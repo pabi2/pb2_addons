@@ -87,7 +87,7 @@ end) as budget_name,
 from account_move_line aml left join account_move am on aml.move_id = am.id
 where aml.date between '$P!{date_start}'  AND '$P!{date_end}'  AND  $P!{condition}
 order by
-aml.move_id,
+am.name ,
 aml.docline_seq]]>
 	</queryString>
 	<field name="id" class="java.lang.Integer">
@@ -354,7 +354,7 @@ aml.docline_seq]]>
 				<text><![CDATA[period]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="940" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="c39d66ad-bb7b-48ef-beac-2a7d4effaeb6">
+				<reportElement mode="Opaque" x="940" y="0" width="80" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="c39d66ad-bb7b-48ef-beac-2a7d4effaeb6">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7e4a99fa-e0f8-41ce-b607-a7be263e8dc8"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -365,7 +365,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Partner code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1010" y="0" width="184" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="5fcbbff7-9ebe-4da1-8af5-05f19c166c73">
+				<reportElement mode="Opaque" x="1020" y="0" width="184" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="5fcbbff7-9ebe-4da1-8af5-05f19c166c73">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7a206d01-a922-41c5-89b1-dd324779b106"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -376,7 +376,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Partner]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1194" y="0" width="66" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="fee4971f-dd03-4b7c-9e7b-37a2e1efe662">
+				<reportElement mode="Opaque" x="1204" y="0" width="66" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="fee4971f-dd03-4b7c-9e7b-37a2e1efe662">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c833d518-710b-491a-b981-ae811eb9791e"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -388,7 +388,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Charge Type]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1430" y="0" width="90" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="d0b64782-2f8f-4757-8ece-7e79e26f6eca">
+				<reportElement mode="Opaque" x="1440" y="0" width="90" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="d0b64782-2f8f-4757-8ece-7e79e26f6eca">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="91968f65-8f53-41d5-97f3-60dda308cd26"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -399,7 +399,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Activity Group Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1520" y="0" width="140" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="5635c57d-1aff-43a8-92cc-ef1232da46b5">
+				<reportElement mode="Opaque" x="1530" y="0" width="140" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="5635c57d-1aff-43a8-92cc-ef1232da46b5">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2309ec19-f1d8-4d56-87f2-569a55a0e140"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -411,7 +411,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Activity Group Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1660" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="bc3af1cc-60db-4899-9d91-6a1d3f47edbe">
+				<reportElement mode="Opaque" x="1670" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="bc3af1cc-60db-4899-9d91-6a1d3f47edbe">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a4322ec5-3a8a-4163-bf15-38f09d72bff5"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -422,7 +422,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Activity Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1730" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="c8cc31f3-4394-41dd-b924-d41288af3a4a">
+				<reportElement mode="Opaque" x="1740" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="c8cc31f3-4394-41dd-b924-d41288af3a4a">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7b210364-6fdd-47cb-9309-78eb1532d707"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -434,7 +434,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Activity Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1840" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="7be0cccf-6315-43e3-ae2e-651eeddfe869">
+				<reportElement mode="Opaque" x="1850" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="7be0cccf-6315-43e3-ae2e-651eeddfe869">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ee0d5ef6-5cd6-45e0-b168-00b4f5b3918a"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -445,7 +445,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Activity Rpt Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1910" y="0" width="140" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="20809c9d-6dd3-4ab8-b8ac-f00c3e83fa22">
+				<reportElement mode="Opaque" x="1920" y="0" width="140" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="20809c9d-6dd3-4ab8-b8ac-f00c3e83fa22">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="64295e6b-64f7-411c-80c8-fc1e60f7a4dc"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -457,7 +457,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Activity Rpt Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2050" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="d31f3720-1f58-4f2c-9a1f-d25ea2f65600">
+				<reportElement mode="Opaque" x="2060" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="d31f3720-1f58-4f2c-9a1f-d25ea2f65600">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="31fe4fac-1e41-43bb-8514-af14044bbb42"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -468,7 +468,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Taxbranch]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2120" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="cc9398ab-4685-482c-bc81-097f21da996a">
+				<reportElement mode="Opaque" x="2130" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="cc9398ab-4685-482c-bc81-097f21da996a">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="15cd4778-ca68-4955-b906-f27a9e9e3b52"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -480,7 +480,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Account]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2230" y="0" width="140" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="03c7d326-f6c1-4731-a58d-34e6d53612a4">
+				<reportElement mode="Opaque" x="2240" y="0" width="180" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="03c7d326-f6c1-4731-a58d-34e6d53612a4">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="acc413ff-d3bc-4b9f-8eae-e42f15755b0a"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -491,7 +491,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2370" y="0" width="80" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="ec233575-bb5f-4d27-bd75-460f741722b7">
+				<reportElement mode="Opaque" x="2420" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="ec233575-bb5f-4d27-bd75-460f741722b7">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="08c4ef4b-01e9-4ea5-bd92-ef662c791843"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -503,7 +503,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Debit]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2450" y="0" width="80" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="0577130c-5cc5-477a-a692-5a44ad85871f">
+				<reportElement mode="Opaque" x="2520" y="0" width="80" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="0577130c-5cc5-477a-a692-5a44ad85871f">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9f1c0ce4-14af-4e0a-814c-b6bf5f93c8de"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -514,7 +514,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Credit]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2530" y="0" width="240" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="45eaea1e-010d-4daf-897a-5882de4cd3a2">
+				<reportElement mode="Opaque" x="2600" y="0" width="240" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="45eaea1e-010d-4daf-897a-5882de4cd3a2">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d757b639-b148-4db1-8bc0-40734e91371a"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -526,7 +526,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Line Description]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2770" y="0" width="41" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="047e4242-62e5-4010-8334-64d8ce0bd8d3">
+				<reportElement mode="Opaque" x="2840" y="0" width="41" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="047e4242-62e5-4010-8334-64d8ce0bd8d3">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4208a5c1-c120-4547-b3e1-44760ecb6713"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -538,7 +538,7 @@ aml.docline_seq]]>
 				<text><![CDATA[org]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3230" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="ede135e5-21d3-436d-91fd-f55bbeed4555">
+				<reportElement mode="Opaque" x="3300" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="ede135e5-21d3-436d-91fd-f55bbeed4555">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="469facc9-2323-475c-a373-8d43b9c1b6b1"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -550,7 +550,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Fund  ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3300" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="7d4ea5ff-0aa1-4c81-8453-b16f5ef87ed5">
+				<reportElement mode="Opaque" x="3370" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="7d4ea5ff-0aa1-4c81-8453-b16f5ef87ed5">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6ecad68d-8fb8-43bd-9c8a-eb746d2c92e1"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -562,7 +562,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Cost Center Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3370" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="29420345-a784-4983-ad06-57ad8b5fa8a8">
+				<reportElement mode="Opaque" x="3440" y="0" width="170" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="29420345-a784-4983-ad06-57ad8b5fa8a8">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1b79df03-2638-4a1b-acb3-39debf05fc1b"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -574,7 +574,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Costcenter Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3470" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="130af60a-9a5d-4ca9-8d81-34f63735b44b">
+				<reportElement mode="Opaque" x="3610" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="130af60a-9a5d-4ca9-8d81-34f63735b44b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8fd95018-537c-4488-9bd6-0ba103f364ea"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -585,7 +585,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Job Order Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3540" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="77d005e6-0f51-4c54-a884-40e5cc4e734c">
+				<reportElement mode="Opaque" x="3680" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="77d005e6-0f51-4c54-a884-40e5cc4e734c">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ef0f9dbc-c191-4197-a51c-538196e5ae7f"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -596,7 +596,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Job Order Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3640" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="60c54356-f805-453a-a0b7-c0c0801e3f9b">
+				<reportElement mode="Opaque" x="3780" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="60c54356-f805-453a-a0b7-c0c0801e3f9b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f47c7732-7f41-4ef1-89d5-62130a5247f3"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -607,7 +607,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Asset code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3740" y="0" width="220" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="9cb97bbe-ebbd-4aa8-8dc2-2c7f87fd2d22">
+				<reportElement mode="Opaque" x="3880" y="0" width="220" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="9cb97bbe-ebbd-4aa8-8dc2-2c7f87fd2d22">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9bfafd51-b57f-43ba-88f4-3e03379cf543"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -619,7 +619,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Asset name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3960" y="0" width="120" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="d42a25e8-b5f0-4257-ad9d-224cd456ecc8">
+				<reportElement mode="Opaque" x="4100" y="0" width="120" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="d42a25e8-b5f0-4257-ad9d-224cd456ecc8">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8ccd4180-ef2a-40be-9d17-59c9fb898f08"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -629,7 +629,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Asset Profile]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="4190" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="051b92dd-3fb7-40c6-9a3e-b1eef6410b90">
+				<reportElement mode="Opaque" x="4330" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="051b92dd-3fb7-40c6-9a3e-b1eef6410b90">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9af266f0-dc4a-4e1d-ba23-db9b0e8a5105"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -640,7 +640,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Rec.ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="4260" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="8cb2c5e1-6ec7-44ff-907b-c95691f19c98">
+				<reportElement mode="Opaque" x="4400" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="8cb2c5e1-6ec7-44ff-907b-c95691f19c98">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7819b12-b2e6-47dc-a0ac-7b821e50f647"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -650,7 +650,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Part.ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="4080" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="6195a704-a9ef-4379-999e-8e6d7296ef54">
+				<reportElement mode="Opaque" x="4220" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="6195a704-a9ef-4379-999e-8e6d7296ef54">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9af266f0-dc4a-4e1d-ba23-db9b0e8a5105"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -661,7 +661,7 @@ aml.docline_seq]]>
 				<text><![CDATA[System Origin]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1260" y="0" width="170" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="2f132bb4-0303-4f61-8beb-d373389fa4b1">
+				<reportElement mode="Opaque" x="1270" y="0" width="170" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="2f132bb4-0303-4f61-8beb-d373389fa4b1">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c833d518-710b-491a-b981-ae811eb9791e"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -672,7 +672,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Product]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2811" y="0" width="159" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="bb0e01cd-7c3c-4052-9250-d30f3777d8e6">
+				<reportElement mode="Opaque" x="2881" y="0" width="159" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="bb0e01cd-7c3c-4052-9250-d30f3777d8e6">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4208a5c1-c120-4547-b3e1-44760ecb6713"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -684,7 +684,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Source of Budget Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2970" y="0" width="260" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="08e13e69-0c7a-4b2d-899a-c2fe8b52b52e">
+				<reportElement mode="Opaque" x="3040" y="0" width="260" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="08e13e69-0c7a-4b2d-899a-c2fe8b52b52e">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4208a5c1-c120-4547-b3e1-44760ecb6713"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -809,7 +809,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{period}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="940" y="0" width="70" height="20" uuid="c6146d21-1535-4734-9ad2-b5fb5214f525">
+				<reportElement x="940" y="0" width="80" height="20" uuid="c6146d21-1535-4734-9ad2-b5fb5214f525">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7e4a99fa-e0f8-41ce-b607-a7be263e8dc8"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -819,7 +819,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{partner_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1010" y="0" width="184" height="20" uuid="fb0daebd-628a-4219-aba6-2c4d962be755">
+				<reportElement x="1020" y="0" width="184" height="20" uuid="fb0daebd-628a-4219-aba6-2c4d962be755">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7a206d01-a922-41c5-89b1-dd324779b106"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -829,7 +829,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{partner_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1194" y="0" width="66" height="20" uuid="f23e20ca-1fd9-414e-8177-41637c62508f">
+				<reportElement x="1204" y="0" width="66" height="20" uuid="f23e20ca-1fd9-414e-8177-41637c62508f">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c833d518-710b-491a-b981-ae811eb9791e"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -839,7 +839,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{charge_type}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1430" y="0" width="90" height="20" uuid="be675d7b-ec86-49b8-b3c2-9d2b804b9dd5">
+				<reportElement x="1440" y="0" width="90" height="20" uuid="be675d7b-ec86-49b8-b3c2-9d2b804b9dd5">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="91968f65-8f53-41d5-97f3-60dda308cd26"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -849,7 +849,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{activity_group_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1520" y="0" width="140" height="20" uuid="85f32c00-5bc7-47ca-b248-c01295e1f75f">
+				<reportElement x="1530" y="0" width="140" height="20" uuid="85f32c00-5bc7-47ca-b248-c01295e1f75f">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2309ec19-f1d8-4d56-87f2-569a55a0e140"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -860,7 +860,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{activity_group_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1660" y="0" width="70" height="20" uuid="242a1234-74fc-4cef-924b-c700b3e54d99">
+				<reportElement x="1670" y="0" width="70" height="20" uuid="242a1234-74fc-4cef-924b-c700b3e54d99">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a4322ec5-3a8a-4163-bf15-38f09d72bff5"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -870,7 +870,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{activity_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1730" y="0" width="110" height="20" uuid="242e6a01-82f6-43c1-8161-b49675db0282">
+				<reportElement x="1740" y="0" width="110" height="20" uuid="242e6a01-82f6-43c1-8161-b49675db0282">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7b210364-6fdd-47cb-9309-78eb1532d707"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -881,7 +881,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{activity_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1840" y="0" width="70" height="20" uuid="6551208e-4d2b-429f-9791-154bd51feea5">
+				<reportElement x="1850" y="0" width="70" height="20" uuid="6551208e-4d2b-429f-9791-154bd51feea5">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ee0d5ef6-5cd6-45e0-b168-00b4f5b3918a"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -891,7 +891,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{activity_rpt_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1910" y="0" width="140" height="20" uuid="7c42690e-3b6e-4d19-b9c7-b6430c8eb1b6">
+				<reportElement x="1920" y="0" width="140" height="20" uuid="7c42690e-3b6e-4d19-b9c7-b6430c8eb1b6">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="64295e6b-64f7-411c-80c8-fc1e60f7a4dc"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -902,7 +902,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{activity_rpt_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="2050" y="0" width="70" height="20" uuid="c8deef55-9a72-4250-961a-f68cdec3eb8f">
+				<reportElement x="2060" y="0" width="70" height="20" uuid="c8deef55-9a72-4250-961a-f68cdec3eb8f">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="31fe4fac-1e41-43bb-8514-af14044bbb42"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -912,7 +912,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{taxbranch}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="2120" y="0" width="110" height="20" uuid="74b0a9e3-ee68-4942-af06-d34e94bdaebc">
+				<reportElement x="2130" y="0" width="110" height="20" uuid="74b0a9e3-ee68-4942-af06-d34e94bdaebc">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="15cd4778-ca68-4955-b906-f27a9e9e3b52"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -923,7 +923,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{account}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="2230" y="0" width="140" height="20" uuid="8fa09eef-840a-408a-9bf0-0bb50c44e116">
+				<reportElement x="2240" y="0" width="180" height="20" uuid="8fa09eef-840a-408a-9bf0-0bb50c44e116">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="acc413ff-d3bc-4b9f-8eae-e42f15755b0a"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -933,7 +933,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00#" isBlankWhenNull="true">
-				<reportElement x="2370" y="0" width="80" height="20" uuid="9716d499-737d-4158-a60c-685f368279e0">
+				<reportElement x="2420" y="0" width="100" height="20" uuid="9716d499-737d-4158-a60c-685f368279e0">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="08c4ef4b-01e9-4ea5-bd92-ef662c791843"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -944,7 +944,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{debit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.###;(#,##0.###-)" isBlankWhenNull="true">
-				<reportElement x="2450" y="0" width="80" height="20" uuid="f4688329-aa72-4db8-a20e-8553511f2a8c">
+				<reportElement x="2520" y="0" width="80" height="20" uuid="f4688329-aa72-4db8-a20e-8553511f2a8c">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9f1c0ce4-14af-4e0a-814c-b6bf5f93c8de"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -954,7 +954,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{credit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="2530" y="0" width="240" height="20" uuid="b6ad3386-9181-48e3-a9cd-e85fb7a6ada9">
+				<reportElement x="2600" y="0" width="240" height="20" uuid="b6ad3386-9181-48e3-a9cd-e85fb7a6ada9">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d757b639-b148-4db1-8bc0-40734e91371a"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -965,7 +965,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{line_description}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="2770" y="0" width="41" height="20" uuid="40a0fd1a-3aa9-4932-9d74-f866a5f8f923">
+				<reportElement x="2840" y="0" width="41" height="20" uuid="40a0fd1a-3aa9-4932-9d74-f866a5f8f923">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4208a5c1-c120-4547-b3e1-44760ecb6713"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -976,7 +976,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{org}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="3230" y="0" width="70" height="20" uuid="b89c2a59-d69f-439c-8b94-1f7658b7a391">
+				<reportElement x="3300" y="0" width="70" height="20" uuid="b89c2a59-d69f-439c-8b94-1f7658b7a391">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="469facc9-2323-475c-a373-8d43b9c1b6b1"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -987,7 +987,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{fund}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="3300" y="0" width="70" height="20" uuid="14b54339-512b-4e4c-ace7-a016ae68d90d">
+				<reportElement x="3370" y="0" width="70" height="20" uuid="14b54339-512b-4e4c-ace7-a016ae68d90d">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6ecad68d-8fb8-43bd-9c8a-eb746d2c92e1"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -998,7 +998,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{costcenter_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="3370" y="0" width="100" height="20" uuid="9db2e3f6-8e42-40a8-8bfa-12f724ec024e">
+				<reportElement x="3440" y="0" width="170" height="20" uuid="9db2e3f6-8e42-40a8-8bfa-12f724ec024e">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1b79df03-2638-4a1b-acb3-39debf05fc1b"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1009,7 +1009,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{costcenter_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="3470" y="0" width="70" height="20" uuid="a6e29dc3-4b95-4df2-b0d5-3c377869aa88">
+				<reportElement x="3610" y="0" width="70" height="20" uuid="a6e29dc3-4b95-4df2-b0d5-3c377869aa88">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8fd95018-537c-4488-9bd6-0ba103f364ea"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1020,7 +1020,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{job_order_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="3540" y="0" width="100" height="20" uuid="aaf8ca38-1057-43a5-9952-d392dc3c9e8f">
+				<reportElement x="3680" y="0" width="100" height="20" uuid="aaf8ca38-1057-43a5-9952-d392dc3c9e8f">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ef0f9dbc-c191-4197-a51c-538196e5ae7f"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1031,7 +1031,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{job_order_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="3640" y="0" width="100" height="20" uuid="629f4142-f608-4729-9004-b1d79780a52c">
+				<reportElement x="3780" y="0" width="100" height="20" uuid="629f4142-f608-4729-9004-b1d79780a52c">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f47c7732-7f41-4ef1-89d5-62130a5247f3"/>
 				</reportElement>
 				<textElement verticalAlignment="Bottom">
@@ -1040,7 +1040,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{asset_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="3740" y="0" width="220" height="20" uuid="d792dea6-4bd6-4eb7-acdc-979f034d133b">
+				<reportElement x="3880" y="0" width="220" height="20" uuid="d792dea6-4bd6-4eb7-acdc-979f034d133b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9bfafd51-b57f-43ba-88f4-3e03379cf543"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1051,7 +1051,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{asset_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="3960" y="0" width="120" height="20" uuid="8aa5bc19-8119-4cdf-9f95-0021b810b24f">
+				<reportElement x="4100" y="0" width="120" height="20" uuid="8aa5bc19-8119-4cdf-9f95-0021b810b24f">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8ccd4180-ef2a-40be-9d17-59c9fb898f08"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -1061,7 +1061,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{asset_profile_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4190" y="0" width="70" height="20" uuid="39ca7e70-579a-48a7-9c0e-713adc9f2948">
+				<reportElement x="4330" y="0" width="70" height="20" uuid="39ca7e70-579a-48a7-9c0e-713adc9f2948">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9af266f0-dc4a-4e1d-ba23-db9b0e8a5105"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1072,7 +1072,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{rec_id}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4260" y="0" width="70" height="20" uuid="142967f6-9862-4209-aa66-4121e7008df0">
+				<reportElement x="4400" y="0" width="70" height="20" uuid="142967f6-9862-4209-aa66-4121e7008df0">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7819b12-b2e6-47dc-a0ac-7b821e50f647"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -1082,7 +1082,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{par_id}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1260" y="0" width="170" height="20" uuid="a1eb5341-d88c-4bac-97f0-f576b419d63b">
+				<reportElement x="1270" y="0" width="170" height="20" uuid="a1eb5341-d88c-4bac-97f0-f576b419d63b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c833d518-710b-491a-b981-ae811eb9791e"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -1092,7 +1092,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{product_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="2811" y="0" width="159" height="20" uuid="b3bc7e09-d34f-4d77-b44e-14cba0d4f9ba">
+				<reportElement x="2881" y="0" width="159" height="20" uuid="b3bc7e09-d34f-4d77-b44e-14cba0d4f9ba">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4208a5c1-c120-4547-b3e1-44760ecb6713"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1103,7 +1103,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{budget_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="2970" y="0" width="260" height="20" uuid="5ca16918-f968-43e7-a66a-3771b5cb9ed4">
+				<reportElement x="3040" y="0" width="260" height="20" uuid="5ca16918-f968-43e7-a66a-3771b5cb9ed4">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4208a5c1-c120-4547-b3e1-44760ecb6713"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1114,7 +1114,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{budget_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4080" y="0" width="110" height="20" uuid="3b9b3637-0f85-40dc-b39e-2188100299bd">
+				<reportElement x="4220" y="0" width="110" height="20" uuid="3b9b3637-0f85-40dc-b39e-2188100299bd">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8ccd4180-ef2a-40be-9d17-59c9fb898f08"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -1247,7 +1247,7 @@ aml.docline_seq]]>
 				<text><![CDATA[period]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="940" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="34533e49-5027-42ab-8957-d95a65177fb7">
+				<reportElement mode="Opaque" x="940" y="0" width="80" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="34533e49-5027-42ab-8957-d95a65177fb7">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7e4a99fa-e0f8-41ce-b607-a7be263e8dc8"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1258,7 +1258,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Partner code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1010" y="0" width="184" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="a214e5db-a42a-430e-a702-cd3a347a1142">
+				<reportElement mode="Opaque" x="1020" y="0" width="184" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="a214e5db-a42a-430e-a702-cd3a347a1142">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7a206d01-a922-41c5-89b1-dd324779b106"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1269,7 +1269,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Partner]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1194" y="0" width="66" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="18e0f0ad-fb5f-4649-85fc-aacd1bb4fb14">
+				<reportElement mode="Opaque" x="1204" y="0" width="66" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="18e0f0ad-fb5f-4649-85fc-aacd1bb4fb14">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c833d518-710b-491a-b981-ae811eb9791e"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -1281,7 +1281,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Charge Type]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1430" y="0" width="90" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="a9f2c982-7171-448a-9ba3-0c26ec1099e9">
+				<reportElement mode="Opaque" x="1440" y="0" width="90" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="a9f2c982-7171-448a-9ba3-0c26ec1099e9">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="91968f65-8f53-41d5-97f3-60dda308cd26"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1292,7 +1292,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Activity Group Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1520" y="0" width="140" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="f41c7f7e-8885-4202-91e4-374e4431b5c2">
+				<reportElement mode="Opaque" x="1530" y="0" width="140" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="f41c7f7e-8885-4202-91e4-374e4431b5c2">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="2309ec19-f1d8-4d56-87f2-569a55a0e140"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1304,7 +1304,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Activity Group Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1660" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="6afb8671-2dc9-4351-bc6a-7cb514b58198">
+				<reportElement mode="Opaque" x="1670" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="6afb8671-2dc9-4351-bc6a-7cb514b58198">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a4322ec5-3a8a-4163-bf15-38f09d72bff5"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1315,7 +1315,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Activity Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1730" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="d799e028-03f2-4fd4-829a-5f6323eb429d">
+				<reportElement mode="Opaque" x="1740" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="d799e028-03f2-4fd4-829a-5f6323eb429d">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="7b210364-6fdd-47cb-9309-78eb1532d707"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1327,7 +1327,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Activity Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1840" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="aac40157-09d7-4791-bff9-bc4bb5143932">
+				<reportElement mode="Opaque" x="1850" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="aac40157-09d7-4791-bff9-bc4bb5143932">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ee0d5ef6-5cd6-45e0-b168-00b4f5b3918a"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1338,7 +1338,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Activity Rpt Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1910" y="0" width="140" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="8d7cba32-1a1f-41cc-b82e-5c0867429fd3">
+				<reportElement mode="Opaque" x="1920" y="0" width="140" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="8d7cba32-1a1f-41cc-b82e-5c0867429fd3">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="64295e6b-64f7-411c-80c8-fc1e60f7a4dc"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1350,7 +1350,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Activity Rpt Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2050" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="ad776ed3-0e17-4dae-9be6-29e2c2d1e29b">
+				<reportElement mode="Opaque" x="2060" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="ad776ed3-0e17-4dae-9be6-29e2c2d1e29b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="31fe4fac-1e41-43bb-8514-af14044bbb42"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1361,7 +1361,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Taxbranch]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2120" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="17a5807d-c5a4-4096-80b8-9175b594e653">
+				<reportElement mode="Opaque" x="2130" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="17a5807d-c5a4-4096-80b8-9175b594e653">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="15cd4778-ca68-4955-b906-f27a9e9e3b52"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1373,7 +1373,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Account]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2230" y="0" width="140" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="e2edb23f-a338-4e67-af5a-7ae4c1f15d98">
+				<reportElement mode="Opaque" x="2240" y="0" width="180" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="e2edb23f-a338-4e67-af5a-7ae4c1f15d98">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="acc413ff-d3bc-4b9f-8eae-e42f15755b0a"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1384,7 +1384,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2370" y="0" width="80" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="4128ddb6-fc07-4246-a972-a91870711475">
+				<reportElement mode="Opaque" x="2420" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="4128ddb6-fc07-4246-a972-a91870711475">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="08c4ef4b-01e9-4ea5-bd92-ef662c791843"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1396,7 +1396,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Debit]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2450" y="0" width="80" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="24f05049-4c68-405b-9071-ee152008cfe2">
+				<reportElement mode="Opaque" x="2520" y="0" width="80" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="24f05049-4c68-405b-9071-ee152008cfe2">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9f1c0ce4-14af-4e0a-814c-b6bf5f93c8de"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1407,7 +1407,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Credit]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2530" y="0" width="240" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="22a4c110-012d-448d-8f24-d45f0884350a">
+				<reportElement mode="Opaque" x="2600" y="0" width="240" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="22a4c110-012d-448d-8f24-d45f0884350a">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d757b639-b148-4db1-8bc0-40734e91371a"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1419,7 +1419,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Line Description]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2770" y="0" width="41" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="02835512-3d28-411b-9409-3dc7ebf10fc8">
+				<reportElement mode="Opaque" x="2840" y="0" width="41" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="02835512-3d28-411b-9409-3dc7ebf10fc8">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4208a5c1-c120-4547-b3e1-44760ecb6713"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1431,7 +1431,7 @@ aml.docline_seq]]>
 				<text><![CDATA[org]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3230" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="380cb154-4baa-4cb9-812d-38d9e33ea9c2">
+				<reportElement mode="Opaque" x="3300" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="380cb154-4baa-4cb9-812d-38d9e33ea9c2">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="469facc9-2323-475c-a373-8d43b9c1b6b1"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1443,7 +1443,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Fund  ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3300" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="066e6d37-de36-460a-8e4d-d2c8127549f8">
+				<reportElement mode="Opaque" x="3370" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="066e6d37-de36-460a-8e4d-d2c8127549f8">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6ecad68d-8fb8-43bd-9c8a-eb746d2c92e1"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1455,7 +1455,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Cost Center Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3370" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="2b5b3b49-1f30-442d-bc5c-7f1a9c299939">
+				<reportElement mode="Opaque" x="3440" y="0" width="170" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="2b5b3b49-1f30-442d-bc5c-7f1a9c299939">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1b79df03-2638-4a1b-acb3-39debf05fc1b"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1467,7 +1467,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Costcenter Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3470" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="a317ccc6-2260-4586-b3ed-5ddf3538d3e6">
+				<reportElement mode="Opaque" x="3610" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="a317ccc6-2260-4586-b3ed-5ddf3538d3e6">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8fd95018-537c-4488-9bd6-0ba103f364ea"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1478,7 +1478,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Job Order Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3540" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="1f3d40ff-8135-4293-9da1-e2141583ad85">
+				<reportElement mode="Opaque" x="3680" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="1f3d40ff-8135-4293-9da1-e2141583ad85">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ef0f9dbc-c191-4197-a51c-538196e5ae7f"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1489,7 +1489,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Job Order Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3640" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="42f66c3a-5a28-41b5-a3b8-2d651ed34284">
+				<reportElement mode="Opaque" x="3780" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="42f66c3a-5a28-41b5-a3b8-2d651ed34284">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f47c7732-7f41-4ef1-89d5-62130a5247f3"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1500,7 +1500,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Asset code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3740" y="0" width="220" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="262fd997-1a44-4e9d-ba1f-2b3ae762bece">
+				<reportElement mode="Opaque" x="3880" y="0" width="220" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="262fd997-1a44-4e9d-ba1f-2b3ae762bece">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9bfafd51-b57f-43ba-88f4-3e03379cf543"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1512,7 +1512,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Asset name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3960" y="0" width="120" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="40f0304d-122b-4624-ac47-38204fd07f20">
+				<reportElement mode="Opaque" x="4100" y="0" width="120" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="40f0304d-122b-4624-ac47-38204fd07f20">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8ccd4180-ef2a-40be-9d17-59c9fb898f08"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -1522,7 +1522,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Asset Profile]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="4190" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="4a30e0a1-b0ee-4c08-84af-3c996b6e3be5">
+				<reportElement mode="Opaque" x="4330" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="4a30e0a1-b0ee-4c08-84af-3c996b6e3be5">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9af266f0-dc4a-4e1d-ba23-db9b0e8a5105"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1533,7 +1533,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Rec.ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="4260" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="e490c6fa-b619-481e-abe9-f8cc2ed2aa3e">
+				<reportElement mode="Opaque" x="4400" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="e490c6fa-b619-481e-abe9-f8cc2ed2aa3e">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7819b12-b2e6-47dc-a0ac-7b821e50f647"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -1543,7 +1543,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Part.ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="4080" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="0c04f36d-4f38-4f76-ae17-10ae4de07a02">
+				<reportElement mode="Opaque" x="4220" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="0c04f36d-4f38-4f76-ae17-10ae4de07a02">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9af266f0-dc4a-4e1d-ba23-db9b0e8a5105"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1554,7 +1554,7 @@ aml.docline_seq]]>
 				<text><![CDATA[System Origin]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="1260" y="0" width="170" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="9d7adbe4-8cf4-4e4c-966f-781cac41fc02">
+				<reportElement mode="Opaque" x="1270" y="0" width="170" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="9d7adbe4-8cf4-4e4c-966f-781cac41fc02">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c833d518-710b-491a-b981-ae811eb9791e"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1565,7 +1565,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Product]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2811" y="0" width="159" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="ea3596d9-0ee5-461a-a8f0-5baddc7220c6">
+				<reportElement mode="Opaque" x="2881" y="0" width="159" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="ea3596d9-0ee5-461a-a8f0-5baddc7220c6">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4208a5c1-c120-4547-b3e1-44760ecb6713"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1577,7 +1577,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Source of Budget Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2970" y="0" width="260" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="1cecb86f-f957-4dba-8c15-be493777a78c">
+				<reportElement mode="Opaque" x="3040" y="0" width="260" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="1cecb86f-f957-4dba-8c15-be493777a78c">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4208a5c1-c120-4547-b3e1-44760ecb6713"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
