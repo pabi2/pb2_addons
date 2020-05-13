@@ -99,7 +99,7 @@ class JasperReportJournalDocumentEntry(models.TransientModel):
             res = []
             for type in doc_type:               
                 res += [(" am.name like '{}%' ".format(type.upper()))]
-            doc_type = 'or'.join(map(str, res))
+            doc_type = '('+'or'.join(map(str, res))+')'
             dom += [(doc_type)]
         if self.doc_number_ids:
             dom += [(" aml.move_id in ({}) ".format(','.join(map(str, (self.doc_number_ids.ids)))))]
