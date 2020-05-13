@@ -650,26 +650,6 @@ aml.docline_seq]]>
 				<text><![CDATA[Part.ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="4330" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="e6597a3e-700f-4fdf-9bac-0a4f9d5b7828">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7819b12-b2e6-47dc-a0ac-7b821e50f647"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center">
-					<font size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Validate by (ID)]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="4430" y="0" width="150" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="82731dc1-eb63-453b-a5d5-c7557f178b91">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7819b12-b2e6-47dc-a0ac-7b821e50f647"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center">
-					<font size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Validate by (Name)]]></text>
-			</staticText>
-			<staticText>
 				<reportElement mode="Opaque" x="4080" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="6195a704-a9ef-4379-999e-8e6d7296ef54">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9af266f0-dc4a-4e1d-ba23-db9b0e8a5105"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1561,26 +1541,6 @@ aml.docline_seq]]>
 					<font size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Part.ID]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="4330" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="d8616c9a-3a11-4056-93bd-db48f568bbac">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7819b12-b2e6-47dc-a0ac-7b821e50f647"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center">
-					<font size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Validate by (ID)]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="4430" y="0" width="150" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="d5fea12c-7b05-41e0-9916-dc706e444b44">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7819b12-b2e6-47dc-a0ac-7b821e50f647"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center">
-					<font size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Validate by (Name)]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="4080" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="0c04f36d-4f38-4f76-ae17-10ae4de07a02">

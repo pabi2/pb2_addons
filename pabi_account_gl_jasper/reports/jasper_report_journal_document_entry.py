@@ -40,11 +40,7 @@ class JasperReportJournalDocumentEntry(models.TransientModel):
         2. Check account type is expense
         """
         self.ensure_one()
-#         Result = self.env['account.move.line']
         dom = []
-         
-#         if self.user_type:
-#             dom = [('account_id.user_type', '=', self.user_type.id)]
         if self.account_ids:
 #             dom += [('account_id', 'in', self.account_ids.ids)]
             dom += [(' account_id in ({}) '.format(','.join(map(str, (self.account_ids.ids)))))]
@@ -82,40 +78,31 @@ class JasperReportJournalDocumentEntry(models.TransientModel):
             dom += [(" charge_type = '{}' ".format(self.charge_type))]
         if self.fiscalyear_start_id:
 #             dom += [('date', '>=', self.fiscalyear_start_id.date_start)]
-#             date_start = [(" date >= '{}' ".format(self.fiscalyear_start_id.date_start))]
             date_start = self.fiscalyear_start_id.date_start
         if self.fiscalyear_end_id:
 #             dom += [('date', '<=', self.fiscalyear_end_id.date_stop)]
-#             date_end = [(" date <= '{}' ".format(self.fiscalyear_end_id.date_stop))]
             date_end = self.fiscalyear_end_id.date_stop
         if self.period_start_id:
 #             dom += [('date', '>=', self.period_start_id.date_start)]
-#             date_start = [(" date >= '{}' ".format(self.period_start_id.date_start))]
             date_start = self.period_start_id.date_start
         if self.period_end_id:
 #             dom += [('date', '<=', self.period_end_id.date_stop)]
-#             date_end = [(" date <= '{}' ".format(self.period_end_id.date_stop))]
             date_end = self.period_start_id.date_stop
         if self.date_start:
 #             dom += [('date', '>=', self.date_start)]
-#             date_start = [(" date >= '{}' ".format(self.date_start))]
             date_start = self.date_start
         if self.date_end:
 #             dom += [('date', '<=', self.date_end)]
-#             date_end = [(" date <= '{}' ".format(self.date_end))]
             date_end = self.date_end
         if self.doc_type:
-            dom += [(" am.name like '{}%'".format(self.doc_type))]
+            doc_type = self.doc_type.split(',')
+            res = []
+            for type in doc_type:               
+                res += [(" am.name like '{}%' ".format(type.upper()))]
+            doc_type = 'or'.join(map(str, res))
+            dom += [(doc_type)]
         if self.doc_number_ids:
             dom += [(" aml.move_id in ({}) ".format(','.join(map(str, (self.doc_number_ids.ids)))))]
-            
-#         self.results = Result.with_context(active=False).search(dom).sorted(
-#                        key=lambda l: (l.charge_type,
-#                                       l.account_id.code,
-#                                       l.activity_group_id.code,
-#                                       l.activity_id.code,
-#                                       l.period_id.fiscalyear_id.name,
-#                                       l.period_id.name))
         return date_start,date_end,dom
         
             
@@ -124,10 +111,6 @@ class JasperReportJournalDocumentEntry(models.TransientModel):
         self.ensure_one()
         date_start,date_end,dom = self._compute_results()
         params = {}
-#         params['condition'] = 'and'.join(map(str, where_str)) #error
-#         params['ids'] = [3613143,3613144] #pass
-#         params['condition'] = 'id in (1829948,1829949,1829950,1829951,1847763)' #pass
-#         params['condition'] = "date >= \'2019-10-01\' and date <= \'2020-09-30\' and move_id in (628204,627347,626953,624181)" #error
         params['date_start'] = date_start
         params['date_end'] = date_end
         params['condition'] = 'and'.join(map(str, dom))
