@@ -38,6 +38,7 @@ Note: following are arequiremen for system to properly create analytic line
         'xlsx_template/xlsx_template_wizard.xml',
         'xlsx_template/load_template.xml',
         'wizard/create_journal_entry_wizard.xml',
+        'wizard/create_journal_entry_salary_expense_wizard.xml',
         'wizard/edit_desc.xml',
         'wizard/account_move_change_date_due.xml',
         'wizard/account_move_reverse_view.xml',
