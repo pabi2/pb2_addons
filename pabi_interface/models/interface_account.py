@@ -396,7 +396,7 @@ class InterfaceAccountEntry(models.Model):
         self.ensure_one()
         self._validate_payment_entry()
         move = self._create_journal_entry()
-        self._reconcile_payment()
+        self._reconcile_payment(move)
         return move
 
     # == Validate by Action ==
@@ -430,6 +430,40 @@ class InterfaceAccountEntry(models.Model):
         Checker._check_amount_currency(self)
         Checker._check_select_reconcile_with(self)
 
+    @api.multi
+    def _reconcile_moveline_account(self, move):
+        moveline_obj = self.env['account.move.line']
+        reconcile_move_id = self.line_ids.mapped('reconcile_move_id')
+        if reconcile_move_id:
+            accounts = move.line_id.mapped('account_id')
+            for account in accounts:
+                move_lines = moveline_obj.search([
+                    ('account_id.reconcile', '=', True),
+                    ('reconcile_id', '=', False),
+                    ('move_id', 'in', [move.id, reconcile_move_id.id]),
+                    ('account_id', '=', account.id)
+                ])
+                # # check partial reconcile and add (optional)
+                # partial_reconcile = moveline_obj.search([
+                #     ('reconcile_partial_id', 'in',
+                #         move_lines.mapped('reconcile_partial_id').ids)
+                # ])
+                # if partial_reconcile:
+                #     move_lines |= partial_reconcile
+                # If nohting to reconcile
+                debit = sum(move_lines.mapped('debit'))
+                credit = sum(move_lines.mapped('credit'))
+                if debit == 0.0 or credit == 0.0:
+                    continue
+                # --
+                if len(move_lines) >= 2:
+                    # check partial or full reconcile
+                    if debit != credit:
+                        move_lines.reconcile_partial('auto')
+                    else:
+                        move_lines.reconcile('auto')
+        return True
+
     # == Execution Logics ==
     @api.model
     def _create_journal_entry(self):
@@ -441,6 +475,7 @@ class InterfaceAccountEntry(models.Model):
         Analytic = self.env['account.analytic.account']
         TaxDetail = self.env['account.tax.detail']
         Period = self.env['account.period']
+        Currency = self.env['res.currency']
 
         move_date = self.line_ids[0].date
         operating_unit_id = self.line_ids[0].operating_unit_id.id
@@ -537,6 +572,8 @@ class InterfaceAccountEntry(models.Model):
                 detail = TaxDetail.create(tax_dict)
                 detail._set_next_sequence()
             # --
+        # auto reconcile
+        self._reconcile_moveline_account(move)
 
         self.write({'move_id': move.id,
                     'state': 'done'})
@@ -558,18 +595,19 @@ class InterfaceAccountEntry(models.Model):
         return doc_type
 
     @api.multi
-    def _reconcile_payment(self):
+    def _reconcile_payment(self, move):
         self.ensure_one()
+        self._reconcile_moveline_account(move)
         # To reconcile each reciable/payable line
-        to_reconcile_lines = self.line_ids.filtered('account_id.reconcile')
-        for line in to_reconcile_lines:
-            payment_ml = line.ref_move_line_id
-            invoice_ml = line.reconcile_move_line_ids
-            to_rec = payment_ml | invoice_ml
-            if len(to_rec) >= 2:
-                r_id = to_rec.reconcile_partial('auto')
-                reconcile = self.env['account.move.reconcile'].browse(r_id)
-                reconcile.reconcile_partial_check()
+        # to_reconcile_lines = self.line_ids.filtered('account_id.reconcile')
+        # for line in to_reconcile_lines:
+        #     payment_ml = line.ref_move_line_id
+        #     invoice_ml = line.reconcile_move_line_ids
+        #     to_rec = payment_ml | invoice_ml
+        #     if len(to_rec) >= 2:
+        #         r_id = to_rec.reconcile_partial('auto')
+        #         reconcile = self.env['account.move.reconcile'].browse(r_id)
+        #         reconcile.reconcile_partial_check()
 
     # ==========================================================
     #                  INTERFACE OTHER SYSEM
@@ -587,7 +625,7 @@ class InterfaceAccountEntry(models.Model):
             'journal_id': u'Sales Journal',
             'cancel_reason': u'ยกเลิก',
         }
-            
+
         return self.generate_interface_account_entry(data_dict)
 
     @api.multi
@@ -690,7 +728,6 @@ class InterfaceAccountEntry(models.Model):
                 }
             ]
         }
-            
         return self.generate_interface_account_entry(data_dict)
 
     @api.model
@@ -699,7 +736,7 @@ class InterfaceAccountEntry(models.Model):
         str_type = data_dict["type"]
         ia_table = self.env["interface.account.entry"]
         system_table = self.env["interface.system"]
-        
+
         if str_type != "Reverse":
             str_system = data_dict["system_id"]
             dom = [("name", "=", str_system)]
@@ -709,10 +746,10 @@ class InterfaceAccountEntry(models.Model):
                    ("system_id", "=", system_datas.id)]
         else:
             dom = [("name", "=", str_doc_origin)]
-            
+
         ia_datas = ia_table.search(dom)
         res = {"exists": False}
-        
+
         if ia_datas:
             ia_id = ia_number = ia_fiscalyear = None
             system = None
@@ -752,14 +789,14 @@ class InterfaceAccountEntry(models.Model):
                                       },
                             "messages": "Record created successfully"
                           }
-            
+
         return res
 
     @api.model
     def _clear_temp_check_existing(self):
         sql = "delete from interface_account_entry_check_existing"
         self._cr.execute(sql)
-        
+
         return True
 
     @api.model
@@ -771,7 +808,7 @@ class InterfaceAccountEntry(models.Model):
         # for check double interface of document at same time
         if ("system_id" in data_dict):
             check_table = self.env["interface.account.entry.check.existing"]
-            
+
             if str_type == "Reverse":
                 dom = [("doc_origin", "=", str_doc_origin),
                        ("type", "=", "reverse")]
@@ -779,9 +816,9 @@ class InterfaceAccountEntry(models.Model):
                 dom = [("doc_origin", "=", str_doc_origin),
                        ("type", "=", "post"),
                        ("system", "=", data_dict["system_id"])]
-                
+
             check_datas = check_table.search(dom)
-            
+
             if not check_datas:
                 values = {}
                 values["doc_origin"] = str_doc_origin
@@ -802,7 +839,7 @@ class InterfaceAccountEntry(models.Model):
                         "messages": _(err_message)
                       }
                 return res
-        
+
         return res
 
     @api.model
@@ -818,12 +855,12 @@ class InterfaceAccountEntry(models.Model):
         if existing["exists"]:
             _logger.info("IA - Output: %s" % existing)
             return existing
-        
+
         interfaced = self._is_interfaced(data_dict)
         if interfaced["interfaced"]:
             _logger.info("IA - Output: %s" % interfaced)
             return interfaced
-        
+
         try:
             data_dict = self._pre_process_interface_account_entry(data_dict)
             # For migration period, payment reconicle can be entry or item
@@ -845,7 +882,7 @@ class InterfaceAccountEntry(models.Model):
                 res_id = res['result']['id']
                 document = self.browse(res_id)
                 document.execute()
-                
+
                 # More info
                 res['result']['number'] = document.number
                 res['result']['fiscalyear'] = \
@@ -855,7 +892,7 @@ class InterfaceAccountEntry(models.Model):
             if err_msg == "could not serialize access due to concurrent update":
                 err_msg = "ไม่สามารถ Interface ได้ เนื่องจาก" + \
                         "มีผู้ใช้งานจำนวนมาก กรุณารอ 10 นาทีแล้วลองอีกครั้ง"
-                        
+
             res = {
                 'is_success': False,
                 'result': False,
@@ -1232,4 +1269,3 @@ class InterfaceAccountChecker(models.AbstractModel):
         if float_compare(debit, credit, prec) != 0:
             raise ValidationError(
                 _('Interface Entry, %s, not balanced!') % inf.name)
-
