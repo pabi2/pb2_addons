@@ -202,7 +202,8 @@ class PABIPartnerDunningLetterLine(models.Model):
         store=True,
     )
     date_due = fields.Date(
-        related='move_line_id.date_maturity',
+        #related='move_line_id.date_maturity',
+        compute='_compute_date_due',
         string='Date Due',
         store=True,
     )
@@ -218,13 +219,19 @@ class PABIPartnerDunningLetterLine(models.Model):
 
     @api.multi
     @api.depends('move_line_id')
+    def _compute_date_due(self):
+        for line in self:
+            line.date_due = line.move_line_id.date_maturity
+
+    @api.multi
+    @api.depends('move_line_id')
     def _compute_amount_residual(self):
         for line in self:
             move_line = line.move_line_id
             sign = move_line.debit - move_line.credit < 0 and -1 or 1
-            line.amount_residual = sign * abs(move_line.amount_residual) 
+            line.amount_residual = sign * abs(move_line.amount_residual)
             
-    @api.multi       
+    @api.multi
     @api.depends('move_line_id')
     def _compute_validate_user_id(self):
         for line in self:
