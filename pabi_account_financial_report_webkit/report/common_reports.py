@@ -117,6 +117,51 @@ class CommonReportHeaderWebkit(common_report_header):
     def _get_form_param(self, param, data, default=False):
         return data.get('form', {}).get(param, default)
 
+    def _get_amount_unpaid(self, lines, data):
+        Recon = self.pool.get('account.move.reconcile')
+        rec_ids = []
+        percent = []
+        account = []
+        if data['form']['filter'] == 'filter_no':
+            fiscalyear = self.get_fiscalyear_br(data)
+            specific_report = data.get('specific_report')
+            stop_period = self.get_last_fiscalyear_period(
+                fiscalyear, specific_report=specific_report)
+            date_stop = stop_period.date_stop
+        elif data['form']['filter'] == 'filter_date':
+            date_stop = self._get_form_param('date_to', data)
+        else:
+            stop_period = self.get_end_period_br(data)
+            date_stop = stop_period.date_stop
+        rec_ids = [x['rec_id'] for x in lines if x['rec_id'] not in rec_ids]
+        if rec_ids:
+            percent, account = Recon._get_percent_unpaid(
+                self.cr, self.uid, rec_ids, date_stop
+            )
+        if percent:
+            for count, rec_id in enumerate(rec_ids):
+                vals = filter(lambda l: l['rec_id'] == rec_id, lines)
+                for line in vals:
+                    amount_unpaid = 0.0
+                    percent_unpaid = 0.0
+                    # Check AP AR
+                    if account[0] == 'receivable':
+                        if line['debit'] - line['credit'] > 0:
+                            percent_unpaid = percent[count]
+                            amount_unpaid = line['debit'] * percent_unpaid
+                        line.update({
+                            'amount_unpaid': amount_unpaid,
+                            'percent_unpaid': percent_unpaid,
+                        })
+                    if account[0] == 'payable':
+                        if line['credit'] - line['debit'] > 0:
+                            percent_unpaid = percent[count]
+                            amount_unpaid = line['credit'] * percent_unpaid
+                        line.update({
+                            'amount_unpaid': amount_unpaid,
+                            'percent_unpaid': percent_unpaid,
+                        })
+
     #############################################
     # Account and account line filter helper    #
     #############################################
@@ -570,7 +615,7 @@ class CommonReportHeaderWebkit(common_report_header):
         if main_filter in ('filter_period', 'filter_no'):
             return self._get_move_ids_from_periods(
                 account_id, start, stop, target_move, reconcile_cond,
-                charge_type,org_id, partner_ids=partner_ids, 
+                charge_type,org_id, partner_ids=partner_ids,
                 specific_report=specific_report)
 
         elif main_filter == 'filter_date':
@@ -582,7 +627,7 @@ class CommonReportHeaderWebkit(common_report_header):
             raise osv.except_osv(
                 _('No valid filter'), _('Please set a valid time filter'))
 
-    def _get_move_line_datas(self, move_line_ids,org_id=False, 
+    def _get_move_line_datas(self, move_line_ids,org_id=False,
                              order='per.special DESC, l.date ASC, \
                              per.date_start ASC, m.name ASC'):
         # Possible bang if move_line_ids is too long
@@ -718,8 +763,9 @@ SELECT l.id AS id,
             SUBSTRING(m.name, 1, 2) AS doctype,
             coalesce(fullrec.name, '') as reconcile_id,
             coalesce(partialrec.name, '') as partial_id,
+            l.date_reconciled as date_reconciled,
             i.source_document,
-            (case when i.validate_user_id is not null then 
+            (case when i.validate_user_id is not null then
                 (SELECT rp.display_name FROM res_users ru LEFT JOIN res_partner rp
                 ON rp.id = ru.partner_id WHERE ru.id = i.validate_user_id LIMIT 1)
             ELSE (SELECT rp.display_name FROM res_users ru LEFT JOIN res_partner rp
@@ -750,7 +796,7 @@ FROM account_move_line l
             if org_id:
                 self.cursor.execute(monster, (tuple(move_line_ids),tuple(org_id)))
             else:
-                self.cursor.execute(monster, (tuple(move_line_ids),)) 
+                self.cursor.execute(monster, (tuple(move_line_ids),))
             res = self.cursor.dictfetchall()
         except Exception:
             self.cursor.rollback()
@@ -804,7 +850,7 @@ WHERE move_id in %s"""
         #Bug when you choose _get_start_stop_for_filter
 #         if opening_period_selected == start_period.ids:
 #             opening_period_selected = []
-        #opening 
+        #opening
         opening_move_lines = self.periods_contains_move_lines(
             opening_period_selected)
         if opening_move_lines:
