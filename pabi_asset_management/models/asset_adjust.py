@@ -305,10 +305,10 @@ class AccountAssetAdjust(models.Model):
                                                 line.origin_status)
                     # Remove new asset
                     target_status = Status.search([
-                        ('code', '=', 'cancel')], limit=1)
+                        ('code', '=', 'reverse')], limit=1)
                     self._set_asset_as_removed(line.ref_asset_id,
                                                target_status)
-            # 2) Expense -> Asset
+            # 2) Asset -> Expense
             if rec.adjust_type == 'asset_to_expense':
                 adjust_lines = rec.adjust_asset_to_expense_ids
                 for line in adjust_lines:
@@ -328,7 +328,7 @@ class AccountAssetAdjust(models.Model):
                     line.cancel_move_id = rev_move
                     # Remove asset
                     target_status = Status.search([
-                        ('code', '=', 'cancel')], limit=1)
+                        ('code', '=', 'reverse')], limit=1)
                     self._set_asset_as_removed(line.ref_asset_id,
                                                target_status)
             # Detach asset adjust from invoice, do it can create again.
