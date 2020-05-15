@@ -28,7 +28,8 @@ class CreateJournalEntryWizard(models.TransientModel):
     @api.model
     def view_init(self, fields_list):
         invoice_id = self._context.get('active_id')
-        invoice = self.env['account.invoice'].browse(invoice_id)
+        invoice_model = self._context.get('active_model')
+        invoice = self.env[invoice_model].browse(invoice_id)
         if invoice.state not in ('open', 'paid'):
             raise ValidationError(
                 _('Only open invoice allowed!'))
@@ -59,9 +60,13 @@ class CreateJournalEntryWizard(models.TransientModel):
                        'views': False})
         ctx = ast.literal_eval(result['context'])
         invoice_id = self._context.get('active_id')
-        invoice = self.env['account.invoice'].browse(invoice_id)
-        ctx.update({'default_ref': invoice.number,
-                    'src_invoice_id': invoice.id})
+        invoice_model = self._context.get('active_model')
+        invoice = self.env[invoice_model].browse(invoice_id)
+        if invoice_model == 'hr.salary.expense':
+            ctx.update({'default_ref': invoice.number})
+        else:
+            ctx.update({'default_ref': invoice.number,
+                        'src_invoice_id': invoice.id})
         # If use fin lease model
         if self.use_finlease_model and self.model_id:
             invline = invoice.invoice_line and invoice.invoice_line[0]
