@@ -145,18 +145,24 @@ class CommonReportHeaderWebkit(common_report_header):
                     amount_unpaid = 0.0
                     percent_unpaid = 0.0
                     # Check AP AR
-                    if account[0] == 'receivable':
-                        if line['debit'] - line['credit'] > 0:
-                            percent_unpaid = percent[count]
-                            amount_unpaid = line['debit'] * percent_unpaid
-                        line.update({
-                            'amount_unpaid': amount_unpaid,
-                            'percent_unpaid': percent_unpaid,
-                        })
-                    if account[0] == 'payable':
-                        if line['credit'] - line['debit'] > 0:
-                            percent_unpaid = percent[count]
-                            amount_unpaid = line['credit'] * percent_unpaid
+                    if account:
+                        if account[0] == 'receivable':
+                            if line['debit'] - line['credit'] > 0:
+                                percent_unpaid = percent[count]
+                                amount_unpaid = line['debit'] * percent_unpaid
+                            line.update({
+                                'amount_unpaid': amount_unpaid,
+                                'percent_unpaid': percent_unpaid,
+                            })
+                        if account[0] == 'payable':
+                            if line['credit'] - line['debit'] > 0:
+                                percent_unpaid = percent[count]
+                                amount_unpaid = line['credit'] * percent_unpaid
+                            line.update({
+                                'amount_unpaid': amount_unpaid,
+                                'percent_unpaid': percent_unpaid,
+                            })
+                    else:
                         line.update({
                             'amount_unpaid': amount_unpaid,
                             'percent_unpaid': percent_unpaid,
