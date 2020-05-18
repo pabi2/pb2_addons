@@ -32,7 +32,7 @@
         "views/voucher_payment_receipt_view.xml",
         "views/res_bank_view.xml",
         "views/register_icash_view.xml",
-        "wizard/register_icash_wizard.xml",
+        "report/register_icash_report_view.xml",
         "report/payment_export_report_view.xml",
         "report/report.xml",
     ],

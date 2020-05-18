@@ -4,8 +4,8 @@ from openerp.exceptions import ValidationError
 from datetime import datetime
 
 
-class PabiRegister_iCashWizard(models.TransientModel):
-    _name = 'pabi.register.icash.wizard'
+class PabiRegister_iCashReport(models.TransientModel):
+    _name = 'pabi.register.icash.report'
     _inherit = 'xlsx.report'
 
     register_id = fields.Many2one(
@@ -37,7 +37,7 @@ class PabiRegister_iCashWizard(models.TransientModel):
                 line.partner_bank_id.register_no = self.register_id.name
                 line.partner_bank_id.register_date = datetime.now()
                 line.partner_bank_id.is_register = True
-        res = super(PabiRegister_iCashWizard, self).action_get_report()
+        res = super(PabiRegister_iCashReport, self).action_get_report()
         return res
 
 

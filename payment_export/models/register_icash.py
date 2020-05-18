@@ -30,59 +30,89 @@ class PabiRegister_iCash(models.Model):
         'register_id',
         'Supplier Account'
     )
+    line_filter = fields.Char(
+        string='Filter',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        help="More filter. You can use complex search with comma and between.",
+    )
 
     @api.model
     def create(self, vals):
         vals['state'] = 'draft'
         vals['name'] = self.env['ir.sequence'].next_by_code('register.icash')
         res = super(PabiRegister_iCash, self).create(vals)
-        res._create_register_icash_line()
+        #res._create_register_icash_line()
         return res
 
     @api.multi
     def write(self, vals):
         res = super(PabiRegister_iCash, self).write(vals)
-        if 'service_type' in vals:
+        """if 'service_type' in vals:
             self.line_ids.unlink()
-            self._create_register_icash_line()
+            self._create_register_icash_line()"""
         return res
 
     @api.multi
-    def _create_register_icash_line(self):
+    def _create_register_icash_line(self, domain=None):
         self.ensure_one()
         RegisterLineObj = self.env['pabi.register.icash.line']
         PartnerBankObj = self.env['res.partner.bank']
-        dom = [('is_register','!=',True)]
+        if domain is None:
+            domain = []
+        domain.append(('is_register','!=',True))
 
         if self.line_ids:
             ids = self.line_ids.mapped('partner_bank_id').ids
-            dom.append(('id', 'not in', ids))
+            domain.append(('id', 'not in', ids))
         if self.service_type == 'direct':
-            dom.append(('bank.abbrev', '=', 'BBL'))
+            domain.append(('bank.abbrev', '=', 'BBL'))
         if self.service_type == 'smart':
-            dom.append(('bank.abbrev', '!=', 'BBL'))
+            domain.append(('bank.abbrev', '!=', 'BBL'))
 
-        parner_bank_search = PartnerBankObj.search(dom)
+        parner_bank_search = PartnerBankObj.search(domain)
 
         for line in parner_bank_search:
-            RegisterLineObj.create({'register_id': self.id,
+            register_line = RegisterLineObj.new()
+            register_line.partner_bank_id = line
+            register_line.beneficiary_code = 'NSTDA_%s' % line.acc_number
+            register_line.account_number = line.acc_number
+            register_line.owner_name_en = line.owner_name_en
+            register_line.partner_searchkey = line.partner_id.search_key
+            register_line.partner_name = line.partner_id.name
+            register_line.partner_email_accountant = line.partner_id.email_accountant
+            self.line_ids += register_line
+            """RegisterLineObj.create({'register_id': self.id,
                                     'partner_bank_id': line.id,
                                     'beneficiary_code': 'NSTDA_%s' % line.acc_number,
                                     'account_number': line.acc_number,
                                     'owner_name_en': line.owner_name_en,
                                     'partner_searchkey': line.partner_id.search_key,
                                     'partner_name': line.partner_id.name,
-                                    'partner_email': line.partner_id.email,
-                                    })
+                                    'partner_email_accountant': line.partner_id.email_accountant,
+                                    })"""
+
+    @api.onchange('line_filter')
+    def _onchange_compute_register_icash_line(self):
+        if self.line_filter:
+            acc_number = self.line_filter.split(',')
+            acc_number = [x.strip() for x in acc_number]
+            acc_number = tuple(acc_number)
+            domain = [('acc_number', 'in', acc_number)]
+            
+            self._create_register_icash_line(domain)
+    
+    @api.onchange('service_type')
+    def _onchange_service_type(self):
+        self.line_ids = False
 
     @api.multi
     def reload(self):
-        self.line_ids.filtered(
-            lambda l: l.partner_bank_id.is_register == True
-            ).unlink()
         self.line_ids.onchange_partner_bank_id()
-        self._create_register_icash_line()
 
+    @api.multi
+    def generate_record(self):
+        self._create_register_icash_line()
 
 
 class PabiRegister_iCashLine(models.Model):
@@ -109,7 +139,7 @@ class PabiRegister_iCashLine(models.Model):
     partner_name = fields.Char(
         'Partner Name'
     )
-    partner_email = fields.Char(
+    partner_email_accountant = fields.Char(
         'Email Account'
     )
 
@@ -122,5 +152,5 @@ class PabiRegister_iCashLine(models.Model):
                 rec.owner_name_en = rec.partner_bank_id.owner_name_en
                 rec.partner_searchkey = rec.partner_bank_id.partner_id.search_key
                 rec.partner_name = rec.partner_bank_id.partner_id.name
-                rec.partner_email = rec.partner_bank_id.partner_id.email
+                rec.partner_email_accountant = rec.partner_bank_id.partner_id.email_accountant
 
