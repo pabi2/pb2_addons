@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, models
+from openerp import fields, models, api
 
 
 class PABIDunningConfig(models.Model):
@@ -81,6 +81,9 @@ class PABIDunningConfig(models.Model):
         #related='company_id.letter3_signature',
         translate=True,
     )
+    use_sign_image = fields.Boolean(
+        'Use Signature Image'
+    )
     sign_image = fields.Binary(
         string='Signature Image'
     )
@@ -94,6 +97,8 @@ class PABIDunningConfigTitle(models.Model):
         string='Dunning Config',
         index=True,
         readonly=True,
+        compute='_compute_config_id',
+        store=True,
     )
     title_id = fields.Many2one(
         'res.partner.title',
@@ -105,3 +110,8 @@ class PABIDunningConfigTitle(models.Model):
         required=True,
         size=500,
     )
+
+    @api.multi
+    def _compute_config_id(self):
+        for line in self:
+            line.config_id = self.env.ref('pabi_partner_dunning_report.pabi_dunning_config_data').id
