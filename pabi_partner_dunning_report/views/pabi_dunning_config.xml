@@ -46,6 +46,7 @@
                         </page>
 	                    <page string="Signature" name="signature" >
 	                    	<group string="Upload Signature">
+	                    		<field name="use_sign_image"/>
 	                    		<field name="sign_image" widget="image" class="oe_avatar oe_left"/>
 	                    	</group>
 	                    </page>
