@@ -84,11 +84,17 @@ class PABIPartnerDunningLetter(models.Model):
     config_id = fields.Many2one(
         'pabi.dunning.config',
         'Dunning Config',
+        compute='_compute_config_id',
     )
+    
+    @api.multi
+    def _compute_config_id(self):
+        for config in self:
+            config.config_id = self.env.ref('pabi_partner_dunning_report.pabi_dunning_config_data').id
     
     @api.model
     def create(self, vals):
-        vals['config_id'] = self.env.ref('pabi_partner_dunning_report.pabi_dunning_config_data').id
+        #vals['config_id'] = self.env.ref('pabi_partner_dunning_report.pabi_dunning_config_data').id
         return super(PABIPartnerDunningLetter, self).create(vals)
         
 
