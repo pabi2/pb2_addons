@@ -703,7 +703,8 @@ class AccountAssetAdjust(models.Model):
                     lambda l: l.type == 'depreciate' and not l.move_check
                     ).create_move()
                 # Auto post
-                self.env['account.move'].browse(move_id).post()
+                if move_id:
+                    self.env['account.move'].browse(move_id).post()
             # Set move_check equal to amount depreciated
             new_asset.compute_depreciation_board()
             new_asset.validate()
