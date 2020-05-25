@@ -436,32 +436,34 @@ class InterfaceAccountEntry(models.Model):
         reconcile_move_id = self.line_ids.mapped('reconcile_move_id')
         if reconcile_move_id:
             accounts = move.line_id.mapped('account_id')
-            for account in accounts:
-                move_lines = moveline_obj.search([
-                    ('account_id.reconcile', '=', True),
-                    ('reconcile_id', '=', False),
-                    ('move_id', 'in', [move.id, reconcile_move_id.id]),
-                    ('account_id', '=', account.id)
-                ])
-                # # check partial reconcile and add (optional)
-                # partial_reconcile = moveline_obj.search([
-                #     ('reconcile_partial_id', 'in',
-                #         move_lines.mapped('reconcile_partial_id').ids)
-                # ])
-                # if partial_reconcile:
-                #     move_lines |= partial_reconcile
-                # If nohting to reconcile
-                debit = sum(move_lines.mapped('debit'))
-                credit = sum(move_lines.mapped('credit'))
-                if debit == 0.0 or credit == 0.0:
-                    continue
-                # --
-                if len(move_lines) >= 2:
-                    # check partial or full reconcile
-                    if debit != credit:
-                        move_lines.reconcile_partial('auto')
-                    else:
-                        move_lines.reconcile('auto')
+            # multi reconcile
+            for rec_move_id in reconcile_move_id:
+                for account in accounts:
+                    move_lines = moveline_obj.search([
+                        ('account_id.reconcile', '=', True),
+                        ('reconcile_id', '=', False),
+                        ('move_id', 'in', [move.id, rec_move_id.id]),
+                        ('account_id', '=', account.id)
+                    ])
+                    # # check partial reconcile and add (optional)
+                    # partial_reconcile = moveline_obj.search([
+                    #     ('reconcile_partial_id', 'in',
+                    #         move_lines.mapped('reconcile_partial_id').ids)
+                    # ])
+                    # if partial_reconcile:
+                    #     move_lines |= partial_reconcile
+                    # If nohting to reconcile
+                    debit = sum(move_lines.mapped('debit'))
+                    credit = sum(move_lines.mapped('credit'))
+                    if debit == 0.0 or credit == 0.0:
+                        continue
+                    # --
+                    if len(move_lines) >= 2:
+                        # check partial or full reconcile
+                        if debit != credit:
+                            move_lines.reconcile_partial('auto')
+                        else:
+                            move_lines.reconcile('auto')
         return True
 
     # == Execution Logics ==
