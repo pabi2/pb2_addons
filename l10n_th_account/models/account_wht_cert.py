@@ -541,7 +541,6 @@ class AccountWhtCert(models.Model):
     def process_mail_wht_auto_send(self):
         sql = """
             select * from public.issi_wht_to_email 
-                where date_value = (now()::timestamp::date)
         """
         self._cr.execute(sql)
         awt_rec = self._cr.dictfetchall()
