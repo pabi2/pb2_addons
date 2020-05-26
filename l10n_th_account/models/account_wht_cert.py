@@ -540,10 +540,8 @@ class AccountWhtCert(models.Model):
     @api.model
     def process_mail_wht_auto_send(self):
         sql = """
-            Select pe.name,pe.date_value, whtc.* from account_wht_cert whtc
-            left join account_voucher vo on whtc.voucher_id = vo.id
-            left join payment_export pe on vo.payment_export_id = pe.id
-            where date_sent_mail is null and pe.date_value = (now()::timestamp::date)
+            select * from public.issi_wht_to_email 
+                where pe.date_value = (now()::timestamp::date);
         """
         self._cr.execute(sql)
         awt_rec = self._cr.dictfetchall()
@@ -559,6 +557,9 @@ class AccountWhtCert(models.Model):
             error_pv = seperator.join(error_pv_list)
             _logger.exception(
                 _('Please fill Email Accountant in (%s). ') %(error_pv))
+        else:
+            _logger.exception(
+                _('Job mail successfully'))
 
 
 class WhtCertTaxLine(models.Model):
