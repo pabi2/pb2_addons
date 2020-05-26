@@ -64,6 +64,10 @@ class AccountVoucher(CommonVoucher, models.Model):
         readonly=True, states={'draft': [('readonly', False)]},
         domain=[('tax_code_type', '=', 'undue')],
     )
+    is_update = fields.Boolean(
+        string="Update Tax",
+        default=True,
+    )
     tax_line_wht = fields.One2many(
         'account.voucher.tax',
         'voucher_id',
@@ -396,7 +400,7 @@ class AccountVoucher(CommonVoucher, models.Model):
             for tax_line in vals.get('tax_line_normal'):
                 if tax_line[0] == 1 and 'amount' in tax_line[2]:  # 1 = update
                     to_update = False
-        if to_update:
+        if to_update and self.is_update:
             self.button_reset_taxes()
         return res
 
