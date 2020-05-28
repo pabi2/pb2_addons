@@ -278,6 +278,10 @@ class HRExpense(models.Model):
             if expense.pay_to == 'internal' and \
                     period.fiscalyear_id.control_ext_charge_only:
                 exp_move.with_context(ctx).post()
+            elif expense.pay_to == 'internal' and not \
+                    period.fiscalyear_id.control_ext_charge_only:
+                expense.release_all_committed_budget()
+                exp_move.post()
             elif exp_move.state != 'posted':
                 exp_move.post()
 
@@ -290,6 +294,14 @@ class HRExpense(models.Model):
             else:
                 raise ValidationError(_('> 1 type of pay_to'))
         return super(HRExpense, self).write(vals)
+
+    @api.multi
+    def expense_confirm(self):
+        """Create Budget Committed, If Pay to equal 'Internal Charge' """
+        for rec in self:
+            if rec.pay_to == 'internal':
+                rec.recreate_all_budget_commitment()
+        return super(HRExpense, self).expense_confirm()
 
 
 class HRExpenseLine(models.Model):
