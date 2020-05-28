@@ -36,17 +36,17 @@ class PurchaseRequest(models.Model):
                 ('login', '=', data_dict['assigned_to'] or False)
             ], limit=1).id
             del data_dict['assigned_to']
-        if 'request_ref_id' in data_dict:
-            request_ref_id = self.search([
-                ('id', '=', data_dict['request_ref_id'] or False)
-            ], limit=1).id
-            del data_dict['request_ref_id']
+        # if 'request_ref_id' in data_dict:
+        #     request_ref_id = self.search([
+        #         ('name', '=', data_dict['request_ref_id'] or False)
+        #     ], limit=1).id
+        #     del data_dict['request_ref_id']
 
         data_dict.update({
             'requested_by.id': requested_by,
             'responsible_uid.id': responsible_uid,
             'assigned_to.id': assigned_to,
-            'request_ref_id.id': request_ref_id,
+            # 'request_ref_id.id': request_ref_id,
         })
 
         # line_ids
