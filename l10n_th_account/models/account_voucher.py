@@ -400,8 +400,9 @@ class AccountVoucher(CommonVoucher, models.Model):
             for tax_line in vals.get('tax_line_normal'):
                 if tax_line[0] == 1 and 'amount' in tax_line[2]:  # 1 = update
                     to_update = False
-        if to_update and self.is_update:
-            self.button_reset_taxes()
+        for rec in self:
+            if to_update and rec.is_update:
+                self.button_reset_taxes()
         return res
 
     @api.model
