@@ -402,7 +402,7 @@ class AccountVoucher(CommonVoucher, models.Model):
                     to_update = False
         for rec in self:
             if to_update and rec.is_update:
-                self.button_reset_taxes()
+                rec.button_reset_taxes()
         return res
 
     @api.model
