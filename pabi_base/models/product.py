@@ -19,6 +19,7 @@ class ProductTemplate(models.Model):
         readonly=False,
         size=10,
     )
+    valuation = fields.property(track_visibility='onchange',)
 
 
 class ProductProduct(models.Model):
