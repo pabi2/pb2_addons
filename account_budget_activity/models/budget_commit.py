@@ -298,4 +298,8 @@ class CommitLineCommon(object):
                 reverse=reverse, currency=rec[document_field].currency_id,
                 force_currency_rate=force_currency_rate)
             if vals:
-                self.env['account.analytic.line'].sudo().create(vals)
+                line = self.env['account.analytic.line'].sudo().create(vals)
+                fiscalyear = line.fiscalyear_id
+                if fiscalyear and not fiscalyear.control_ext_charge_only and \
+                        rec.expense_id.pay_to == 'internal':
+                    line.charge_type = 'internal'
