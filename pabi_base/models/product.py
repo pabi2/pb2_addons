@@ -13,13 +13,13 @@ class ProductTemplate(models.Model):
     type = fields.Selection(track_visibility='onchange',)
     uom_id = fields.Many2one(track_visibility='onchange',)
     categ_id = fields.Many2one(track_visibility='onchange',)
-    taxes_id =fields.Many2many(track_visibility='onchange',)
+    taxes_id = fields.Many2many(track_visibility='onchange',)
     legacy_ref = fields.Char(
         string='Legacy Ref.',
         readonly=False,
         size=10,
     )
-    valuation = fields.property(track_visibility='onchange',)
+    valuation = fields.Selection(track_visibility='onchange',)
 
 
 class ProductProduct(models.Model):
