@@ -180,6 +180,7 @@ class PurchaseBilling(models.Model):
                     wa = WA.sudo().search([
                         ('order_id', '=', po.id),
                         ('installment', '=', inv.installment),
+                        ('state', '!=', 'cancel')
                     ])
                     if not wa:
                         raise ValidationError(
