@@ -16,6 +16,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/ir_cron_data.xml',
         'data/report_data.xml',
         'data/journal_data.xml',
         'wizard/clear_undue_vat_wizard.xml',

@@ -4,7 +4,9 @@ from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 from .res_partner import INCOME_TAX_FORM
 from datetime import datetime
+import logging
 
+_logger = logging.getLogger(__name__)
 
 WHT_CERT_INCOME_TYPE = [('1', '1. เงินเดือน ค่าจ้าง ฯลฯ 40(1)'),
                         ('2', '2. ค่าธรรมเนียม ค่านายหน้า ฯลฯ 40(2)'),
@@ -534,6 +536,29 @@ class AccountWhtCert(models.Model):
                     'date_sent_mail': datetime.today(),
                     })
         return True
+    
+    @api.model
+    def process_mail_wht_auto_send(self):
+        sql = """
+            select * from public.issi_wht_to_email 
+        """
+        self._cr.execute(sql)
+        awt_rec = self._cr.dictfetchall()
+        error_pv_list = []
+        for rec in awt_rec:
+            awt_obj = self.search([('id','=',rec['id'])])
+            try:
+                awt_obj.send_mail()
+            except:
+                error_pv_list.append(awt_obj.number)
+        if error_pv_list:
+            seperator = ', '
+            error_pv = seperator.join(error_pv_list)
+            _logger.exception(
+                _('Please fill Email Accountant in (%s). ') %(error_pv))
+        else:
+            _logger.exception(
+                _('Job mail successfully'))
 
 
 class WhtCertTaxLine(models.Model):
