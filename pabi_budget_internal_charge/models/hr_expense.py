@@ -277,6 +277,7 @@ class HRExpense(models.Model):
             rev_move.with_context(ctx).post()  # For revenue, always by pass
             if expense.pay_to == 'internal' and \
                     period.fiscalyear_id.control_ext_charge_only:
+                expense.release_all_committed_budget()
                 exp_move.with_context(ctx).post()
             elif expense.pay_to == 'internal' and not \
                     period.fiscalyear_id.control_ext_charge_only:
