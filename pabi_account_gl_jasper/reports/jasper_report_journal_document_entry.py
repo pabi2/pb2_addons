@@ -43,11 +43,11 @@ class JasperReportJournalDocumentEntry(models.TransientModel):
         dom = []
         if self.account_ids:
 #             dom += [('account_id', 'in', self.account_ids.ids)]
-            dom += [(' account_id in ({}) '.format(','.join(map(str, (self.account_ids.ids)))))]
+            dom += [(' aml.account_id in ({}) '.format(','.join(map(str, (self.account_ids.ids)))))]
         if self.operating_unit_ids:
 #             dom += [('account_id.operating_unit_id', 'in', self.operating_unit_ids.ids)]
 #             dom += [('partner_id.user_id.default_operating_unit_id', 'in', self.operating_unit_ids.ids)]
-            dom += [(' operating_unit_id in ({}) '.format(','.join(map(str, (self.operating_unit_ids.ids)))))]
+            dom += [(' aml.operating_unit_id in ({}) '.format(','.join(map(str, (self.operating_unit_ids.ids)))))]
         if self.chartfield_ids:
             # map beetween chartfield_id with chartfield type
             chartfields = [('section_id', 'sc:'),
@@ -69,13 +69,13 @@ class JasperReportJournalDocumentEntry(models.TransientModel):
                 sql = "select id from account_move_line where " + where_str
                 self._cr.execute(sql, res_ids)
 #                 dom += [('id', 'in', map(lambda l: l[0], self._cr.fetchall()))]
-                dom += [(' id in ({}) '.format(','.join(map(str, (map(lambda l: l[0], self._cr.fetchall()))))))]
+                dom += [(' aml.id in ({}) '.format(','.join(map(str, (map(lambda l: l[0], self._cr.fetchall()))))))]
         if self.partner_ids:
 #             dom += [('partner_id', 'in', self.partner_ids.ids)]
-            dom += [(' partner_id in ({}) '.format(','.join(map(str, (self.partner_ids.ids)))))]
+            dom += [(' aml.partner_id in ({}) '.format(','.join(map(str, (self.partner_ids.ids)))))]
         if self.charge_type:
 #             dom += [('charge_type', '=', self.charge_type)]
-            dom += [(" charge_type = '{}' ".format(self.charge_type))]
+            dom += [(" aml.charge_type = '{}' ".format(self.charge_type))]
         if self.fiscalyear_start_id:
 #             dom += [('date', '>=', self.fiscalyear_start_id.date_start)]
             date_start = self.fiscalyear_start_id.date_start
@@ -87,7 +87,7 @@ class JasperReportJournalDocumentEntry(models.TransientModel):
             date_start = self.period_start_id.date_start
         if self.period_end_id:
 #             dom += [('date', '<=', self.period_end_id.date_stop)]
-            date_end = self.period_start_id.date_stop
+            date_end = self.period_end_id.date_stop
         if self.date_start:
 #             dom += [('date', '>=', self.date_start)]
             date_start = self.date_start

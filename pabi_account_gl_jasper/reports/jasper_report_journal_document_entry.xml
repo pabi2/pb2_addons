@@ -31,6 +31,18 @@
                 <xpath expr="//button[@name='action_get_report']" position="replace">
                 	<button name="start_report" string="Execute Report" type="object" class="oe_highlight"/>
                 </xpath>
+                <xpath expr="//field[@name='async_process']" position="replace">
+                	 <field name="async_process" invisible="1"/>
+                </xpath>
+                <xpath expr="//label[@for='async_process']" position="replace">
+                	 <label for="async_process" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='to_csv']" position="replace">
+                	 <field name="to_csv" invisible="1"/>
+                </xpath>
+                <xpath expr="//label[@for='to_csv']" position="replace">
+                	 <label for="to_csv" invisible="1"/>
+                </xpath>
             </field>
         </record>
 

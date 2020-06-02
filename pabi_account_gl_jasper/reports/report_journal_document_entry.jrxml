@@ -2,7 +2,7 @@
 <!-- Created with Jaspersoft Studio version 6.9.0.final using JasperReports Library version 6.9.0-cb8f9004be492ccc537180b49c026951f4220bf3  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_journal_document_entry" pageWidth="5000" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="4960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" isIgnorePagination="true" uuid="153d681f-b073-4636-b1e5-0f2f36f6c1fd">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="myDataAdaterTest#29044"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="myDataAdapterTest#29048"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
@@ -21,70 +21,118 @@
 	<parameter name="date_end" class="java.lang.String"/>
 	<parameter name="move_id" class="java.lang.String"/>
 	<queryString language="SQL">
-		<![CDATA[select 
-aml.id,
-(select code from account_journal where id = (select journal_id from account_move where id = aml.move_id)) as doc_type,
-(select name from account_journal where id = (select journal_id from account_move where id = aml.move_id)) as doc_journal,
+		<![CDATA[SELECT aml.id,
+LEFT(am.name,2) as doc_type, 
+journal.name as doc_journal,
 am.name as document_number,
 aml.docline_seq as item,
-(select reversal_id from account_move where id = aml.move_id) as reversal,
-(select substring(name,4) from account_period where id = aml.period_id) as fiscal_year,
-(select date_document from account_move where id = aml.move_id) as document_date,
-(select date from account_move where id = aml.move_id) as posting_date,
-(select ref from account_move where id = aml.move_id) as reference,
-(select number from hr_expense_expense where id = (select cast(split_part(source_document_id,',',2) as integer)from account_invoice 
- where id = cast(split_part(aml.document_id,',',2) as integer)
- and split_part(aml.document_id,',',1) like 'account.invoice')) as source_document,
-(select name from account_period where id = aml.period_id) as period,
-(select search_key from res_partner where id = aml.partner_id) as partner_code,
-(select display_name2 from res_partner where id = aml.partner_id) as partner_name,
+reversal.name as reversal,
+substring(period.name,4) as fiscal_year,
+am.date_document as document_date,
+am.date as posting_date,
+am.ref as reference,
+(case
+	when split_part(aml.document_id,',',1) = 'account.bank.receipt' then (select name from account_bank_receipt where id = cast(split_part(aml.document_id,',',2) as integer))
+	when split_part(aml.document_id,',',1) = 'account.invoice' then (select ref1_doc from issi_actual_ref_invoice_view where invoice_id = cast(split_part(aml.document_id,',',2) as integer))
+	when split_part(aml.document_id,',',1) = 'account.voucher' then (select number from account_voucher where id = cast(split_part(aml.document_id,',',2) as integer))
+	when split_part(aml.document_id,',',1) = 'hr.expense.expense' then (select number from hr_expense_expense where id = cast(split_part(aml.document_id,',',2) as integer))
+	when split_part(aml.document_id,',',1) = 'hr.salary.expense' then (select number from hr_salary_expense where id = cast(split_part(aml.document_id,',',2) as integer))
+ 	when split_part(aml.document_id,',',1) = 'interface.account.entry' then (select name from interface_account_entry where id = cast(split_part(aml.document_id,',',2) as integer))
+ 	when split_part(aml.document_id,',',1) = 'stock.picking' then (select stock_picking_origin from issi_actual_ref_stock_picking_view where stock_picking_id = cast(split_part(aml.document_id,',',2) as integer))
+	else ''
+end) as source_document,
+period.name as period,
+partner.search_key as partner_code,
+partner.display_name2 as partner_name,
 aml.charge_type as charge_type,
-(select name_template from product_product where id = aml.product_id) as product_name,
-(select code from account_activity_group where id = aml.activity_group_id) as activity_group_code,
-(select description from account_activity_group where id = aml.activity_group_id) as activity_group_name,
-(select code from account_activity where id = aml.activity_id) as activity_code,
-(select name from account_activity where id = aml.activity_id) as activity_name,
-(select code from account_activity where id = aml.activity_rpt_id) as activity_rpt_code,
-(select name from account_activity where id = aml.activity_rpt_id) as activity_rpt_name,
-(select code from res_taxbranch where id = aml.taxbranch_id) as taxbranch,
-(select code from account_account where id = aml.account_id) as account,
-(select name from account_account where id = aml.account_id) as name,
+product.name_template as product_name,
+ag.code as activity_group_code,
+ag.description as activity_group_name,
+ac.code as activity_code,
+ac.name as activity_name,
+acrpt.code as activity_rpt_code,
+acrpt.name as activity_rpt_name,
+taxbranch.code as taxbranch,
+account.code as account,
+account.name as account_name,
 aml.debit as debit,
 aml.credit as credit,
 aml.name as line_description,
-(select value from public.ir_translation
- where src like (select name_short from res_org org where id = aml.org_id) 
- and name like 'res.org,name_short' order by id desc limit 1) as org,
 (case
-	when aml.section_id is not null then (select code from chartfield_view where res_id = aml.section_id and active = true and costcenter_id = aml.costcenter_id )
-	when aml.project_id is not null then (select code from chartfield_view where res_id = aml.project_id and active = true and costcenter_id = aml.costcenter_id)
-	when aml.invest_construction_phase_id is not null then (select code from chartfield_view where res_id = aml.invest_construction_phase_id and active = true and costcenter_id = aml.costcenter_id)
-	when aml.invest_asset_id is not null then (select code from chartfield_view where res_id = aml.invest_asset_id and active = true and costcenter_id = aml.costcenter_id)
-	when aml.personnel_costcenter_id is not null then (select code from chartfield_view where res_id = aml.personnel_costcenter_id and active = true and costcenter_id = aml.costcenter_id)
-	else null
+	when aml.org_id = 1 then 'สก.'
+	when aml.org_id = 2 then 'ศช.'
+	when aml.org_id = 3 then 'ศว.'
+	when aml.org_id = 4 then 'ศอ.'
+	when aml.org_id = 5 then 'ศน.'
+	else ''
+end) as org, 
+(case
+	when aml.section_id is not null then bg_section.source_budget
+	when aml.project_id is not null then bg_project.source_budget
+	when aml.invest_construction_phase_id is not null then bg_constrution.source_budget
+	when aml.invest_asset_id is not null then bg_asset.source_budget
+	when aml.personnel_costcenter_id is not null then bg_personel.source_budget
+	else ''
 end) as budget_code,
 (case
-	when aml.section_id is not null then (select name from chartfield_view where res_id = aml.section_id and active = true and costcenter_id = aml.costcenter_id )
-	when aml.project_id is not null then (select name from chartfield_view where res_id = aml.project_id and active = true and costcenter_id = aml.costcenter_id)
-	when aml.invest_construction_phase_id is not null then (select name from chartfield_view where res_id = aml.invest_construction_phase_id and active = true and costcenter_id = aml.costcenter_id)
-	when aml.invest_asset_id is not null then (select name from chartfield_view where res_id = aml.invest_asset_id and active = true and costcenter_id = aml.costcenter_id)
-	when aml.personnel_costcenter_id is not null then (select name from chartfield_view where res_id = aml.personnel_costcenter_id and active = true and costcenter_id = aml.costcenter_id)
-	else null
+	when aml.section_id is not null then bg_section.source_budget_name
+	when aml.project_id is not null then bg_project.source_budget_name
+	when aml.invest_construction_phase_id is not null then bg_constrution.source_budget_name
+	when aml.invest_asset_id is not null then bg_asset.source_budget_name
+	when aml.personnel_costcenter_id is not null then bg_personel.source_budget_name
+	else ''
 end) as budget_name,
-(select name from res_fund where id = aml.fund_id) as fund,
-(select code from res_costcenter where id = aml.costcenter_id) as costcenter_code,
-(select value from public.ir_translation
- where src like (select name from res_costcenter where id = aml.costcenter_id)
- and name like 'res.costcenter,name' order by id desc limit 1) as costcenter_name,
-(select code from cost_control where id = aml.cost_control_id) as job_order_code,
-(select name from cost_control where id = aml.cost_control_id) as job_order_name,
-(select code from account_asset where id = aml.asset_id) as asset_code,
-(select name from account_asset where id = aml.asset_id) as asset_name,
-(select name from account_asset_profile where id = aml.asset_profile_id) as asset_profile_name,
-(select name from interface_system where id = aml.system_id) as system_origin,
-(select name from account_move_reconcile where id = aml.reconcile_id) as rec_id,
-(select name from account_move_reconcile where id = aml.reconcile_partial_id) as par_id
-from account_move_line aml left join account_move am on aml.move_id = am.id
+fund.name as fund,
+cctr.costcenter_code AS costcenter_code,
+cctr.costcenter_name AS costcenter_name,
+job.code as job_order_code,
+job.name as job_order_name,
+asset.code as asset_code,
+asset.name as asset_name,
+profile.name as asset_profile_name,
+system_ref.name as system_origin,
+recon.name as rec_id,
+recon_partial.name as par_id,
+-- Add New
+usr.login AS validate_by,
+COALESCE(hr.full_name_th,'') AS validate_by_name,
+(case
+	when aml.section_id is not null then 'unit_base'
+	when aml.project_id is not null then 'project_base'
+	when aml.invest_construction_phase_id is not null then 'invest_construction'
+	when aml.invest_asset_id is not null then 'invest_asset'
+	when aml.personnel_costcenter_id is not null then 'personnel'
+	else ''
+end) as source_budget
+FROM account_move_line aml
+LEFT JOIN account_move am ON aml.move_id = am.id
+LEFT JOIN account_journal journal ON am.journal_id = journal.id
+LEFT JOIN account_move reversal ON am.reversal_id = reversal.id
+LEFT JOIN account_period period ON aml.period_id = period.id
+LEFT JOIN res_partner partner ON aml.partner_id = partner.id
+LEFT JOIN product_product product ON aml.product_id = product.id
+LEFT JOIN account_activity_group ag ON aml.activity_group_id =ag.id
+LEFT JOIN account_activity ac ON aml.activity_id = ac.id
+LEFT JOIN account_activity acrpt ON aml.activity_rpt_id = acrpt.id
+LEFT JOIN res_taxbranch taxbranch ON aml.taxbranch_id = taxbranch.id
+LEFT JOIN account_account account ON aml.account_id = account.id
+LEFT JOIN res_fund fund ON aml.fund_id =fund.id
+LEFT JOIN cost_control job ON aml.cost_control_id = job.id
+LEFT JOIN account_asset asset ON aml.asset_id = asset.id
+LEFT JOIN account_asset_profile profile ON aml.asset_profile_id = profile.id
+LEFT JOIN interface_system system_ref ON aml.system_id = system_ref.id
+LEFT JOIN account_move_reconcile recon ON aml.reconcile_id = recon.id
+LEFT JOIN account_move_reconcile recon_partial ON aml.reconcile_partial_id = recon_partial.id
+LEFT JOIN etl_issi_m_costcenter cctr ON aml.costcenter_id = cctr.costcenter_id
+--- budget 
+LEFT JOIN issi_m_source_budget_view bg_project ON aml.project_id = bg_project.project_id
+LEFT JOIN issi_m_source_budget_view bg_section ON aml.section_id = bg_section.section_id
+LEFT JOIN issi_m_source_budget_view bg_asset ON aml.invest_asset_id = bg_asset.invest_asset_id
+LEFT JOIN issi_m_source_budget_view bg_constrution ON aml.invest_construction_phase_id = bg_constrution.invest_construction_phase_id
+LEFT JOIN issi_m_source_budget_view bg_personel ON aml.personnel_costcenter_id = bg_personel.personnel_costcenter_id
+--- user
+LEFT JOIN res_users usr ON aml.create_uid = usr.id
+LEFT JOIN issi_hr_employee_view hr ON usr.login = hr.employee_code
 where aml.date between '$P!{date_start}'  AND '$P!{date_end}'  AND  $P!{condition}
 order by
 am.name ,
@@ -229,6 +277,9 @@ aml.docline_seq]]>
 		<property name="com.jaspersoft.studio.field.label" value="par_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="account_move_line"/>
 	</field>
+	<field name="validate_by" class="java.lang.String"/>
+	<field name="validate_by_name" class="java.lang.String"/>
+	<field name="source_budget" class="java.lang.String"/>
 	<variable name="con" class="java.lang.String">
 		<initialValueExpression><![CDATA["date >= " + $P{date_start}  + "and date <= " + $P{date_end}]]></initialValueExpression>
 	</variable>
@@ -538,7 +589,7 @@ aml.docline_seq]]>
 				<text><![CDATA[org]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3300" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="ede135e5-21d3-436d-91fd-f55bbeed4555">
+				<reportElement mode="Opaque" x="3410" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="ede135e5-21d3-436d-91fd-f55bbeed4555">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="469facc9-2323-475c-a373-8d43b9c1b6b1"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -550,7 +601,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Fund  ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3370" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="7d4ea5ff-0aa1-4c81-8453-b16f5ef87ed5">
+				<reportElement mode="Opaque" x="3480" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="7d4ea5ff-0aa1-4c81-8453-b16f5ef87ed5">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6ecad68d-8fb8-43bd-9c8a-eb746d2c92e1"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -562,7 +613,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Cost Center Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3440" y="0" width="170" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="29420345-a784-4983-ad06-57ad8b5fa8a8">
+				<reportElement mode="Opaque" x="3550" y="0" width="170" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="29420345-a784-4983-ad06-57ad8b5fa8a8">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1b79df03-2638-4a1b-acb3-39debf05fc1b"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -574,7 +625,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Costcenter Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3610" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="130af60a-9a5d-4ca9-8d81-34f63735b44b">
+				<reportElement mode="Opaque" x="3720" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="130af60a-9a5d-4ca9-8d81-34f63735b44b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8fd95018-537c-4488-9bd6-0ba103f364ea"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -585,7 +636,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Job Order Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3680" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="77d005e6-0f51-4c54-a884-40e5cc4e734c">
+				<reportElement mode="Opaque" x="3790" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="77d005e6-0f51-4c54-a884-40e5cc4e734c">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ef0f9dbc-c191-4197-a51c-538196e5ae7f"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -596,7 +647,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Job Order Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3780" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="60c54356-f805-453a-a0b7-c0c0801e3f9b">
+				<reportElement mode="Opaque" x="3890" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="60c54356-f805-453a-a0b7-c0c0801e3f9b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f47c7732-7f41-4ef1-89d5-62130a5247f3"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -607,7 +658,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Asset code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3880" y="0" width="220" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="9cb97bbe-ebbd-4aa8-8dc2-2c7f87fd2d22">
+				<reportElement mode="Opaque" x="3990" y="0" width="220" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="9cb97bbe-ebbd-4aa8-8dc2-2c7f87fd2d22">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9bfafd51-b57f-43ba-88f4-3e03379cf543"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -619,7 +670,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Asset name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="4100" y="0" width="120" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="d42a25e8-b5f0-4257-ad9d-224cd456ecc8">
+				<reportElement mode="Opaque" x="4210" y="0" width="120" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="d42a25e8-b5f0-4257-ad9d-224cd456ecc8">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8ccd4180-ef2a-40be-9d17-59c9fb898f08"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -629,7 +680,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Asset Profile]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="4330" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="051b92dd-3fb7-40c6-9a3e-b1eef6410b90">
+				<reportElement mode="Opaque" x="4440" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="051b92dd-3fb7-40c6-9a3e-b1eef6410b90">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9af266f0-dc4a-4e1d-ba23-db9b0e8a5105"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -640,7 +691,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Rec.ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="4400" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="8cb2c5e1-6ec7-44ff-907b-c95691f19c98">
+				<reportElement mode="Opaque" x="4510" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="8cb2c5e1-6ec7-44ff-907b-c95691f19c98">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7819b12-b2e6-47dc-a0ac-7b821e50f647"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -650,7 +701,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Part.ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="4220" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="6195a704-a9ef-4379-999e-8e6d7296ef54">
+				<reportElement mode="Opaque" x="4330" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="6195a704-a9ef-4379-999e-8e6d7296ef54">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9af266f0-dc4a-4e1d-ba23-db9b0e8a5105"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -672,7 +723,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Product]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2881" y="0" width="159" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="bb0e01cd-7c3c-4052-9250-d30f3777d8e6">
+				<reportElement mode="Opaque" x="2991" y="0" width="159" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="bb0e01cd-7c3c-4052-9250-d30f3777d8e6">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4208a5c1-c120-4547-b3e1-44760ecb6713"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -684,7 +735,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Source of Budget Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3040" y="0" width="260" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="08e13e69-0c7a-4b2d-899a-c2fe8b52b52e">
+				<reportElement mode="Opaque" x="3150" y="0" width="260" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="08e13e69-0c7a-4b2d-899a-c2fe8b52b52e">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4208a5c1-c120-4547-b3e1-44760ecb6713"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -694,6 +745,38 @@ aml.docline_seq]]>
 					<font size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Source of Budget Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="4580" y="0" width="140" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="9e738edd-4c93-4992-844e-4ff7f1cdcbe6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7819b12-b2e6-47dc-a0ac-7b821e50f647"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Validated By]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="4720" y="0" width="240" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="61e2543f-0846-4eb3-8de4-f413d6a13154">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7819b12-b2e6-47dc-a0ac-7b821e50f647"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Validated By Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2881" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="7c776d40-0700-4782-92ea-b3601d71519b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4208a5c1-c120-4547-b3e1-44760ecb6713"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Source of Budget]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -976,7 +1059,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{org}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="3300" y="0" width="70" height="20" uuid="b89c2a59-d69f-439c-8b94-1f7658b7a391">
+				<reportElement x="3410" y="0" width="70" height="20" uuid="b89c2a59-d69f-439c-8b94-1f7658b7a391">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="469facc9-2323-475c-a373-8d43b9c1b6b1"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -987,7 +1070,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{fund}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="3370" y="0" width="70" height="20" uuid="14b54339-512b-4e4c-ace7-a016ae68d90d">
+				<reportElement x="3480" y="0" width="70" height="20" uuid="14b54339-512b-4e4c-ace7-a016ae68d90d">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6ecad68d-8fb8-43bd-9c8a-eb746d2c92e1"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -998,7 +1081,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{costcenter_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="3440" y="0" width="170" height="20" uuid="9db2e3f6-8e42-40a8-8bfa-12f724ec024e">
+				<reportElement x="3550" y="0" width="170" height="20" uuid="9db2e3f6-8e42-40a8-8bfa-12f724ec024e">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1b79df03-2638-4a1b-acb3-39debf05fc1b"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1009,7 +1092,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{costcenter_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="3610" y="0" width="70" height="20" uuid="a6e29dc3-4b95-4df2-b0d5-3c377869aa88">
+				<reportElement x="3720" y="0" width="70" height="20" uuid="a6e29dc3-4b95-4df2-b0d5-3c377869aa88">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8fd95018-537c-4488-9bd6-0ba103f364ea"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1020,7 +1103,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{job_order_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="3680" y="0" width="100" height="20" uuid="aaf8ca38-1057-43a5-9952-d392dc3c9e8f">
+				<reportElement x="3790" y="0" width="100" height="20" uuid="aaf8ca38-1057-43a5-9952-d392dc3c9e8f">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ef0f9dbc-c191-4197-a51c-538196e5ae7f"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1031,7 +1114,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{job_order_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="3780" y="0" width="100" height="20" uuid="629f4142-f608-4729-9004-b1d79780a52c">
+				<reportElement x="3890" y="0" width="100" height="20" uuid="629f4142-f608-4729-9004-b1d79780a52c">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f47c7732-7f41-4ef1-89d5-62130a5247f3"/>
 				</reportElement>
 				<textElement verticalAlignment="Bottom">
@@ -1040,7 +1123,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{asset_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="3880" y="0" width="220" height="20" uuid="d792dea6-4bd6-4eb7-acdc-979f034d133b">
+				<reportElement x="3990" y="0" width="220" height="20" uuid="d792dea6-4bd6-4eb7-acdc-979f034d133b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9bfafd51-b57f-43ba-88f4-3e03379cf543"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1051,7 +1134,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{asset_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4100" y="0" width="120" height="20" uuid="8aa5bc19-8119-4cdf-9f95-0021b810b24f">
+				<reportElement x="4210" y="0" width="120" height="20" uuid="8aa5bc19-8119-4cdf-9f95-0021b810b24f">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8ccd4180-ef2a-40be-9d17-59c9fb898f08"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -1061,7 +1144,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{asset_profile_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4330" y="0" width="70" height="20" uuid="39ca7e70-579a-48a7-9c0e-713adc9f2948">
+				<reportElement x="4440" y="0" width="70" height="20" uuid="39ca7e70-579a-48a7-9c0e-713adc9f2948">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9af266f0-dc4a-4e1d-ba23-db9b0e8a5105"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1072,7 +1155,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{rec_id}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4400" y="0" width="70" height="20" uuid="142967f6-9862-4209-aa66-4121e7008df0">
+				<reportElement x="4510" y="0" width="70" height="20" uuid="142967f6-9862-4209-aa66-4121e7008df0">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7819b12-b2e6-47dc-a0ac-7b821e50f647"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -1092,7 +1175,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{product_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="2881" y="0" width="159" height="20" uuid="b3bc7e09-d34f-4d77-b44e-14cba0d4f9ba">
+				<reportElement x="2991" y="0" width="159" height="20" uuid="b3bc7e09-d34f-4d77-b44e-14cba0d4f9ba">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4208a5c1-c120-4547-b3e1-44760ecb6713"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1103,7 +1186,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{budget_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="3040" y="0" width="260" height="20" uuid="5ca16918-f968-43e7-a66a-3771b5cb9ed4">
+				<reportElement x="3150" y="0" width="260" height="20" uuid="5ca16918-f968-43e7-a66a-3771b5cb9ed4">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4208a5c1-c120-4547-b3e1-44760ecb6713"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1114,7 +1197,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{budget_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4220" y="0" width="110" height="20" uuid="3b9b3637-0f85-40dc-b39e-2188100299bd">
+				<reportElement x="4330" y="0" width="110" height="20" uuid="3b9b3637-0f85-40dc-b39e-2188100299bd">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8ccd4180-ef2a-40be-9d17-59c9fb898f08"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -1122,6 +1205,37 @@ aml.docline_seq]]>
 					<font size="14"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{system_origin}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="4580" y="0" width="140" height="20" uuid="55658ff5-bc73-4dad-9c19-41889c8900d1">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7819b12-b2e6-47dc-a0ac-7b821e50f647"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Bottom">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{validate_by}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="4720" y="0" width="240" height="20" uuid="ce873e5a-64ed-4240-a3b0-0cb8b6178c67">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7819b12-b2e6-47dc-a0ac-7b821e50f647"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Bottom">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{validate_by_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="2881" y="0" width="110" height="20" uuid="a4cd31ff-af72-441b-a2d2-e9cd1531356a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4208a5c1-c120-4547-b3e1-44760ecb6713"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Bottom">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{source_budget}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -1431,7 +1545,7 @@ aml.docline_seq]]>
 				<text><![CDATA[org]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3300" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="380cb154-4baa-4cb9-812d-38d9e33ea9c2">
+				<reportElement mode="Opaque" x="3410" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="380cb154-4baa-4cb9-812d-38d9e33ea9c2">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="469facc9-2323-475c-a373-8d43b9c1b6b1"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1443,7 +1557,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Fund  ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3370" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="066e6d37-de36-460a-8e4d-d2c8127549f8">
+				<reportElement mode="Opaque" x="3480" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="066e6d37-de36-460a-8e4d-d2c8127549f8">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="6ecad68d-8fb8-43bd-9c8a-eb746d2c92e1"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1455,7 +1569,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Cost Center Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3440" y="0" width="170" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="2b5b3b49-1f30-442d-bc5c-7f1a9c299939">
+				<reportElement mode="Opaque" x="3550" y="0" width="170" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="2b5b3b49-1f30-442d-bc5c-7f1a9c299939">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1b79df03-2638-4a1b-acb3-39debf05fc1b"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1467,7 +1581,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Costcenter Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3610" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="a317ccc6-2260-4586-b3ed-5ddf3538d3e6">
+				<reportElement mode="Opaque" x="3720" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="a317ccc6-2260-4586-b3ed-5ddf3538d3e6">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8fd95018-537c-4488-9bd6-0ba103f364ea"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1478,7 +1592,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Job Order Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3680" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="1f3d40ff-8135-4293-9da1-e2141583ad85">
+				<reportElement mode="Opaque" x="3790" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="1f3d40ff-8135-4293-9da1-e2141583ad85">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ef0f9dbc-c191-4197-a51c-538196e5ae7f"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1489,7 +1603,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Job Order Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3780" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="42f66c3a-5a28-41b5-a3b8-2d651ed34284">
+				<reportElement mode="Opaque" x="3890" y="0" width="100" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="42f66c3a-5a28-41b5-a3b8-2d651ed34284">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f47c7732-7f41-4ef1-89d5-62130a5247f3"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1500,7 +1614,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Asset code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3880" y="0" width="220" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="262fd997-1a44-4e9d-ba1f-2b3ae762bece">
+				<reportElement mode="Opaque" x="3990" y="0" width="220" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="262fd997-1a44-4e9d-ba1f-2b3ae762bece">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9bfafd51-b57f-43ba-88f4-3e03379cf543"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1512,7 +1626,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Asset name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="4100" y="0" width="120" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="40f0304d-122b-4624-ac47-38204fd07f20">
+				<reportElement mode="Opaque" x="4210" y="0" width="120" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="40f0304d-122b-4624-ac47-38204fd07f20">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8ccd4180-ef2a-40be-9d17-59c9fb898f08"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -1522,7 +1636,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Asset Profile]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="4330" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="4a30e0a1-b0ee-4c08-84af-3c996b6e3be5">
+				<reportElement mode="Opaque" x="4440" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="4a30e0a1-b0ee-4c08-84af-3c996b6e3be5">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9af266f0-dc4a-4e1d-ba23-db9b0e8a5105"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1533,7 +1647,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Rec.ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="4400" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="e490c6fa-b619-481e-abe9-f8cc2ed2aa3e">
+				<reportElement mode="Opaque" x="4510" y="0" width="70" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="e490c6fa-b619-481e-abe9-f8cc2ed2aa3e">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7819b12-b2e6-47dc-a0ac-7b821e50f647"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -1543,7 +1657,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Part.ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="4220" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="0c04f36d-4f38-4f76-ae17-10ae4de07a02">
+				<reportElement mode="Opaque" x="4330" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="0c04f36d-4f38-4f76-ae17-10ae4de07a02">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9af266f0-dc4a-4e1d-ba23-db9b0e8a5105"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1565,7 +1679,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Product]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2881" y="0" width="159" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="ea3596d9-0ee5-461a-a8f0-5baddc7220c6">
+				<reportElement mode="Opaque" x="2991" y="0" width="159" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="ea3596d9-0ee5-461a-a8f0-5baddc7220c6">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4208a5c1-c120-4547-b3e1-44760ecb6713"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1577,7 +1691,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Source of Budget Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="3040" y="0" width="260" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="1cecb86f-f957-4dba-8c15-be493777a78c">
+				<reportElement mode="Opaque" x="3150" y="0" width="260" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="1cecb86f-f957-4dba-8c15-be493777a78c">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4208a5c1-c120-4547-b3e1-44760ecb6713"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1587,6 +1701,38 @@ aml.docline_seq]]>
 					<font size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Source of Budget Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="4580" y="0" width="140" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="a4eea816-c661-4b64-9eb6-99a332992574">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7819b12-b2e6-47dc-a0ac-7b821e50f647"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Validated By]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="4720" y="0" width="240" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="b2d9316c-b975-491e-9530-88b532d8a8a9">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7819b12-b2e6-47dc-a0ac-7b821e50f647"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Validated By Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2881" y="0" width="110" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="35a20adf-44dd-4d28-a429-eb39eb5d020a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4208a5c1-c120-4547-b3e1-44760ecb6713"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Source of Budget]]></text>
 			</staticText>
 		</band>
 	</noData>
