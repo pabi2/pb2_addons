@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
 	<property name="ireport.zoom" value="1.6105100000000105"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="523"/>
+	<property name="ireport.y" value="394"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -11,13 +11,19 @@
 			<![CDATA[SELECT
 pol.name,
 pol.price_unit,
-CONCAT(pol.product_qty::integer,' ',pu.name) product_unit,
-pol.product_qty,
-pu.name product_uom
+CONCAT(sum(pol.product_qty)::integer,' ',pu.name) product_unit,
+sum(pol.product_qty) product_qty,
+pu.name product_uom,
+(SELECT CONCAT((amount*100)::integer::char,'%')
+FROM purchase_order_taxe pot
+LEFT JOIN account_tax at
+ON at.id = pot.tax_id
+WHERE ord_id = pol.order_id limit 1) percentvat
 FROM purchase_order_line pol
 LEFT JOIN product_uom pu
 ON pu.id = pol.product_uom
-WHERE pol.order_id = $P{ids} and pol.active = True]]>
+WHERE pol.order_id = $P{ids} and pol.active = True
+group by pol.product_id, pol.name, pu.name, pol.price_unit, pol.order_id, percentvat]]>
 		</queryString>
 		<field name="name" class="java.lang.String"/>
 		<field name="price_unit" class="java.math.BigDecimal">
