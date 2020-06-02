@@ -299,5 +299,6 @@ class CommitLineCommon(object):
                 force_currency_rate=force_currency_rate)
             if vals:
                 line = self.env['account.analytic.line'].sudo().create(vals)
-                if rec.expense_id.pay_to == 'internal':
+                if rec._name == 'hr.expense.line' and \
+                        rec.expense_id.pay_to == 'internal':
                     line.charge_type = 'internal'
