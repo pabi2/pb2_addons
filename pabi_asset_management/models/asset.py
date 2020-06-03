@@ -707,6 +707,12 @@ class AccountAsset(ChartFieldAction, models.Model):
             # Import 1 asset line will return original asset line
             if len(first_asset) <= 1:
                 return line_dates
+            # Import more than 1 asset line
+            init_last_date = \
+                fields.Datetime.from_string(first_asset[-1].line_date)
+            line_dates = [line for line in all_dates if line >= init_last_date]
+            line_dates.insert(0, init_last_date)
+            line_dates.insert(0, all_dates[0])
             return line_dates
             # error from issue #4542
             # init_last_date = \
