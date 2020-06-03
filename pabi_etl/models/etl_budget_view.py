@@ -591,3 +591,150 @@ class ETLISSIBudgetProjectCQuery(models.Model):
               WHERE ((aa.chart_view)::text = 'invest_construction'::text)
         )
         """ % self._table)
+
+class etl_issi_m_investment_asset(models.Model):
+    _name = 'etl.issi.m.investment.asset'
+    _auto = False
+    _description = 'etl_issi_m_investment_asset'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE OR REPLACE VIEW public.etl_issi_m_investment_asset
+             AS
+             SELECT a.id AS investment_asset_id,
+                fis.name AS fiscal_year,
+                a.code AS invest_asset_code,
+                a.name AS invest_asset_name,
+                a.name_common AS invest_asset_name_common,
+                hr.employee_code AS requester,
+                (((COALESCE(hr.title_th, ''::text) || ' '::text) || COALESCE(hr.first_name_th, ''::text)) || ' '::text) || COALESCE(hr.last_name_th, ''::text) AS requester_name,
+                sec.costcenter_code,
+                sec.costcenter_name_short,
+                sec.costcenter_name,
+                sec.section_code,
+                sec.section_name,
+                sec.mission_code AS mission,
+                sec.org_code,
+                sec.org_name_short,
+                sec.org_name_short_en AS org_name,
+                sec.sector_code,
+                sec.sector_name,
+                sec.subsector_code,
+                sec.subsector_name,
+                sec.division_code,
+                sec.division_name,
+                asecprg.code AS section_program,
+                asecprg.name AS section_program_name,
+                assetprg.code AS owner_program,
+                assetprg.name AS owner_program_name,
+                projfund.code AS fund_type_code,
+                projfund.name AS fund_type_name,
+                a.location AS invest_asset_location,
+                a.reason_purchase,
+                a.reason_purchase_text,
+                a.special,
+                a.price_unit,
+                a.price_other,
+                a.price_total,
+                a.price_subtotal,
+                a.amount_plan_total,
+                a.active,
+                ownerprg.functional_area_code AS functional_area,
+                ownerprg.functional_area_name,
+                ownerprg.functional_area_active,
+                ownerprg.program_group_code AS program_group,
+                ownerprg.program_group_name,
+                ownerprg.program_group_active,
+                ownerprg.code AS program_code,
+                ownerprg.name AS program_name,
+                ownerprg.active AS program_active,
+                ( SELECT proj.code
+                       FROM res_project proj
+                         JOIN res_invest_asset_res_project_rel inproj ON proj.id = inproj.res_project_id AND a.id = inproj.res_invest_asset_id) AS invest_project
+               FROM res_invest_asset a
+                 LEFT JOIN hr_employee h ON a.request_user_id = h.id
+                 LEFT JOIN issi_hr_employee_view hr ON h.id = hr.id
+                 LEFT JOIN etl_issi_m_section sec ON a.owner_section_id = sec.section_id
+                 LEFT JOIN res_section ressec ON sec.section_id = ressec.id
+                 LEFT JOIN res_program asecprg ON ressec.section_program_id = asecprg.id
+                 LEFT JOIN project_fund_type projfund ON a.fund_type_id = projfund.id
+                 LEFT JOIN account_fiscalyear fis ON a.fiscalyear_id = fis.id
+                 LEFT JOIN res_program assetprg ON a.owner_program_id = assetprg.id
+                 LEFT JOIN issi_m_program_view ownerprg ON a.owner_program_id = ownerprg.id
+                 ORDER BY a.id""" % self._table)
+
+class etl_issi_budget_investment_asset_query(models.Model):
+    _name = 'etl.issi.budget.investment.asset.query'
+    _auto = False
+    _description = 'etl_issi_budget_investment_asset_query'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE OR REPLACE VIEW public.etl_issi_budget_investment_asset_query
+         AS
+         SELECT bb.fiscal_year,
+            mm.source_budget,
+            mm.plan_proposal_overall_expense,
+            mm.plan_overall_external,
+            mm.plan_overall_expense_internal,
+            0.00 AS sum_overall_actual,
+            0.00 AS sum_overall_commit,
+            0.00 AS release_overall,
+            0.00 AS unrelease_plan_overall,
+            0.00 AS remain_plan_overall_external,
+            COALESCE(bb.release, 0.00::double precision) AS plan_fiscal_external,
+            COALESCE(bb.release, 0.00::double precision) AS release_fiscal,
+            0.00 AS unrelease_plan_fiscal,
+            COALESCE(bb.sum_pr, 0.00) AS pr_fiscal,
+            COALESCE(bb.sum_po, 0.00) AS po_fiscal,
+            COALESCE(bb.sum_ex, 0.00::double precision) AS ex_fiscal,
+            COALESCE((bb.sum_pr + bb.sum_po)::double precision + bb.sum_ex, 0.00::double precision) AS sum_commit,
+            COALESCE(bb.sum_actual, 0.00::double precision) AS sum_actual_external,
+            COALESCE(bb.release - ((bb.sum_pr + bb.sum_po)::double precision + bb.sum_ex + bb.sum_actual), 0.00::double precision) AS remain_fiscal,
+            COALESCE(bb.plan_expense_internal, 0.00::double precision) AS plan_expense_internal,
+            COALESCE(bb.sum_ex_internal, 0.00) AS sum_ex_internal,
+            COALESCE(bb.sum_actual_internal, 0.00) AS sum_actual_internal,
+            0.00 AS plan_overall_revenue_external,
+            COALESCE(bb.sum_so, 0.00) AS so_fiscal,
+            0.00 AS sum_overall_revenue_external,
+            0.00 AS sum_overall_revenue_internal,
+            COALESCE(bb.plan_revenue, 0.00::double precision) AS plan_fiscal_revenue_external,
+            COALESCE(bb.plan_revenue_internal, 0.00::double precision) AS plan_fiscal_revenue_internal,
+            COALESCE(bb.sum_revenue, 0.00) AS fiscal_revenue_external,
+            COALESCE(bb.sum_revenue_internal, 0.00) AS fiscal_revenue_internal,
+                CASE
+                    WHEN bb.fiscal_year::text < ((( SELECT account_fiscalyear.name
+                       FROM account_fiscalyear
+                      WHERE now() >= account_fiscalyear.date_start AND now() <= account_fiscalyear.date_stop))::text) THEN COALESCE(bb.sum_actual, 0.00::double precision)
+                    ELSE COALESCE(bb.release, 0.00::double precision)
+                END AS rolling_released_amount
+           FROM ( SELECT aa.fiscal_year,
+                    aa.chart_view,
+                    aa.project_id,
+                    aa.section_id,
+                    aa.invest_asset_id,
+                    aa.invest_construction_id,
+                    aa.invest_construction_phase_id,
+                    aa.personnel_costcenter_id,
+                    aa.sum_pr,
+                    aa.sum_po,
+                    aa.sum_actual,
+                    aa.release,
+                    aa.sum_ex,
+                    aa.plan_expense_external,
+                    aa.sum_actual_internal,
+                    aa.plan_expense_internal,
+                    aa.sum_revenue,
+                    aa.plan_revenue,
+                    aa.sum_revenue_internal,
+                    aa.plan_revenue_internal,
+                    aa.sum_ex_internal,
+                    aa.sum_so,
+                    aa.fiscalyear_id
+                   FROM issi_budget_summary_monitor_view aa
+                     LEFT JOIN account_fiscalyear fis ON aa.fiscalyear_id = fis.id
+                  WHERE aa.chart_view::text = 'invest_asset'::text) bb
+             LEFT JOIN issi_m_source_budget_view mm ON mm.invest_asset_id = bb.invest_asset_id
+          WHERE mm.budget_view = 'invest_asset'::text
+          ORDER BY mm.source_budget""" % self._table)
+  
