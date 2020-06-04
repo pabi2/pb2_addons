@@ -177,11 +177,12 @@ class PurchaseBilling(models.Model):
             for inv in rec.supplier_invoice_ids:
                 po = inv.source_document_id
                 if po and po.use_invoice_plan:
+                    # limit 1 for case user selected wrong installment
                     wa = WA.sudo().search([
                         ('order_id', '=', po.id),
                         ('installment', '=', inv.installment),
                         ('state', '!=', 'cancel')
-                    ])
+                    ], order='id', limit=1)
                     if not wa:
                         raise ValidationError(
                             _("Can not Find Work Acceptance Installment "
