@@ -14,8 +14,8 @@
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<property name="ireport.jasperserver.url" value="https://r-test.intra.nstda.or.th/jasperserver/"/>
 	<property name="ireport.jasperserver.user" value="api_pabi2"/>
-	<property name="ireport.jasperserver.reportUnit" value="/Reports/API/PABI2/pabi2o_test_28048_intra_nstda_or_th/pb2/report_journal_document_entry"/>
-	<property name="ireport.jasperserver.report.resource" value="/Reports/API/PABI2/pabi2o_test_28048_intra_nstda_or_th/pb2/report_journal_document_entry_files/main_jrxml"/>
+	<property name="ireport.jasperserver.reportUnit" value="/Reports/API/PABI2/pabi2o_test_28044_intra_nstda_or_th/pb2/report_journal_document_entry"/>
+	<property name="ireport.jasperserver.report.resource" value="/Reports/API/PABI2/pabi2o_test_28044_intra_nstda_or_th/pb2/report_journal_document_entry_files/main_jrxml"/>
 	<parameter name="condition" class="java.lang.String"/>
 	<parameter name="date_start" class="java.lang.String"/>
 	<parameter name="date_end" class="java.lang.String"/>
@@ -218,7 +218,7 @@ aml.docline_seq]]>
 	<field name="account" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="account"/>
 	</field>
-	<field name="name" class="java.lang.String">
+	<field name="account_name" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="name"/>
 	</field>
 	<field name="debit" class="java.math.BigDecimal">
@@ -1013,7 +1013,7 @@ aml.docline_seq]]>
 				<textElement verticalAlignment="Bottom">
 					<font size="14"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{account_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00#" isBlankWhenNull="true">
 				<reportElement x="2420" y="0" width="100" height="20" uuid="9716d499-737d-4158-a60c-685f368279e0">
@@ -1026,7 +1026,7 @@ aml.docline_seq]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{debit}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.###;(#,##0.###-)" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="#,##0.00#;(#,##0.00#-)" isBlankWhenNull="true">
 				<reportElement x="2520" y="0" width="80" height="20" uuid="f4688329-aa72-4db8-a20e-8553511f2a8c">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9f1c0ce4-14af-4e0a-814c-b6bf5f93c8de"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
