@@ -58,6 +58,7 @@
 						<font color="red">
 							<label string="Closed &amp; Uncommitted Budget"/>
 						</font>
+						<field name="reason_text"/>
 					</h4>
 				</xpath>
 			</field>

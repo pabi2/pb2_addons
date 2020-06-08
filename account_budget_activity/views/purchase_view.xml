@@ -13,6 +13,7 @@
                         <font color="red">
                             <label string="Closed &amp; Uncommitted Budget"/>
                         </font>
+                        <field name="reason_text"/>
                     </h4>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page/field/tree/field[@name='price_subtotal']" position="after">
