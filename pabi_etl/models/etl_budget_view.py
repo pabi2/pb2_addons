@@ -669,7 +669,7 @@ class etl_issi_budget_investment_asset_query(models.Model):
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE OR REPLACE VIEW VIEW %s AS (
+        cr.execute("""CREATE OR REPLACE VIEW %s AS (
          SELECT bb.fiscal_year,
             mm.source_budget,
             mm.plan_proposal_overall_expense,
