@@ -59,7 +59,7 @@ class XLSXReportExpenseLedger(models.TransientModel):
         domain_acc = []
         domain_partner = []
         if self.operating_unit_ids:
-            domain_acc += [('company_id', '=', self.company_id.ids), '|', ('user_type.code', 'in', ('Expense', 'Allocation')), ('code', 'like', '5%'), ('operating_unit_id', 'in', self.operating_unit_ids.ids)]
+            domain_acc += [('company_id', '=', self.company_id.ids), '|', ('user_type.code', 'in', ('Expense', 'Allocation')), ('code', 'like', '5%')]
             domain_partner += [('company_id', '=', self.company_id.ids), ('supplier', '=', True), ('user_id.default_operating_unit_id', 'in', self.operating_unit_ids.ids)]
             return {'domain': {'account_ids': domain_acc, 'partner_ids': domain_partner}}
 
