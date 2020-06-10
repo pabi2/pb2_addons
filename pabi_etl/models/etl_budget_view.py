@@ -599,8 +599,7 @@ class etl_issi_m_investment_asset(models.Model):
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE OR REPLACE VIEW public.etl_issi_m_investment_asset
-             AS
+        cr.execute("""CREATE OR REPLACE VIEW %s AS(
              SELECT a.id AS investment_asset_id,
                 fis.name AS fiscal_year,
                 a.code AS invest_asset_code,
@@ -661,7 +660,7 @@ class etl_issi_m_investment_asset(models.Model):
                  LEFT JOIN account_fiscalyear fis ON a.fiscalyear_id = fis.id
                  LEFT JOIN res_program assetprg ON a.owner_program_id = assetprg.id
                  LEFT JOIN issi_m_program_view ownerprg ON a.owner_program_id = ownerprg.id
-                 ORDER BY a.id""" % self._table)
+                 ORDER BY a.id)""" % self._table)
 
 class etl_issi_budget_investment_asset_query(models.Model):
     _name = 'etl.issi.budget.investment.asset.query'
@@ -670,8 +669,7 @@ class etl_issi_budget_investment_asset_query(models.Model):
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE OR REPLACE VIEW public.etl_issi_budget_investment_asset_query
-         AS
+        cr.execute("""CREATE OR REPLACE VIEW %s AS (
          SELECT bb.fiscal_year,
             mm.source_budget,
             mm.plan_proposal_overall_expense,
@@ -736,5 +734,5 @@ class etl_issi_budget_investment_asset_query(models.Model):
                   WHERE aa.chart_view::text = 'invest_asset'::text) bb
              LEFT JOIN issi_m_source_budget_view mm ON mm.invest_asset_id = bb.invest_asset_id
           WHERE mm.budget_view = 'invest_asset'::text
-          ORDER BY mm.source_budget""" % self._table)
+          ORDER BY mm.source_budget)""" % self._table)
   
