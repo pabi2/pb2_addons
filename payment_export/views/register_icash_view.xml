@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-
         <record model="ir.ui.view" id="view_pabi_register_icash_tree">
             <field name="name">view.pabi.register.icash.tree</field>
             <field name="model">pabi.register.icash</field>
@@ -21,11 +20,18 @@
             <field name="arch" type="xml">
                 <form string="Payment Export">
                     <header>
-                    	<button name="generate_record" string="Generate" type="object" states="draft" class="oe_highlight"/>
-                    	<button name="reload" string="Reload" type="object" states="draft" class="oe_highlight"/>
+                    	<button name="generate_record" string="Generate" type="object" states="draft" class="oe_highlight"
+                    			confirm="confirm generate record?"/>
+                    	<button name="reload" string="Reload" type="object" states="draft" class="oe_highlight"
+                    			confirm="confirm reload record?"/>
+                    	<button name="register_cancel" string="Cancel" type="object" states="draft" class="oe_highlight"
+                    			confirm="confirm cancel record?"/>
                     	<field name="state" widget="statusbar" statusbar_visible="draft,exported"/>
                     </header>
                     <sheet>
+                        <div class="oe_right oe_button_box" name="buttons">
+                            <button name="%(action_register_icash_report)d" string="Export Pre Register" type="action" attrs="{'invisible': [('state', 'not in', ('draft'))]}"/>
+                        </div>
                     	<h1><label string="Pre register iCash"/></h1>
                     	<group>
                     		<group>
@@ -53,6 +59,10 @@
                             </page>
                         </notebook>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
                 </form>
             </field>
         </record>
@@ -66,7 +76,6 @@
         </record>
 
         <menuitem action="action_pre_register_icash" sequence="1" id="menu_action_pre_register_icash" parent="menu_payment_export"/>
-
 
     </data>
 </openerp> 

@@ -31,6 +31,7 @@ class PabiRegister_iCashReport(models.TransientModel):
     @api.multi
     def action_get_report(self):
         if self.register_id.state == 'draft':
+            self.register_id._check_record_registered()
             self.register_id.state = 'exported'
             self.register_id.export_date = datetime.now()
             for line in self.register_line_ids:

@@ -5,17 +5,21 @@ from openerp.exceptions import ValidationError
 
 class PabiRegister_iCash(models.Model):
     _name = 'pabi.register.icash'
+    _inherit = ['mail.thread']
 
     name = fields.Char(
-        'Register number'
+        'Register number',
+        track_visibility='onchange',
     )
     service_type = fields.Selection(
         [('direct', 'DIRECT'),('smart', 'SMART')],
-        'Service Type'
+        'Service Type',
+        track_visibility='onchange',
     )
     export_date = fields.Date(
         'Register export date',
         #default=fields.Date.context_today,
+        track_visibility='onchange',
     )
     state = fields.Selection(
         [('draft', 'Draft'),
@@ -24,6 +28,7 @@ class PabiRegister_iCash(models.Model):
         string='Status',
         default='draft',
         readonly=True,
+        track_visibility='onchange',
     )
     line_ids = fields.One2many(
         'pabi.register.icash.line',
@@ -105,7 +110,19 @@ class PabiRegister_iCash(models.Model):
     @api.onchange('service_type')
     def _onchange_service_type(self):
         self.line_ids = False
+    
+    @api.multi
+    def _check_record_registered(self):
+        self.ensure_one()
+        registered_ids = self.line_ids.filtered(
+            lambda l: l.partner_bank_id.is_register == True).mapped('beneficiary_code')
+        if registered_ids:
+            raise ValidationError('Record Registered\n%s' % str(tuple(registered_ids)))
 
+    @api.multi
+    def register_cancel(self):
+        self.state = 'cancel'
+    
     @api.multi
     def reload(self):
         self.line_ids.onchange_partner_bank_id()
