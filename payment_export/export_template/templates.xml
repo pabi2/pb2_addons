@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <!-- Directory for Account XLSX Reports -->
+        <record model="document.directory" id="dir_payment_export">
+            <field name="name">Payment Export</field>
+            <field name="parent_id" ref="document.dir_root"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="ressource_id">0</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        # Input Tax Report
+        <record id="xlsx_report_register_icash" model="ir.attachment">
+            <field name="res_model">pabi.register.icash.report</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_register_icash.xlsx</field>
+            <field name="name">Register iCash</field>
+            <field name="parent_id" eval="ref('dir_payment_export')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Pre Register iCash': {
+                            '_HEAD_': {
+                                'B3': '${env.user.with_context(lang="en_US").company_id.rml_header1}',
+                                'B4': 'register_id.name${value or ""}',
+                            },
+                            'register_line_ids': {
+                                'A7': 'beneficiary_code${value or ""}',
+                                'B7': 'account_number${value or ""}',
+                                'C7': 'owner_name_en${value or ""}',
+                                'D7': 'partner_searchkey${value or ""}',
+                                'E7': 'partner_name${value or ""}',
+                                'F7': 'partner_email_accountant${value or ""}',
+                            }
+                        }
+                    }
+                }
+            </field>
+
+        </record>        
+    </data>
+</openerp>

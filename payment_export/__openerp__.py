@@ -17,16 +17,22 @@
 
     """,
     "data": [
+        "data/register_icash_sequence.xml",
         "data/payment_export_sequence.xml",
         "data/config_parameter.xml",
         # "export_template/document.export.config.csv",# It will be duplicated
         "security/ir.model.access.csv",
+        'export_template/templates.xml',
+        'export_template/load_template.xml',
         "views/account_view.xml",
         "wizard/cancel_reason_view.xml",
         "wizard/update_date_cheque_received.xml",
         "views/payment_export_view.xml",
         "views/cheque_lot_view.xml",
         "views/voucher_payment_receipt_view.xml",
+        "views/res_bank_view.xml",
+        "views/register_icash_view.xml",
+        "report/register_icash_report_view.xml",
         "report/payment_export_report_view.xml",
         "report/report.xml",
     ],
