@@ -30,15 +30,35 @@ class PabiRegister_iCashReport(models.TransientModel):
     
     @api.multi
     def action_get_report(self):
+        self.ensure_one()
+        
         if self.register_id.state == 'draft':
             self.register_id._check_record_registered()
-            self.register_id.state = 'exported'
-            self.register_id.export_date = datetime.now()
+            out_file, out_name = self.get_report()
+            
+            self.env['ir.attachment'].create({
+                'name': self.register_id.name+'.xlsx',
+                'datas': out_file,
+                'datas_fname': self.register_id.name+'.xlsx',
+                'res_model': 'pabi.register.icash',
+                'res_id': self.register_id.id,
+                'type': 'binary',
+            })
+            self.register_id.write({'state': 'exported',
+                                    'export_date': datetime.now()})
+            
             for line in self.register_line_ids:
-                line.partner_bank_id.register_no = self.register_id.name
-                line.partner_bank_id.register_date = datetime.now()
-                line.partner_bank_id.is_register = True
-        res = super(PabiRegister_iCashReport, self).action_get_report()
-        return res
+                #line.partner_bank_id.register_no = self.register_id.name
+                #line.partner_bank_id.register_date = datetime.now()
+                #line.partner_bank_id.is_register = True
+                line.partner_bank_id.write(
+                    {'register_no': self.register_id.name,
+                     'register_date': datetime.now(),
+                     'is_register': True})
+            
+        
+        
+        #res = super(PabiRegister_iCashReport, self).action_get_report()
+        #return res
 
 
