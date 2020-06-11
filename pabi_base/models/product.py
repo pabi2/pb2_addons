@@ -20,6 +20,8 @@ class ProductTemplate(models.Model):
         size=10,
     )
     valuation = fields.Selection(track_visibility='onchange',)
+    cost_method = fields.Selection(track_visibility='onchange',)
+    standard_price = fields.Float(track_visibility='onchange',)
 
 
 class ProductProduct(models.Model):
