@@ -26,7 +26,7 @@ class PabiRegister_iCash(models.Model):
          ('exported', 'Exported'),
          ('cancel', 'Cancelled')],
         string='Status',
-        default='draft',
+        #default='draft',
         readonly=True,
         track_visibility='onchange',
     )
