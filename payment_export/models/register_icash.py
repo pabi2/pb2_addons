@@ -38,7 +38,7 @@ class PabiRegister_iCash(models.Model):
     line_filter = fields.Char(
         string='Filter',
         readonly=True,
-        states={'draft': [('readonly', False)]},
+        #states={'draft': [('readonly', False)]},
         help="More filter. You can use complex search with comma and between.",
     )
 
