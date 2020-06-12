@@ -29,6 +29,20 @@
             <field name="padding">6</field>
             <field name="company_id" eval="False"/>
         </record>
+        
+        <!-- Asset Change Master -->
+        <record id="seq_type_account_asset_changemaster" model="ir.sequence.type">
+            <field name="name">Asset Change Master</field>
+            <field name="code">account.asset.changemaster</field>
+        </record>
+
+        <record id="seq_account_asset_changemaster" model="ir.sequence">
+            <field name="name">Asset Change Master</field>
+            <field name="code">account.asset.changemaster</field>
+            <field name="prefix">ACM%(y)s</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
 
         <!-- Asset Request -->
         <record id="seq_type_account_asset_request" model="ir.sequence.type">

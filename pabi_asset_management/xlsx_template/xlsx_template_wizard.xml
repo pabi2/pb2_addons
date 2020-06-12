@@ -9,7 +9,15 @@
             src_model="account.asset.changeowner"
             view_mode="form"
             target="new"/>
-
+            
+        <!-- Change Master -->
+        <act_window id="action_asset_changemaster_import_xlsx_template"
+            name="Import Asset Change Master (.xlsx)"
+            res_model="import.xlsx.template"
+            src_model="account.asset.changemaster"
+            view_mode="form"
+            target="new"/>
+            
         <!-- Transfer -->
         <act_window id="action_asset_transfer_import_xlsx_template"
             name="Import Asset Transfer (.xlsx)"
