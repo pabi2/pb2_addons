@@ -397,64 +397,59 @@ class ISSIBudgetProjectMonitorView(models.Model):
                       GROUP BY fis.name, prj.id, src.fiscalyear_id) query
                  JOIN res_project project ON ((project.id = query.project_id)))
             UNION
-             SELECT query.fiscal_year,
-                project.code,
-                project.revenue_budget,
-                project.overall_revenue_plan AS plan_overall_revenue,
-                project.proposal_overall_budget AS plan_proposal_overall_expense,
-                project.overall_expense_budget AS plan_overall_expense,
-                project.overall_expense_budget_internal AS plan_overall_expense_internal,
-                sum(query.release) AS release,
-                0 AS sum_pr,
-                0 AS sum_po,
-                0 AS sum_ex,
-                sum(query.plan_expense_external) AS plan_expense_external,
-                sum(query.sum_actual_external) AS sum_actual_external,
-                0 AS plan_expense_internal,
-                0 AS sum_actual_internal,
-                sum(query.plan_revenue_external) AS plan_revenue_external,
-                COALESCE(sum(rev_project.actual_amount), (0)::double precision) AS sum_revenue_external,
-                0 AS plan_revenue_internal,
-                0 AS sum_revenue_internal,
-                true AS old_data,
-                0 AS sum_ex_internal,
-                query.fiscalyear_id,
-                project.id AS project_id
-               FROM ((( SELECT fis.name AS fiscal_year,
-                        plan.project_id,
-                        plan.planned_amount AS release,
-                        plan.planned_amount AS sum_actual_external,
-                        plan.planned_amount AS plan_expense_external,
-                        0 AS plan_revenue_external,
-                        plan.fiscalyear_id,
-                        0 AS sum_revenue_external
-                       FROM (res_project_budget_summary plan
-                         LEFT JOIN account_fiscalyear fis ON ((plan.fiscalyear_id = fis.id)))
-                      WHERE (((plan.budget_method)::text = 'expense'::text) AND ((fis.name)::text <= '2018'::text) AND (plan.planned_amount <> (0)::double precision))
-                    UNION
-                     SELECT fis.name,
-                        plan.project_id,
-                        0 AS release,
-                        0 AS sum_actual_external,
-                        0 AS plan_expense_external,
-                        plan.planned_amount AS plan_revenue_external,
-                        plan.fiscalyear_id,
-                        COALESCE(rev_project.actual_amount, (0)::double precision) AS sum_revenue_external
-                       FROM ((res_project_budget_summary plan
-                         LEFT JOIN account_fiscalyear fis ON ((plan.fiscalyear_id = fis.id)))
-                         LEFT JOIN ( SELECT res_project_revenue_actual.fiscalyear_id,
-                                res_project_revenue_actual.project_id,
-                                sum(res_project_revenue_actual.actual_amount) AS actual_amount
-                               FROM res_project_revenue_actual
-                              GROUP BY res_project_revenue_actual.fiscalyear_id, res_project_revenue_actual.project_id) rev_project ON (((plan.project_id = rev_project.project_id) AND (plan.fiscalyear_id = rev_project.fiscalyear_id))))
-                      WHERE (((plan.budget_method)::text = 'revenue'::text) AND ((fis.name)::text <= '2018'::text) AND (plan.planned_amount <> (0)::double precision))) query
-                 LEFT JOIN res_project project ON ((query.project_id = project.id)))
-                 LEFT JOIN (SELECT res_project_revenue_actual.fiscalyear_id,
-                            res_project_revenue_actual.project_id,
-                            sum(res_project_revenue_actual.actual_amount) AS actual_amount
-                            FROM res_project_revenue_actual
-                            GROUP BY res_project_revenue_actual.fiscalyear_id, res_project_revenue_actual.project_id) rev_project ON (((project.id = rev_project.project_id) AND (query.fiscalyear_id = rev_project.fiscalyear_id))))
-              GROUP BY query.fiscal_year, query.fiscalyear_id, project.code, project.id
+              SELECT query.fiscal_year,
+                    project.code,
+                    project.revenue_budget,
+                    project.overall_revenue_plan AS plan_overall_revenue,
+                    project.proposal_overall_budget AS plan_proposal_overall_expense,
+                    project.overall_expense_budget AS plan_overall_expense,
+                    project.overall_expense_budget_internal AS plan_overall_expense_internal,
+                    sum(query.release) AS release,
+                    0 AS sum_pr,
+                    0 AS sum_po,
+                    0 AS sum_ex,
+                    sum(query.plan_expense_external) AS plan_expense_external,
+                    sum(query.sum_actual_external) AS sum_actual_external,
+                    0 AS plan_expense_internal,
+                    0 AS sum_actual_internal,
+                    sum(query.plan_revenue_external) AS plan_revenue_external,
+                    COALESCE(sum(query.sum_revenue_external), 0::double precision) AS sum_revenue_external,
+                    0 AS plan_revenue_internal,
+                    0 AS sum_revenue_internal,
+                    true AS old_data,
+                    0 AS sum_ex_internal,
+                    query.fiscalyear_id,
+                    project.id AS project_id
+                   FROM ( SELECT fis.name AS fiscal_year,
+                            plan.project_id,
+                            plan.planned_amount AS release,
+                            plan.planned_amount AS sum_actual_external,
+                            plan.planned_amount AS plan_expense_external,
+                            0 AS plan_revenue_external,
+                            plan.fiscalyear_id,
+                            0 AS sum_revenue_external
+                           FROM res_project_budget_summary plan
+                             LEFT JOIN account_fiscalyear fis ON plan.fiscalyear_id = fis.id
+                          WHERE plan.budget_method::text = 'expense'::text AND fis.name::text <= '2018'::text AND plan.planned_amount <> 0::double precision
+                        UNION
+                         SELECT fis.name,
+                            plan.project_id,
+                            0 AS release,
+                            0 AS sum_actual_external,
+                            0 AS plan_expense_external,
+                            plan.planned_amount AS plan_revenue_external,
+                            plan.fiscalyear_id,
+                            COALESCE(rev_project_1.actual_amount, 0::double precision) AS sum_revenue_external
+                           FROM res_project_budget_summary plan
+                             LEFT JOIN account_fiscalyear fis ON plan.fiscalyear_id = fis.id
+                             LEFT JOIN ( SELECT res_project_revenue_actual.fiscalyear_id,
+                                    res_project_revenue_actual.project_id,
+                                    sum(res_project_revenue_actual.actual_amount) AS actual_amount
+                                   FROM res_project_revenue_actual
+                                  GROUP BY res_project_revenue_actual.fiscalyear_id, res_project_revenue_actual.project_id) rev_project_1 ON plan.project_id = rev_project_1.project_id AND plan.fiscalyear_id = rev_project_1.fiscalyear_id
+                          WHERE plan.budget_method::text = 'revenue'::text AND fis.name::text <= '2018'::text AND plan.planned_amount <> 0::double precision) query
+                     LEFT JOIN res_project project ON query.project_id = project.id
+                  GROUP BY query.fiscal_year, query.fiscalyear_id, project.code, project.id
         )
         """ % self._table)
         
