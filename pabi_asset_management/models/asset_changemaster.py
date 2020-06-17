@@ -48,13 +48,6 @@ class AccountAssetChangemaster(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]},
     )
-    org_id = fields.Many2one(
-        'res.org',
-        related='user_id.partner_id.employee_id.org_id',
-        string='Org',
-        store=True,
-        readonly=True,
-    )
     note = fields.Text(
         string='Note',
         copy=False,
@@ -77,19 +70,6 @@ class AccountAssetChangemaster(models.Model):
         readonly=True,
         copy=False,
         track_visibility='onchange',
-    )
-    journal_id = fields.Many2one(
-        'account.journal',
-        string='Journal',
-        domain=[('asset', '=', True), ('analytic_journal_id', '=', False)],
-        readonly=True,
-        required=True,
-        help="Asset Journal (No-Budget)",
-    )
-    move_ids = fields.Many2many(
-        'account.move',
-        string='Journal Entries',
-        compute='_compute_moves',
     )
     changemaster_job_id = fields.Many2one(
         'queue.job',
@@ -256,7 +236,6 @@ class AccountAssetChangemasterLine(models.Model):
     asset_id = fields.Many2one(
         'account.asset',
         string='Asset',
-        domain=[('state', '=', 'open')],
         required=True,
         ondelete='restrict',
     )
@@ -267,17 +246,14 @@ class AccountAssetChangemasterLine(models.Model):
     building_id = fields.Many2one(
         'res.building',
         string='Building',
-        ondelete='restrict',
     )
     floor_id = fields.Many2one(
         'res.floor',
         string='Floor',
-        ondelete='restrict',
     )
     room_id = fields.Many2one(
         'res.room',
         string='Room',
-        ondelete='restrict',
     )
     name = fields.Char(
         string='Name',
