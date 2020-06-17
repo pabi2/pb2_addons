@@ -40,6 +40,7 @@
           }
           </field>
       </record>
+      
       <!-- Asset Change Master -->
       <record id="asset_changemaster_template" model="ir.attachment">
           <field name="res_model">account.asset.changemaster</field>
@@ -54,7 +55,7 @@
                       '_HEAD_': {
                           'M3': 'date',
                       },
-                      'changeowner_ids': {
+                      'changemaster_ids': {
                           'A6': 'asset_id',
                           'B6': 'name',
                           'C6': 'asset_brand',

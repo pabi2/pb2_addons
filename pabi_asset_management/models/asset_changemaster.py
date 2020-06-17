@@ -246,14 +246,17 @@ class AccountAssetChangemasterLine(models.Model):
     building_id = fields.Many2one(
         'res.building',
         string='Building',
+        ondelete='restrict',
     )
     floor_id = fields.Many2one(
         'res.floor',
         string='Floor',
+        ondelete='restrict',
     )
     room_id = fields.Many2one(
         'res.room',
         string='Room',
+        ondelete='restrict',
     )
     name = fields.Char(
         string='Name',
@@ -281,3 +284,21 @@ class AccountAssetChangemasterLine(models.Model):
         string='Notes',
     )
 
+    # Building / Floor / Room
+    @api.multi
+    @api.constrains('building_id', 'floor_id', 'room_id')
+    def _check_building(self):
+        for rec in self:
+            self.env['res.building']._check_room_location(rec.building_id,
+                                                          rec.floor_id,
+                                                          rec.room_id)
+
+    @api.onchange('building_id')
+    def _onchange_building_id(self):
+        self.floor_id = False
+        self.room_id = False
+
+    @api.onchange('floor_id')
+    def _onchange_floor_id(self):
+        self.room_id = False
+        
