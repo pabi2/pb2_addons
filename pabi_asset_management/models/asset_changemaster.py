@@ -206,7 +206,7 @@ class AccountAssetChangemaster(models.Model):
             if line.building_id:
                 new_master['building_id'] = line.building_id.id
             if line.floor_id:
-                new_masterr['floor_id'] = line.floor_id.id
+                new_master['floor_id'] = line.floor_id.id
             if line.room_id:
                 new_master['room_id'] = line.room_id.id
             if line.asset_purchase_method_id:
