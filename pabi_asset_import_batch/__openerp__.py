@@ -7,6 +7,7 @@
     "category": "Customs Modules",
     "depends": [
         "pabi_asset_management",
+        "pabi_account_report",
     ],
     "description": """This module allow import asset batch.""",
     "data": [
@@ -16,6 +17,7 @@
         "xlsx_template/templates.xml",
         "xlsx_template/load_template.xml",
         "xlsx_template/xlsx_template_wizard.xml",
+        "views/asset_register_report.xml",
     ],
     'installable': True,
 }
