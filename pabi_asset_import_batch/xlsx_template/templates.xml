@@ -72,65 +72,60 @@
         </record>
         
         <!-- Download -->
-        <record id="import_asset_batch_template_download" model="ir.attachment">
-            <field name="res_model">asset.register.report.dowload</field>
+        <record id="export_asset_master" model="ir.attachment">
+            <field name="res_model">asset.export.report</field>
             <field name="datas"></field>
-            <field name="datas_fname">import_asset.xlsx</field>
-            <field name="name">Download Asset Batch</field>
+            <field name="datas_fname">export_asset.xlsx</field>
+            <field name="name">Export Asset Master</field>
             <field name="parent_id" eval="ref('dir_account_asset')"/>
             <field name="description">
-              {
-                '__IMPORT__': {
-                    1: {
-                        '_HEAD_': {
-                        },
-                        'asset_batch_ids': {
-                            'A3': 'code',
-                            'B3': 'code2',
-                            'C3': 'name',
-                            'D3': 'status',
-                            'E3': 'is_standard',
-                            'F3': 'asset_brand',
-                            'G3': 'asset_model',
-                            'H3': 'purchase_value',
-                            'I3': 'salvage_value',
-                            'J3': 'date_start',
-                            'K3': 'section_id',
-                            'L3': 'project_id',
-                            'M3': 'invest_asset_id',
-                            'N3': 'invest_construction_phase_id',
-                            'O3': 'profile_id',
-                            'P3': 'product_id',
-                            'Q3': 'purchase_id',
-                            'R3': 'partner_id',
-                            'S3': 'method_number',
-                            'T3': 'owner_section_id',
-                            'U3': 'owner_project_id',
-                            'V3': 'owner_invest_asset_id',
-                            'W3': 'owner_invest_construction_phase_id',
-                            'X3': 'asset_purchase_method_id',
-                            'Y3': 'responsible_user_id',
-                            'Z3': 'room_id',
-                            'AA3': 'floor_id',
-                            'AB3': 'building_id',
-                            'AC3': 'serial_number',
-                            'AD3': 'warranty_start_date',
-                            'AE3': 'warranty_expire_date',
-                            'AF3': 'code',
-                            'AG3': 'method_period',
-                            'AH3': 'days_calc',
-                            'AI3': 'prorata',
-                            # depreciation_lines
-                            'AJ3': 'line_date',
-                            'AK3': 'line_days',
-                            'AL3': 'amount',
-                            'AM3': 'init_entry',
-                        }
-                    }
-                }
-            }
+	              {
+	                '__EXPORT__': {
+	                    'Assets': {
+	                        '_HEAD_': {
+	                        },
+	                        'results': {
+	                            'A3': 'code${value or ""}#{number_format=text}',
+	                            'B3': 'code2${value or ""}#{number_format=text}',
+	                            'C3': 'name${value or ""}#{number_format=text}',
+	                            'D3': 'status${value and value.name or ""}#{number_format=text}',
+	                            'E3': 'is_standard${value or ""}#{number_format=text}',
+	                            'F3': 'asset_brand${value or ""}#{number_format=text}',
+	                            'G3': 'asset_model${value or ""}#{number_format=text}',
+	                            'H3': 'purchase_value${value or ""}#{number_format=text}',
+	                            'I3': 'salvage_value${value or ""}#{number_format=text}',
+	                            'J3': 'date_start${value and env["account.fiscalyear"].browse(env["account.fiscalyear"].find(value)).name or ""}#{number_format=text}',
+	                            'K3': 'section_id${value and value.name or ""}#{number_format=text}',
+	                            'L3': 'project_id${value and value.name or ""}#{number_format=text}',
+	                            'M3': 'invest_asset_id${value and value.name or ""}#{number_format=text}',
+	                            'N3': 'invest_construction_phase_id${value and value.name or ""}#{number_format=text}',
+	                            'O3': 'profile_id${value and value.name or ""}#{number_format=text}',
+	                            'P3': 'product_id${value and value.name or ""}#{number_format=text}',
+	                            'Q3': 'purchase_id${value and value.name or ""}#{number_format=text}',
+	                            'R3': 'partner_id${value and value.name or ""}#{number_format=text}',
+	                            'S3': 'method_number${value or 0}#{number_format=text}',
+	                            'T3': 'owner_section_id${value and value.name or ""}#{number_format=text}',
+	                            'U3': 'owner_project_id${value and value.name or ""}#{number_format=text}',
+	                            'V3': 'owner_invest_asset_id${value and value.name or ""}#{number_format=text}',
+	                            'W3': 'owner_invest_construction_phase_id${value and value.name or ""}#{number_format=text}',
+	                            'X3': 'asset_purchase_method_id${value and value.name or ""}#{number_format=text}',
+	                            'Y3': 'responsible_user_id${value and value.name or ""}#{number_format=text}',
+	                            'Z3': 'room_id${value and value.name or ""}#{number_format=text}',
+	                            'AA3': 'floor_id${value and value.name or ""}#{number_format=text}',
+	                            'AB3': 'building_id${value and value.name or ""}#{number_format=text}',
+	                            'AC3': 'serial_number${value or ""}#{number_format=text}',
+	                            'AD3': 'warranty_start_date${value or ""}#{number_format=date}',
+	                            'AE3': 'warranty_expire_date${value or ""}#{number_format=date}',
+	                            'AF3': 'code${value or ""}#{number_format=text}',
+	                            'AG3': 'method_period${value or 0}#{number_format=text}',
+	                            'AH3': 'days_calc${value or ""}#{number_format=date}',
+	                            'AI3': 'prorata${value or ""}#{number_format=text}',
+	                        }
+	                    }
+	                }
+	            }
           </field>
         </record>
-        
+
     </data>
 </openerp>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-      <record id="view_asset_register_report_form" model="ir.ui.view">
-          <field name="name">view.asset.register.report.form</field>
-          <field name="model">asset.register.report.dowload</field>
+      <record id="view_asset_export_report_form" model="ir.ui.view">
+          <field name="name">view.asset.export.report.form</field>
+          <field name="model">asset.export.report</field>
           <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
           <field name="mode">primary</field>
           <field name="arch" type="xml">

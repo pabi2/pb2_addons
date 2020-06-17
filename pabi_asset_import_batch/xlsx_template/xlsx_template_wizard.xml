@@ -16,10 +16,10 @@
         </record>
 		
 		<!-- Download -->
-        <act_window id="action_dowload_asset_batch_xlsx"
-          name="Dowload"
+        <act_window id="action_dowload_asset_master_xlsx"
+          name="Download"
           src_model="account.asset.import.batch"
-          res_model="asset.register.report.dowload"
+          res_model="asset.export.report"
           view_type="form"
           view_mode="form"
           key2="client_action_multi"

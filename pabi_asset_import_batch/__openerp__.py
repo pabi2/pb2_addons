@@ -17,7 +17,7 @@
         "xlsx_template/templates.xml",
         "xlsx_template/load_template.xml",
         "xlsx_template/xlsx_template_wizard.xml",
-        "views/asset_register_report.xml",
+        "views/asset_export_report.xml",
     ],
     'installable': True,
 }

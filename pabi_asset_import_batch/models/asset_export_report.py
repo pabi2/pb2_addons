@@ -10,9 +10,9 @@ REFERENCE_SELECT = [
     ('res.invest.construction.phase', 'Invest Construction Phase'),
 ]
 
-class AssetRegisterReportDownload(models.TransientModel):
-    _name = 'asset.register.report.dowload'
-    _inherit = ['report.account.common','account.asset.import.batch']
+class AssetExportReport(models.TransientModel):
+    _name = 'asset.export.report'
+    _inherit = 'report.account.common'
 
     filter = fields.Selection(
         readonly=True,
