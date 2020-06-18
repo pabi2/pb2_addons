@@ -45,6 +45,14 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         string='PO Not Closed',
         default=True,
     )
+    no_finlease = fields.Boolean(
+        string='No Finlease',
+        default=True,
+    )
+    po_draft = fields.Boolean(
+        string='PO Draft',
+        default=True,
+    )
     filter_description = fields.Char(
         string='Filter',
         compute='_compute_filter_description',
@@ -82,14 +90,18 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
     )
     
     @api.multi
-    @api.depends('invoice_plan', 'po_not_closed')
+    @api.depends('invoice_plan', 'po_not_closed', 'no_finlease', 'po_draft')
     def _compute_filter_description(self):
         for rec in self:
             filter_description = ''
             if rec.invoice_plan is True:
-                filter_description = 'invoice plan, '
+                filter_description = ' Invoice Plan,'
             if rec.po_not_closed:
-                filter_description += 'po not closed'
+                filter_description += ' PO Not Closed,'
+            if rec.no_finlease:
+                filter_description += ' No Finlease,'
+            if rec.po_draft:
+                filter_description += ' Po Draft,'
             
             rec.filter_description = filter_description
 
@@ -267,6 +279,10 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
             dom += [('use_invoice_plan','=',True)]
         if self.po_not_closed is True:
             dom += [('technical_closed','!=',True)]
+        if self.no_finlease is True:
+            dom += [('is_fin_lease','!=',True)]
+        if self.po_draft is True:
+            dom += [('po_status','=','draft')]
         
         if len(dom) > 0:
             where_str = self._domain_to_where_str(dom)
@@ -300,7 +316,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                          (select id from account_fiscalyear
                         where cast(NOW() + interval '1 year' as Date) between date_start and date_stop)
                 ) as amount_next_fisyear,
-                (select id from account_period where date_order between date_start and date_stop limit 1) as period_id
+                (select id from account_period where date_order between date_start and date_stop limit 1) as period_po_id
              from (
                 (select
                     ou.org_id as org_id, po.id as purchase_id, pct.id as contract_id, 
@@ -317,6 +333,9 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     po.name as po_number, pol.docline_seq, 
                     cast(pip.installment as varchar) as installment,
                     pct.action_date,
+                    (select pe.id from account_period pe 
+                        where pip.date_invoice between pe.date_start and pe.date_stop limit 1
+                    ) as period_kv_id,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
                         else ''
@@ -379,11 +398,11 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                         when po.use_deposit is False and po.use_advance is False then ''
                         else ads.name
                     end as advance_deposit,
-                    po.use_invoice_plan, po.technical_closed
+                    po.use_invoice_plan, po.technical_closed, po.is_fin_lease
                 from purchase_order po
                     left join purchase_invoice_plan pip on pip.order_id = po.id and po.use_invoice_plan = True
                     left join purchase_order_line pol on pol.id = pip.order_line_id
-                    left join account_invoice av on av.id = pip.ref_invoice_id
+                    left join account_invoice av on av.id = pip.ref_invoice_id and av.state <> 'cancel'
                     left join account_invoice_line avl on avl.invoice_id = av.id
                          and avl.purchase_line_id = pol.id
                     left join purchase_work_acceptance wa on wa.invoice_created = av.id and wa.state <> 'cancel'
@@ -437,6 +456,9 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     po.name as po_number, pol.docline_seq, 
                     cast(pip.installment as varchar) as installment,
                     pct.action_date,
+                    (select pe.id from account_period pe 
+                        where pip.date_invoice between pe.date_start and pe.date_stop limit 1
+                    ) as period_kv_id,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
                         else ''
@@ -499,7 +521,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                         when po.use_deposit is False and po.use_advance is False then ''
                         else ads.name
                     end as advance_deposit,
-                    po.use_invoice_plan, po.technical_closed
+                    po.use_invoice_plan, po.technical_closed, po.is_fin_lease
                 from purchase_order po
                     left join purchase_order_line pol on pol.order_id = po.id
                     left join purchase_invoice_plan pip on pip.order_line_id = pol.id and po.use_invoice_plan = True
@@ -565,7 +587,8 @@ class ReportPurchaseInvoicePlanView(models.AbstractModel):
     purchase_line_id = fields.Many2one('purchase.order.line')
     product_id = fields.Many2one('product.product')
     supplier_id = fields.Many2one('res.partner')
-    period_id = fields.Many2one('account.period')
+    period_po_id = fields.Many2one('account.period')
+    period_kv_id = fields.Many2one('account.period')
     po_fiscalyear = fields.Char()
     po_contract_type = fields.Char()
     activity_group = fields.Char()
