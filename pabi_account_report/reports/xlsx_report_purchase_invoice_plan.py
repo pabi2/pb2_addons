@@ -296,27 +296,64 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
 
         self._cr.execute("""
             select *,
-                (select count(*) from purchase_invoice_plan pip
-                where pip.order_id = purchase_id
-                    and pip.installment is not null
-                ) as no_of_installment,
-                (select sum(pip.invoice_amount) from purchase_invoice_plan pip
-                    left join purchase_order_line pol on pol.id = pip.order_line_id
-                where pip.order_id = purchase_id
-                     and pip.installment is not null
-                     and pol.fiscalyear_id = 
-                         (select id from account_fiscalyear
-                        where cast(NOW() as Date) between date_start and date_stop)
-                ) as amount_curr_fisyear,
-                (select sum(pip.invoice_amount) from purchase_invoice_plan pip
-                    left join purchase_order_line pol on pol.id = pip.order_line_id
-                where pip.order_id = purchase_id
-                     and pip.installment is not null
-                     and pol.fiscalyear_id = 
-                         (select id from account_fiscalyear
-                        where cast(NOW() + interval '1 year' as Date) between date_start and date_stop)
-                ) as amount_next_fisyear,
-                (select id from account_period where date_order between date_start and date_stop limit 1) as period_po_id
+                CASE 
+                    WHEN use_invoice_plan = True 
+                        THEN (select count(*) from purchase_invoice_plan pip
+                            where pip.order_id = purchase_id
+                                and pip.installment is not null
+                            )
+                    ELSE (select count(*) from account_invoice av
+                            left join purchase_invoice_rel pi_r on pi_r.invoice_id = av.id
+                        where pi_r.purchase_id = new.purchase_id and av.state <> 'cancel'
+                        )
+                END as no_of_installment,
+                (select id from account_period where date_order between date_start and date_stop limit 1) as period_po_id,
+                (CASE
+                    WHEN use_invoice_plan = True
+                        THEN (select sum(pip.invoice_amount) from purchase_invoice_plan pip
+                             where pip.order_id = purchase_id and pip.state = 'draft'
+                                and pip.date_invoice >=
+                                    (select fis.date_start from account_fiscalyear fis
+                                        where cast(NOW() as Date) between fis.date_start and fis.date_stop)
+                                and pip.date_invoice <=
+                                    (select fis.date_stop from account_fiscalyear fis
+                                        where cast(NOW() as Date) between fis.date_start and fis.date_stop))
+                    ELSE
+                        (select sum(av.amount_total)
+                         from account_invoice av
+                            left join purchase_invoice_rel pi_r on pi_r.invoice_id = av.id
+                         where pi_r.purchase_id = new.purchase_id and av.state = 'draft'
+                            and av.date_invoice >=
+                                (select fis.date_start from account_fiscalyear fis
+                                    where cast(NOW() as Date) between fis.date_start and fis.date_stop)
+                            and av.date_invoice <=
+                                (select fis.date_stop from account_fiscalyear fis
+                                    where cast(NOW() as Date) between fis.date_start and fis.date_stop))
+                END) --* exchange_rate_kv 
+                as amount_curr_fisyear,
+                (CASE
+                    WHEN use_invoice_plan = True
+                        THEN (select sum(pip.invoice_amount) from purchase_invoice_plan pip
+                             where pip.order_id = purchase_id and pip.state = 'draft'
+                                and pip.date_invoice >=
+                                    (select fis.date_start from account_fiscalyear fis
+                                        where cast(NOW() + interval '1 year' as Date) between fis.date_start and fis.date_stop)
+                                and pip.date_invoice <=
+                                    (select fis.date_stop from account_fiscalyear fis
+                                        where cast(NOW() + interval '1 year' as Date) between fis.date_start and fis.date_stop))
+                    ELSE
+                        (select sum(av.amount_total)
+                         from account_invoice av
+                            left join purchase_invoice_rel pi_r on pi_r.invoice_id = av.id
+                         where pi_r.purchase_id = new.purchase_id and av.state = 'draft'
+                            and av.date_invoice >=
+                                (select fis.date_start from account_fiscalyear fis
+                                    where cast(NOW() + interval '1 year' as Date) between fis.date_start and fis.date_stop)
+                            and av.date_invoice <=
+                                (select fis.date_stop from account_fiscalyear fis
+                                    where cast(NOW() + interval '1 year' as Date) between fis.date_start and fis.date_stop))
+                END) --* exchange_rate_kv 
+                as amount_next_fisyear
              from (
                 (select
                     ou.org_id as org_id, po.id as purchase_id, pct.id as contract_id, 
