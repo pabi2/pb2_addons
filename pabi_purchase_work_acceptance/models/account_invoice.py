@@ -16,6 +16,13 @@ class AccountInvoice(models.Model):
         help="List Purchase Work Acceptance with total_fine > 0.0 "
         "and not already invoiced",
     )
+    wa_id = fields.Many2one(
+        comodel_name='purchase.work.acceptance',
+        string="Work Acceptance",
+        copy=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+    )
 
     @api.model
     def _get_account_id_from_product(self, product, fpos):
