@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        # Customer Payment Search
+        <record id="view_voucher_filter_customer_pay" model="ir.ui.view">
+            <field name="name">account.voucher.customer.pay.select</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_voucher_filter_customer_pay"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/group" position="inside">
+                    <filter name="group_by_state_sign" string="State Sign" context="{'group_by':'state_sign'}"/>
+                </xpath>
+                <xpath expr="//search" position="inside">
+                    <filter name="state_sign" string="Waiting Sign" domain="[('state_sign','=', 'waiting')]" help="Waiting Sign"/>
+                    <filter name="state_sign" string="Signed" domain="[('state_sign','=', 'signed')]" help="Signed"/>
+                </xpath>
+            </field>
+        </record>
+
+        # Cutomer Payment Tree
+        <record id="view_voucher_tree" model="ir.ui.view">
+            <field name="name">account.voucher.tree</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_voucher_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="before">
+                    <field name="state_sign"/>
+                </xpath>
+            </field>
+        </record>
+
+        # Customer Payment Form
+        <record id="view_vendor_receipt_form" model="ir.ui.view">
+            <field name="name">account.voucher.receipt.form</field>
+            <field name="model">account.voucher</field>
+            <field name="inherit_id" ref="account_voucher.view_vendor_receipt_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/group/group[1]" position="inside">
+                    <field name="state_sign"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

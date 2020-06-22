@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <record id="print_account_voucher_wizard" model="ir.ui.view">
+            <field name="name">print.account.voucher.wizard</field>
+            <field name="model">print.account.voucher.wizard</field>
+            <field name="inherit_id" ref="pabi_forms.print_account_voucher_wizard"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/group" position="inside">
+                    <field name="state_sign" invisible="1"/>
+                    <field name="reason_receipt_update" attrs="{'invisible': ['|', ('doc_print', 'not in', ['customer_receipt', 'customer_receipt_voucher']), ('state_sign', '!=', 'signed')], 'required': ['&amp;', ('doc_print', 'in', ['customer_receipt', 'customer_receipt_voucher']), ('state_sign', '=', 'signed')]}"/>
+                    <field name="reason_tax_receipt_update" attrs="{'invisible': ['|', ('doc_print', 'not in', ['customer_tax_receipt', 'customer_tax_receipt200']), ('state_sign', '!=', 'signed')], 'required': ['&amp;', ('doc_print', 'in', ['customer_tax_receipt', 'customer_tax_receipt200']), ('state_sign', '=', 'signed')]}"/>
+                    <field name="reason_text" attrs="{'invisible': ['&amp;', ('reason_receipt_update', '!=', 'RCTC99'), ('reason_tax_receipt_update', '!=', 'TIVC99')], 'required': ['|', ('reason_receipt_update', '=', 'RCTC99'), ('reason_tax_receipt_update', '=', 'TIVC99'), ('state_sign', '=', 'signed')]}"/>
+                </xpath>
+                <xpath expr="//footer/button[@name='action_print_account_voucher']" position="after">
+                    <button name="action_preview_account_voucher" type="object" string="Preview" class="oe_highlight"/>
+                    or
+                    <span attrs="{'invisible': [('state_sign', '=', 'signed')]}">
+                        <button name="action_sign_account_voucher" type="object" string="Sign" class="oe_highlight"/>
+                    </span>
+                    <span attrs="{'invisible': [('state_sign', '=', 'waiting')]}">
+                        <button name="action_edit_sign_account_voucher" type="object" string="Update Sign" class="oe_highlight"/>
+                    </span>
+                    or
+                </xpath>
+            </field>
+        </record>
+
+      </data>
+</openerp>

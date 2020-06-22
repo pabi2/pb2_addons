@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        # Cutomer Invoice Search
+        <record id="view_account_invoice_filter" model="ir.ui.view">
+            <field name="name">view.account.invoice.filter</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/group" position="inside">
+                    <filter name="group_by_state_sign" string="State Sign" context="{'group_by':'state_sign'}"/>
+                </xpath>
+                <xpath expr="//search" position="inside">
+                    <filter name="state_sign" string="Waiting Sign" domain="[('state_sign','=', 'waiting')]" help="Waiting Sign"/>
+                    <filter name="state_sign" string="Signed" domain="[('state_sign','=', 'signed')]" help="Signed"/>
+                </xpath>
+            </field>
+        </record>
+
+        # Cutomer Invoice Tree
+        <record id="invoice_tree" model="ir.ui.view">
+            <field name="name">invoice.tree</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="before">
+                    <field name="state_sign"/>
+                </xpath>
+            </field>
+        </record>
+
+        # Customer Invoice Form
+        <record id="invoice_form" model="ir.ui.view">
+            <field name="name">invoice.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/group/group[2]" position="inside">
+                    <field name="state_sign"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
