@@ -288,8 +288,14 @@ class HRExpense(models.Model):
 
     @api.multi
     def write(self, vals):
+        Budget = self.env['account.budget']
+        FiscalYear = self.env['account.fiscalyear']
         pay_to = self.mapped('pay_to')
-        if 'internal' in pay_to:
+        # not sure that support multi date
+        fiscal_id, budget_levels = \
+            Budget.get_fiscal_and_budget_level(self.date)
+        fiscal = FiscalYear.browse(fiscal_id)
+        if 'internal' in pay_to and fiscal.control_ext_charge_only:
             if len(pay_to) == 1:
                 self = self.with_context(no_create_analytic_line=True)
             else:
