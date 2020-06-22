@@ -47,6 +47,8 @@ ou.id ou_id,
 ou_partner.image partner_image,
 (SELECT ro.name FROM res_org ro
 WHERE ro.operating_unit_id = ou.id) partner_name,
+(SELECT ro.address_print_text FROM res_org ro
+WHERE ro.operating_unit_id = ou.id) address_text,
 regexp_replace(ou_partner.street, '\r|\n', ' ', 'g') as partner_street,
 ou_township.name partner_township,
 ou_district.name partner_district,
@@ -232,6 +234,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 		<fieldDescription><![CDATA[Incoterm txt]]></fieldDescription>
 	</field>
 	<field name="buyer_phone" class="java.lang.String"/>
+	<field name="address_text" class="java.lang.String"/>
 	<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 	</variable>
@@ -324,14 +327,14 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="445" y="770" width="30" height="20"/>
 				<textElement lineSpacing="Single">
 					<font pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="457" y="770" width="7" height="20"/>
@@ -403,7 +406,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font size="16" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{order_date}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{order_date}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="3" y="21" width="280" height="31"/>
@@ -505,26 +508,11 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{buyer_phone}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="2" y="44" width="257" height="64" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="2" y="44" width="313" height="222" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{tax_branch_street} == null ? "" : $F{tax_branch_street}+ ' ')
- +
-($F{tax_branch_street2} == null ? "" : $F{tax_branch_street2}+ ' ' )
- +
-($F{tax_branch_city} == null ? "" : $F{tax_branch_city}+ ' ')
-+
-($F{partner_zip} == null ? "" : $F{partner_zip})]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="2" y="73" width="320" height="22" isPrintWhenDetailOverflows="true"/>
-				<textElement lineSpacing="Single">
-					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{tax_branch_phone} != null ? "Tel: " + "+66" + ' ' + $F{tax_branch_phone}.split("-")[1] + ' ' + $F{tax_branch_phone}.split("-")[2] + ' ': "")
- +
-($F{tax_branch_fax} != null ? "Fax: " + "+66" + ' ' + $F{tax_branch_fax}.split("-")[1] + ' ' + $F{tax_branch_fax}.split("-")[2] + ' ' : "")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{address_text} == null ? "" : $F{address_text})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="331" y="47" width="208" height="40" isPrintWhenDetailOverflows="true"/>
@@ -583,15 +571,6 @@ WHERE $X{IN,po.id,PIDS}]]>
 +
 ($F{taxbranch_taxid} != null ? "Tax ID: " + $F{taxbranch_taxid} + " ": "")
 +
-($F{taxbranch_code} != null ? "branch " + $F{taxbranch_code} : "")]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="2" y="86" width="320" height="22" isPrintWhenDetailOverflows="true"/>
-				<textElement lineSpacing="Single">
-					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{taxbranch_taxid} != null ? "Tax ID: " + $F{taxbranch_taxid}+ ' ' : "")
- +
 ($F{taxbranch_code} != null ? "branch " + $F{taxbranch_code} : "")]]></textFieldExpression>
 			</textField>
 			<image>
@@ -755,7 +734,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Integer"><![CDATA[$V{row_count}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{row_count}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -824,7 +803,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Number"><![CDATA[$F{price_unit}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{price_unit}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -847,7 +826,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 								<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.Number"><![CDATA[$V{price_subtotal}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{price_subtotal}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -1136,7 +1115,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{vat}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{vat}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement x="323" y="1" width="112" height="21"/>
@@ -1157,14 +1136,14 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{sub_total}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sub_total}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="368" y="43" width="112" height="21"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{grand_total}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{grand_total}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement x="1" y="62" width="314" height="18" isPrintWhenDetailOverflows="true"/>
