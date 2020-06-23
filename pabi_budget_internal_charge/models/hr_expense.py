@@ -291,15 +291,19 @@ class HRExpense(models.Model):
         Budget = self.env['account.budget']
         FiscalYear = self.env['account.fiscalyear']
         pay_to = self.mapped('pay_to')
-        # not sure that support multi date
-        fiscal_id, budget_levels = \
-            Budget.get_fiscal_and_budget_level(self.date)
-        fiscal = FiscalYear.browse(fiscal_id)
-        if 'internal' in pay_to and fiscal.control_ext_charge_only:
-            if len(pay_to) == 1:
-                self = self.with_context(no_create_analytic_line=True)
-            else:
-                raise ValidationError(_('> 1 type of pay_to'))
+        fiscal_check = []
+        for rec in self:
+            fiscal_id, budget_levels = \
+                Budget.get_fiscal_and_budget_level(rec.date)
+            fiscal_check.append(fiscal_id)
+        # check budget 1 year
+        if len(set(fiscal_check)) == 1:
+            fiscal = FiscalYear.browse(fiscal_id)
+            if 'internal' in pay_to and fiscal.control_ext_charge_only:
+                if len(pay_to) == 1:
+                    self = self.with_context(no_create_analytic_line=True)
+                else:
+                    raise ValidationError(_('> 1 type of pay_to'))
         return super(HRExpense, self).write(vals)
 
     @api.multi
