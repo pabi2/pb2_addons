@@ -18,10 +18,20 @@ class ProductTemplate(models.Model):
         string='Legacy Ref.',
         readonly=False,
         size=10,
+        track_visibility='onchange',
     )
     valuation = fields.Selection(track_visibility='onchange',)
     cost_method = fields.Selection(track_visibility='onchange',)
     standard_price = fields.Float(track_visibility='onchange',)
+    list_price = fields.Float(track_visibility='onchange',)
+    active = fields.Boolean(track_visibility='onchange',)
+    ean13 = fields.Char(track_visibility='onchange',)
+    default_code = fields.Char(track_visibility='onchange',)
+    uom_po_id = fields.Many2one(track_visibility='onchange',)
+    warranty = fields.Float(track_visibility='onchange',)
+    sale_delay = fields.Float(track_visibility='onchange',)
+    consign_partner_id = fields.Many2one(track_visibility='onchange',)
+    consign_product = fields.Selection(track_visibility='onchange',)
 
 
 class ProductProduct(models.Model):
