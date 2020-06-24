@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-	    <record id="action_register_icash_report" model="ir.actions.act_window">
-            <field name="name">Export Pre Register</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">pabi.register.icash.report</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="view_pabi_register_icash_report_form"/>
-            <field name="target">new</field>
-        </record>
-
 		<record model="ir.ui.view" id="view_pabi_register_icash_report_form">
             <field name="name">view.pabi.register.icash.report.form</field>
             <field name="model">pabi.register.icash.report</field>
@@ -41,6 +31,16 @@
                     </footer>
                 </form>
             </field>
+        </record>
+        
+	    <record id="action_register_icash_report" model="ir.actions.act_window">
+            <field name="name">Export Pre Register</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pabi.register.icash.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_pabi_register_icash_report_form"/>
+            <field name="target">new</field>
         </record>
     </data>
 </openerp>
