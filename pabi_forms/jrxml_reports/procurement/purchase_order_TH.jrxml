@@ -504,7 +504,7 @@ WHERE $X{IN, po.id, PIDS}  and pol.active = True
 				<textElement lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{tax_branch_org} == null ? "" : $F{tax_branch_org}.split(" ")[0] + ' ' + $F{tax_branch_org}.split(" ")[1] + ' ' + $F{tax_branch_org}.split(" ")[2] + ' ' + $F{tax_branch_org}.split(" ")[3] + ' ' + $F{tax_branch_org}.split(" ")[4] + ' ' + $F{tax_branch_org}.split(" ")[5] + ' ' + $F{tax_branch_org}.split(" ")[6] + ' ' + "+66" + ' ' + $F{tax_branch_org}.split(" ")[7].split("-")[1]+ ' ' + $F{tax_branch_org}.split(" ")[7].split("-")[2] + ' ' + $F{tax_branch_org}.split(" ")[8] + ' ' + "+66" + ' ' + $F{tax_branch_org}.split(" ")[9].split("-")[1]+ ' ' + $F{tax_branch_org}.split(" ")[9].split("-")[2])]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{tax_branch_org} == null ? "" : $F{tax_branch_org})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="4" y="162" width="222" height="34" isPrintWhenDetailOverflows="true"/>
