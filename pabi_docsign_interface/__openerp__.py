@@ -17,11 +17,10 @@
     "installable": True,
     "depends": ["pabi_forms"],
     "data": [
-        # "wizard/etax_invoice_wizard.xml",
-        # "wizard/etax_update_invoice_wizard.xml",
         "views/pabi_web_config.xml",
         "views/account_invoice_view.xml",
         "views/account_voucher_view.xml",
+        "print_account_invoice/print_account_invoice_wizard.xml",
         "print_account_voucher/print_account_voucher_wizard.xml",
     ],
 }
