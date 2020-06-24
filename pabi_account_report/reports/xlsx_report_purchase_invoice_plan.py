@@ -329,7 +329,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                             and av.date_invoice <=
                                 (select fis.date_stop from account_fiscalyear fis
                                     where cast(NOW() as Date) between fis.date_start and fis.date_stop))
-                END) --* exchange_rate_kv 
+                END)
                 as amount_curr_fisyear,
                 (CASE
                     WHEN use_invoice_plan = True
@@ -352,7 +352,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                             and av.date_invoice <=
                                 (select fis.date_stop from account_fiscalyear fis
                                     where cast(NOW() + interval '1 year' as Date) between fis.date_start and fis.date_stop))
-                END) --* exchange_rate_kv 
+                END)
                 as amount_next_fisyear
              from (
                 (select
@@ -407,24 +407,6 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                          LEFT JOIN purchase_order_taxe pot ON pot.tax_id = tax.id
                      WHERE pot.ord_id = pol.id
                     ) AS taxes,
-                    ROUND((CASE
-                        WHEN cur_po.name = 'THB' THEN 1
-                        WHEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_po.id and CAST(po.date_order AS DATE) = CAST(cur_r.name AS DATE) limit 1) IS NULL 
-                        THEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_po.id and CAST(po.date_order AS DATE) > CAST(cur_r.name AS DATE) order by cur_r.name limit 1)
-                        ELSE (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_po.id and CAST(po.date_order AS DATE) = CAST(cur_r.name AS DATE) limit 1)
-                    END), 2) as exchange_rate_po,
-                    ROUND((CASE
-                        WHEN cur_kv.name = 'THB' THEN 1
-                        WHEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_kv.id and av.date_invoice = CAST(cur_r.name AS DATE) limit 1) IS NULL 
-                        THEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_kv.id and av.date_invoice  > CAST(cur_r.name AS DATE) order by cur_r.name limit 1)
-                        ELSE (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_kv.id and av.date_invoice  = CAST(cur_r.name AS DATE) limit 1)
-                    END), 2) as exchange_rate_kv,
                      wa.name as wa_number, 
                     wa.date_accept as acceptance_date,
                     wal.to_receive_qty as plan_qty,
@@ -530,24 +512,6 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                          LEFT JOIN purchase_order_taxe pot ON pot.tax_id = tax.id
                      WHERE pot.ord_id = pol.id
                     ) AS taxes,
-                    ROUND((CASE
-                        WHEN cur_po.name = 'THB' THEN 1
-                        WHEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_po.id and CAST(po.date_order AS DATE) = CAST(cur_r.name AS DATE) limit 1) IS NULL 
-                        THEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_po.id and CAST(po.date_order AS DATE) > CAST(cur_r.name AS DATE) order by cur_r.name limit 1)
-                        ELSE (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_po.id and CAST(po.date_order AS DATE) = CAST(cur_r.name AS DATE) limit 1)
-                    END), 2) as exchange_rate_po,
-                    ROUND((CASE
-                        WHEN cur_kv.name = 'THB' THEN 1
-                        WHEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_kv.id and av.date_invoice = CAST(cur_r.name AS DATE) limit 1) IS NULL 
-                        THEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_kv.id and av.date_invoice  > CAST(cur_r.name AS DATE) order by cur_r.name limit 1)
-                        ELSE (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_kv.id and av.date_invoice  = CAST(cur_r.name AS DATE) limit 1)
-                    END), 2) as exchange_rate_kv,
                      wa.name as wa_number, 
                     wa.date_accept as acceptance_date,
                     wal.to_receive_qty as plan_qty,
@@ -636,8 +600,6 @@ class ReportPurchaseInvoicePlanView(models.AbstractModel):
     fiscal_year_by_invoice_plan = fields.Char()
     currency = fields.Char()
     taxes = fields.Char()
-    exchange_rate_po = fields.Float()
-    exchange_rate_kv = fields.Float()
     wa_number = fields.Char()
     acceptance_date = fields.Date()
     plan_qty = fields.Char()
