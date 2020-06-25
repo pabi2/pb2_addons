@@ -14,12 +14,11 @@
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<property name="ireport.jasperserver.url" value="https://r-test.intra.nstda.or.th/jasperserver/"/>
 	<property name="ireport.jasperserver.user" value="api_pabi2"/>
-	<property name="ireport.jasperserver.reportUnit" value="/Reports/API/PABI2/pabi2o_test_28044_intra_nstda_or_th/pb2/report_journal_document_entry"/>
-	<property name="ireport.jasperserver.report.resource" value="/Reports/API/PABI2/pabi2o_test_28044_intra_nstda_or_th/pb2/report_journal_document_entry_files/main_jrxml"/>
+	<property name="ireport.jasperserver.reportUnit" value="/Reports/API/PABI2/pabi2o_test_28048_intra_nstda_or_th/pb2/report_journal_document_entry"/>
+	<property name="ireport.jasperserver.report.resource" value="/Reports/API/PABI2/pabi2o_test_28048_intra_nstda_or_th/pb2/report_journal_document_entry_files/main_jrxml"/>
 	<parameter name="condition" class="java.lang.String"/>
 	<parameter name="date_start" class="java.lang.String"/>
 	<parameter name="date_end" class="java.lang.String"/>
-	<parameter name="move_id" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[SELECT aml.id,
 LEFT(am.name,2) as doc_type, 
@@ -47,7 +46,7 @@ partner.display_name2 as partner_name,
 aml.charge_type as charge_type,
 product.name_template as product_name,
 ag.code as activity_group_code,
-ag.description as activity_group_name,
+ag.name as activity_group_name,
 ac.code as activity_code,
 ac.name as activity_name,
 acrpt.code as activity_rpt_code,
@@ -94,8 +93,22 @@ system_ref.name as system_origin,
 recon.name as rec_id,
 recon_partial.name as par_id,
 -- Add New
-usr.login AS validate_by,
-COALESCE(hr.full_name_th,'') AS validate_by_name,
+(case
+	when LEFT(am.name,2) = 'IA' then
+ 	(select hev.employee_code from 
+		res_users ru LEFT JOIN issi_hr_employee_view hev ON ru.login = hev.employee_code
+	    where ru.id = (select validate_user_id from interface_account_entry where id = cast(split_part(aml.document_id,',',2) as integer))
+	)
+	else usr.login
+end) AS validate_by,
+(case
+	when LEFT(am.name,2) = 'IA' then
+ 	(select hev.full_name_th from 
+		res_users ru LEFT JOIN issi_hr_employee_view hev ON ru.login = hev.employee_code
+	    where ru.id = (select validate_user_id from interface_account_entry where id = cast(split_part(aml.document_id,',',2) as integer))
+	)
+	else COALESCE(hr.full_name_th,'')
+end) AS validate_by_name,
 (case
 	when aml.section_id is not null then 'unit_base'
 	when aml.project_id is not null then 'project_base'
@@ -269,7 +282,7 @@ aml.docline_seq]]>
 	<field name="system_origin" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="system_origin"/>
 	</field>
-	<field name="rec_id" class="java.lang.Integer">
+	<field name="rec_id" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="rec_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="account_move_line"/>
 	</field>
@@ -1211,7 +1224,7 @@ aml.docline_seq]]>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e7819b12-b2e6-47dc-a0ac-7b821e50f647"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
-				<textElement verticalAlignment="Bottom">
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font size="14"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{validate_by}]]></textFieldExpression>
