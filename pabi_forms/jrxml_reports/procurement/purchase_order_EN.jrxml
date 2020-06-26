@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
-	<property name="ireport.zoom" value="1.6105100000000105"/>
+	<property name="ireport.zoom" value="1.2100000000000002"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="523"/>
+	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
@@ -594,42 +594,6 @@ WHERE $X{IN,po.id,PIDS}]]>
  +
 ($F{taxbranch_code} != null ? "branch " + $F{taxbranch_code} : "")]]></textFieldExpression>
 			</textField>
-			<image>
-				<reportElement x="405" y="4" width="74" height="47">
-					<printWhenExpression><![CDATA[$F{ou_id} == 7]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_nanotec.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="405" y="4" width="74" height="47">
-					<printWhenExpression><![CDATA[$F{ou_id} == 6]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_tmc.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="405" y="4" width="74" height="47">
-					<printWhenExpression><![CDATA[$F{ou_id} == 5]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_nectec.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="405" y="4" width="74" height="47">
-					<printWhenExpression><![CDATA[$F{ou_id} == 2]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_nstda.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="405" y="4" width="74" height="47">
-					<printWhenExpression><![CDATA[$F{ou_id} == 4]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_mtec.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="405" y="4" width="74" height="47">
-					<printWhenExpression><![CDATA[$F{ou_id} == 3]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_biotec.gif"]]></imageExpression>
-			</image>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="120" y="292" width="113" height="21" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" lineSpacing="Single">
@@ -644,6 +608,42 @@ WHERE $X{IN,po.id,PIDS}]]>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{buyer_mail}]]></textFieldExpression>
 			</textField>
+			<image>
+				<reportElement x="409" y="1" width="74" height="43">
+					<printWhenExpression><![CDATA[$F{ou_id} == 7]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_nanotec.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="409" y="1" width="74" height="43">
+					<printWhenExpression><![CDATA[$F{ou_id} == 6]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_tmc.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="409" y="1" width="74" height="43">
+					<printWhenExpression><![CDATA[$F{ou_id} == 5]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_nectec.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="409" y="1" width="74" height="43">
+					<printWhenExpression><![CDATA[$F{ou_id} == 2]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_nstda.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="409" y="1" width="74" height="43">
+					<printWhenExpression><![CDATA[$F{ou_id} == 4]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_mtec.gif"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="409" y="1" width="74" height="43">
+					<printWhenExpression><![CDATA[$F{ou_id} == 3]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_biotec.gif"]]></imageExpression>
+			</image>
 		</band>
 	</pageHeader>
 	<columnHeader>
@@ -753,7 +753,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 							<textField>
 								<reportElement x="0" y="0" width="47" height="21"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
-									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
+									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 								</textElement>
 								<textFieldExpression class="java.lang.Integer"><![CDATA[$V{row_count}]]></textFieldExpression>
 							</textField>
@@ -1166,7 +1166,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{grand_total}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="1" y="62" width="314" height="18" isPrintWhenDetailOverflows="true"/>
 				<textElement lineSpacing="Single">
 					<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
