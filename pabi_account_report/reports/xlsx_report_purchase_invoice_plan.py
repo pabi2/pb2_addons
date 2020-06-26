@@ -571,7 +571,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         invoice_plans = self._cr.dictfetchall()
         self.results = [Reports.new(line).id for line in invoice_plans]
         print 'results: '+str(self.results)
-
+ 
 
 class ReportPurchaseInvoicePlanView(models.AbstractModel):
     _name = 'report.purchase.invoice.plan.view'
