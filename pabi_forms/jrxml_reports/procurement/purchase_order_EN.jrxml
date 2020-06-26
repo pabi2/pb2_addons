@@ -212,11 +212,11 @@ WHERE $X{IN,po.id,PIDS}]]>
 	<field name="vendor_province" class="java.lang.String"/>
 	<field name="taxbranch_taxid" class="java.lang.String"/>
 	<field name="taxbranch_code" class="java.lang.String"/>
-	<field name="sub_total" class="java.math.BigDecimal"/>
-	<field name="vat" class="java.math.BigDecimal">
+	<field name="sub_total" class="java.lang.Number"/>
+	<field name="vat" class="java.lang.Number">
 		<fieldDescription><![CDATA[TIN]]></fieldDescription>
 	</field>
-	<field name="grand_total" class="java.math.BigDecimal"/>
+	<field name="grand_total" class="java.lang.Number"/>
 	<field name="amount_total_en" class="java.lang.String"/>
 	<field name="delivery_address" class="java.lang.String">
 		<fieldDescription><![CDATA[Delivery Address]]></fieldDescription>
