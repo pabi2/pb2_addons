@@ -18,3 +18,4 @@ from . import res_project
 from . import res_section
 from . import hr_expense
 from . import ir_sequence
+from . import asset_changemaster

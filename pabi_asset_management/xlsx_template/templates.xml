@@ -40,6 +40,41 @@
           }
           </field>
       </record>
+      
+      <!-- Asset Change Master -->
+      <record id="asset_changemaster_template" model="ir.attachment">
+          <field name="res_model">account.asset.changemaster</field>
+          <field name="datas"></field>
+          <field name="datas_fname">asset_changemaster.xlsx</field>
+          <field name="name">asset_changemaster.xlsx</field>
+          <field name="parent_id" eval="ref('dir_asset_action_template')"/>
+          <field name="description">
+            {
+              '__IMPORT__': {
+                  1: {
+                      '_HEAD_': {
+                          'M3': 'date',
+                      },
+                      'changemaster_ids': {
+                          'A6': 'asset_id',
+                          'B6': 'name',
+                          'C6': 'asset_brand',
+                          'D6': 'asset_model',
+                          'E6': 'asset_purchase_method_id',
+                          'F6': 'responsible_user_id',
+                          'G6': 'building_id',
+                          'H6': 'floor_id',
+                          'I6': 'room_id',
+                          'J6': 'serial_number',
+                          'K6': 'warranty_start_date',
+                          'L6': 'warranty_expire_date',
+                          'M6': 'note',
+                      }
+                  }
+              }
+          }
+          </field>
+      </record>
       <!-- Asset Transfer -->
       <record id="asset_transfer_template" model="ir.attachment">
           <field name="res_model">account.asset.transfer</field>
