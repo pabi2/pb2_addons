@@ -564,7 +564,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
             ) as new
             where po_status not in ('except_picking','except_invoice','cancel') 
                 and order_type = 'purchase_order'
-                %s
+                %s 
             order by org_id, po_fiscalyear, date_order, po_number, docline_seq, installment
         """  % (where_str))
 
