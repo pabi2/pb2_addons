@@ -148,6 +148,38 @@
                   parent="hr_expense.next_id_49"
                   sequence="100"
                   groups="pabi_budget_internal_charge.group_approve_ic_activity"/>
-
+                  
+                  
+           <!--Print Internal Charge-->       
+        <record id="view_print_internal_charge_tree" model="ir.ui.view">
+            <field name="name">view.print.internal.charge.tree</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="arch" type="xml">
+                    <field name="employee_id"/>
+                    <field name="department_id" invisible="1"/>
+                    <field name="date"/>
+                    <field name="user_id" invisible="1"/>
+                    <field name="name"/>
+                    <field name="currency_id" groups="base.group_multi_currency"/>
+                    <field name="amount" sum="Total Amount"/>
+                    <field name="state"/>
+        	</field>
+        </record>
+        
+        <record id="action_print_internal_charge" model="ir.actions.act_window">
+            <field name="name">Print Internal Charge Receipt</field>
+            <field name="res_model">hr.expense.expense</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_print_internal_charge_tree"/>
+            <!-- <field name="domain">[('user_ic_allowed', '=', False)]</field> -->
+            <field name="domain">[('pay_to', '=', 'internal')]</field>
+        </record>
+        <menuitem action="action_print_internal_charge"
+          	id="menu_print_internal_charge"
+          	name="Print Internal Charge Receipt"
+          	parent="hr_expense.next_id_49"
+          	sequence="100"
+          	groups="pabi_budget_internal_charge.group_approve_ic_activity"/>
+		
     </data>
 </openerp>

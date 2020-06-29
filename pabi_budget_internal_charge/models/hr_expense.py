@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
+from openerp.addons.l10n_th_amount_text.amount_to_text_th \
+    import amount_to_text_th
 
 
 class HRExpense(models.Model):
@@ -400,3 +402,20 @@ class HRExpenseLine(models.Model):
             inrev_activity_id = self._get_inrev_activity(vals['activity_id'])
             vals.update({'inrev_activity_id': inrev_activity_id})
         return super(HRExpenseLine, self).write(vals)
+    
+class PrintInternalCharge(models.Model):
+    _inherit = 'hr.expense.expense'
+    
+    amount_text_th = fields.Char(
+        string='Amount Text (TH)',
+        compute='_amount_to_word_th',
+    )
+    
+    @api.multi
+    def _amount_to_word_th(self):
+        amount_text = ''
+        for rec in self:
+            amount = rec.amount
+            amount_text = amount_to_text_th(amount, rec.currency_id.name)
+            rec.amount_text_th = amount_text
+        
