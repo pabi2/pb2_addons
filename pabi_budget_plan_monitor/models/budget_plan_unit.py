@@ -21,7 +21,7 @@ class BudgetPlanUnitPrevFYView(PrevFYCommon, models.Model):
     # Extra variable for this view
     _chart_view = 'unit_base'
     _ex_view_fields = ['section_id', 'document',
-                       'activity_group_id', 'cost_control_id']
+                       'activity_group_id', 'cost_control_id', 'charge_type']
     _ex_domain_fields = ['section_id']  # Each plan is by this domain of view
     _ex_active_domain = [('all_commit', '>', 0.0)]
     _filter_fy = 2  # Will the result of his view focus on prev fy only
@@ -45,6 +45,7 @@ class BudgetPlanUnitPrevFYView(PrevFYCommon, models.Model):
         string='Job Order',
         readonly=True,
     )
+    charge_type = fields.Char()
 
     @api.multi
     def _prepare_prev_fy_lines(self):
@@ -69,6 +70,7 @@ class BudgetPlanUnitPrevFYView(PrevFYCommon, models.Model):
                    'm0': rec.all_commit,
                    'next_fy_commitment': next_fy_commit,
                    'description': rec.document,
+                   'charge_type': rec.charge_type,
                    }
             plan_lines.append((0, 0, val))
         return plan_lines
