@@ -58,11 +58,19 @@ class PurchaseLineInvoice(models.TransientModel):
             acceptance = WAcceptance.browse(active_id)
             acceptance.invoice_created = \
                 invoice_ids and invoice_ids[0] or False
-            if invoice_ids and acceptance.supplier_invoice:
+            if invoice_ids:
                 invoices = self.env['account.invoice'].browse(invoice_ids)
-                invoices.write({'supplier_invoice_number':
-                                acceptance.supplier_invoice})
-                invoices.button_reset_taxes()
+                invoice_dict = {'wa_id': acceptance.id}
+                if acceptance.supplier_invoice:
+                    invoice_dict.update({
+                        'supplier_invoice_number': acceptance.supplier_invoice
+                    })
+                    invoices.write(invoice_dict)
+                    invoices.button_reset_taxes()
+                    acceptance.write({'invoice_id': invoices.id})
+                    return res
+                invoices.write(invoice_dict)
+                acceptance.write({'invoice_id': invoices.id})
         return res
 
 # Can't receive product's quantity over work acceptance's quantity

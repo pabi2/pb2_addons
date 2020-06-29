@@ -199,6 +199,31 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         res['date_receive'] = "{:%Y-%m-%d}".format(today)
         return res
 
+    @api.multi
+    def _add_wa_invoice(self, acceptance, lines):
+        self.ensure_one()
+        Invoice = self.env['account.invoice']
+        InvoiceLine = self.env['account.invoice.line']
+        Purchase = self.env['purchase.order']
+        active_ids = self._context.get('active_ids', False)
+        purchase_id = Purchase.browse(active_ids)
+        invoice_line = lines[0][2].get('inv_line_id', False)
+        # Case use invoice plan
+        if invoice_line:
+            line_id = InvoiceLine.browse(invoice_line)
+            invoice_id = line_id.invoice_id
+        else:
+            invoice_id = Invoice.search([
+                ('source_document', '=', purchase_id.name)])
+        if invoice_id:
+            # delete reference old wa
+            acceptance_invoice = acceptance.search([
+                ('invoice_id', '=', invoice_id.id)], limit=1)
+            if acceptance_invoice:
+                acceptance_invoice.invoice_id = False
+            acceptance.write({'invoice_id': invoice_id.id})
+            invoice_id.write({'wa_id': acceptance.id})
+
     @api.model
     def _prepare_acceptance(self):
         lines = []
@@ -250,6 +275,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         }
         acceptance = PWAcceptance.create(vals)
         # acceptance.write({'acceptance_line_ids': lines})
+        self._add_wa_invoice(acceptance, lines)
         acceptance._compute_total_fine()
         return acceptance
 

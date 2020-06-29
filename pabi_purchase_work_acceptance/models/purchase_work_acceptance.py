@@ -114,7 +114,7 @@ class PurchaseWorkAcceptance(models.Model):
     )
     date_action = fields.Date(
         string='Action Date',
-        related = 'order_id.contract_id.action_date'
+        related='order_id.contract_id.action_date'
     )
     partner_id = fields.Many2one(
         'res.partner',
@@ -218,6 +218,11 @@ class PurchaseWorkAcceptance(models.Model):
         string='Referred Invoices',
         readonly=True,
         help="Invoice that reference to this WA for panalty",
+    )
+    invoice_id = fields.Many2one(
+        comodel_name='account.invoice',
+        string='Invoice Ref',
+        readonly=True
     )
     installment = fields.Integer(
         string='Installment',
