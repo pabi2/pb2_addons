@@ -57,7 +57,8 @@ class account_invoice_line(osv.osv):
                                     valuation_price_unit = self.pool.get('res.currency').compute(cr, uid, company_currency, inv.currency_id.id, valuation_price_unit, context={'date': inv.date_invoice})
 
                         # if valuation_price_unit != i_line.price_unit and line['price_unit'] == i_line.price_unit and acc:
-                        if float_compare(valuation_price_unit, i_line.price_unit, precision_digits=prec) and line['price_unit'] == i_line.price_unit and acc:
-                            raise ValidationError(_("This document has price diff.Please Contact Support Team."))
+                        # if float_compare(valuation_price_unit, i_line.price_unit, precision_digits=prec) and line['price_unit'] == i_line.price_unit and acc:
+                        #     raise ValidationError(_("This document has price diff.Please Contact Support Team."))
+
                 return diff_res
         return []
