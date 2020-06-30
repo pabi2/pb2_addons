@@ -59,6 +59,9 @@ class account_invoice_line(osv.osv):
                         # if valuation_price_unit != i_line.price_unit and line['price_unit'] == i_line.price_unit and acc:
                         # if float_compare(valuation_price_unit, i_line.price_unit, precision_digits=prec) and line['price_unit'] == i_line.price_unit and acc:
                         #     raise ValidationError(_("This document has price diff.Please Contact Support Team."))
+<<<<<<< HEAD
 
+=======
+>>>>>>> acbf3a1541bb658690945b6584d5dd5b87159a86
                 return diff_res
         return []
