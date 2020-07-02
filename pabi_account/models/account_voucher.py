@@ -78,6 +78,7 @@ class AccountVoucher(models.Model):
     number_preprint = fields.Char(
         string='Preprint Number',
         size=500,
+        readonly=True,
     )
     research_type = fields.Selection(
         [('basic', 'Basic Research'),
@@ -370,7 +371,7 @@ class AccountVoucherLine(models.Model):
             move_line = rec.voucher_id.move_ids.filtered(
                 lambda l: l.account_id == income_account)
             income = calc_principal = remain_principal = 0
-            
+
             if move_line:
                 income = move_line[0].credit - move_line[0].debit
             plan = Plan.search([('move_line_id', '=', rec.move_line_id.id)])
@@ -385,7 +386,7 @@ class AccountVoucherLine(models.Model):
                     if ins.id <= plan.id:
                         remain_principal2 -= ins.calc_principal
                         a= ''
-                
+
             desc_dict = [
                 (_('{:,.2f}'.format(income) + ' บาท').rjust(50)),
                 (_('{:,.2f}'.format(calc_principal) + ' บาท').rjust(50)),

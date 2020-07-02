@@ -168,6 +168,10 @@ class IrSequencePreprint(models.Model):
         default=lambda s: s.env.user.company_id)
     use_date_range = fields.Boolean(string='Use subsequences per date_range')
     use_month_range = fields.Boolean(string='Use month range')
+    convert_to_buddhist_calendar = fields.Boolean(
+        string='Convert to Buddhist Calendar',
+        help='Convert Sequence year to B.E. display'
+    )
     date_range_ids = fields.One2many(
         'ir.sequence.date_range', 'sequence_id', string='Subsequences')
 
@@ -246,7 +250,7 @@ class IrSequencePreprint(models.Model):
         def _interpolate(s, d):
             return (s % d) if s else ''
 
-        def _interpolation_dict():
+        def _interpolation_dict(convert):
             now = range_date = effective_date = datetime.now(
                 pytz.timezone(self._context.get('tz') or 'UTC'))
             if date or self._context.get('ir_sequence_date'):
@@ -266,10 +270,21 @@ class IrSequencePreprint(models.Model):
                 res[key] = effective_date.strftime(format)
                 res['range_' + key] = range_date.strftime(format)
                 res['current_' + key] = now.strftime(format)
-
+            # Convert to Buddhist Calendar
+            if convert:
+                year_be_2_digit = str((int(res['y']) + 43) % 100)
+                year_be = str(int(res['year']) + 543)
+                res.update({
+                    'y': year_be_2_digit,
+                    'current_y': year_be_2_digit,
+                    'range_y': year_be_2_digit,
+                    'year': year_be,
+                    'current_year': year_be,
+                    'range_year': year_be,
+                })
             return res
 
-        d = _interpolation_dict()
+        d = _interpolation_dict(self.convert_to_buddhist_calendar)
         try:
             interpolated_prefix = _interpolate(self.prefix, d)
             interpolated_suffix = _interpolate(self.suffix, d)

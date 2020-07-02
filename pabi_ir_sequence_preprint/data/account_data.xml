@@ -11,6 +11,7 @@
             <field name="prefix">IVT%(year)s/%(range_month)s-</field>
             <field name="use_date_range">True</field>
             <field name="use_month_range">True</field>
+            <field name="convert_to_buddhist_calendar">True</field>
         </record>
 
         # Receipt Tax Sequence
@@ -22,6 +23,7 @@
             <field name="prefix">RT%(year)s/%(range_month)s-</field>
             <field name="use_date_range">True</field>
             <field name="use_month_range">True</field>
+            <field name="convert_to_buddhist_calendar">True</field>
         </record>
     </data>
 </openerp>
