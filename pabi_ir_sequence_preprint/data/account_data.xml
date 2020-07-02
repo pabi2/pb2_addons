@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        # Invoice Tax Sequence
+        <record id="seq_invoice_tax_preprint" model="ir.sequence.preprint">
+            <field name="name">Invoice Tax Preprint</field>
+            <field name="code">invoice.tax.preprint</field>
+            <field name="implementation">no_gap</field>
+            <field name="padding" eval="4"/>
+            <field name="prefix">IVT%(year)s/%(range_month)s-</field>
+            <field name="use_date_range">True</field>
+            <field name="use_month_range">True</field>
+        </record>
+
+        # Receipt Tax Sequence
+        <record id="seq_receipt_tax_preprint" model="ir.sequence.preprint">
+            <field name="name">Receipt Tax Preprint</field>
+            <field name="code">receipt.tax.preprint</field>
+            <field name="implementation">no_gap</field>
+            <field name="padding" eval="4"/>
+            <field name="prefix">RT%(year)s/%(range_month)s-</field>
+            <field name="use_date_range">True</field>
+            <field name="use_month_range">True</field>
+        </record>
+    </data>
+</openerp>

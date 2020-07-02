@@ -40,6 +40,9 @@ class InvoiceVoucherTaxDetail(object):
                                         doc_date,
                                         sign * tax.base,
                                         sign * tax.amount)
+                # For update sequence preprint
+                vals = TaxDetail._create_sequence_preprint(
+                    invoice_tax_id, voucher_tax_id, doc, vals, doc_date)
                 detail = TaxDetail.search(domain)
                 if detail:
                     detail.write(vals)
@@ -47,8 +50,8 @@ class InvoiceVoucherTaxDetail(object):
                     TaxDetail.create(vals)
 
     @api.multi
-    def _check_tax_detail_info(self):                                          
-        for doc in self:                
+    def _check_tax_detail_info(self):
+        for doc in self:
             taxes = doc.tax_line.filtered(lambda l:
                                           l.tax_code_type == 'normal')
             for tax in taxes:
@@ -80,9 +83,9 @@ class InvoiceVoucherTaxDetail(object):
                     continue
                 for detail in tax.detail_ids:
                     detail._set_next_sequence(date_doc)
-                    
+
     @api.multi
-    def _check_income_tax_from(self):                                          
+    def _check_income_tax_from(self):
         for linetax in self.invoice_line:
             for taxid in linetax.invoice_line_tax_id._ids:
                 taxlineid = self.env['account.tax'].search([('id','=',taxid)]).description
@@ -91,8 +94,8 @@ class InvoiceVoucherTaxDetail(object):
                         continue
                     else:
                         raise ValidationError(
-                                _('- WHTP1 must be related with PND3 only.')) 
-                elif taxlineid == 'WHTC1': 
+                                _('- WHTP1 must be related with PND3 only.'))
+                elif taxlineid == 'WHTC1':
                     if self.income_tax_form == 'pnd53' and taxlineid == 'WHTC1':
                         continue
                     elif self.income_tax_form == 'pnd54' and taxlineid == 'WHTC1':
@@ -101,7 +104,7 @@ class InvoiceVoucherTaxDetail(object):
                          raise ValidationError(
                                 _('- WHTC1 must be related with PND53 or PND54 only.'))
         return True
-#////////////////////////////////////////////////////////////////////////////////////////////////                   
+#////////////////////////////////////////////////////////////////////////////////////////////////
 
 class AccountTaxDetail(models.Model):
     _name = 'account.tax.detail'
@@ -330,6 +333,18 @@ class AccountTaxDetail(models.Model):
         doc_tax_id = invoice_tax_id or voucher_tax_id
         tax_code = self.env[model].browse(doc_tax_id).tax_code_id
         vals.update({'tax_id': self._get_tax_id(tax_code)})
+        return vals
+
+    @api.model
+    def _create_sequence_preprint(self, invoice_tax_id, voucher_tax_id, doc,
+                                  vals, invoice_date):
+        # Generate sequence preprint
+        seq_name = invoice_tax_id and 'invoice.tax.preprint'\
+            or 'receipt.tax.preprint'
+        preprint_number = self.env['ir.sequence.preprint'].next_by_code(
+            seq_name, sequence_date=invoice_date)
+        vals['invoice_number'] = preprint_number
+        doc.update({'number_preprint': preprint_number})
         return vals
 
     @api.multi
