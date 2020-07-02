@@ -181,8 +181,17 @@ class AccountJournal(models.Model):
         string='Account for Expense Commitment',
         domain=[('type', '!=', 'view')]
     )
+    
+    @api.model
+    def _get_default_journal(self):
+        res = self.env['account.analytic.journal'].search([('name','=','General Budget')])
+        return res and res[0] or False
 
-
+    analytic_journal_id = fields.Many2one(
+        default= _get_default_journal,
+    )
+    
+    
 class AccountAccount(models.Model):
     _inherit = 'account.account'
 
