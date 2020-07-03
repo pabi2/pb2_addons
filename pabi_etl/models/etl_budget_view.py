@@ -501,8 +501,10 @@ class ETLISSIBudgetProjectQuery(models.Model):
                        FROM issi_budget_project_monitor_view bb
                       WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::double precision) AS sum_actual_external,
                 COALESCE(( SELECT bb.plan_expense_internal
-                       FROM issi_budget_project_monitor_view bb
-                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::double precision) AS plan_expense_internal,
+                        FROM issi_budget_project_monitor_view bb
+                         WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), COALESCE(( SELECT pp.plan_expense_internal
+                        FROM issi_budget_project_plan_view pp
+                    WHERE ((yy.project_id = pp.project_id) AND (yy.fiscalyear_id = pp.fiscalyear_id))), (0)::double precision)) AS plan_expense_internal,
                 COALESCE(( SELECT bb.sum_actual_internal
                        FROM issi_budget_project_monitor_view bb
                       WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::numeric) AS sum_actual_internal,
@@ -516,7 +518,9 @@ class ETLISSIBudgetProjectQuery(models.Model):
                       WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::numeric) AS sum_revenue_external,
                 COALESCE(( SELECT bb.plan_revenue_internal
                        FROM issi_budget_project_monitor_view bb
-                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::double precision) AS plan_revenue_internal,
+                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), COALESCE(( SELECT pp.plan_revenue_internal
+                       FROM issi_budget_project_plan_view pp
+                      WHERE ((yy.project_id = pp.project_id) AND (yy.fiscalyear_id = pp.fiscalyear_id))), (0)::double precision)) AS plan_revenue_internal,
                 COALESCE(( SELECT bb.sum_revenue_internal
                        FROM issi_budget_project_monitor_view bb
                       WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::numeric) AS sum_revenue_internal,
