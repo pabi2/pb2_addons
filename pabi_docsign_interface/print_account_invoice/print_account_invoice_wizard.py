@@ -90,13 +90,10 @@ class PrintAccountInvoiceWizard(models.TransientModel):
                 }) for line in invoice.invoice_line]
             # create invoice printing document
             invoice_dict.append({
-                # system
-                'system_origin_name': 'pabi2',
-                'origin_invoice': origin,  # d/c note only
-                'user_sign': self.env.user.name,
-                'doctype': doctype,
                 # header
-                'number': invoice.number,
+                'doctype': doctype,
+                'lang_form': self.lang,
+                'number': invoice.number_preprint,
                 'customer_code': invoice.partner_id.search_key,
                 'customer_name': invoice.partner_id.name,
                 'seller_name': seller.name,
@@ -136,6 +133,12 @@ class PrintAccountInvoiceWizard(models.TransientModel):
                 'amount_untaxed': invoice.amount_untaxed,
                 'amount_tax': invoice.amount_tax,
                 'amount_total': invoice.amount_total,
+                # origin
+                'system_origin_name': 'pabi2',
+                'system_origin_number': invoice.number,
+                'origin_invoice': origin,  # d/c note only
+                'user_sign': self.env.user.name,
+                'approved_by': self.env.user.name,  # TODO: Waiting new pg.
                 # lines
                 'printing_lines': line_ids,
             })

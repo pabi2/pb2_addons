@@ -74,6 +74,8 @@ class PrintAccountVoucherWizard(models.TransientModel):
             if self.reason_receipt_update == 'RCTC99':
                 reason_text = self.reason_text
         elif self.doc_print in TAX_RECEIPT:
+            if voucher_ids.filtered(lambda l: not l.number_preprint):
+                raise ValidationError(_("Pre-print Number is null."))
             doctype = 'T03'
             reason = self.reason_tax_receipt_update
             if self.reason_tax_receipt_update == 'TIVC99':
@@ -104,12 +106,10 @@ class PrintAccountVoucherWizard(models.TransientModel):
                 amount_total += invoice_id.amount_total
             # create invoice printing document
             voucher_dict.append({
-                # system
-                'system_origin_name': 'pabi2',
-                'user_sign': self.env.user.name,
-                'doctype': doctype,
                 # header
-                'number': voucher.number,
+                'doctype': doctype,
+                'lang_form': self.lang,
+                'number': voucher.number_preprint,
                 'customer_code': voucher.partner_id.search_key,
                 'customer_name': voucher.partner_id.name,
                 'seller_name': seller.name,
@@ -133,7 +133,7 @@ class PrintAccountVoucherWizard(models.TransientModel):
                 'customer_email': voucher.partner_id.email,
                 'customer_taxbranch_code': voucher.partner_id.taxbranch,
                 'customer_taxbranch_name': 'สำนักงานใหญ่',
-                # # seller information
+                # seller information
                 'seller_street': seller.street,
                 'seller_street2': seller.street2,
                 'seller_city': '',
@@ -149,6 +149,21 @@ class PrintAccountVoucherWizard(models.TransientModel):
                 'amount_untaxed': amount_untaxed,
                 'amount_tax': amount_tax,
                 'amount_total': amount_total,
+                # origin
+                'system_origin_name': 'pabi2',
+                'system_origin_number': voucher.number,
+                'user_sign': self.env.user.name,
+                'approved_by': self.env.user.name,  # TODO: Waiting new pg.
+                # payment method
+                'payment_method': voucher.receipt_type,
+                'check_no': voucher.number_cheque,
+                'check_date':
+                voucher.number_cheque and voucher.date_cheque or False,
+                'bank_name':
+                voucher.number_cheque and voucher.bank_cheque or False,
+                'bank_branch':
+                voucher.number_cheque and voucher.bank_branch or False,
+                'rdx_no': '',  # TODO: Waiting RDX
                 # lines
                 'printing_lines': line_ids,
             })
