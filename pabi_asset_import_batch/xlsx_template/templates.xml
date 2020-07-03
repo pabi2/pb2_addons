@@ -85,7 +85,7 @@
 	                        '_HEAD_': {
 	                        },
 	                        'results': {
-	                            'A3': 'code${value or ""}#{number_format=text}',
+	                            'A3': 'code',
 	                            'B3': 'code2${value or ""}#{number_format=text}',
 	                            'C3': 'name${value or ""}#{number_format=text}',
 	                            'D3': 'status${value and value.name or ""}#{number_format=text}',
@@ -116,16 +116,20 @@
 	                            'AC3': 'serial_number${value or ""}#{number_format=text}',
 	                            'AD3': 'warranty_start_date${value or ""}#{number_format=date}',
 	                            'AE3': 'warranty_expire_date${value or ""}#{number_format=date}',
-	                            'AF3': 'code${value or ""}#{number_format=text}',
+                            	'AF3': 'note${value or ""}#{number_format=text}',
 	                            'AG3': 'method_period${value or 0}#{number_format=text}',
-	                            'AH3': 'days_calc${value or ""}#{number_format=date}',
+	                            'AH3': 'days_calc${value or ""}#{number_format=text}',
 	                            'AI3': 'prorata${value or ""}#{number_format=text}',
+	                            # depreciation_lines
+	                            'AJ3': 'depreciation4${value or ""}#{number_format=date}',
+                            	'AK3': 'depreciation2${value or ""}#{number_format=text}',
+                            	'AL3': 'depreciation3${value or ""}#{number_format=text}',
+                            	'AM3': 'depreciation1${value or ""}#{number_format=text}',
 	                        }
 	                    }
 	                }
 	            }
           </field>
         </record>
-
     </data>
 </openerp>
