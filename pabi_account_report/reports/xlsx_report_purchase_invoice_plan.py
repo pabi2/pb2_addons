@@ -297,9 +297,9 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         self._cr.execute("""
             select *,
                 CASE 
-                    WHEN use_invoice_plan = True 
+                    WHEN new.use_invoice_plan = True 
                         THEN (select count(*) from purchase_invoice_plan pip
-                            where pip.order_id = purchase_id
+                            where pip.order_id = new.purchase_id
                                 and pip.installment is not null
                             )
                     ELSE (select count(*) from account_invoice av
@@ -307,11 +307,11 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                         where pi_r.purchase_id = new.purchase_id and av.state <> 'cancel'
                         )
                 END as no_of_installment,
-                (select id from account_period where date_order between date_start and date_stop limit 1) as period_po_id,
+                (select id from account_period where new.date_order between date_start and date_stop limit 1) as period_po_id,
                 (CASE
-                    WHEN use_invoice_plan = True
+                    WHEN new.use_invoice_plan = True
                         THEN (select sum(pip.invoice_amount) from purchase_invoice_plan pip
-                             where pip.order_id = purchase_id and pip.state = 'draft'
+                             where pip.order_id = new.purchase_id and pip.state = 'draft'
                                 and pip.date_invoice >=
                                     (select fis.date_start from account_fiscalyear fis
                                         where cast(NOW() as Date) between fis.date_start and fis.date_stop)
@@ -332,9 +332,9 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                 END)
                 as amount_curr_fisyear,
                 (CASE
-                    WHEN use_invoice_plan = True
+                    WHEN new.use_invoice_plan = True
                         THEN (select sum(pip.invoice_amount) from purchase_invoice_plan pip
-                             where pip.order_id = purchase_id and pip.state = 'draft'
+                             where pip.order_id = new.purchase_id and pip.state = 'draft'
                                 and pip.date_invoice >=
                                     (select fis.date_start from account_fiscalyear fis
                                         where cast(NOW() + interval '1 year' as Date) between fis.date_start and fis.date_stop)
@@ -611,3 +611,14 @@ class ReportPurchaseInvoicePlanView(models.AbstractModel):
     no_of_installment = fields.Integer()
     amount_curr_fisyear = fields.Float()
     amount_next_fisyear = fields.Float()
+    amount_curr_fisyear_local = fields.Float(compute='_compute_amount_local')
+    amount_next_fisyear_local = fields.Float(compute='_compute_amount_local')
+
+    @api.multi
+    @api.depends('amount_curr_fisyear','amount_next_fisyear')
+    def _compute_amount_local(self):
+        for rec in self:
+            if rec.amount_curr_fisyear:
+                rec.amount_curr_fisyear_local = rec.amount_curr_fisyear * rec.purchase_id.currency_rate
+            if rec.amount_next_fisyear:
+                rec.amount_next_fisyear_local = rec.amount_next_fisyear * rec.purchase_id.currency_rate
