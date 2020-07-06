@@ -80,6 +80,8 @@ class PrintAccountVoucherWizard(models.TransientModel):
             reason = self.reason_tax_receipt_update
             if self.reason_tax_receipt_update == 'TIVC99':
                 reason_text = self.reason_text
+        else:
+            raise ValidationError(_("This Form can't sign."))
         for voucher in voucher_ids:
             amount_untaxed = 0.0
             amount_tax = 0.0
@@ -104,17 +106,23 @@ class PrintAccountVoucherWizard(models.TransientModel):
                 amount_untaxed += invoice_id.amount_untaxed
                 amount_tax += invoice_id.amount_tax
                 amount_total += invoice_id.amount_total
+            # payment diff
+            diff_line_ids = [(0, 0, {
+                'note': diff.note,
+                'amount': diff.amount,
+            }) for diff in voucher.multiple_reconcile_ids]
             # create invoice printing document
             voucher_dict.append({
                 # header
                 'doctype': doctype,
+                'docform': self.doc_print,
                 'lang_form': self.lang,
                 'number': voucher.number_preprint,
                 'customer_code': voucher.partner_id.search_key,
                 'customer_name': voucher.partner_id.name,
                 'seller_name': seller.name,
                 'currency': voucher.currency_id.name,
-                'date_document': voucher.date,  # document create date
+                'date_document': voucher.date_document,
                 'operating_unit': voucher.operating_unit_id.name,
                 'purpose_code': reason,
                 'purpose_reason_other': reason_text,
@@ -166,6 +174,7 @@ class PrintAccountVoucherWizard(models.TransientModel):
                 'rdx_no': '',  # TODO: Waiting RDX
                 # lines
                 'printing_lines': line_ids,
+                'payment_diff_lines': diff_line_ids,
             })
         return voucher_dict
 
