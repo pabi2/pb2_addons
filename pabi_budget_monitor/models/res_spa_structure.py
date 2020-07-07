@@ -103,6 +103,7 @@ class ResFunctionalArea(models.Model):
         string='Functional Area Monitor',
         domain=[('budget_method', '=', 'revenue')],
         readonly=True,
+
     )
     monitor_expense_ids = fields.One2many(
         'res.functional.area.monitor.view', 'functional_area_id',
@@ -110,6 +111,15 @@ class ResFunctionalArea(models.Model):
         domain=[('budget_method', '=', 'expense')],
         readonly=True,
     )
+
+    @api.multi
+    def action_open_budget_monitor_functional(self):
+        self.ensure_one()
+        action = self.env.ref(
+            'pabi_budget_monitor.action_budget_monitor_functional_view')
+        result = action.read()[0]
+        result.update({'res_id': self.id})
+        return result
 
 
 class ResProgramGroup(models.Model):
@@ -133,6 +143,15 @@ class ResProgramGroup(models.Model):
         readonly=True,
     )
 
+    @api.multi
+    def action_open_budget_monitor_program_group(self):
+        self.ensure_one()
+        action = self.env.ref(
+            'pabi_budget_monitor.action_budget_monitor_program_group_view')
+        result = action.read()[0]
+        result.update({'res_id': self.id})
+        return result
+
 
 class ResProgram(models.Model):
     _inherit = 'res.program'
@@ -155,6 +174,15 @@ class ResProgram(models.Model):
         readonly=True,
     )
 
+    @api.multi
+    def action_open_budget_monitor_program(self):
+        self.ensure_one()
+        action = self.env.ref(
+            'pabi_budget_monitor.action_budget_monitor_program_view')
+        result = action.read()[0]
+        result.update({'res_id': self.id})
+        return result
+
 
 class ResProjectGroup(models.Model):
     _inherit = 'res.project.group'
@@ -176,6 +204,15 @@ class ResProjectGroup(models.Model):
         domain=[('budget_method', '=', 'expense')],
         readonly=True,
     )
+
+    @api.multi
+    def action_open_budget_monitor_project_group(self):
+        self.ensure_one()
+        action = self.env.ref(
+            'pabi_budget_monitor.action_budget_monitor_project_group_view')
+        result = action.read()[0]
+        result.update({'res_id': self.id})
+        return result
 
 
 class ResProject(models.Model):

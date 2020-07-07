@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, models
+from openerp import fields, models, api
 
 
 class ResOrg(models.Model):
@@ -23,6 +23,15 @@ class ResOrg(models.Model):
         readonly=True,
     )
 
+    @api.multi
+    def action_open_budget_monitor_org(self):
+        self.ensure_one()
+        action = self.env.ref(
+            'pabi_budget_monitor.action_budget_monitor_org_view')
+        result = action.read()[0]
+        result.update({'res_id': self.id})
+        return result
+
 
 class ResSector(models.Model):
     _inherit = 'res.sector'
@@ -44,6 +53,15 @@ class ResSector(models.Model):
         domain=[('budget_method', '=', 'expense')],
         readonly=True,
     )
+
+    @api.multi
+    def action_open_budget_monitor_sector(self):
+        self.ensure_one()
+        action = self.env.ref(
+            'pabi_budget_monitor.action_budget_monitor_sector_view')
+        result = action.read()[0]
+        result.update({'res_id': self.id})
+        return result
 
 
 class ResSubsector(models.Model):
@@ -67,6 +85,15 @@ class ResSubsector(models.Model):
         readonly=True,
     )
 
+    @api.multi
+    def action_open_budget_monitor_subsector(self):
+        self.ensure_one()
+        action = self.env.ref(
+            'pabi_budget_monitor.action_budget_monitor_subsector_view')
+        result = action.read()[0]
+        result.update({'res_id': self.id})
+        return result
+
 
 class ResDivision(models.Model):
     _inherit = 'res.division'
@@ -89,6 +116,15 @@ class ResDivision(models.Model):
         readonly=True,
     )
 
+    @api.multi
+    def action_open_budget_monitor_division(self):
+        self.ensure_one()
+        action = self.env.ref(
+            'pabi_budget_monitor.action_budget_monitor_division_view')
+        result = action.read()[0]
+        result.update({'res_id': self.id})
+        return result
+
 
 class ResSection(models.Model):
     _inherit = 'res.section'
@@ -110,10 +146,19 @@ class ResSection(models.Model):
         domain=[('budget_method', '=', 'expense')],
         readonly=True,
     )
-    job_order_ids= fields.Many2many(
+    job_order_ids = fields.Many2many(
         'cost.control',
         string='Job Order',
     )
+
+    @api.multi
+    def action_open_budget_monitor_section(self):
+        self.ensure_one()
+        action = self.env.ref(
+            'pabi_budget_monitor.action_budget_monitor_section_view')
+        result = action.read()[0]
+        result.update({'res_id': self.id})
+        return result
 
 
 class ResCostcenter(models.Model):
@@ -136,3 +181,12 @@ class ResCostcenter(models.Model):
         domain=[('budget_method', '=', 'expense')],
         readonly=True,
     )
+
+    @api.multi
+    def action_open_budget_monitor_costcenter(self):
+        self.ensure_one()
+        action = self.env.ref(
+            'pabi_budget_monitor.action_budget_monitor_costcenter_view')
+        result = action.read()[0]
+        result.update({'res_id': self.id})
+        return result
