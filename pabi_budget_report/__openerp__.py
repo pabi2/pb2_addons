@@ -31,6 +31,7 @@
         'reports/xlsx_report_budget_summary.xml',
         'xlsx_template/templates.xml',
         'xlsx_template/load_template.xml',
+        'reports/menu_account_report.xml',
     ],
     'demo': [
     ],
