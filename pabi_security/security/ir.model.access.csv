@@ -2,7 +2,7 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 "access_pabi_security_group_erp_manager","pabi_security group_erp_manager","model_pabi_security","base.group_erp_manager",1,1,1,1
 "access_pabi_security_line_group_erp_manager","pabi_security_line group_erp_manager","model_pabi_security_line","base.group_erp_manager",1,1,1,1
 
-"oia_account.invoice","oia_account.invoice","model_account_invoice","group_pabi_oia",1,0,0,0
+"oia_account.invoice","oia_account.invoice","account.model_account_invoice","group_pabi_oia",1,0,0,0
 "oia_account.invoice.tax","oia_account.invoice.tax","model_account_invoice_tax","group_pabi_oia",1,0,0,0
 "oia_account.move.line","oia_account.move.line","model_account_move_line","group_pabi_oia",1,0,0,0
 "oia_account.move","oia_account.move","model_account_move","group_pabi_oia",1,0,0,0
