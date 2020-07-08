@@ -15,16 +15,8 @@ This module allow easy management of security for each user.
     'depends': [
         'meta_groups',
         'pabi_utils',
-        'account',
-        'account_voucher',
         'base',
-        'sale',
         'pabi_readonly_group',
-        'l10n_th_account_deduction',
-        'account_bank_receipt',
-        'account_bank_receipt_deduction',
-        'pabi_budget_plan',
-        'pabi_bank_statement_reconcile',
     ],
     'data': [
         'security/pabi_security_group.xml',
