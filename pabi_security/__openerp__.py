@@ -15,6 +15,7 @@ This module allow easy management of security for each user.
     'depends': [
         'meta_groups',
         'pabi_utils',
+        'account',
         'base',
         'sale',
         'pabi_readonly_group',
