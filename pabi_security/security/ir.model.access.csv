@@ -36,7 +36,7 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 "oia_account_subscription","oia_account_subscription","account.model_account_subscription","group_pabi_oia",1,0,0,0
 "oia_account_model_type","oia_account_model_type","account_subscription_enhanced.model_account_model_type","group_pabi_oia",1,0,0,0
 "oia_account_model","oia_account_model","account_subscription_enhanced.model_account_model","group_pabi_oia",1,0,0,0
-"oia_pabi_asset_depre_batch","oia_pabi_asset_depre_batch","pabi_action_asset_compute.model_pabi_asset_depre_batch","group_pabi_oia",1,0,0,0
+"oia_pabi_asset_depre_batch","oia_pabi_asset_depre_batch","pabi_async_process.model_pabi_asset_depre_batch","group_pabi_oia",1,0,0,0
 "oia_pabi_asset_depre_batch_summary","oia_pabi_asset_depre_batch_summary","pabi_action_asset_compute.model_pabi_asset_depre_batch_summary","group_pabi_oia",1,0,0,0
 "oia_account_model_line","oia_account_model_line","account.model_account_model_line","group_pabi_oia",1,0,0,0
 "oia_afr","oia_afr","account_financial_report.model_afr","group_pabi_oia",1,0,0,0
