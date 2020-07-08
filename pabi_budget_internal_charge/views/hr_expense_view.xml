@@ -154,6 +154,7 @@
         <record id="view_print_internal_charge_tree" model="ir.ui.view">
             <field name="name">view.print.internal.charge.tree</field>
             <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense.view_expenses_tree"/>
             <field name="arch" type="xml">
                     <field name="employee_id"/>
                     <field name="department_id" invisible="1"/>
@@ -169,9 +170,7 @@
         <record id="action_print_internal_charge" model="ir.actions.act_window">
             <field name="name">Print Internal Charge Receipt</field>
             <field name="res_model">hr.expense.expense</field>
-            <field name="view_type">form</field>
             <field name="view_id" ref="view_print_internal_charge_tree"/>
-            <!-- <field name="domain">[('user_ic_allowed', '=', False)]</field> -->
             <field name="domain">[('pay_to', '=', 'internal')]</field>
         </record>
         <menuitem action="action_print_internal_charge"
