@@ -56,7 +56,7 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 "oia_account_asset_import_batch","oia_account_asset_import_batch","pabi_asset_import_batch.model_account_asset_import_batch","group_pabi_oia",1,0,0,0
 "oia_account_asset_removal","oia_account_asset_removal","pabi_asset_management.model_account_asset_removal","group_pabi_oia",1,0,0,0
 "oia_account_asset_transfer","oia_account_asset_transfer","pabi_asset_management.model_account_asset_transfer","group_pabi_oia",1,0,0,0
-"oia_account_asset_changeowner_line","oia_account_asset_changeowner_line","pabi_asset_management..model_account_asset_changeowner_line","group_pabi_oia",1,0,0,0
+"oia_account_asset_changeowner_line","oia_account_asset_changeowner_line","pabi_asset_management.model_account_asset_changeowner_line","group_pabi_oia",1,0,0,0
 "oia_account_asset_changeowner","oia_account_asset_changeowner","pabi_asset_management.model_account_asset_changeowner","group_pabi_oia",1,0,0,0
 "oia_account_asset_request_line","oia_account_asset_request_line","pabi_asset_management.model_account_asset_request_line","group_pabi_oia",1,0,0,0
 "oia_account_asset_request","oia_account_asset_request","pabi_asset_management.model_account_asset_request","group_pabi_oia",1,0,0,0
