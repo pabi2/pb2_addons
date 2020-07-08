@@ -9,7 +9,7 @@
             <field name="category_id" ref="pabi_security"/>
 	        <field name="implied_ids" 
 	        	eval="[(4, ref('base.group_user')),
-	        			(4, ref('sale.group_sale_salesman')),
+	        			(4, ref('base.group_sale_salesman')),
 	        			(4, ref('pabi_readonly_group.group_readonly_account_move')),
 	        			(4, ref('pabi_readonly_group.group_readonly_account_move_line')),
 	        			(4, ref('pabi_readonly_group.group_readonly_account_budget')),
