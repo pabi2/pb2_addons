@@ -3,20 +3,20 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 "access_pabi_security_line_group_erp_manager","pabi_security_line group_erp_manager","model_pabi_security_line","base.group_erp_manager",1,1,1,1
 
 "oia_account.invoice","oia_account.invoice","account.model_account_invoice","group_pabi_oia",1,0,0,0
-"oia_account.invoice.tax","oia_account.invoice.tax","model_account_invoice_tax","group_pabi_oia",1,0,0,0
-"oia_account.move.line","oia_account.move.line","model_account_move_line","group_pabi_oia",1,0,0,0
-"oia_account.move","oia_account.move","model_account_move","group_pabi_oia",1,0,0,0
-"oia_account.move.reconcile","oia_account.move.reconcile","model_account_move_reconcile","group_pabi_oia",1,0,0,0
-"oia_account.voucher","oia_account.voucher","model_account_voucher","group_pabi_oia",1,0,0,0
-"oia_account.voucher.line","oia_account.voucher.line","model_account_voucher_line","group_pabi_oia",1,0,0,0
-"oia_account.voucher.multiple.reconcile","oia_account.voucher.multiple.reconcile","model_account_voucher_multiple_reconcile","group_pabi_oia",1,0,0,0
-"oia_account.wht.cert","oia_account.wht.cert","model_account_wht_cert","group_pabi_oia",1,0,0,0
-"oia_account.invoice.line","oia_account.invoice.line","model_account_invoice_line","group_pabi_oia",1,0,0,0
-"oia_account.bank.receipt","oia_account.bank.receipt","model_account_bank_receipt","group_pabi_oia",1,0,0,0
-"oia_account.bank.receipt.multiple.reconcile","oia_account.bank.receipt.multiple.reconcile","model_account_bank_receipt_multiple_reconcile","group_pabi_oia",1,0,0,0
-"oia_budget.allocation","oia_budget.allocation","model_budget_allocation","group_pabi_oia",1,0,0,0
-"oia_pabi.bank.statement.import","oia_pabi.bank.statement.import","model_pabi_bank_statement_import","group_pabi_oia",1,0,0,0
-"oia_cheque.lot","oia_cheque.lot","model_cheque_lot","group_pabi_oia",1,0,0,0
+"oia_account.invoice.tax","oia_account.invoice.tax","account.model_account_invoice_tax","group_pabi_oia",1,0,0,0
+"oia_account.move.line","oia_account.move.line","account.model_account_move_line","group_pabi_oia",1,0,0,0
+"oia_account.move","oia_account.move","account.model_account_move","group_pabi_oia",1,0,0,0
+"oia_account.move.reconcile","oia_account.move.reconcile","account.model_account_move_reconcile","group_pabi_oia",1,0,0,0
+"oia_account.voucher","oia_account.voucher","account_voucher.model_account_voucher","group_pabi_oia",1,0,0,0
+"oia_account.voucher.line","oia_account.voucher.line","account_voucher.model_account_voucher_line","group_pabi_oia",1,0,0,0
+"oia_account.voucher.multiple.reconcile","oia_account.voucher.multiple.reconcile","l10n_th_account_deduction.model_account_voucher_multiple_reconcile","group_pabi_oia",1,0,0,0
+"oia_account.wht.cert","oia_account.wht.cert","l10n_th_account.model_account_wht_cert","group_pabi_oia",1,0,0,0
+"oia_account.invoice.line","oia_account.invoice.line","account.model_account_invoice_line","group_pabi_oia",1,0,0,0
+"oia_account.bank.receipt","oia_account.bank.receipt","account_bank_receipt.model_account_bank_receipt","group_pabi_oia",1,0,0,0
+"oia_account.bank.receipt.multiple.reconcile","oia_account.bank.receipt.multiple.reconcile","account_bank_receipt_deduction.model_account_bank_receipt_multiple_reconcile","group_pabi_oia",1,0,0,0
+"oia_budget.allocation","oia_budget.allocation","pabi_budget_plan.model_budget_allocation","group_pabi_oia",1,0,0,0
+"oia_pabi.bank.statement.import","oia_pabi.bank.statement.import","pabi_bank_statement_reconcile.model_pabi_bank_statement_import","group_pabi_oia",1,0,0,0
+"oia_cheque.lot","oia_cheque.lot","payment_export.model_cheque_lot","group_pabi_oia",1,0,0,0
 "oia_cheque.register","oia_cheque.register","model_cheque_register","group_pabi_oia",1,0,0,0
 "oia_payment.export","oia_payment.export","model_payment_export","group_pabi_oia",1,0,0,0
 "oia_payment.export.line","oia_payment.export.line","model_payment_export_line","group_pabi_oia",1,0,0,0
