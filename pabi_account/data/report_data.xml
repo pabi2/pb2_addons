@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+
+		<!-- Customer Receipt Voucher -->
+		<!-- EN -->
+		<record id="customer_receipt_voucher_form_en" model="ir.actions.report.xml">
+			<field name="string">Customer Receipt Voucher (EN)</field>
+			<field name="name">Customer Receipt Voucher (EN)</field>
+			<field name="report_name">customer.receipt.voucher.form.en</field>
+			<field name="force_locale">en_US</field>
+			<field name="auto">True</field>
+			<field name="model">account.voucher</field>
+			<field name="jasper_model_id" ref="account_voucher.model_account_voucher"/>
+			<field name="report_rml">pabi_forms/jrxml_reports/account/customer_receipt_voucher.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+			<field name="download_filename">${o.number}.pdf</field>
+		</record>
+		<record id="customer_receipt_voucher_form_en_values" model="ir.values">
+		<field name="name">Customer Receipt Voucher (EN)</field>
+			<field name="model">account.voucher</field>
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(customer_receipt_voucher_form_en)"/>
+		</record>
+		<!-- TH -->
+		<record id="customer_receipt_voucher_form_th" model="ir.actions.report.xml">
+			<field name="string">Customer Receipt Voucher (TH)</field>
+			<field name="name">Customer Receipt Voucher (TH)</field>
+			<field name="report_name">customer.receipt.voucher.form.th</field>
+			<field name="force_locale">th_TH</field>
+			<field name="auto">True</field>
+			<field name="model">account.voucher</field>
+			<field name="jasper_model_id" ref="account_voucher.model_account_voucher"/>
+			<field name="report_rml">pabi_forms/jrxml_reports/account/customer_receipt_voucher.jrxml</field>
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">1</field>
+			<field name="download_filename">${o.number}.pdf</field>
+		</record>
+		<record id="customer_receipt_voucher_form_th_values" model="ir.values">
+		<field name="name">Customer Receipt Voucher (TH)</field>
+			<field name="model">account.voucher</field>
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(customer_receipt_voucher_form_th)"/>
+		</record>
+
+	</data>
+</openerp>

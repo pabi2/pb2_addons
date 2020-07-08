@@ -2,6 +2,7 @@
 from openerp import models, api, fields, _
 import openerp.addons.decimal_precision as dp
 from openerp.exceptions import ValidationError
+from datetime import datetime
 from openerp.addons.l10n_th_account.models.res_partner \
     import INCOME_TAX_FORM
 
@@ -115,6 +116,10 @@ class AccountVoucher(models.Model):
     )
     cancel_date = fields.Date(
         string='Cancel Posting Date',
+    )
+    date_sent_mail = fields.Date(
+        stirng='Date sent mail',
+        readonly=True,
     )
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
                         'Preprint Number must be unique!')]
@@ -327,6 +332,58 @@ class AccountVoucher(models.Model):
                         ('move_id', 'in', rec_move_ids)])
                     rec_lines.reconcile()
         super(AccountVoucher, self).cancel_voucher()
+        
+    @api.multi
+    def send_mail(self):
+        email_template_name = 'ReceiptVoucher employee - Send by Email'
+        template = self.env['email.template'].search([('name','=',email_template_name)])
+        if template:
+            if not self.partner_id.email:
+                raise ValidationError(
+                    _('Please enter valid email address for group email!'))
+            if self.env.user.company_id.send_to_groupmail_only: #send email test
+                to_email = self.env.user.partner_id.email
+                template.email_to = to_email
+            else :
+                if not self.partner_id.email_accountant:
+                    raise ValidationError(
+                        _('Please fill Email Accountant.'))
+                to_email = self.partner_id.email_accountant
+                template.email_to = to_email
+            if template:
+                    ctx = self.env.context.copy()
+                    ctx.update({
+                        'date_print': fields.Date.context_today(self),
+                        'email_attachment': True,
+                    })
+            template.with_context(ctx).send_mail(self.id)
+            self.write({'mail_state': 'done',
+                    'date_sent_mail': datetime.today(),
+                    })
+        return True
+    
+    @api.model
+    def process_mail_receipt_voucher_auto_send(self):
+        sql = """
+            select * from public.issi_wht_to_email 
+        """
+        self._cr.execute(sql)
+        awt_rec = self._cr.dictfetchall()
+        error_pv_list = []
+        for rec in awt_rec:
+            awt_obj = self.search([('id','=',rec['id'])])
+            try:
+                awt_obj.send_mail()
+            except:
+                error_pv_list.append(awt_obj.number)
+        if error_pv_list:
+            seperator = ', '
+            error_pv = seperator.join(error_pv_list)
+            _logger.exception(
+                _('Please fill Email Accountant in (%s). ') %(error_pv))
+        else:
+            _logger.exception(
+                _('Job mail successfully'))
 
 
 class AccountVoucherLine(models.Model):
