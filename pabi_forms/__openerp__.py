@@ -44,6 +44,7 @@
         'print_account_invoice/print_account_invoice_wizard.xml',
         'print_account_voucher/print_account_voucher_wizard.xml',
         'print_payment_cheque/print_payment_cheque_wizard.xml',
+        'print_internal_charge/print_internal_charge_wizard.xml',
         'views/account_voucher_view.xml',
     ],
     'installable': True,

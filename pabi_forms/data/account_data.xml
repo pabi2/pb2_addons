@@ -1000,5 +1000,29 @@
 			<field name="key2" eval="False"/>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(report_internal_transfer_voucher_qweb)"/>
 		</record>
+		
+		
+ 		<!-- Internal Charge  -->
+ 			<record id="internal_charge" model="ir.actions.report.xml"> 
+			<field name="string">Internal Charge Receipt</field> 
+			<field name="auto">True</field>
+			<field name="model">hr.expense.expense</field>
+			<field name="name">Internal Charge</field> 
+			<field name="report_name">internal_charge</field> 
+			<field name="report_rml">pabi_forms/jrxml_reports/account/receipt_internal_charge_form.jrxml</field>  
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">2</field>
+			<field name="download_filename">${o.number}.pdf</field>
+		</record>
+
+		<record id="internal_charge_values" model="ir.values">  
+			<field name="name">Internal Charge</field>  
+			<field name="model">hr.expense.expense</field> 
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(internal_charge)"/> 
+		</record>
 	</data>
 </openerp>
