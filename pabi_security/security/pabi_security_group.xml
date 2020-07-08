@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="0">
+        <record id="pabi_security" model="ir.module.category" >
+            <field name="name">PABI Security</field>
+        </record>
+        <record id="group_pabi_oia" model="res.groups">
+            <field name="name">PABI2 OIA</field>
+            <field name="category_id" ref="pabi_security"/>
+	        <field name="implied_ids" 
+	        	eval="[(4, ref('base.group_user')),
+	        			(4, ref('sale.base.group_sale_salesman')),
+	        			(4, ref('pabi_readonly_group.group_readonly_account_move')),
+	        			(4, ref('pabi_readonly_group.group_readonly_account_move_line')),
+	        			(4, ref('pabi_readonly_group.group_readonly_account_budget')),
+	        			(4, ref('pabi_readonly_group.group_readonly_budget_plan_invest_asset')),
+	        			(4, ref('pabi_readonly_group.group_readonly_budget_plan_invest_construction')),
+	        			(4, ref('pabi_readonly_group.group_readonly_budget_plan_personnel')),
+	        			(4, ref('pabi_readonly_group.group_readonly_budget_plan_project')),
+	        			(4, ref('pabi_readonly_group.group_readonly_budget_plan_unit')),
+	        			(4, ref('pabi_readonly_group.group_readonly_hr_expense_expense')),
+	        			(4, ref('pabi_readonly_group.group_readonly_account_invoice')),
+	        			(4, ref('pabi_readonly_group.group_readonly_account_voucher')),
+	        			(4, ref('pabi_readonly_group.group_readonly_purchase_billing')),
+	        			(4, ref('pabi_readonly_group.group_readonly_purchase_order')),
+	        			(4, ref('pabi_readonly_group.group_readonly_purchase_request')),
+	        			(4, ref('pabi_readonly_group.group_readonly_purchase_requisition')),
+	        			(4, ref('pabi_readonly_group.group_readonly_sale_order')),
+	        			(4, ref('pabi_readonly_group.group_readonly_purchase_work_acceptance')),
+	        		  ]"/>
+        </record>
+    </data>
+</openerp>
