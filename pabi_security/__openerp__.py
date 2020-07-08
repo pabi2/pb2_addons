@@ -21,8 +21,8 @@ This module allow easy management of security for each user.
         'pabi_readonly_group',
     ],
     'data': [
-        'security/ir.model.access.csv',
         'security/pabi_security_group.xml',
+        'security/ir.model.access.csv',
         'views/pabi_security_view.xml',
         'xlsx_template/templates.xml',
         'xlsx_template/xlsx_template_wizard.xml',
