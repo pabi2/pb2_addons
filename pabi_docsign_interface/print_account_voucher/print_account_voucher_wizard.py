@@ -6,7 +6,6 @@ import xmlrpclib
 from openerp import models, api, fields, _
 from openerp.exceptions import ValidationError
 
-RECEIPT = ('customer_receipt', 'customer_receipt_voucher')
 TAX_RECEIPT = ('customer_tax_receipt', 'customer_tax_receipt200')
 
 
@@ -68,12 +67,12 @@ class PrintAccountVoucherWizard(models.TransientModel):
         doctype = ""
         # seller by company
         seller = self.env.user.company_id.partner_id
-        if self.doc_print in RECEIPT:
-            doctype = 'T01'
-            reason = self.reason_receipt_update
-            if self.reason_receipt_update == 'RCTC99':
-                reason_text = self.reason_text
-        elif self.doc_print in TAX_RECEIPT:
+        # if self.doc_print in RECEIPT:
+        #     doctype = 'T01'
+        #     reason = self.reason_receipt_update
+        #     if self.reason_receipt_update == 'RCTC99':
+        #         reason_text = self.reason_text
+        if self.doc_print in TAX_RECEIPT:
             if voucher_ids.filtered(lambda l: not l.number_preprint):
                 raise ValidationError(_("Pre-print Number is null."))
             doctype = 'T03'
