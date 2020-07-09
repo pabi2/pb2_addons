@@ -481,11 +481,13 @@ class BudgetFundRuleLine(models.Model):
         'fund_rule_line_id', 'account_id',
         string='Account',
         domain=[('type', '!=', 'view'),
-                '|',
+                '|','|',
                 ('user_type.code', 'ilike', 'fixed asset'),
-                ('user_type.code', 'ilike', 'expense')],
+                ('user_type.code', 'ilike', 'expense'),
+                ('user_type.code', 'ilike', 'revenue'),
+                ],
         required=True,
-        help="List only account type in [fixed asset, expense]",
+        help="List only account type in [fixed asset, expense, revenue]",
     )
     activity_ids = fields.Many2many(
         'account.activity',
@@ -520,7 +522,7 @@ class BudgetFundRuleLine(models.Model):
         string='Max Spending (%)',
         default=100.0,
         required=True,
-        help="กรณียอดที่ใส่ไม่รวม Vat แต่ตอนเบิกจ่าย รวม Vat ให้กรอก 93%",
+        help="à¸�à¸£à¸“à¸µà¸¢à¸­à¸”à¸—à¸µà¹ˆà¹ƒà¸ªà¹ˆà¹„à¸¡à¹ˆà¸£à¸§à¸¡ Vat à¹�à¸•à¹ˆà¸•à¸­à¸™à¹€à¸šà¸´à¸�à¸ˆà¹ˆà¸²à¸¢ à¸£à¸§à¸¡ Vat à¹ƒà¸«à¹‰à¸�à¸£à¸­à¸� 93%",
     )
 
     @api.multi
