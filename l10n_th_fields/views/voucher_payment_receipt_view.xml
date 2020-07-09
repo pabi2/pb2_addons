@@ -10,7 +10,7 @@
             <field name="inherit_id" ref="account_voucher.view_vendor_receipt_form"/>
             <field name="arch" type="xml">
                 <field name="journal_id" position="after">
-                    <field name="number_cheque"/>
+ 					<field name="number_cheque" attrs="{'invisible': [('receipt_type', '!=', 'cheque')]}"/>
                     <field name="date_cheque" attrs="{'invisible': [('number_cheque','=',False)]}"/>
                     <field name="bank_cheque" attrs="{'invisible': [('number_cheque','=',False)]}"/>
                     <field name="bank_branch" attrs="{'invisible': [('number_cheque','=',False)]}"/>
