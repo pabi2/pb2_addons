@@ -54,26 +54,52 @@ class PrintAccountInvoiceWizard(models.TransientModel):
             raise ValidationError(_("%s" % e))
 
     @api.multi
+    def _check_refund_direct(self, refund_ids):
+        self.ensure_one()
+        direct_refund = refund_ids.filtered(lambda l: not l.origin_invoice_id)
+        not_preprint = refund_ids.filtered(lambda l: not l.number_preprint)
+        # create from mySale
+        if direct_refund:
+            refund_number = ", ".join(direct_refund.mapped('number'))
+            raise ValidationError(_(
+                "%s don't have origin invoice" % refund_number))
+        if not_preprint:
+            raise ValidationError(_(
+                "Some Credit Note don't have Preprint Number."))
+
+    @api.multi
+    def _check_origin_invoice(self, refund_id):
+        self.ensure_one()
+        Voucher = self.env['account.voucher']
+        move_ids = \
+            refund_id.origin_invoice_id.payment_ids.mapped('move_id')._ids
+        voucher_ids = Voucher.search([('move_id', 'in', move_ids)])
+        voucher_not_sign = \
+            voucher_ids.filtered(lambda l: l.state_sign == 'waiting')
+        if voucher_not_sign:
+            raise ValidationError(_(
+                "%s is not sign." % voucher_not_sign.number))
+        preprint = ", ".join(voucher_ids.mapped('number_preprint'))
+        return preprint
+
+    @api.multi
     def _prepare_invoice(self, invoice_ids):
         self.ensure_one()
         invoice_dict = []
         reason = ""
         reason_text = ""
-        doctype = "380"  # invoice
         # seller by company
         seller = self.env.user.company_id.partner_id
-        if self.doc_print in REFUND and \
-                self.doctype in ('out_refund', 'in_refund'):
-            # TODO: Hot to check debit or credit note; 81 ลดหนี้ 80 เพิ่มหนี้
-            if self.doctype == 'out_refund':
-                doctype = '81'  # credit note
-            else:
-                doctype = '80'  # debit note
+        if self.doc_print in REFUND and self.doctype == 'out_refund':
+            self._check_refund_direct(invoice_ids)
+            doctype = '81'  # credit note
             reason = self.reason_dcn_code
             if self.reason_dcn_code == 'CDNG99':
                 reason_text = self.reason_text
+        else:
+            raise ValidationError(_("This Form can't sign."))
         for invoice in invoice_ids:
-            origin = invoice.origin_invoice_id.number
+            origin = self._check_origin_invoice(invoice)
             # invoice lines
             line_ids = [(0, 0, {
                 'name': line.name,
@@ -83,7 +109,6 @@ class PrintAccountInvoiceWizard(models.TransientModel):
                 'price_subtotal': line.price_subtotal,
                 'product_code': line.product_id.default_code,
                 'product_name': line.product_id.name,
-                # 'product_uom_id': 18,  # TODO: used name instead
                 'taxes': line.invoice_line_tax_id.name,
                 'taxes_percent':
                     round(line.invoice_line_tax_id.amount*100, 2),
@@ -92,13 +117,14 @@ class PrintAccountInvoiceWizard(models.TransientModel):
             invoice_dict.append({
                 # header
                 'doctype': doctype,
+                'docform': self.doc_print,
                 'lang_form': self.lang,
-                'number': invoice.number_preprint,
+                'number': invoice.number_preprint,  # TODO: number preprint CN
                 'customer_code': invoice.partner_id.search_key,
                 'customer_name': invoice.partner_id.name,
                 'seller_name': seller.name,
                 'currency': invoice.currency_id.name,
-                'date_document': invoice.date_invoice,  # document create date
+                'date_document': invoice.date_document,
                 'operating_unit': invoice.operating_unit_id.name,
                 'purpose_code': reason,
                 'purpose_reason_other': reason_text,
@@ -136,7 +162,7 @@ class PrintAccountInvoiceWizard(models.TransientModel):
                 # origin
                 'system_origin_name': 'pabi2',
                 'system_origin_number': invoice.number,
-                'origin_invoice': origin,  # d/c note only
+                'origin_id': origin,
                 'user_sign': self.env.user.name,
                 'approved_by': self.env.user.name,  # TODO: Waiting new pg.
                 # lines

@@ -97,7 +97,6 @@ class PrintAccountVoucherWizard(models.TransientModel):
                     'price_subtotal': line.price_subtotal,
                     'product_code': line.product_id.default_code,
                     'product_name': line.product_id.name,
-                    # 'product_uom_id': 18,  # TODO: used name instead
                     'taxes': line.invoice_line_tax_id.name,
                     'taxes_percent':
                         round(line.invoice_line_tax_id.amount*100, 2),
