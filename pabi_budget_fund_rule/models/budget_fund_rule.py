@@ -522,7 +522,7 @@ class BudgetFundRuleLine(models.Model):
         string='Max Spending (%)',
         default=100.0,
         required=True,
-        help="à¸�à¸£à¸“à¸µà¸¢à¸­à¸”à¸—à¸µà¹ˆà¹ƒà¸ªà¹ˆà¹„à¸¡à¹ˆà¸£à¸§à¸¡ Vat à¹�à¸•à¹ˆà¸•à¸­à¸™à¹€à¸šà¸´à¸�à¸ˆà¹ˆà¸²à¸¢ à¸£à¸§à¸¡ Vat à¹ƒà¸«à¹‰à¸�à¸£à¸­à¸� 93%",
+        help="กรณียอดที่ใส่ไม่รวม Vat แต่ตอนเบิกจ่าย รวม Vat ให้กรอก 93%",
     )
 
     @api.multi
