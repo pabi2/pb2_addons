@@ -481,11 +481,13 @@ class BudgetFundRuleLine(models.Model):
         'fund_rule_line_id', 'account_id',
         string='Account',
         domain=[('type', '!=', 'view'),
-                '|',
+                '|','|',
                 ('user_type.code', 'ilike', 'fixed asset'),
-                ('user_type.code', 'ilike', 'expense')],
+                ('user_type.code', 'ilike', 'expense'),
+                ('user_type.code', 'ilike', 'revenue'),
+                ],
         required=True,
-        help="List only account type in [fixed asset, expense]",
+        help="List only account type in [fixed asset, expense, revenue]",
     )
     activity_ids = fields.Many2many(
         'account.activity',
