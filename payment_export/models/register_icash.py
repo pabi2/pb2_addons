@@ -12,7 +12,7 @@ class PabiRegister_iCash(models.Model):
         track_visibility='onchange',
     )
     service_type = fields.Selection(
-        [('direct', 'DIRECT'),('smart', 'SMART')],
+        [('direct', 'DIRECT-DCB02'),('smart', 'SMART-SMC06')],
         'Service Type',
         track_visibility='onchange',
     )
@@ -78,24 +78,31 @@ class PabiRegister_iCash(models.Model):
         parner_bank_search = PartnerBankObj.search(domain)
 
         for line in parner_bank_search:
+            if line.bank.abbrev != 'BBL':
+                if line.bank.code == '033':
+                    if len(line.acc_number) == 10:
+                        account_number = '00' + line.acc_number[2:4] + '0' + line.acc_number[-6:]
+                    
+                    elif len(line.acc_number) == 12:
+                        account_number = '00' + line.acc_number[-9:]
+                        
+                elif line.bank.code in ['066','067','069']:
+                    account_number = '0' + line.acc_number[-10:]
+                else:
+                    account_number = ('00000000000' + line.acc_number)[-11:]
+            else:
+                account_number = line.acc_number.strip()
+            
             register_line = RegisterLineObj.new()
             register_line.partner_bank_id = line
-            register_line.beneficiary_code = 'NSTDA_%s' % line.acc_number
-            register_line.account_number = line.acc_number
+            register_line.beneficiary_code = 'NSTDA_%s' % line.acc_number.strip()
+            register_line.account_number = account_number
             register_line.owner_name_en = line.owner_name_en
             register_line.partner_searchkey = line.partner_id.search_key
             register_line.partner_name = line.partner_id.name
             register_line.partner_email_accountant = line.partner_id.email_accountant
+            register_line.bank_branch_code = line.bank_branch.code
             self.line_ids += register_line
-            """RegisterLineObj.create({'register_id': self.id,
-                                    'partner_bank_id': line.id,
-                                    'beneficiary_code': 'NSTDA_%s' % line.acc_number,
-                                    'account_number': line.acc_number,
-                                    'owner_name_en': line.owner_name_en,
-                                    'partner_searchkey': line.partner_id.search_key,
-                                    'partner_name': line.partner_id.name,
-                                    'partner_email_accountant': line.partner_id.email_accountant,
-                                    })"""
 
     @api.onchange('line_filter')
     def _onchange_compute_register_icash_line(self):
@@ -159,14 +166,34 @@ class PabiRegister_iCashLine(models.Model):
     partner_email_accountant = fields.Char(
         'Email Account'
     )
+    bank_branch_code = fields.Char(
+        'Bank Branch Code'
+    )
 
     @api.onchange('partner_bank_id')
     def onchange_partner_bank_id(self):
         for rec in self:
             if rec.register_id.state == 'draft' and rec.partner_bank_id:
-                rec.beneficiary_code = 'NSTDA_%s' % rec.partner_bank_id.acc_number
-                rec.account_number = rec.partner_bank_id.acc_number
+                if rec.partner_bank_id.bank.abbrev != 'BBL':
+                    if rec.partner_bank_id.bank.code == '033':
+                        if len(rec.partner_bank_id.acc_number.strip()) == 10:
+                            account_number = '00' + rec.partner_bank_id.acc_number.strip()[2:4] +\
+                                             '0' + rec.partner_bank_id.acc_number.strip()[-6:]
+                        
+                        elif len(rec.partner_bank_id.acc_number.strip()) == 12:
+                            account_number = '00' + rec.partner_bank_id.acc_number.strip()[-9:]
+                            
+                    elif rec.partner_bank_id.bank.code in ['066','067','069']:
+                        account_number = '0' + rec.partner_bank_id.acc_number.strip()[-10:]
+                    else:
+                        account_number = ('00000000000' + rec.partner_bank_id.acc_number.strip())[-11:]
+                else:
+                    account_number = rec.partner_bank_id.acc_number.strip()
+                
+                rec.beneficiary_code = 'NSTDA_%s' % rec.partner_bank_id.acc_number.strip()
+                rec.account_number = account_number
                 rec.owner_name_en = rec.partner_bank_id.owner_name_en
                 rec.partner_searchkey = rec.partner_bank_id.partner_id.search_key
                 rec.partner_name = rec.partner_bank_id.partner_id.name
                 rec.partner_email_accountant = rec.partner_bank_id.partner_id.email_accountant
+                rec.bank_branch_code = rec.partner_bank_id.bank_branch.code

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-		<record model="ir.ui.view" id="view_pabi_register_icash_report_form">
-            <field name="name">view.pabi.register.icash.report.form</field>
-            <field name="model">pabi.register.icash.report</field>
+		<record model="ir.ui.view" id="view_pabi_register_icash_direct_report_form">
+            <field name="name">view.pabi.register.icash.direct.report.form</field>
+            <field name="model">pabi.register.icash.direct.report</field>
             <field name="arch" type="xml">
                 <form string="Register iCash Report">
                 	<field name="register_id" invisible="1"/>
@@ -33,13 +33,55 @@
             </field>
         </record>
         
-	    <record id="action_register_icash_report" model="ir.actions.act_window">
+		<record model="ir.ui.view" id="view_pabi_register_icash_smart_report_form">
+            <field name="name">view.pabi.register.icash.smart.report.form</field>
+            <field name="model">pabi.register.icash.smart.report</field>
+            <field name="arch" type="xml">
+                <form string="Register iCash Report">
+                	<field name="register_id" invisible="1"/>
+                	<field name="state" invisible="1"/>
+                    <field name="name" invisible="1"/>
+	                <p states="choose">
+                        Export Excel
+                    </p>
+                    <div states="get">
+                          <h2>
+                              Complete Prepare Report (.xlsx)
+                          </h2>
+                          <p colspan="4">
+                              Here is the report file:
+                              <field name="data" filename="name" class="oe_inline"/>
+                          </p>
+                      </div>
+	                <footer states="choose">
+	                    <button name="action_get_report" string="Execute Report" type="object" class="oe_highlight"/>
+	                    or
+	                    <button string="Cancel" class="oe_link" special="cancel" />
+	                </footer>
+                    <footer states="get">
+                        <button special="cancel" string="Close" type="object"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        
+	    <record id="action_register_icash_direct_report" model="ir.actions.act_window">
             <field name="name">Export Pre Register</field>
             <field name="type">ir.actions.act_window</field>
-            <field name="res_model">pabi.register.icash.report</field>
+            <field name="res_model">pabi.register.icash.direct.report</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
-            <field name="view_id" ref="view_pabi_register_icash_report_form"/>
+            <field name="view_id" ref="view_pabi_register_icash_direct_report_form"/>
+            <field name="target">new</field>
+        </record>
+        
+	    <record id="action_register_icash_smart_report" model="ir.actions.act_window">
+            <field name="name">Export Pre Register</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pabi.register.icash.smart.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_pabi_register_icash_smart_report_form"/>
             <field name="target">new</field>
         </record>
     </data>

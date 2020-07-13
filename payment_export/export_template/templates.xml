@@ -10,34 +10,69 @@
             <field name="group_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
-        # Input Tax Report
-        <record id="xlsx_report_register_icash" model="ir.attachment">
-            <field name="res_model">pabi.register.icash.report</field>
+        # Register iCash Direct
+        <record id="xlsx_report_register_icash_direct" model="ir.attachment">
+            <field name="res_model">pabi.register.icash.direct.report</field>
             <field name="datas"></field>
-            <field name="datas_fname">xlsx_report_register_icash.xlsx</field>
-            <field name="name">Register iCash</field>
+            <field name="datas_fname">xlsx_report_register_icash_direct.xlsx</field>
+            <field name="name">Register iCash Direct</field>
             <field name="parent_id" eval="ref('dir_payment_export')"/>
             <field name="description">
                 {
                     '__EXPORT__': {
                         'Pre Register iCash': {
                             '_HEAD_': {
-                                'B3': '${env.user.with_context(lang="en_US").company_id.rml_header1}',
-                                'B4': 'register_id.name${value or ""}',
+                                'B1': '${env.user.with_context(lang="en_US").company_id.rml_header1}#{number_format=text}',
+                                'B2': 'register_id.service_type${value and ((value == "direct" and "DCB02") or (value == "smart" and "SMC06")) or ""}#{number_format=text}',
+                                'E2': 'register_id.name${value or ""}#{number_format=text}',
                             },
                             'register_line_ids': {
-                                'A7': 'beneficiary_code${value or ""}',
-                                'B7': 'account_number${value or ""}',
-                                'C7': 'owner_name_en${value or ""}',
-                                'D7': 'partner_searchkey${value or ""}',
-                                'E7': 'partner_name${value or ""}',
-                                'F7': 'partner_email_accountant${value or ""}',
+                                'A6': 'beneficiary_code${value or ""}#{number_format=text}',
+                                'B6': 'owner_name_en${value or ""}#{number_format=text}',
+                                'C6': 'account_number${value or ""}#{number_format=text}',
+                                
+                                'E6': 'partner_email_accountant${value or ""}#{number_format=text}',
+                                
+                                'G6': 'partner_searchkey${value or ""}#{number_format=text}',
+                                'H6': 'partner_name${value or ""}#{number_format=text}',
                             }
                         }
                     }
                 }
             </field>
+        </record>
 
-        </record>        
+        # Register iCash Smart
+        <record id="xlsx_report_register_icash_smart" model="ir.attachment">
+            <field name="res_model">pabi.register.icash.smart.report</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_register_icash_smart.xlsx</field>
+            <field name="name">Register iCash Smart</field>
+            <field name="parent_id" eval="ref('dir_payment_export')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Pre Register iCash': {
+                            '_HEAD_': {
+                                'B1': '${env.user.with_context(lang="en_US").company_id.rml_header1}#{number_format=text}',
+                                'B2': 'register_id.service_type${value and ((value == "direct" and "DCB02") or (value == "smart" and "SMC06")) or ""}#{number_format=text}',
+                                'E2': 'register_id.name${value or ""}#{number_format=text}',
+                            },
+                            'register_line_ids': {
+                                'A6': 'beneficiary_code${value or ""}#{number_format=text}',
+                                'B6': 'owner_name_en${value or ""}#{number_format=text}',
+                                'C6': 'bank_branch_code${value or ""}#{number_format=text}',
+                                'D6': 'account_number${value or ""}#{number_format=text}',
+                                
+                                'F6': 'partner_email_accountant${value or ""}#{number_format=text}',
+                                'G6': 'partner_searchkey${value or ""}#{number_format=text}',
+                                'H6': 'partner_name${value or ""}#{number_format=text}',
+                            }
+                        }
+                    }
+                }
+            </field>
+        </record>
+
     </data>
 </openerp>
