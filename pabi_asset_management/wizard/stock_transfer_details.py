@@ -41,10 +41,13 @@ class StockTransferDetails(models.TransientModel):
     def _validate_asset_line(self):
         for rec in self:
             for line in rec.item_ids:
-                if line.product_id.asset and line.quantity and \
-                        not line.quantity.is_integer():
-                    raise ValidationError(_('For asset, quantity '
-                                            'must be whole number.'))
+                if line.product_id.asset and line.quantity:
+                    if not line.price_unit:
+                        raise ValidationError(_('For asset, Price Unit '
+                                                'must be whole number.'))
+                    if not line.quantity.is_integer():
+                        raise ValidationError(_('For asset, quantity '
+                                                'must be whole number.'))
         return True
 
     @api.multi
@@ -68,5 +71,5 @@ class StockTransferDetails(models.TransientModel):
                 'owner_invest_asset_id': stock_move.invest_asset_id.id,
                 'owner_invest_construction_phase_id': stock_move.invest_construction_phase_id.id
                 })
-            
+
         return res
