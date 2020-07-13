@@ -59,7 +59,7 @@
         
 <!--PABI2 Accountant PO&EX-->
         <record id="group_pabi_accountant_po_ex" model="res.groups">
-            <field name="name">PABI2 Accountant PO&EX</field>
+            <field name="name">PABI2 Accountant PO&amp;EX</field>
             <field name="category_id" ref="pabi_security"/>
 	        <field name="implied_ids" 
 					eval="[(4, ref('pabi_security.group_pabi_accountant')),]"/>   
