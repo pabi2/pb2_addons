@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
+import logging
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
+
+_logger = logging.getLogger(__name__)
 
 
 class AccountBudget(models.Model):
@@ -194,6 +197,9 @@ class AccountBudget(models.Model):
             :param res_id: resource's id, differ for each type of budget
             :return: dict of result
         """
+        _logger.info(
+            'simple_check_budget(), input: [%s, %s, %s, %s, %s]' %
+            (doc_date, budget_type, amount, res_id, internal_charge))
         res = {'budget_ok': True,
                'budget_status': {},
                'message': False,
