@@ -63,7 +63,7 @@ class AssetExportReport(models.TransientModel):
         'xlsx.report.status',
         string='Asset State',
         domain=[('location', '=', 'asset.register.view')],
-        default=lambda self: self.env['xlsx.report.status'].search([('location', '=', 'asset.register.view'),('status', 'in', ['draft', 'open', 'close', 'removed'])]),
+        default=lambda self: self.env['xlsx.report.status'].search([('location', '=', 'asset.register.view'),('status', 'in', ['draft', 'open', 'close'])]),
     )
     account_ids = fields.Many2many(
         'account.account',
@@ -97,14 +97,17 @@ class AssetExportReport(models.TransientModel):
         string='Account Type for Accum.Depre.',
         required=True,
         help="Define account type for accumulated depreciation account, "
-        "to be used in report query SQL."
+        "to be used in report query SQL.",
+        default=lambda self: self.env['account.account.type'].search([('name','=','Accumulated Depreciation')]),
     )
     depre_account_type = fields.Many2one(
         'account.account.type',
         string='Account Type for Depre.',
         required=True,
         help="Define account type for depreciation account, "
-        "to be used in report query SQL."
+        "to be used in report query SQL.",
+        default=lambda self: self.env['account.account.type'].search([('name','=','Depreciation')]),
+
     )
 
     # More fileter
@@ -421,3 +424,4 @@ class AssetExportReport(models.TransientModel):
             codes = ','.join(codes)
             dom.append(('code', 'ilike', codes))
             self.owner_budget = Chartfield.search(dom, order='id')
+            

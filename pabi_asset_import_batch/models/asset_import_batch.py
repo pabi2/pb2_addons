@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
+from google.auth._default import default
 
 
 class AccountAssetImportBatch(models.Model):
@@ -162,10 +163,10 @@ class AccountAssetImportBatchLine(models.Model):
     asset_model = fields.Char(
         string='Model',
     )
-    purchase_value = fields.Float(
+    purchase_value = fields.Integer(
         string='Purchase Value',
     )
-    salvage_value = fields.Float(
+    salvage_value = fields.Integer(
         string='Salvage Value',
     )
     date_start = fields.Date(

@@ -64,6 +64,8 @@
                                         <field name="name"/>
                                         <field name="date_start"/>
                                         <field name="profile_id"/>
+                                        <field name="purchase_value"/>
+                                        <field name="salvage_value"/>
                                         <field name="purchase_id"/>
                                         <field name="partner_id"/>
                                         <field name="product_id"/>
