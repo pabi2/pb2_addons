@@ -27,6 +27,7 @@
 	        			(4, ref('pabi_readonly_group.group_readonly_purchase_requisition')),
 	        			(4, ref('pabi_readonly_group.group_readonly_sale_order')),
 	        			(4, ref('pabi_readonly_group.group_readonly_purchase_work_acceptance')),
+	        			(4, ref('pabi_readonly_group.group_readonly_account_asset')),
 	        		  ]"/>
         </record>
         
