@@ -28,6 +28,7 @@
         'views/res_config_view.xml',
         'data/cost_control_data.xml',
         'data/job_order_history_rule.xml',
+        'wizard/change_invoice_date_wizard_view.xml',
         'wizard/stock_change_product_qty_view.xml',
         'views/account_budget_view.xml',
         'views/account_invoice_view.xml',
