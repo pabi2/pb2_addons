@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
-from google.auth._default import default
 
 
 class AccountAssetImportBatch(models.Model):
