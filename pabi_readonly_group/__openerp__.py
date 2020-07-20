@@ -31,7 +31,6 @@ Readonly for following models,
         'pabi_budget_plan',
         'pabi_purchase_billing',
         'pabi_purchase_work_acceptance',
-        'pabi_asset_management',
     ],
     'data': [
         'security/readonly_group.xml',
