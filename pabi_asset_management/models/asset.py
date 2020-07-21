@@ -702,23 +702,25 @@ class AccountAsset(ChartFieldAction, models.Model):
                 # (i.e : Purchase value 2019 and Depreciation 2020)
                 line_dates.insert(0, all_dates[0])
             return line_dates
-        # Import asset batch
-        if not asset_line:
-            # Import 1 asset line will return original asset line
-            if len(first_asset) <= 1:
-                return line_dates
-            # Import more than 1 asset line
-            init_last_date = \
-                fields.Datetime.from_string(first_asset[-1].line_date)
-            line_dates = [line for line in all_dates if line >= init_last_date]
-            line_dates.insert(0, init_last_date)
-            line_dates.insert(0, all_dates[0])
-            return line_dates
-            # error from issue #4542
-            # init_last_date = \
-            #     fields.Datetime.from_string(first_asset[-1].line_date)
-            # line_dates = [line for line in all_dates if line >= init_last_date]
-            # line_dates.insert(0, init_last_date)
+        # Import asset batch used return origin asset line issue #4729
+        # if not asset_line:
+        #     # Import 1 asset line will return original asset line
+        #     if len(first_asset) <= 1:
+        #         return line_dates
+        #     # Import more than 1 asset line
+        #     init_last_date = \
+        #         fields.Datetime.from_string(first_asset[-1].line_date)
+        #     line_dates = \
+        #         [line for line in all_dates if line >= init_last_date]
+        #     line_dates.insert(0, init_last_date)
+        #     line_dates.insert(0, all_dates[0])
+        #     return line_dates
+        #     # error from issue #4542
+        #     init_last_date = \
+        #         fields.Datetime.from_string(first_asset[-1].line_date)
+        #     line_dates = \
+        #         [line for line in all_dates if line >= init_last_date]
+        #     line_dates.insert(0, init_last_date)
         return line_dates
 
     # @api.multi
