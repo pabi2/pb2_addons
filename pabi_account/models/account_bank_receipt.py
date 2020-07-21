@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class AccountBankReceipt(models.Model):
@@ -62,6 +63,42 @@ class AccountBankReceipt(models.Model):
             banks = BankAcct.search([('journal_id', 'in', journals.ids),
                                      ('state', '=', 'SA')])
             self.partner_bank_id = banks and banks[0] or False
+
+    @api.multi
+    def _prepare_analytic_line_vals(self, line):
+        self.ensure_one()
+        vals = {
+            'account_id': line.analytic_account_id.id,
+            'general_account_id': line.account_id.id,
+            'date': self.date_document,
+            'move_id': line.id,
+            'name': line.name,
+            'user_id': 1,
+            'journal_id': self.move_id.journal_id.analytic_journal_id.id,
+            'amount': line.debit and -line.debit or line.credit,
+            'ref': self.name
+        }
+        return vals
+
+    @api.multi
+    def action_recompute_budget(self):
+        AnalyticLine = self.env['account.analytic.line'].sudo()
+        for rec in self:
+            # skip if not payment diff or check budget already
+            payment_diff = rec.multiple_reconcile_ids
+            analytic_line = rec.move_id.budget_commit_ids
+            if not payment_diff or (payment_diff and analytic_line):
+                continue
+            if not rec.move_id.journal_id.analytic_journal_id:
+                raise ValidationError(_(
+                    'Journal %s is not set check budget'
+                    % rec.move_id.journal_id.name))
+            # Find analytic_account from account.move.line
+            move_line = rec.move_id.line_id.filtered(
+                lambda l: l.analytic_account_id)
+            for line in move_line:
+                vals = rec._prepare_analytic_line_vals(line)
+                AnalyticLine.create(vals)
 
     @api.multi
     def _prepare_reverse_move_data(self):
