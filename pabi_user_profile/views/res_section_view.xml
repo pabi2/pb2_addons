@@ -6,12 +6,12 @@
             <field name="model">res.section</field>
             <field name="inherit_id" ref="pabi_budget_monitor.view_res_section_form"/>
             <field name="arch" type="xml">
-            	<xpath expr="//notebook/page[@string='Budget Monitor']" position="after">
+            	<xpath expr="//notebook//page[@string='Job Order']" position="after">
 				<!-- <xpath expr="//form/sheet/notebook/page[@string='Budget Monitor']" position="after">-->
                     <page string="Report">
                         <field name="employee_rpt_ids"/>
                     </page>
-				</xpath> 
+				</xpath>
             </field>
         </record>
     </data>
