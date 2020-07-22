@@ -14,6 +14,42 @@
             <field name="convert_to_buddhist_calendar">True</field>
         </record>
 
+        # Invoice Sequence
+        <record id="seq_invoice_preprint" model="ir.sequence.preprint">
+            <field name="name">Invoice Preprint</field>
+            <field name="code">invoice.preprint</field>
+            <field name="implementation">no_gap</field>
+            <field name="padding" eval="4"/>
+            <field name="prefix">IV%(year)s/%(range_month)s-</field>
+            <field name="use_date_range">True</field>
+            <field name="use_month_range">True</field>
+            <field name="convert_to_buddhist_calendar">True</field>
+        </record>
+
+        # Credit Note Tax Sequence
+        <record id="seq_credit_note_tax_preprint" model="ir.sequence.preprint">
+            <field name="name">Credit Notes Tax Preprint</field>
+            <field name="code">cn.tax.preprint</field>
+            <field name="implementation">no_gap</field>
+            <field name="padding" eval="4"/>
+            <field name="prefix">CNT%(year)s/%(range_month)s-</field>
+            <field name="use_date_range">True</field>
+            <field name="use_month_range">True</field>
+            <field name="convert_to_buddhist_calendar">True</field>
+        </record>
+
+        # Credit Note Sequence
+        <record id="seq_credit_note_tax_preprint" model="ir.sequence.preprint">
+            <field name="name">Credit Notes Preprint</field>
+            <field name="code">cn.preprint</field>
+            <field name="implementation">no_gap</field>
+            <field name="padding" eval="4"/>
+            <field name="prefix">CN%(year)s/%(range_month)s-</field>
+            <field name="use_date_range">True</field>
+            <field name="use_month_range">True</field>
+            <field name="convert_to_buddhist_calendar">True</field>
+        </record>
+
         # Receipt Tax Sequence
         <record id="seq_receipt_tax_preprint" model="ir.sequence.preprint">
             <field name="name">Receipt Tax Preprint</field>
@@ -21,6 +57,30 @@
             <field name="implementation">no_gap</field>
             <field name="padding" eval="4"/>
             <field name="prefix">RT%(year)s/%(range_month)s-</field>
+            <field name="use_date_range">True</field>
+            <field name="use_month_range">True</field>
+            <field name="convert_to_buddhist_calendar">True</field>
+        </record>
+
+        # Receipt Tax 300 % Sequence
+        <record id="seq_receipt_tax_300_preprint" model="ir.sequence.preprint">
+            <field name="name">Receipt Tax 300 Preprint</field>
+            <field name="code">receipt.tax.300.preprint</field>
+            <field name="implementation">no_gap</field>
+            <field name="padding" eval="4"/>
+            <field name="prefix">RTT%(year)s/%(range_month)s-</field>
+            <field name="use_date_range">True</field>
+            <field name="use_month_range">True</field>
+            <field name="convert_to_buddhist_calendar">True</field>
+        </record>
+
+        # Receipt Sequence
+        <record id="seq_receipt_preprint" model="ir.sequence.preprint">
+            <field name="name">Receipt Preprint</field>
+            <field name="code">receipt.preprint</field>
+            <field name="implementation">no_gap</field>
+            <field name="padding" eval="4"/>
+            <field name="prefix">RC%(year)s/%(range_month)s-</field>
             <field name="use_date_range">True</field>
             <field name="use_month_range">True</field>
             <field name="convert_to_buddhist_calendar">True</field>

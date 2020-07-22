@@ -14,6 +14,15 @@ class InvoiceVoucherTaxDetail(object):
         for doc in self:
             if doc.type in ('in_refund', 'in_invoice', 'payment'):
                 continue
+            if not doc.tax_line:
+                if doc._name == 'account.invoice':
+                    doc_date = doc.date_invoice
+                if doc._name == 'account.voucher':
+                    doc_date = doc.date
+                ctx = {'no_tax': True, 'doctype': doc._name, 'doc_id': doc.id}
+                preprint_number = TaxDetail.with_context(
+                    ctx)._create_sequence_preprint(False, False, doc_date)
+                doc.update({'number_preprint': preprint_number})
             # Auto create tax detail for Sales Cycle only
             for tax in doc.tax_line:
                 if tax.tax_code_type != 'normal':
@@ -41,8 +50,10 @@ class InvoiceVoucherTaxDetail(object):
                                         sign * tax.base,
                                         sign * tax.amount)
                 # For update sequence preprint
-                vals = TaxDetail._create_sequence_preprint(
-                    invoice_tax_id, voucher_tax_id, doc, vals, doc_date)
+                preprint_number = TaxDetail._create_sequence_preprint(
+                    invoice_tax_id, voucher_tax_id, doc_date)
+                vals['invoice_number'] = preprint_number
+                doc.update({'number_preprint': preprint_number})
                 detail = TaxDetail.search(domain)
                 if detail:
                     detail.write(vals)
@@ -336,16 +347,22 @@ class AccountTaxDetail(models.Model):
         return vals
 
     @api.model
-    def _create_sequence_preprint(self, invoice_tax_id, voucher_tax_id, doc,
-                                  vals, invoice_date):
+    def _create_sequence_preprint(
+            self, invoice_tax_id, voucher_tax_id, invoice_date):
         # Generate sequence preprint
-        seq_name = invoice_tax_id and 'invoice.tax.preprint'\
-            or 'receipt.tax.preprint'
+        no_tax = self._context.get('no_tax', False)
+        doctype = self._context.get('doctype', False)
+        if no_tax:
+            if doctype == 'account.invoice':
+                seq_name = 'invoice.preprint'
+            elif doctype == 'account.voucher':
+                seq_name = 'receipt.preprint'
+        else:
+            seq_name = invoice_tax_id and 'invoice.tax.preprint'\
+                or 'receipt.tax.preprint'
         preprint_number = self.env['ir.sequence.preprint'].next_by_code(
             seq_name, sequence_date=invoice_date)
-        vals['invoice_number'] = preprint_number
-        doc.update({'number_preprint': preprint_number})
-        return vals
+        return preprint_number
 
     @api.multi
     @api.depends('tax_sequence')
