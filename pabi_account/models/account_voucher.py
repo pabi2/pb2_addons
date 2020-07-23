@@ -120,6 +120,42 @@ class AccountVoucher(models.Model):
                         'Preprint Number must be unique!')]
 
     @api.multi
+    def _prepare_analytic_line_vals(self, line):
+        self.ensure_one()
+        vals = {
+            'account_id': line.analytic_account_id.id,
+            'general_account_id': line.account_id.id,
+            'date': self.date_document,
+            'move_id': line.id,
+            'name': line.name,
+            'user_id': 1,
+            'journal_id': self.move_id.journal_id.analytic_journal_id.id,
+            'amount': line.debit and -line.debit or line.credit,
+            'ref': self.name
+        }
+        return vals
+
+    @api.multi
+    def action_recompute_budget(self):
+        AnalyticLine = self.env['account.analytic.line'].sudo()
+        for rec in self:
+            # skip if not payment diff or check budget already
+            payment_diff = rec.multiple_reconcile_ids
+            analytic_line = rec.move_id.budget_commit_ids
+            if not payment_diff or (payment_diff and analytic_line):
+                continue
+            if not rec.move_id.journal_id.analytic_journal_id:
+                raise ValidationError(_(
+                    'Journal %s is not set check budget'
+                    % rec.move_id.journal_id.name))
+            # Find analytic_account from account.move.line
+            move_line = rec.move_id.line_id.filtered(
+                lambda l: l.analytic_account_id)
+            for line in move_line:
+                vals = rec._prepare_analytic_line_vals(line)
+                AnalyticLine.create(vals)
+
+    @api.multi
     def write(self, vals):
         # Set date
         if vals.get('date') and not vals.get('date_document'):
@@ -370,7 +406,7 @@ class AccountVoucherLine(models.Model):
             move_line = rec.voucher_id.move_ids.filtered(
                 lambda l: l.account_id == income_account)
             income = calc_principal = remain_principal = 0
-            
+
             if move_line:
                 income = move_line[0].credit - move_line[0].debit
             plan = Plan.search([('move_line_id', '=', rec.move_line_id.id)])
@@ -385,7 +421,7 @@ class AccountVoucherLine(models.Model):
                     if ins.id <= plan.id:
                         remain_principal2 -= ins.calc_principal
                         a= ''
-                
+
             desc_dict = [
                 (_('{:,.2f}'.format(income) + ' บาท').rjust(50)),
                 (_('{:,.2f}'.format(calc_principal) + ' บาท').rjust(50)),
