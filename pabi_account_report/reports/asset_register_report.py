@@ -474,3 +474,15 @@ class AssetRegisterReport(models.TransientModel):
             codes = ','.join(codes)
             dom.append(('code', 'ilike', codes))
             self.owner_budget = Chartfield.search(dom, order='id')
+                  
+    @api.onchange('asset_state')
+    def _onchange_asset_state(self):
+        res = {}
+        state_list = []
+        for rec in self.asset_state:
+            status = rec.status
+            state_list.append(status)
+        res['domain'] =  {'asset_ids': [('state','in',state_list)]}
+        return res 
+            
+        
