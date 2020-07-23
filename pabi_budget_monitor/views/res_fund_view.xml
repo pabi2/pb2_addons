@@ -9,7 +9,7 @@
             <field name="inherit_id" ref="pabi_base.view_res_fund_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//notebook" position="inside">
-                    <page string="Fund / Project Monitor">
+<!--                    <page string="Fund / Project Monitor">
                         <field name="monitor_project_ids">
                             <tree string="Monitor" editable="bottom">
                                 <field name="fund_id" invisible="1"/>
@@ -98,7 +98,7 @@
                                 <field name="amount_balance"/>
                             </tree>
                         </field>
-                    </page>
+                    </page> -->
                 </xpath>
             </field>
         </record>
