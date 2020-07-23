@@ -231,6 +231,7 @@ class PrintAccountVoucherWizard(models.TransientModel):
         db = self.env.user.company_id.pabietax_db
         username = self.env.user.company_id.pabietax_user
         password = self.env.user.company_id.pabietax_password
+        edit_sign = self._context.get("Edit_sign", False)
         # connect with server
         uid = self._connect_docsign_server(url, db, username, password)
 
@@ -239,24 +240,8 @@ class PrintAccountVoucherWizard(models.TransientModel):
         # call method in server
         models = xmlrpclib.ServerProxy('{}/xmlrpc/object'.format(url))
         voucher_dict = self._prepare_voucher(voucher_ids)
-        self._stamp_voucher_pdf(voucher_dict, models, db, uid, password)
-        return True
-
-    @api.multi
-    def action_edit_sign_account_voucher(self):
-        url = self.env.user.company_id.pabietax_web_url
-        db = self.env.user.company_id.pabietax_db
-        username = self.env.user.company_id.pabietax_user
-        password = self.env.user.company_id.pabietax_password
-        # connect with server
-        uid = self._connect_docsign_server(url, db, username, password)
-
-        active_ids = self._context.get('active_ids')
-        voucher_ids = self.env['account.voucher'].browse(active_ids)
-        # call method in server
-        models = xmlrpclib.ServerProxy('{}/xmlrpc/object'.format(url))
-        voucher_dict = self._prepare_voucher(voucher_ids)
-        self._check_edit_value(voucher_dict, models, db, uid, password)
+        if edit_sign:
+            self._check_edit_value(voucher_dict, models, db, uid, password)
         self._stamp_voucher_pdf(voucher_dict, models, db, uid, password)
         return True
 
