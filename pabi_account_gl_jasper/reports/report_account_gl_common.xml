@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_report_account_gl_common_form" model="ir.ui.view">
+            <field name="name">view.report.account.gl.common.form</field>
+            <field name="model">report.account.gl.common</field>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+            	<form string="Reports">
+                    <group name="criteria">
+                        <group col="4">
+                            <field name="chart_account_id" widget="selection" context="{'show_account_view': True}"/>
+                            <field name="company_id" invisible="1"/>
+                            <field name="fiscalyear_start_id" domain="[('company_id', '=', company_id)]"/>
+                            <field name="fiscalyear_end_id" domain="[('company_id', '=', company_id)]"/>
+                            <field name="fiscalyear_date_start" invisible="1"/>
+                            <field name="fiscalyear_date_end" invisible="1"/>
+		                    <field name="charge_type"/>
+                        </group>
+                    </group>
+                    <notebook name="additional_criteria">
+                        <page string="Time Filters" name="time_filters">
+                            <group>
+                                <field name="filter"/>
+                            </group>
+                            <group string="Dates" attrs="{'invisible': [('filter', '!=', 'filter_date')], 'required': [('filter', '=', 'filter_date')]}">
+                                <field name="date_start"/>
+                                <field name="date_end"/>
+                            </group>
+                            <group string="Periods" attrs="{'invisible': [('filter', '!=', 'filter_period')], 'required': [('filter', '=', 'filter_period')]}">
+                                <field name="period_start_id" domain="[('company_id', '=', company_id), ('fiscalyear_id.date_start', '&gt;=', fiscalyear_date_start), ('fiscalyear_id.date_stop', '&lt;=', fiscalyear_date_end)]"/>
+                                <field name="period_end_id" domain="[('company_id', '=', company_id), ('fiscalyear_id.date_start', '&gt;=', fiscalyear_date_start), ('fiscalyear_id.date_stop', '&lt;=', fiscalyear_date_end)]"/>
+                            </group>
+                        </page>
+	                    <page string="Budget Filters" name="budget_filters">
+	                        <group>
+	                            <field name="count_chartfield"/>
+	                        </group>
+	                        <group>
+	                            <group string="Paste list of code to search">
+	                                <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1" context="{'active_test': False}"/>
+	                            </group>
+	                            <group string="Print only">
+	                                <field name="chartfield_ids" nolabel="1" context="{'active_test': False}"/>
+	                            </group>
+	                        </group>
+	                    </page>
+                    </notebook>
+                    <footer>
+                        <button name="start_report" string="Execute Report" type="object" class="oe_highlight"/>
+                        or
+                        <button special="cancel" string="Cancel" type="object" class="oe_link"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</openerp>

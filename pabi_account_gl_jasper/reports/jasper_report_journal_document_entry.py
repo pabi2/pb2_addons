@@ -4,21 +4,44 @@ from openerp import models, fields, api
 
 class JasperReportJournalDocumentEntry(models.TransientModel):
     _name = 'jasper.report.journal.document.entry'
-    _inherit = 'xlsx.report.expense.ledger'
+    _inherit = 'report.account.gl.common'
     
+    account_ids = fields.Many2many(
+        'account.account',
+        string='Accounts',
+    )
+    partner_ids = fields.Many2many(
+        'res.partner',
+        string='Partners',
+    )
+    operating_unit_ids = fields.Many2one(
+        'operating.unit',
+        string='Org',
+    )
+    user_type = fields.Many2one(
+        'account.account.type',
+        string='Account Type',
+    )
     doc_type = fields.Char(
         string='Doc Type',
     )
-    
     doc_number_ids =  fields.Many2many(
         'account.move',
         string='Document Number',
     )
-    
     doc_line_filter = fields.Text(
         string='Document Number Filter',
         help="More filter. You can use complex search with comma and between.",
     )
+
+    @api.onchange('operating_unit_ids')
+    def onchange_org(self):
+        domain_acc = []
+        domain_partner = []
+        if self.operating_unit_ids:
+            domain_acc += [('company_id', '=', self.company_id.ids), '|', ('user_type.code', 'in', ('Expense', 'Allocation')), ('code', 'like', '5%')]
+            domain_partner += [('company_id', '=', self.company_id.ids), ('supplier', '=', True), ('user_id.default_operating_unit_id', 'in', self.operating_unit_ids.ids)]
+            return {'domain': {'account_ids': domain_acc, 'partner_ids': domain_partner}}
     
     @api.onchange('doc_line_filter')
     def _onchange_line_filter(self):

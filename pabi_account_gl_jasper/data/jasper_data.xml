@@ -21,7 +21,28 @@
 			<field name="model">jasper.report.journal.document.entry</field>
 			<field name="value_unpickle"
 				eval="'ir.actions.report.xml, ' +str(report_journal_document_entry)" />
-		</record>	
+		</record>
 		
+		<record id="report_expense_ledger" model="ir.actions.report.xml">
+			<field name="string">Expense Ledger Report</field>
+			<field name="auto">True</field>
+			<field name="model">report.expense.ledger</field>
+			<field name="jasper_model_id" ref="pabi_account_gl_jasper.model_report_expense_ledger" />
+			<field name="name">report_expense_ledger</field>
+			<field name="report_name">report_expense_ledger</field>
+			<field name="menu">False</field>
+			<field name="header">False</field>
+			<field name="report_type">jasperserver_rest_v2</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="jasper_report_path">/Reports/#SERVER_URL#/pb2</field>
+			<field name="criteria_field">id</field>
+		</record>
+		<record id="report_expense_ledger_values" model="ir.values">
+			<field name="name">report_expense_ledger_values</field>
+			<field name="model">report.expense.ledger</field>
+			<field name="value_unpickle"
+				eval="'ir.actions.report.xml, ' +str(report_expense_ledger)" />
+		</record>
 	</data>
 </openerp>

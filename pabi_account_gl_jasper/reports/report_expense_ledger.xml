@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_report_expense_ledger_form" model="ir.ui.view">
+            <field name="name">view.report.expense.ledger.form</field>
+            <field name="model">report.expense.ledger</field>
+            <field name="inherit_id" ref="pabi_account_gl_jasper.view_report_account_gl_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+            	<field name="charge_type" position="after">
+            		<field name="operating_unit_ids"/>
+		            <field name="user_type" invisible="1"/>
+            	</field>
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                    <page string="Account Filters" name="account_filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="account_ids" domain="[('company_id', '=', company_id), '|', ('user_type.code', 'in', ('Expense', 'Allocation')), ('code', 'like', '5%')]"/>
+                    </page>
+	                <page string="Partner Filters">
+	                    <separator string="Print only" colspan="4"/>
+	                    <field name="partner_ids" colspan="4" nolabel="1" domain="[('company_id', '=', company_id), ('supplier', '=', True)]"/>
+	                </page>
+	            </xpath>
+            </field>
+        </record>
+
+        <record id="action_report_expense_ledger_form" model="ir.actions.act_window">
+            <field name="name">Expense Ledger</field>
+            <field name="res_model">report.expense.ledger</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'lang': 'th_TH'}</field>
+        </record>
+
+        <menuitem id="menu_report_expense_ledger"
+            name="Expense Ledger"
+            parent="pabi_account_report.menu_pabi_general_ledger_report"
+            action="action_report_expense_ledger_form"
+            sequence="10"/>
+        
+        <delete model="ir.ui.menu" id="pabi_account_report.menu_xlsx_report_expense_ledger"/> 
+    </data>
+</openerp>

@@ -4,19 +4,23 @@
         <record id="view_jasper_report_journal_document_entry" model="ir.ui.view">
             <field name="name">view.jasper.report.journal.document.entry</field>
             <field name="model">jasper.report.journal.document.entry</field>
-            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_expense_ledger_form"/>
+            <field name="inherit_id" ref="pabi_account_gl_jasper.view_report_account_gl_common_form"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
-            	<xpath expr="//field[@name='operating_unit_ids']" position="after">
+            	<field name="charge_type" position="after">
+            		<field name="operating_unit_ids"/>
+		            <field name="user_type" invisible="1"/>
             		<field name="doc_type"/>
-            	</xpath>
-            	<xpath expr="//page[@name='account_filters']" position="replace">
+            	</field>
+            	<xpath expr="//notebook[@name='additional_criteria']" position="inside">
                     <page string="Account Filters" name="account_filters">
                         <separator string="Print only" colspan="4"/>
-                        <field name="account_ids" domain="[('company_id', '=', company_id), '|', ('user_type.code', 'in', ('Expense', 'Allocation'))]"/>
+                        <field name="account_ids" domain="[('company_id', '=', company_id), '|', ('user_type.code', 'in', ('Expense', 'Allocation')), ('code', 'like', '5%')]"/>
                     </page>
-                </xpath>
-            	<xpath expr="//notebook[@name='additional_criteria']" position="inside">
+	                <page string="Partner Filters">
+	                    <separator string="Print only" colspan="4"/>
+	                    <field name="partner_ids" colspan="4" nolabel="1" domain="[('company_id', '=', company_id), ('supplier', '=', True)]"/>
+	                </page>
                     <page string="Document Number Filters" name="doc_number_filters">
                         <group>
                             <group string="Paste list of code to search">
@@ -27,21 +31,6 @@
                             </group>
                         </group>
                     </page>
-                </xpath>
-                <xpath expr="//button[@name='action_get_report']" position="replace">
-                	<button name="start_report" string="Execute Report" type="object" class="oe_highlight"/>
-                </xpath>
-                <xpath expr="//field[@name='async_process']" position="replace">
-                	 <field name="async_process" invisible="1"/>
-                </xpath>
-                <xpath expr="//label[@for='async_process']" position="replace">
-                	 <label for="async_process" invisible="1"/>
-                </xpath>
-                <xpath expr="//field[@name='to_csv']" position="replace">
-                	 <field name="to_csv" invisible="1"/>
-                </xpath>
-                <xpath expr="//label[@for='to_csv']" position="replace">
-                	 <label for="to_csv" invisible="1"/>
                 </xpath>
             </field>
         </record>
