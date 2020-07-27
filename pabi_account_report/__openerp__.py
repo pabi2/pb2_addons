@@ -86,6 +86,7 @@
         #PE PV Reports
         'reports/xlsx_report_pv_pe.xml',
         'reports/xlsx_report_cgd.xml',
+        'reports/xlsx_report_extra_regulation.xml',
 
     ],
     'demo': [

@@ -53,3 +53,5 @@ from . import xlsx_report_pabi_employee_advance_report
 from . import xlsx_report_pv_pe
 #Report cgd
 from . import xlsx_report_cgd
+#Extra Regulation Report
+from . import xlsx_report_extra_regulation
