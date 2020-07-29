@@ -57,7 +57,13 @@ class BudgetPlanUnitPrevFYView(PrevFYCommon, models.Model):
                                       l.fiscalyear_id.id == plan_fy_id)
         prev_fy_lines = self.filtered(lambda l:
                                       l.fiscalyear_id.id == prev_fy_id)
-        for rec in prev_fy_lines:
+        # There are plan but not have previous
+        fy_lines = prev_fy_lines | plan_fy_lines.filtered(
+            lambda l: l.document not in prev_fy_lines.mapped('document') and
+            l.fiscalyear_id.id == plan_fy_id)
+
+        # for rec in prev_fy_lines:
+        for rec in fy_lines:
             if not rec.all_commit:
                 continue
             # Next FY PR/PO/EX
@@ -65,9 +71,12 @@ class BudgetPlanUnitPrevFYView(PrevFYCommon, models.Model):
                 lambda l: l.activity_group_id == rec.activity_group_id and
                 l.document == rec.document)
             next_fy_commit = sum(plan_fy_ag_lines.mapped('all_commit'))
+            all_commit = rec.all_commit
+            if rec.fiscalyear_id.id == plan_fy_id:
+                all_commit = 0.0
             val = {'activity_group_id': rec.activity_group_id.id,
                    'cost_control_id': rec.cost_control_id.id,
-                   'm0': rec.all_commit,
+                   'm0': all_commit,
                    'next_fy_commitment': next_fy_commit,
                    'description': rec.document,
                    'charge_type': rec.charge_type,
