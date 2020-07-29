@@ -38,6 +38,9 @@
                 <xpath expr="//sheet/group/group[1]" position="inside">
                     <field name="state_sign"/>
                 </xpath>
+                <field name="number_preprint" position="after">
+                    <field name="number_preprint_current" attrs="{'invisible': [('state_sign', '!=', 'signed')]}"/>
+                </field>
             </field>
         </record>
     </data>

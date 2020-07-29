@@ -15,3 +15,7 @@ class AccountVoucher(models.Model):
         default="waiting",
         readonly=True,
     )
+    number_preprint_current = fields.Char(
+        string='Preprint Signed',
+        readonly=True,
+    )

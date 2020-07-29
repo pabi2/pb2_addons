@@ -202,6 +202,9 @@ class PrintAccountVoucherWizard(models.TransientModel):
                     'res_model': voucher_id._name,
                     'res_id': voucher_id.id,
                 })
+                voucher_id.write({
+                    'number_preprint_current': res['preprint_number']
+                })
                 voucher_ids |= voucher_id
             else:
                 raise ValidationError(_("%s" % res['errorMessage']))
