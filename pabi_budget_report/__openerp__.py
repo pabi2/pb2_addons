@@ -32,6 +32,8 @@
         'xlsx_template/templates.xml',
         'xlsx_template/load_template.xml',
         'reports/menu_account_report.xml',
+        'security/ir_rule.xml',
+        'security/security_group.xml',
     ],
     'demo': [
     ],
