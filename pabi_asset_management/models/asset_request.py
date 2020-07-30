@@ -57,12 +57,11 @@ class AccountAssetRequest(models.Model):
         help="Default purchase request user, but can change."
     )
     supervisor_res_id = fields.Many2one(
-        'hr.employee', 
+        'hr.employee',
         string="Requester's Supervisor",
-        #compute='_compute_supervisor_res_id',
         store=True,
         readonly=True,
-    )    
+    )
     request_asset_ids = fields.One2many(
         'account.asset.request.line',
         'request_id',
@@ -114,8 +113,8 @@ class AccountAssetRequest(models.Model):
         if self.responsible_user_id:
             boss = self.responsible_user_id.employee_id.id
             BossLevel = self.env['wkf.cmd.boss.level.approval']
-            self.supervisor_res_id = BossLevel.get_supervisor(boss)        
-              
+            self.supervisor_res_id = BossLevel.get_supervisor(boss)
+
     # Building / Floor / Room
     @api.multi
     @api.constrains('building_id', 'floor_id', 'room_id')
@@ -184,7 +183,7 @@ class AccountAssetRequest(models.Model):
                     _('Only %s can approve this document!') %
                     (rec.approve_user_id.name,))
         self.write({'state': 'approve'})
-        
+
     @api.multi
     def action_verify(self):
         for rec in self:
@@ -194,8 +193,8 @@ class AccountAssetRequest(models.Model):
                 raise ValidationError(
                     _('Only %s can approve this document!') %
                     (rec.supervisor_res_id.name))
-        self.write({'state': 'ready'})      
-        
+        self.write({'state': 'ready'})
+
     @api.multi
     def action_done(self):
         for rec in self:
@@ -226,7 +225,7 @@ class AccountAssetRequest(models.Model):
                     'responsible_user_id': False,
                     'building_id': False,
                     'floor_id': False,
-                    'room': False,
+                    'room_id': False,
                 })
         self.write({'state': 'cancel'})
 
