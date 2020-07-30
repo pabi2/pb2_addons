@@ -20,6 +20,13 @@ class AccountMove(models.Model):
             _ids = rec.line_id.ids
             rec.budget_commit_ids = Analytic.search([('move_id', 'in', _ids)])
 
+    @api.multi
+    def _compute_document_analytic_line(self):
+        for rec in self:
+            for line in rec.budget_commit_ids:
+                if not line.document:
+                    line.document = rec.name
+
 
 class AccountFiscalyear(models.Model):
     _inherit = 'account.fiscalyear'
