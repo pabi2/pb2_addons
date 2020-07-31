@@ -4,10 +4,12 @@
         <record id="pabi_security" model="ir.module.category" >
             <field name="name">PABI Security</field>
         </record>
+
+<!-- PABI2 OIA -->
         <record id="group_pabi_oia" model="res.groups">
             <field name="name">PABI2 OIA</field>
             <field name="category_id" ref="pabi_security"/>
-	        <field name="implied_ids" 
+	        <field name="implied_ids"
 	        	eval="[(4, ref('base.group_user')),
 	        			(4, ref('base.group_sale_salesman')),
 	        			(4, ref('pabi_readonly_group.group_readonly_account_move')),
@@ -30,59 +32,82 @@
 	        			(4, ref('pabi_readonly_group.group_readonly_account_asset')),
 	        		  ]"/>
         </record>
-        
+
 <!-- PABI2 Accountant -->
         <record id="group_pabi_accountant" model="res.groups">
             <field name="name">PABI2 Accountant</field>
             <field name="category_id" ref="pabi_security"/>
-	        <field name="implied_ids" 
+	        <field name="implied_ids"
 	        	eval="[(4, ref('base.group_partner_manager')),
 	        			(4, ref('base.group_user')),
 	        			(4, ref('pabi_utils.group_see_own_spool_report')),
 	        		  ]"/>
-	    </record>  	
-	    	  
+	    </record>
+
 <!-- PABI2 Accountant AR -->
         <record id="group_pabi_accountant_ar" model="res.groups">
             <field name="name">PABI2 Accountant AR</field>
             <field name="category_id" ref="pabi_security"/>
-	        <field name="implied_ids" 
-					eval="[(4, ref('pabi_security.group_pabi_accountant')),]"/>        
+	        <field name="implied_ids"
+					eval="[(4, ref('pabi_security.group_pabi_accountant')),]"/>
 	    </record>
-        
+
 <!--  PABI2 Accountant GL -->
         <record id="group_pabi_accountant_gl" model="res.groups">
             <field name="name">PABI2 Accountant GL</field>
             <field name="category_id" ref="pabi_security"/>
-	        <field name="implied_ids" 
-					eval="[(4, ref('pabi_security.group_pabi_accountant')),]"/>        
+	        <field name="implied_ids"
+					eval="[(4, ref('pabi_security.group_pabi_accountant')),]"/>
 	  	</record>
-        
+
 <!--PABI2 Accountant PO&EX-->
         <record id="group_pabi_accountant_po_ex" model="res.groups">
             <field name="name">PABI2 Accountant PO&amp;EX</field>
             <field name="category_id" ref="pabi_security"/>
-	        <field name="implied_ids" 
-					eval="[(4, ref('pabi_security.group_pabi_accountant')),]"/>   
-		</record>  
-					
+	        <field name="implied_ids"
+					eval="[(4, ref('pabi_security.group_pabi_accountant')),]"/>
+		</record>
+
 <!--PABI2 Procurement -->
         <record id="group_pabi_procurment" model="res.groups">
             <field name="name">PABI2 Procurement</field>
             <field name="category_id" ref="pabi_security"/>
-	        <field name="implied_ids" 
-					eval="[(4, ref('base.group_user')),]"/>    
-        
+	        <field name="implied_ids"
+					eval="[(4, ref('base.group_user')),]"/>
 	    </record>
-					
+
 <!--PABI2 Procurement Manager-->
         <record id="group_pabi_procurment_manager" model="res.groups">
             <field name="name">PABI2 Procurement Manager</field>
             <field name="category_id" ref="pabi_security"/>
-	        <field name="implied_ids" 
+	        <field name="implied_ids"
 					eval="[(4, ref('account_budget_activity.group_budget_close_and_uncommit')),
-						   (4, ref('pabi_security.group_pabi_procurment')),]"/>    
-        
+						   (4, ref('pabi_security.group_pabi_procurment')),]"/>
 	    </record>
+
+<!--PABI2 POS-->
+        <record id="group_pabi_pos" model="res.groups">
+            <field name="name">PABI2 POS</field>
+            <field name="category_id" ref="pabi_security"/>
+	        <field name="implied_ids"
+					eval="[(4, ref('base.group_user')),]"/>
+	    </record>
+
+<!--PABI2 Budget-->
+        <record id="group_pabi_budget" model="res.groups">
+            <field name="name">PABI2 Budget</field>
+            <field name="category_id" ref="pabi_security"/>
+	        <field name="implied_ids"
+					eval="[(4, ref('base.group_user')),]"/>
+	    </record>
+
+<!--PABI2 HR-->
+        <record id="group_pabi_hr" model="res.groups">
+            <field name="name">PABI2 HR</field>
+            <field name="category_id" ref="pabi_security"/>
+	        <field name="implied_ids"
+					eval="[(4, ref('base.group_user')),]"/>
+	    </record>
+	    
     </data>
 </openerp>

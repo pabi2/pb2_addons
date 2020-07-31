@@ -234,3 +234,14 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 "procurement_stock_inventory","procurement_stock_inventory","pabi_account_move_adjustment.model_stock_inventory","group_pabi_procurment",1,0,0,0
 "procurement_stock_history","procurement_stock_history","pabi_stock_easy_internal_transfer.model_stock_history","group_pabi_procurment",1,0,0,0
 "procurement_stock_inventory_line","procurement_stock_inventory_line","pabi_account_move_adjustment.model_stock_inventory_line","group_pabi_procurment",1,0,0,0
+
+"pos_sale_order","pos_sale_order","sale.model_sale_order","group_pabi_pos",1,1,1,0
+"pos_sale_invoice_plan","pos_sale_invoice_plan","sale_invoice_plan.model_sale_invoice_plan","group_pabi_pos",1,0,0,0
+"pos_product_template","pos_product_template","product.model_product_template","group_pabi_pos",1,1,1,0
+"pos_stock_picking_type","pos_stock_picking_type","stock.model_stock_picking_type","group_pabi_pos",1,1,1,0
+"pos_stock_picking","pos_stock_picking","stock.model_stock_picking","group_pabi_pos",1,1,1,0
+"pos_stock_history","pos_stock_history","stock_account.model_stock_history","group_pabi_pos",1,0,0,0
+"pos_stock_inventory","pos_stock_inventory","stock.model_stock_inventory","group_pabi_pos",1,0,0,0
+"pos_stock_move","pos_stock_move","stock.model_stock_move","group_pabi_pos",1,0,0,0
+"pos_stock_quant","pos_stock_quant","stock.model_stock_quant","group_pabi_pos",1,0,0,0
+"pos_product_category","pos_product_category","product.model_product_category","group_pabi_pos",1,1,1,0
