@@ -3,9 +3,10 @@
     <data>
 
         <!-- Budget User to have access to all OU -->
-        <record id="pabi_base.group_budget_user" model="res.groups">
+        <!--  update in application-->
+<!--         <record id="pabi_base.group_budget_user" model="res.groups">
             <field name="access_all_operating_unit">True</field>
-        </record>
+        </record> -->
 
     </data>
 </openerp>
