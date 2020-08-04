@@ -258,10 +258,10 @@
           				sequence="2" parent="menu_action_budget_plan_unit"
           				action="pabi_budget_plan.act_budget_plan_unit_line_view"
           				groups="pabi_base.group_budget_user"/>
-          			<menuitem name="Budget Plan Analysis" id="menu_budget_plan_unit_analysis_report"
+          			<!-- <menuitem name="Budget Plan Analysis" id="menu_budget_plan_unit_analysis_report"
           				sequence="3" parent="menu_action_budget_plan_unit"
             			action="pabi_budget_report.action_budget_plan_unit_analysis_report"
-            			icon="STOCK_PRINT"/>
+            			icon="STOCK_PRINT"/> -->
             	<menuitem name="Project Based" id="menu_action_budget_plan_project"
             		sequence="2" parent="menu_action_budget_plan"/>
             		<menuitem name="Budget Plans" id="menu_budget_plan_project_view"
