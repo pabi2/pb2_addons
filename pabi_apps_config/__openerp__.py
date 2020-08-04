@@ -47,15 +47,6 @@ This module sits on top of other modules whose configuration is moved here.
         'pabi_advance_dunning_letter',
         'pabi_long_term_investment_report',
         
-        'account_budget_activity',
-        'pabi_budget_drilldown_report',
-        'pabi_budget_monitor',
-        'pabi_budget_plan',
-        'pabi_budget_report',
-        'pabi_budget_transfer',
-        'pabi_budget_yearend_process',
-        'pabi_chartfield',
-        
     ],
     "data": [
         'security/security_group.xml',
