@@ -230,10 +230,6 @@
         # Event Calendar
         <menuitem name="Calendar" id="calendar.mail_menu_calendar" parent="calendar.menu_calendar_configuration" sequence="10" action="calendar.action_calendar_event"/>
 
-        # Additional Invest Asset menu for Cooperate Budget
-        <menuitem name="Investment Asset" id="menu_res_invest_asset_for_cooperate_budget"
-          action="pabi_base.action_res_invest_asset"
-          parent="pabi_budget_plan.menu_action_budget_plan_invest_asset" sequence="1"  groups="pabi_base.group_cooperate_budget"/>
 
         # Hide some accounting menu
         <menuitem name="PIT Rate" id="l10n_th_account_pit.menu_account_pit" action="l10n_th_account_pit.action_account_pit"
@@ -241,5 +237,257 @@
         <menuitem id="account.menu_account_reports" name="Financial Reports" parent="menu_pabi2_config_unused_menu" sequence="30" />
         <menuitem id="account.menu_analytic_accounting" name="Analytic Accounting" parent="menu_pabi2_config_unused_menu" groups="analytic.group_analytic_accounting" sequence="40"/>
 
+		# Rearrange Menu
+		
+		# Budgeting
+		<menuitem name="Budgeting" id="menu_budgeting"
+			sequence="2"
+			groups="pabi_base.group_budget_user"/>
+			
+			# Budget Plan
+			<menuitem name="Budget Plan" id="menu_action_budget_plan"
+				sequence="1" parent="menu_budgeting"
+				groups="pabi_base.group_budget_user"/>
+				<menuitem name="Unit Based" id="menu_action_budget_plan_unit"
+					sequence="1" parent="menu_action_budget_plan"/>
+					<menuitem name="Budget Plans" id="menu_budget_plan_unit_view"
+						sequence="1" parent="menu_action_budget_plan_unit"
+						action="pabi_budget_plan.action_budget_plan_unit_view"
+          				groups="pabi_base.group_budget_user"/>
+          			<menuitem name="Budget Plan Lines" id="menu_act_budget_plan_unit_line_view"
+          				sequence="2" parent="menu_action_budget_plan_unit"
+          				action="pabi_budget_plan.act_budget_plan_unit_line_view"
+          				groups="pabi_base.group_budget_user"/>
+          			<menuitem name="Budget Plan Analysis" id="menu_budget_plan_unit_analysis_report"
+          				sequence="3" parent="menu_action_budget_plan_unit"
+            			action="pabi_budget_report.action_budget_plan_unit_analysis_report"
+            			icon="STOCK_PRINT"/>
+            	<menuitem name="Project Based" id="menu_action_budget_plan_project"
+            		sequence="2" parent="menu_action_budget_plan"/>
+            		<menuitem name="Budget Plans" id="menu_budget_plan_project_view"
+            			sequence="1" parent="menu_action_budget_plan_project"
+            			action="pabi_budget_plan.action_budget_plan_project_view"
+          				groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget"/>
+          			<menuitem name="Budget Plan Lines" id="menu_budget_plan_project_line_view"
+          				sequence="2" parent="menu_action_budget_plan_project"
+          				action="pabi_budget_plan.action_budget_plan_project_line_view"
+          				groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget"/>
+          			<menuitem name="Budget Plan Analysis" id="menu_budget_plan_project_analysis_report"
+	            		sequence="3" parent="menu_action_budget_plan_project"
+            			action="pabi_budget_report.action_budget_plan_project_analysis_report"
+            			icon="STOCK_PRINT"/>
+            	<menuitem name="Personnel" id="menu_action_budget_plan_personnel"
+            		sequence="3" parent="menu_action_budget_plan"/>
+            		<menuitem name="Budget Plans" id="menu_budget_plan_personnel_view"
+            			sequence="1" parent="menu_action_budget_plan_personnel"
+            			action="pabi_budget_plan.action_budget_plan_personnel_view"
+          				groups="pabi_base.group_cooperate_budget,pabi_base.group_budget_personnel"/>
+          			<menuitem name="Budget Plan Lines" id="menu_act_budget_plan_personnel_line_view"
+          				sequence="2" parent="menu_action_budget_plan_personnel"
+          				action="pabi_budget_plan.act_budget_plan_personnel_line_view"
+          				groups="pabi_base.group_cooperate_budget,pabi_base.group_budget_personnel"/>
+          			<menuitem name="Budget Plan Analysis" id="menu_report_budget_plan_personnel_analysis"
+          				sequence="3" parent="menu_action_budget_plan_personnel"
+          				action="pabi_budget_report.action_report_budget_plan_personnel_analysis"
+          				groups="pabi_base.group_cooperate_budget,pabi_base.group_budget_personnel"/>
+          		<menuitem name="Investment Asset" id="menu_action_budget_plan_invest_asset"
+          			sequence="4" parent="menu_action_budget_plan"/>
+			        # Additional Invest Asset menu for Cooperate Budget
+			        <menuitem name="Investment Asset" id="menu_res_invest_asset_for_cooperate_budget"
+			        	sequence="1" parent="menu_action_budget_plan_invest_asset"
+			          	action="pabi_base.action_res_invest_asset"
+			          	groups="pabi_base.group_cooperate_budget"/>
+			    	<menuitem name="Asset Item Plans" id="menu_invest_asset_plan_view"
+			    		sequence="2" parent="menu_action_budget_plan_invest_asset"
+			    		action="pabi_budget_plan.action_invest_asset_plan_view"
+          				groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
+          			<menuitem name="Asset Item Plan Line" id="menu_act_invest_asset_plan_item_view"
+          				sequence="3" parent="menu_action_budget_plan_invest_asset"
+          				action="pabi_budget_plan.act_invest_asset_plan_item_view"
+          				groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
+          			<menuitem name="Asset Item Plan Analysis" id="menu_report_asset_item_plan_analysis"
+			          	sequence="4" parent="menu_action_budget_plan_invest_asset"
+			          	action="pabi_budget_report.action_report_asset_item_plan_analysis"
+			          	groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
+			    	<menuitem name="Budget Plans" id="menu_budget_plan_invest_asset_view"
+			          	sequence="5" parent="menu_action_budget_plan_invest_asset"
+			          	action="pabi_budget_plan.action_budget_plan_invest_asset_view"
+            			groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
+            		<menuitem name="Budget Plan Lines" id="menu_act_budget_plan_invest_asset_line_view"
+            			sequence="6" parent="menu_action_budget_plan_invest_asset"
+            			action="pabi_budget_plan.act_budget_plan_invest_asset_line_view"
+            			groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
+            		<menuitem name="Budget Plan Analysis" id="menu_report_budget_plan_asset_analysis"
+          				sequence="7" parent="menu_action_budget_plan_invest_asset"
+          				action="pabi_budget_report.action_report_budget_plan_asset_analysis"
+          				groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
+          		<menuitem name="Investment Construction" id="menu_action_budget_plan_invest_construction"
+          			sequence="5" parent="menu_action_budget_plan"/>
+          			<menuitem name="Budget Plans" id="menu_budget_plan_invest_construction_view"
+          				sequence="1" parent="menu_action_budget_plan_invest_construction"
+          				action="pabi_budget_plan.action_budget_plan_invest_construction_view"
+            			groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget"/>
+            		<menuitem name="Budget Plan Lines" id="menu_act_budget_plan_invest_construction_line_view"
+            			sequence="2" parent="menu_action_budget_plan_invest_construction"
+            			action="pabi_budget_plan.act_budget_plan_invest_construction_line_view"
+          				groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget"/>
+          			<menuitem name="Budget Plan Analysis" id="menu_report_budget_plan_construction_analysis"
+          				sequence="3" parent="menu_action_budget_plan_invest_construction"
+          				action="pabi_budget_report.action_report_budget_plan_construction_analysis"
+          				groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget"/>
+          		<menuitem name="Generate Budget Plans" id="menu_generate_budget_plan"
+          			sequence="6" parent="menu_action_budget_plan"
+          			action="pabi_budget_plan.action_generate_budget_plan"
+         			groups="pabi_base.group_cooperate_budget"/>
+			
+			# Budget Policy
+			<menuitem name="Budget Policy" id="menu_action_budget_policy"
+				sequence="2" parent="menu_budgeting"
+          		groups="pabi_base.group_cooperate_budget_policy"/>
+				<menuitem name="Budget Allocations" id="menu_fiscalyear_budget_allocation"
+					sequence="1" parent="menu_action_budget_policy"
+					action="pabi_budget_plan.action_fiscalyear_budget_allocation"
+					groups="pabi_base.group_cooperate_budget_policy"/>
+				<menuitem name="Unit Based" id="menu_budget_policy_unit_view"
+					sequence="2" parent="menu_action_budget_policy"
+					action="pabi_budget_plan.action_budget_policy_unit_view"
+					groups="pabi_base.group_cooperate_budget_policy"/>
+				<menuitem name="Project Based" id="menu_budget_policy_project_view"
+					sequence="3" parent="menu_action_budget_policy"
+					action="pabi_budget_plan.action_budget_policy_project_view"
+					groups="pabi_base.group_cooperate_budget_policy"/>
+				<menuitem name="Personnel" id="menu_budget_policy_personnel_view"
+					sequence="4" parent="menu_action_budget_policy"
+					action="pabi_budget_plan.action_budget_policy_personnel_view"
+					groups="pabi_base.group_cooperate_budget_policy"/>
+				<menuitem name="Investment Asset" id="menu_budget_policy_invest_asset_view"
+					sequence="5" parent="menu_action_budget_policy"
+					action="pabi_budget_plan.action_budget_policy_invest_asset_view"
+					groups="pabi_base.group_cooperate_budget_policy"/>
+				<menuitem name="Investment Construction" id="menu_budget_policy_invest_construction_view"
+					sequence="6" parent="menu_action_budget_policy"
+					action="pabi_budget_plan.action_budget_policy_invest_construction_view"
+					groups="pabi_base.group_cooperate_budget_policy"/>
+			
+			# Budget Breakdown
+			<menuitem name="Budget Breakdown" id="menu_action_budget_breakdown"
+				sequence="3" parent="menu_budgeting"
+          		groups="pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget"/>
+          		<menuitem name="Unit Based" id="menu_unit_base_breakdown_view"
+	          		sequence="1" parent="menu_action_budget_breakdown"
+	          		action="pabi_budget_plan.action_unit_base_breakdown_view"
+	          		groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
+	          	<menuitem name="Personnel" id="menu_personnel_breakdown_view"
+		          	sequence="2" parent="menu_action_budget_breakdown"
+		          	action="pabi_budget_plan.action_personnel_breakdown_view"
+		          	groups="pabi_base.group_cooperate_budget"/>
+				<menuitem name="Investment Asset" id="menu_invest_asset_breakdown_view"
+					sequence="3" parent="menu_action_budget_breakdown"
+					action="pabi_budget_plan.action_invest_asset_breakdown_view"
+					groups="pabi_base.group_cooperate_budget"/>
+			
+			# Budget Control
+			<menuitem name="Budget Control" id="menu_action_account_budget_control"
+				sequence="4" parent="menu_budgeting"/>
+				<menuitem name="Budgets" id="menu_act_account_budget_view"
+					sequence="1" parent="menu_action_account_budget_control"
+					action="account_budget_activity.act_account_budget_view"/>
+				<menuitem name="Project Based" id="menu_act_account_budget_view_project_base"
+		            sequence="2" parent="menu_action_account_budget_control"
+		            action="pabi_chartfield.act_account_budget_view_project_base"
+		            groups="pabi_base.group_nstda_admin_business"/>
+				<menuitem name="Personnel" id="menu_act_account_budget_view_personnel"
+            		sequence="3" parent="menu_action_account_budget_control"
+		            action="pabi_chartfield.act_account_budget_view_personnel"
+		            groups="pabi_base.group_cooperate_budget,pabi_base.group_budget_personnel"/>
+				<menuitem name="Investment Asset" id="menu_act_account_budget_view_invest_asset"
+            		sequence="4" parent="menu_action_account_budget_control"
+            		action="pabi_chartfield.act_account_budget_view_invest_asset"
+            		groups="pabi_base.group_cooperate_budget,pabi_base.group_asset_ou_budget"/>
+            	<menuitem name="Investment Construction" id="menu_act_account_budget_view_invest_construction"
+            		sequence="5" parent="menu_action_account_budget_control"
+		            action="pabi_chartfield.act_account_budget_view_invest_construction"
+		            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget"/>
+				<menuitem name="Budget Control Analysis" id="menu_act_account_budget_line_view"
+					sequence="6" parent="menu_action_account_budget_control"
+					action="account_budget_activity.act_account_budget_line_view"/>
+			
+			# Budget Transfer
+			<menuitem name="Budget Transfer" id="menu_budget_transfer"
+				sequence="5" parent="menu_budgeting"
+				groups="pabi_base.group_budget_user"/>
+				<menuitem name="Unit Based" id="menu_section_budget_transfer"
+					sequence="20" parent="menu_budget_transfer"
+					action="pabi_budget_transfer.action_section_budget_transfer"/>
+			
+			# Budget Monitor
+			<menuitem name="Budget Monitor" id="menu_action_budget_report"
+				sequence="6" parent="menu_budgeting"/>
+				<menuitem name="Budget Consume" id="menu_action_budget_consume_report"
+					sequence="1" parent="menu_action_budget_report"
+					action="account_budget_activity.action_budget_consume_report"/>
+				<menuitem name="Budget Plan" id="menu_action_budget_plan_report"
+					sequence="2" parent="menu_action_budget_report"
+					action="account_budget_activity.action_budget_plan_report"/>
+				<menuitem name="Budget Monitoring" id="menu_action_budget_monitor_report"
+					sequence="3" parent="menu_action_budget_report"
+					action="pabi_budget_monitor.action_budget_monitor_report_wizard"/>
+				<menuitem name="Budget Transition" id="menu_budget_transitionp"
+					sequence="4" parent="menu_action_budget_report"
+					action="account_budget_activity.action_budget_transition"/>
+				<menuitem name="Budget Overview Report" id="menu_budget_drilldown_report_report"
+          			sequence="5" parent="menu_action_budget_report"
+					action="pabi_budget_drilldown_report.action_budget_drilldown_report_wizard"/>
+			
+			# Year End Process
+			<menuitem name="Year End Process" id="menu_action_budget_year_end_process"
+          		sequence="7" parent="menu_budgeting"/>
+          		<menuitem name="Commitment Carry Over" id="menu_action_budget_carry_over"
+          			sequence="1" parent="menu_action_budget_year_end_process"
+          			action="pabi_budget_yearend_process.action_budget_carry_over"
+          			groups="group_budget_carry_over"/>
+          		<menuitem name="Project Balance C/F" id="menu_project_balance_carry_forward"
+          			sequence="2" parent="menu_action_budget_year_end_process"
+          			action="pabi_budget_yearend_process.action_project_balance_carry_forward"
+          			groups="group_project_balance_carry_forward"/>
+			
+			# Budget Report
+			<menuitem name="Budget Report" id="menu_budget_report"
+            	sequence="8" parent="menu_budgeting"/>
+				<menuitem name="My Budget Report" id="menu_my_budget_drilldown_report"
+	          		sequence="1" parent="menu_budget_report"
+					action="pabi_budget_drilldown_report.action_my_budget_drilldown_report_wizard"/>
+			
+			# Configuration
+			<menuitem name="Configuration" id="menu_action_account_budget_config"
+				sequence="9" parent="menu_budgeting" />
+				<menuitem name="Activity Group" id="menu_account_activity_group"
+					sequence="1" parent="menu_action_account_budget_config"
+					action="account_budget_activity.action_account_activity_group"/>
+				<menuitem name="Activity" id="menu_account_activity"
+					sequence="2" parent="menu_action_account_budget_config"
+					action="account_budget_activity.action_account_activity"/>
+				<menuitem name="Activity Tag" id="menu_account_activity_tag"
+					sequence="3" parent="menu_action_account_budget_config"
+					action="account_budget_activity.action_account_activity_tag"/>
+				<menuitem name="Budgeting Level" id="menu_fiscalyear_budget_level"
+					sequence="4" parent="menu_action_account_budget_config"
+					action="account_budget_activity.action_fiscalyear_budget_level"/>
+				<menuitem name="Budget Plan Templates (xls)" id="menu_budget_plan_import_template"
+            		sequence="5" parent="menu_action_account_budget_config"
+					action="pabi_budget_plan.action_budget_plan_import_template"
+            		groups="base.group_no_one"/>
+			
+			# Account Report
+			<menuitem name="Account Report" id="menu_budgeting_account_report"
+            	sequence="10" parent="menu_budgeting"/>
+            	<menuitem name="Expense Ledger" id="menu_xlsx_report_expense_ledger_account_report"
+		            sequence="1" parent="menu_budgeting_account_report"
+		            action="pabi_account_report.action_xlsx_report_expense_ledger_form"/>
+				<menuitem name="Revenue Ledger" id="menu_xlsx_report_revenue_ledger"
+		            sequence="2" parent="menu_budgeting_account_report"
+		            action="pabi_account_report.action_xlsx_report_revenue_ledger_form"/>
+            
+            
     </data>
 </openerp>

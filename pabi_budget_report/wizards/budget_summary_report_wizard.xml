@@ -29,12 +29,12 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem
+        <!-- <menuitem
             id="menu_budget_report"
             name="Budget Report"
             parent="account_budget_activity.menu_budgeting"
             sequence="115"
-            />
+            />-->
 
         <!-- Not use now -->
         <!-- <menuitem

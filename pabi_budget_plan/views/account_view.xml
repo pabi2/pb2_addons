@@ -116,8 +116,8 @@
             <field name="view_id" ref="view_fiscalyear_budget_allocation_tree"/>
             <field name="act_window_id" ref="action_fiscalyear_budget_allocation"/>
         </record>
-        <menuitem action="action_fiscalyear_budget_allocation" id="menu_fiscalyear_budget_allocation"
-          parent="menu_action_budget_policy" sequence="1" groups="pabi_base.group_cooperate_budget_policy"/>
+        <!-- <menuitem action="action_fiscalyear_budget_allocation" id="menu_fiscalyear_budget_allocation"
+          parent="menu_action_budget_policy" sequence="1" groups="pabi_base.group_cooperate_budget_policy"/>-->
 
     </data>
 </openerp>

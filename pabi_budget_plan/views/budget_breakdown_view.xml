@@ -222,7 +222,7 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_breakdown" id="menu_unit_base_breakdown_view" groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget" action="action_unit_base_breakdown_view" sequence="10"/>
+        <!-- <menuitem parent="menu_action_budget_breakdown" id="menu_unit_base_breakdown_view" groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget" action="action_unit_base_breakdown_view" sequence="10"/>-->
 
         # Personnel
         <record model="ir.actions.act_window" id="action_personnel_breakdown_view">
@@ -240,7 +240,7 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_breakdown" id="menu_personnel_breakdown_view" groups="pabi_base.group_cooperate_budget" action="action_personnel_breakdown_view" sequence="20"/>
+        <!-- <menuitem parent="menu_action_budget_breakdown" id="menu_personnel_breakdown_view" groups="pabi_base.group_cooperate_budget" action="action_personnel_breakdown_view" sequence="20"/>-->
 
         # Invest Asset
         <record model="ir.actions.act_window" id="action_invest_asset_breakdown_view">
@@ -258,7 +258,7 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_breakdown" id="menu_invest_asset_breakdown_view" groups="pabi_base.group_cooperate_budget" action="action_invest_asset_breakdown_view" sequence="40"/>
+        <!-- <menuitem parent="menu_action_budget_breakdown" id="menu_invest_asset_breakdown_view" groups="pabi_base.group_cooperate_budget" action="action_invest_asset_breakdown_view" sequence="40"/>-->
 
     </data>
 </openerp>

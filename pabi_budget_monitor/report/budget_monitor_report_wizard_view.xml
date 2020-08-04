@@ -88,7 +88,7 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem id="account_budget_activity.menu_action_budget_monitor_report" action="action_budget_monitor_report_wizard" parent="account_budget_activity.menu_action_budget_report" sequence="3"/>
+        <!-- <menuitem id="account_budget_activity.menu_action_budget_monitor_report" action="action_budget_monitor_report_wizard" parent="account_budget_activity.menu_action_budget_report" sequence="3"/>-->
 
     </data>
 </openerp>

@@ -93,7 +93,7 @@
 
         </record>
 
-        <menuitem action="action_budget_plan_report" id="menu_action_budget_plan_report" parent="menu_action_budget_report" sequence="2"/>
+        <!-- <menuitem action="action_budget_plan_report" id="menu_action_budget_plan_report" parent="menu_action_budget_report" sequence="2"/>-->
 
     </data>
 </openerp>

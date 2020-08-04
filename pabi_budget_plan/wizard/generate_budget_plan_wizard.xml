@@ -37,8 +37,8 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem action="action_generate_budget_plan" id="menu_generate_budget_plan"
-          parent="menu_action_budget_plan" sequence="70" groups="pabi_base.group_cooperate_budget"/>
+        <!-- <menuitem action="action_generate_budget_plan" id="menu_generate_budget_plan"
+          parent="menu_action_budget_plan" sequence="70" groups="pabi_base.group_cooperate_budget"/>-->
 
     </data>
 </openerp>

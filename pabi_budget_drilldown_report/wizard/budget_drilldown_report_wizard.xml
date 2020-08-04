@@ -95,9 +95,9 @@
             <field name="context">{'action_type': 'budget_overview_report'}</field>
         </record>
 
-        <menuitem action="action_budget_drilldown_report_wizard" sequence="100"
+        <!-- <menuitem action="action_budget_drilldown_report_wizard" sequence="100"
           id="menu_budget_drilldown_report_report"
-          parent="account_budget_activity.menu_action_budget_report"/>
+          parent="account_budget_activity.menu_action_budget_report"/>-->
 
         <!-- My Budget Report -->
         <record id="action_my_budget_drilldown_report_wizard" model="ir.actions.act_window">
@@ -111,8 +111,8 @@
             <field name="context">{'action_type': 'my_budget_report'}</field>
         </record>
 
-        <menuitem action="action_my_budget_drilldown_report_wizard" sequence="110"
+        <!-- <menuitem action="action_my_budget_drilldown_report_wizard" sequence="110"
           id="menu_my_budget_drilldown_report"
-          parent="pabi_budget_report.menu_budget_report"/>
+          parent="pabi_budget_report.menu_budget_report"/>-->
     </data>
 </openerp>

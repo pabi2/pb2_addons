@@ -39,7 +39,7 @@
             <field name="view_id" ref="view_account_activity_group_tree"/>
             <field name="search_view_id" ref="view_account_activity_group_search"/>
         </record>
-        <menuitem action="action_account_activity_group" id="menu_account_activity_group" parent="menu_action_account_budget_config" sequence="100"/>
+        <!-- <menuitem action="action_account_activity_group" id="menu_account_activity_group" parent="menu_action_account_budget_config" sequence="100"/>-->
 
         <record id="view_account_activity_group_form" model="ir.ui.view">
             <field name="name">view.account.activity.group.form</field>
@@ -140,7 +140,7 @@
             <field name="view_id" ref="view_account_activity_tree"/>
             <field name="search_view_id" ref="view_account_activity_search"/>
         </record>
-        <menuitem action="action_account_activity" id="menu_account_activity" parent="menu_action_account_budget_config" sequence="110"/>
+        <!-- <menuitem action="action_account_activity" id="menu_account_activity" parent="menu_action_account_budget_config" sequence="110"/>-->
 
         <record id="view_account_activity_form" model="ir.ui.view">
             <field name="name">view.account.activity.form</field>
@@ -222,7 +222,7 @@
             <field name="view_id" ref="view_account_activity_tag_tree"/>
             <field name="search_view_id" ref="view_account_activity_tag_search"/>
         </record>
-        <menuitem action="action_account_activity_tag" id="menu_account_activity_tag" parent="menu_action_account_budget_config" sequence="120"/>
+        <!-- <menuitem action="action_account_activity_tag" id="menu_account_activity_tag" parent="menu_action_account_budget_config" sequence="120"/>-->
 
         <record id="view_account_activity_tag_form" model="ir.ui.view">
             <field name="name">view.account.activity.tag.form</field>

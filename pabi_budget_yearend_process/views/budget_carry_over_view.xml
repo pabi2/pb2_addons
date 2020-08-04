@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <menuitem name="Year End Process" id="menu_action_budget_year_end_process"
-          parent="account_budget_activity.menu_budgeting" sequence="115"/>
+        <!-- <menuitem name="Year End Process" id="menu_action_budget_year_end_process"
+          parent="account_budget_activity.menu_budgeting" sequence="115"/>-->
 
         <record id="budget_carry_over_tree" model="ir.ui.view">
             <field name="name">budget.carry.over.tree</field>
@@ -92,8 +92,8 @@
             <field name="help">Process to carry over committed budget from previous year to next year</field>
         </record>
 
-        <menuitem action="action_budget_carry_over" id="menu_action_budget_carry_over" parent="menu_action_budget_year_end_process" sequence="10"
-          groups="group_budget_carry_over"/>
+        <!-- <menuitem action="action_budget_carry_over" id="menu_action_budget_carry_over" parent="menu_action_budget_year_end_process" sequence="10"
+          groups="group_budget_carry_over"/>-->
 
     </data>
 </openerp>
