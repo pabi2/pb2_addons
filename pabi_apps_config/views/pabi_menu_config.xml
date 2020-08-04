@@ -445,11 +445,11 @@
           		<menuitem name="Commitment Carry Over" id="menu_action_budget_carry_over"
           			sequence="1" parent="menu_action_budget_year_end_process"
           			action="pabi_budget_yearend_process.action_budget_carry_over"
-          			groups="group_budget_carry_over"/>
+          			groups="pabi_budget_yearend_process.group_budget_carry_over"/>
           		<menuitem name="Project Balance C/F" id="menu_project_balance_carry_forward"
           			sequence="2" parent="menu_action_budget_year_end_process"
           			action="pabi_budget_yearend_process.action_project_balance_carry_forward"
-          			groups="group_project_balance_carry_forward"/>
+          			groups="pabi_budget_yearend_process.group_project_balance_carry_forward"/>
 			
 			# Budget Report
 			<menuitem name="Budget Report" id="menu_budget_report"
