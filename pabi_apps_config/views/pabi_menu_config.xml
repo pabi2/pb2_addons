@@ -239,7 +239,10 @@
 
 		# Rearrange Menu
 		
-		# Budgeting
+		# Delete old Budgeting Menu
+		<delete id="account_budget_activity.menu_action_budget_consume_report" model="ir.ui.menu"/> 
+        
+		# Recreate New Budgeting Menu
 		<menuitem name="Budgeting" id="menu_budgeting"
 			sequence="2"
 			groups="pabi_base.group_budget_user"/>
@@ -487,7 +490,7 @@
 				<menuitem name="Revenue Ledger" id="menu_xlsx_report_revenue_ledger"
 		            sequence="2" parent="menu_budgeting_account_report"
 		            action="pabi_account_report.action_xlsx_report_revenue_ledger_form"/>
-            
+           
             
     </data>
 </openerp>
