@@ -12,7 +12,7 @@ class PabiRegister_iCash(models.Model):
         track_visibility='onchange',
     )
     service_type = fields.Selection(
-        [('direct', 'DIRECT-DCB02'),('smart', 'SMART-SMC06')],
+        [('direct', 'BBL DIRECT-DCB02'),('smart', 'BBL SMART-SMC06')],
         'Service Type',
         track_visibility='onchange',
     )
