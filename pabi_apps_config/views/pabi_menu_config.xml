@@ -258,8 +258,8 @@
 			<delete id="pabi_budget_plan.menu_act_budget_plan_personnel_line_view" model="ir.ui.menu"/>
 			<delete id="pabi_budget_report.menu_report_budget_plan_personnel_analysis" model="ir.ui.menu"/>
 			<delete id="pabi_budget_plan.menu_action_budget_plan_invest_asset" model="ir.ui.menu"/>
-			<delete id="pabi_budget_plan.menu_action_budget_plan_invest_asset" model="ir.ui.menu"/>
-			<delete id="pabi_budget_plan.menu_action_budget_plan_invest_asset" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_invest_asset_plan_view" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_act_invest_asset_plan_item_view" model="ir.ui.menu"/>
 			<delete id="pabi_budget_report.menu_report_asset_item_plan_analysis" model="ir.ui.menu"/>
 			<delete id="pabi_budget_plan.menu_budget_plan_invest_asset_view" model="ir.ui.menu"/>
 			<delete id="pabi_budget_plan.menu_act_budget_plan_invest_asset_line_view" model="ir.ui.menu"/>
