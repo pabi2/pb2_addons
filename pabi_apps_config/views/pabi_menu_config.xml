@@ -473,6 +473,7 @@
 			<delete id="account_budget_activity.menu_action_budget_report" model="ir.ui.menu"/>
 			<delete id="account_budget_activity.menu_action_budget_consume_report" model="ir.ui.menu"/>
 			<delete id="account_budget_activity.menu_action_budget_plan_report" model="ir.ui.menu"/>
+			<delete id="account_budget_activity.menu_action_budget_monitor_report" model="ir.ui.menu"/>
 			<delete id="pabi_budget_monitor.menu_action_budget_monitor_report" model="ir.ui.menu"/>
 			<delete id="account_budget_activity.menu_budget_transitionp" model="ir.ui.menu"/>
 			<delete id="pabi_budget_drilldown_report.menu_budget_drilldown_report_report" model="ir.ui.menu"/>
