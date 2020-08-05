@@ -49,8 +49,8 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         string='No Finlease',
         default=True,
     )
-    po_draft = fields.Boolean(
-        string='PO Draft',
+    no_po_draft = fields.Boolean(
+        string='No PO Draft',
         default=True,
     )
     filter_description = fields.Char(
@@ -90,7 +90,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
     )
     
     @api.multi
-    @api.depends('invoice_plan', 'po_not_closed', 'no_finlease', 'po_draft')
+    @api.depends('invoice_plan', 'po_not_closed', 'no_finlease', 'no_po_draft')
     def _compute_filter_description(self):
         for rec in self:
             filter_description = ''
@@ -100,8 +100,8 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                 filter_description += ' PO Not Closed,'
             if rec.no_finlease:
                 filter_description += ' No Finlease,'
-            if rec.po_draft:
-                filter_description += ' Po Draft,'
+            if rec.no_po_draft:
+                filter_description += ' No Po Draft,'
             
             rec.filter_description = filter_description
 
@@ -281,8 +281,8 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
             dom += [('technical_closed','!=',True)]
         if self.no_finlease is True:
             dom += [('is_fin_lease','!=',True)]
-        if self.po_draft is True:
-            dom += [('po_status','=','draft')]
+        if self.no_po_draft is True:
+            dom += [('po_status','!=','draft')]
         
         if len(dom) > 0:
             where_str = self._domain_to_where_str(dom)
@@ -307,7 +307,6 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                         where pi_r.purchase_id = new.purchase_id and av.state <> 'cancel'
                         )
                 END as no_of_installment,
-                (select id from account_period where new.date_order between date_start and date_stop limit 1) as period_po_id,
                 (CASE
                     WHEN new.use_invoice_plan = True
                         THEN (select sum(pip.invoice_amount) from purchase_invoice_plan pip
@@ -372,6 +371,9 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     pct.action_date,
                     (select pe.id from account_period pe 
                         where pip.date_invoice between pe.date_start and pe.date_stop limit 1
+                    ) as period_plan_id,
+                    (select pe.id from account_period pe 
+                        where av.date_invoice between pe.date_start and pe.date_stop limit 1
                     ) as period_kv_id,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
@@ -419,7 +421,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     end as advance_deposit,
                     po.use_invoice_plan, po.technical_closed, po.is_fin_lease
                 from purchase_order po
-                    left join purchase_invoice_plan pip on pip.order_id = po.id and po.use_invoice_plan = True
+                    left join purchase_invoice_plan pip on pip.order_id = po.id
                     left join purchase_order_line pol on pol.id = pip.order_line_id
                     left join account_invoice av on av.id = pip.ref_invoice_id and av.state <> 'cancel'
                     left join account_invoice_line avl on avl.invoice_id = av.id
@@ -458,6 +460,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     left join res_currency cur_kv on cur_kv.id = av.currency_id
                     left join account_account ads on ads.id = po.account_deposit_supplier
                 where pip.id is not null and (pip.order_line_id is null or pol.active = True)
+                    and po.use_invoice_plan = True
                 )
                 union
                 (select
@@ -477,6 +480,9 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     pct.action_date,
                     (select pe.id from account_period pe 
                         where pip.date_invoice between pe.date_start and pe.date_stop limit 1
+                    ) as period_plan_id,
+                    (select pe.id from account_period pe 
+                        where av.date_invoice between pe.date_start and pe.date_stop limit 1
                     ) as period_kv_id,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
@@ -525,7 +531,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     po.use_invoice_plan, po.technical_closed, po.is_fin_lease
                 from purchase_order po
                     left join purchase_order_line pol on pol.order_id = po.id
-                    left join purchase_invoice_plan pip on pip.order_line_id = pol.id and po.use_invoice_plan = True
+                    left join purchase_invoice_plan pip on pip.order_line_id = pol.id
                     left join account_invoice_line avl on avl.purchase_line_id = pol.id
                         and (select av2.state from account_invoice av2 where av2.id = avl.invoice_id) <> 'cancel'
                     left join account_invoice av on av.id = avl.invoice_id
@@ -559,7 +565,8 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     left join res_currency cur_po on cur_po.id = po.currency_id
                     left join res_currency cur_kv on cur_kv.id = av.currency_id
                     left join account_account ads on ads.id = po.account_deposit_supplier
-                where pol.active = True and pip.id is null
+                where (pol.id is null or pol.active = True) and pip.id is null
+                    and po.use_invoice_plan <> True
                 )
             ) as new
             where po_status not in ('except_picking','except_invoice','cancel') 
@@ -588,7 +595,7 @@ class ReportPurchaseInvoicePlanView(models.AbstractModel):
     purchase_line_id = fields.Many2one('purchase.order.line')
     product_id = fields.Many2one('product.product')
     supplier_id = fields.Many2one('res.partner')
-    period_po_id = fields.Many2one('account.period')
+    period_plan_id = fields.Many2one('account.period')
     period_kv_id = fields.Many2one('account.period')
     po_fiscalyear = fields.Char()
     po_contract_type = fields.Char()
