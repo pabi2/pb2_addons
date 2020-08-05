@@ -238,16 +238,38 @@
         <menuitem id="account.menu_analytic_accounting" name="Analytic Accounting" parent="menu_pabi2_config_unused_menu" groups="analytic.group_analytic_accounting" sequence="40"/>
 
 		# Rearrange Menu
-		
-		# Delete old Budgeting Menu
-		<delete id="account_budget_activity.menu_action_budget_consume_report" model="ir.ui.menu"/> 
-        
-		# Recreate New Budgeting Menu
+		<delete id="account_budget_activity.menu_budgeting" model="ir.ui.menu"/>
 		<menuitem name="Budgeting" id="menu_budgeting"
 			sequence="2"
 			groups="pabi_base.group_budget_user"/>
 			
 			# Budget Plan
+			<delete id="pabi_budget_plan.menu_action_budget_plan" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_action_budget_plan_unit" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_budget_plan_unit_view" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_act_budget_plan_unit_line_view" model="ir.ui.menu"/>
+			<delete id="pabi_budget_report.menu_report_budget_plan_unit_analysis" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_action_budget_plan_project" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_budget_plan_project_view" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_budget_plan_project_line_view" model="ir.ui.menu"/>
+			<delete id="pabi_budget_report.menu_report_budget_plan_project_analysis" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_action_budget_plan_personnel" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_budget_plan_personnel_view" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_act_budget_plan_personnel_line_view" model="ir.ui.menu"/>
+			<delete id="pabi_budget_report.menu_report_budget_plan_personnel_analysis" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_action_budget_plan_invest_asset" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_action_budget_plan_invest_asset" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_action_budget_plan_invest_asset" model="ir.ui.menu"/>
+			<delete id="pabi_budget_report.menu_report_asset_item_plan_analysis" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_budget_plan_invest_asset_view" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_act_budget_plan_invest_asset_line_view" model="ir.ui.menu"/>
+			<delete id="pabi_budget_report.menu_report_budget_plan_asset_analysis" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_action_budget_plan_invest_construction" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_budget_plan_invest_construction_view" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_act_budget_plan_invest_construction_line_view" model="ir.ui.menu"/>
+			<delete id="pabi_budget_report.menu_report_budget_plan_construction_analysis" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_generate_budget_plan" model="ir.ui.menu"/>
+		
 			<menuitem name="Budget Plan" id="menu_action_budget_plan"
 				sequence="1" parent="menu_budgeting"
 				groups="pabi_base.group_budget_user"/>
@@ -344,6 +366,14 @@
          			groups="pabi_base.group_cooperate_budget"/>
 			
 			# Budget Policy
+			<delete id="pabi_budget_plan.menu_action_budget_policy" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_fiscalyear_budget_allocation" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_budget_policy_unit_view" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_budget_policy_project_view" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_budget_policy_personnel_view" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_budget_policy_invest_asset_view" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_budget_policy_invest_construction_view" model="ir.ui.menu"/>
+			
 			<menuitem name="Budget Policy" id="menu_action_budget_policy"
 				sequence="2" parent="menu_budgeting"
           		groups="pabi_base.group_cooperate_budget_policy"/>
@@ -373,6 +403,11 @@
 					groups="pabi_base.group_cooperate_budget_policy"/>
 			
 			# Budget Breakdown
+			<delete id="pabi_budget_plan.menu_action_budget_breakdown" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_unit_base_breakdown_view" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_personnel_breakdown_view" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_invest_asset_breakdown_view" model="ir.ui.menu"/>
+			
 			<menuitem name="Budget Breakdown" id="menu_action_budget_breakdown"
 				sequence="3" parent="menu_budgeting"
           		groups="pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget"/>
@@ -390,6 +425,14 @@
 					groups="pabi_base.group_cooperate_budget"/>
 			
 			# Budget Control
+			<delete id="account_budget_activity.menu_action_account_budget_control" model="ir.ui.menu"/>
+			<delete id="account_budget_activity.menu_act_account_budget_view" model="ir.ui.menu"/>
+			<delete id="pabi_chartfield.menu_act_account_budget_view_project_base" model="ir.ui.menu"/>
+			<delete id="pabi_chartfield.menu_act_account_budget_view_personnel" model="ir.ui.menu"/>
+			<delete id="pabi_chartfield.menu_act_account_budget_view_invest_asset" model="ir.ui.menu"/>
+			<delete id="pabi_chartfield.menu_act_account_budget_view_invest_construction" model="ir.ui.menu"/>
+			<delete id="account_budget_activity.menu_act_account_budget_line_view" model="ir.ui.menu"/>
+			
 			<menuitem name="Budget Control" id="menu_action_account_budget_control"
 				sequence="4" parent="menu_budgeting"/>
 				<menuitem name="Budgets" id="menu_act_account_budget_view"
@@ -416,6 +459,9 @@
 					action="account_budget_activity.act_account_budget_line_view"/>
 			
 			# Budget Transfer
+			<delete id="pabi_budget_transfer.menu_budget_transfer" model="ir.ui.menu"/>
+			<delete id="pabi_budget_transfer.menu_section_budget_transfer" model="ir.ui.menu"/>
+			
 			<menuitem name="Budget Transfer" id="menu_budget_transfer"
 				sequence="5" parent="menu_budgeting"
 				groups="pabi_base.group_budget_user"/>
@@ -424,6 +470,13 @@
 					action="pabi_budget_transfer.action_section_budget_transfer"/>
 			
 			# Budget Monitor
+			<delete id="account_budget_activity.menu_action_budget_report" model="ir.ui.menu"/>
+			<delete id="account_budget_activity.menu_action_budget_consume_report" model="ir.ui.menu"/>
+			<delete id="account_budget_activity.menu_action_budget_plan_report" model="ir.ui.menu"/>
+			<delete id="pabi_budget_monitor.menu_action_budget_monitor_report" model="ir.ui.menu"/>
+			<delete id="account_budget_activity.menu_budget_transitionp" model="ir.ui.menu"/>
+			<delete id="pabi_budget_drilldown_report.menu_budget_drilldown_report_report" model="ir.ui.menu"/>
+			
 			<menuitem name="Budget Monitor" id="menu_action_budget_report"
 				sequence="6" parent="menu_budgeting"/>
 				<menuitem name="Budget Consume" id="menu_action_budget_consume_report"
@@ -443,6 +496,10 @@
 					action="pabi_budget_drilldown_report.action_budget_drilldown_report_wizard"/>
 			
 			# Year End Process
+			<delete id="pabi_budget_yearend_process.menu_action_budget_year_end_process" model="ir.ui.menu"/>
+			<delete id="pabi_budget_yearend_process.menu_action_budget_carry_over" model="ir.ui.menu"/>
+			<delete id="pabi_budget_yearend_process.menu_project_balance_carry_forward" model="ir.ui.menu"/>
+			
 			<menuitem name="Year End Process" id="menu_action_budget_year_end_process"
           		sequence="7" parent="menu_budgeting"/>
           		<menuitem name="Commitment Carry Over" id="menu_action_budget_carry_over"
@@ -455,6 +512,9 @@
           			groups="pabi_budget_yearend_process.group_project_balance_carry_forward"/>
 			
 			# Budget Report
+			<delete id="pabi_budget_report.menu_budget_report" model="ir.ui.menu"/>
+			<delete id="pabi_budget_drilldown_report.menu_my_budget_drilldown_report" model="ir.ui.menu"/>
+			
 			<menuitem name="Budget Report" id="menu_budget_report"
             	sequence="8" parent="menu_budgeting"/>
 				<menuitem name="My Budget Report" id="menu_my_budget_drilldown_report"
@@ -462,6 +522,13 @@
 					action="pabi_budget_drilldown_report.action_my_budget_drilldown_report_wizard"/>
 			
 			# Configuration
+			<delete id="account_budget_activity.menu_action_account_budget_config" model="ir.ui.menu"/>
+			<delete id="account_budget_activity.menu_account_activity_group" model="ir.ui.menu"/>
+			<delete id="account_budget_activity.menu_account_activity" model="ir.ui.menu"/>
+			<delete id="account_budget_activity.menu_account_activity_tag" model="ir.ui.menu"/>
+			<delete id="account_budget_activity.menu_fiscalyear_budget_level" model="ir.ui.menu"/>
+			<delete id="pabi_budget_plan.menu_budget_plan_import_template" model="ir.ui.menu"/>
+			
 			<menuitem name="Configuration" id="menu_action_account_budget_config"
 				sequence="9" parent="menu_budgeting" />
 				<menuitem name="Activity Group" id="menu_account_activity_group"
@@ -482,6 +549,10 @@
             		groups="base.group_no_one"/>
 			
 			# Account Report
+			<delete id="pabi_budget_report.menu_budgeting_account_report" model="ir.ui.menu"/>
+			<delete id="pabi_budget_report.menu_xlsx_report_expense_ledger_account_report" model="ir.ui.menu"/>
+			<delete id="pabi_budget_report.menu_xlsx_report_revenue_ledger" model="ir.ui.menu"/>
+			
 			<menuitem name="Account Report" id="menu_budgeting_account_report"
             	sequence="10" parent="menu_budgeting"/>
             	<menuitem name="Expense Ledger" id="menu_xlsx_report_expense_ledger_account_report"

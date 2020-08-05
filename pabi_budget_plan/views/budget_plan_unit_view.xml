@@ -263,8 +263,6 @@
                 </p>
             </field>
         </record>
-        <!-- <menuitem parent="menu_action_budget_plan_unit" id="menu_budget_plan_unit_view" action="action_budget_plan_unit_view" sequence="10"
-          groups="pabi_base.group_budget_user"/>-->
 
         <!-- Budget Plan Line -->
 
@@ -381,9 +379,6 @@
             <field name="view_mode">tree,graph</field>
             <field name="view_id" ref="view_budget_plan_unit_line_tree"/>
         </record>
-
-        <!-- <menuitem parent="menu_action_budget_plan_unit" id="menu_act_budget_plan_unit_line_view" action="act_budget_plan_unit_line_view" sequence="20"
-          groups="pabi_base.group_budget_user"/>-->
 
     </data>
 </openerp>

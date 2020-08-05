@@ -2,11 +2,6 @@
 <openerp>
     <data>
 
-        <!-- <menuitem name="Budgeting" id="menu_budgeting" sequence="2"/> -->
-        <!-- <menuitem name="Budget Control" id="menu_action_account_budget_control" parent="menu_budgeting" sequence="100"/>-->
-        <!-- <menuitem name="Budget Monitor" id="menu_action_budget_report" parent="menu_budgeting" sequence="110"/>-->
-        <!-- <menuitem name="Configuration" id="menu_action_account_budget_config" parent="menu_budgeting" sequence="120"/>-->
-
         <record id="budget_line_period_split_tree_view" model="ir.ui.view">
             <field name="name">account.budget.line.period.split.tree.view</field>
             <field name="model">account.budget.line.period.split</field>
@@ -278,8 +273,6 @@
             </field>
         </record>
 
-        <!-- <menuitem parent="menu_action_account_budget_control" id="menu_act_account_budget_view" action="act_account_budget_view" sequence="1"/>-->
-
         <record model="ir.ui.view" id="view_account_budget_line_tree">
             <field name="name">account.budget.line.tree</field>
             <field name="model">account.budget.line</field>
@@ -349,8 +342,6 @@
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_account_budget_line_tree"/>
         </record>
-
-        <!-- <menuitem parent="menu_action_account_budget_control" id="menu_act_account_budget_line_view" action="act_account_budget_line_view"/>-->
 
         <!--  Shortcuts -->
         <!--act_window name="Budget Lines"

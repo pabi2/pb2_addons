@@ -67,8 +67,6 @@
             <field name="view_id" ref="view_budget_transition_tree"/>
             <field name="search_view_id" ref="view_budget_transition_search"/>
         </record>
-        <!-- <menuitem action="action_budget_transition" id="menu_budget_transitionp" parent="menu_action_budget_report" sequence="100"/>-->
-
 
     </data>
 </openerp>
