@@ -2,8 +2,6 @@
 <openerp>
     <data>
 
-        <menuitem name="Budget Transfer" id="menu_budget_transfer" parent="account_budget_activity.menu_budgeting" sequence="105" groups="pabi_base.group_budget_user"/>
-
         <record model="ir.ui.view" id="view_section_budget_transfer_form">
             <field name="name">view.section.budget.transfer.form</field>
             <field name="model">section.budget.transfer</field>
@@ -132,7 +130,5 @@
                 </p>
             </field>
         </record>
-
-        <menuitem parent="menu_budget_transfer" id="menu_section_budget_transfer" action="action_section_budget_transfer" sequence="20"/>
     </data>
 </openerp>

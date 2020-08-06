@@ -72,7 +72,6 @@
             <field name="view_id" ref="view_fiscalyear_budget_level_tree"/>
             <field name="act_window_id" ref="action_fiscalyear_budget_level"/>
         </record>
-        <menuitem action="action_fiscalyear_budget_level" id="menu_fiscalyear_budget_level" parent="menu_action_account_budget_config" sequence="130"/>
 
         # account.model.line
         <record id="view_model_line_form" model="ir.ui.view">

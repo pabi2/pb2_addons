@@ -172,8 +172,6 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_plan_invest_asset" id="menu_invest_asset_plan_view" action="action_invest_asset_plan_view" sequence="5"
-          groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
 
         <!-- Investment Asset Plan Items -->
         <record id="view_invest_asset_plan_item_filter" model="ir.ui.view">
@@ -298,9 +296,6 @@
             <field name="view_id" ref="view_invest_asset_plan_item_tree"/>
             <field name="context">{'search_default_fiscalyear_id': 1, 'search_default_org_id': 1}</field>
         </record>
-
-        <menuitem parent="menu_action_budget_plan_invest_asset" id="menu_act_invest_asset_plan_item_view" action="act_invest_asset_plan_item_view" sequence="6"
-          groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
 
     </data>
 </openerp>

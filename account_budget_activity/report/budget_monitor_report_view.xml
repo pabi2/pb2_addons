@@ -84,7 +84,7 @@
             <field name="help">From this report, you can have an budget overview of Commitment vs Actual</field>
         </record>
 
-        <menuitem action="action_budget_monitor_report" id="menu_action_budget_monitor_report" parent="menu_action_budget_report" sequence="3"/>
+        <!-- <menuitem action="action_budget_monitor_report" id="menu_action_budget_monitor_report" parent="menu_action_budget_report" sequence="3"/>-->
 
     </data>
 </openerp>

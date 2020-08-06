@@ -149,8 +149,6 @@
                 </p>
             </field>
         </record>
-        <menuitem parent="menu_action_budget_plan_project" id="menu_budget_plan_project_view" action="action_budget_plan_project_view" sequence="10"
-          groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget"/>
 
         <record id="view_budget_plan_project_line_search" model="ir.ui.view">
             <field name="name">view.budget.plan.project.line.search</field>
@@ -394,9 +392,6 @@
             <field name="view_mode">tree,graph</field>
             <field name="view_id" ref="view_budget_plan_project_line_tree"/>
         </record>
-
-        <menuitem parent="menu_action_budget_plan_project" id="menu_budget_plan_project_line_view" action="action_budget_plan_project_line_view" sequence="20"
-          groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget"/>
 
     </data>
 </openerp>
