@@ -13,6 +13,9 @@ class ResCountryProvince(models.Model):
         required=True,
         size=500,
     )
+    code = fields.Char(
+        string='Code',
+    )
     country_id = fields.Many2one(
         'res.country',
         string='Country',
@@ -30,6 +33,9 @@ class ResCountryDistrict(models.Model):
         required=True,
         size=500,
     )
+    code = fields.Char(
+        string='Code',
+    )
     province_id = fields.Many2one(
         'res.country.province',
         string='Province',
@@ -46,6 +52,9 @@ class ResCountryTownship(models.Model):
         string='Township',
         required=True,
         size=500,
+    )
+    code = fields.Char(
+        string='Code',
     )
     district_id = fields.Many2one(
         'res.country.district',
