@@ -88,6 +88,7 @@ class PrintAccountVoucherWizard(models.TransientModel):
             amount_total = 0.0
             # invoice lines
             line_ids = []
+            taxbranch_id = voucher.line_ids[0].invoice_id.taxbranch_id
             for voucher_line in voucher.line_ids:
                 invoice_id = voucher_line.invoice_id
                 line_ids.extend([(0, 0, {
@@ -135,12 +136,19 @@ class PrintAccountVoucherWizard(models.TransientModel):
                 'customer_zip': voucher.partner_id.zip,
                 'customer_country_code':
                     voucher.partner_id.country_id.code or 'TH',
+                'customer_province_code':
+                    voucher.partner_id.province_id.code,
+                'customer_district_code':
+                    voucher.partner_id.district_id.code,
+                'customer_subdistrict_code':
+                    voucher.partner_id.township_id.code,
                 'customer_vat': voucher.partner_id.vat,
                 'customer_phone':
                     voucher.partner_id.phone or voucher.partner_id.mobile,
                 'customer_email': voucher.partner_id.email,
                 'customer_taxbranch_code': voucher.partner_id.taxbranch,
                 'customer_taxbranch_name': 'สำนักงานใหญ่',
+                'customer_is_company': voucher.partner_id.is_company,
                 # seller information
                 'seller_street': seller.street,
                 'seller_street2': seller.street2,
@@ -148,12 +156,19 @@ class PrintAccountVoucherWizard(models.TransientModel):
                 'seller_state': '',
                 'seller_zip': seller.zip,
                 'seller_country_code': seller.country_id.code or 'TH',
-                'seller_vat': seller.vat,
-                'seller_phone': seller.phone or seller.mobile,
-                'seller_fax': seller.fax,
+                'seller_province_code':
+                    seller.province_id.code,
+                'seller_district_code':
+                    seller.district_id.code,
+                'seller_subdistrict_code':
+                    seller.township_id.code,
+                'seller_building_number': seller.street.split(' ')[0],
+                'seller_vat': taxbranch_id.taxid,
+                'seller_phone': taxbranch_id.phone,
+                'seller_fax': taxbranch_id.fax,
                 'seller_email': seller.email,
-                'seller_taxbranch_code': seller.taxbranch or '00000',
-                'seller_taxbranch_name': 'สำนักงานใหญ่',
+                'seller_taxbranch_code': taxbranch_id.code or '00000',
+                'seller_taxbranch_name': taxbranch_id.name or '',
                 'amount_untaxed': amount_untaxed,
                 'amount_tax': amount_tax,
                 'amount_total': amount_total,

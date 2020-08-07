@@ -35,11 +35,9 @@
             <field name="model">account.voucher</field>
             <field name="inherit_id" ref="account_voucher.view_vendor_receipt_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//sheet/group/group[1]" position="inside">
-                    <field name="state_sign"/>
-                </xpath>
                 <field name="number_preprint" position="after">
                     <field name="number_preprint_current" attrs="{'invisible': [('state_sign', '!=', 'signed')]}"/>
+                    <field name="state_sign"/>
                 </field>
             </field>
         </record>
