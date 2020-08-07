@@ -4,7 +4,8 @@
         <!-- This function is called after all ir.attachment is loaded
             to load the file content to relevant template_ids -->
         <function model="ir.attachment" name="load_xlsx_template">
-            <value eval="[ref('import_asset_batch_template'), ]"/>
+            <value eval="[ref('import_asset_batch_template'),
+            			  ref('export_asset_master'),]"/>          
             <value>pabi_asset_import_batch/xlsx_template</value>
         </function>
     </data>
