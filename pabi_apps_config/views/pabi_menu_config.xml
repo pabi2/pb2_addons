@@ -238,9 +238,10 @@
         <menuitem id="account.menu_analytic_accounting" name="Analytic Accounting" parent="menu_pabi2_config_unused_menu" groups="analytic.group_analytic_accounting" sequence="40"/>
 
 		# Rearrange Menu
+		# Budgeting
 		<delete id="account_budget_activity.menu_budgeting" model="ir.ui.menu"/>
 		<menuitem name="Budgeting" id="menu_budgeting"
-			sequence="2"
+			sequence="1"
 			groups="pabi_base.group_budget_user"/>
 			
 			# Budget Plan
@@ -563,6 +564,50 @@
 		            sequence="2" parent="menu_budgeting_account_report"
 		            action="pabi_account_report.action_xlsx_report_revenue_ledger_form"/>
            
+		# myProjects
+		<delete id="pabi_my_project.menu_main_project" model="ir.ui.menu"/>
+		
+        <menuitem name="myProjects" id="menu_main_project"
+        	sequence="2"
+          	groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget,pabi_base.group_nstda_admin_business" />
+			
+			# Projects
+			<delete id="pabi_my_project.menu_project" model="ir.ui.menu"/>
+			<delete id="pabi_my_project.menu_my_project" model="ir.ui.menu"/>
+			<delete id="pabi_my_project.menu_my_project_small" model="ir.ui.menu"/>
+			
+        	<menuitem name="Projects" id="menu_project"
+        		sequence="1" parent="menu_main_project"/>
+        		<menuitem name="myProjects" id="menu_my_project"
+        			sequence="1" parent="menu_project"
+        			action="pabi_my_project.action_project"
+          			groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget,pabi_base.group_nstda_admin_business"/>
+		        <menuitem name="Release Budget" id="menu_my_project_small"
+		        	sequence="2" parent="menu_project"
+		        	action="pabi_my_project.action_project_small"
+		          	groups="pabi_base.group_nstda_admin_business"/>
+        	
+        	# External Fund Rule
+			<delete id="pabi_budget_fund_rule.menu_budget_external_fund_rule" model="ir.ui.menu"/>
+			<delete id="pabi_budget_fund_rule.menu_budget_fund_rule" model="ir.ui.menu"/>
+			<delete id="pabi_budget_fund_rule.menu_budget_fund_rule_template" model="ir.ui.menu"/>
+			<delete id="pabi_budget_fund_rule.menu_budget_fund_expense_group" model="ir.ui.menu"/>
+			
+        	<menuitem name="External Fund Rule" id="menu_budget_external_fund_rule"
+        		sequence="2" parent="menu_main_project"
+          		groups="pabi_base.group_budget_user,pabi_base.group_nstda_admin_business"/>
+        		<menuitem name="Fund Rule" id="menu_budget_fund_rule"
+        			action="pabi_budget_fund_rule.action_budget_fund_rule"
+        			sequence="1" parent="menu_budget_external_fund_rule"
+          			groups="pabi_base.group_budget_user,pabi_base.group_nstda_admin_business"/>
+        		<menuitem name="Fund Template" id="menu_budget_fund_rule_template"
+	        		action="pabi_budget_fund_rule.action_budget_fund_rule_template"
+	        		sequence="2" parent="menu_budget_external_fund_rule"
+	          		groups="pabi_base.group_nstda_admin_business"/>
+        		<menuitem name="Expense Group" id="menu_budget_fund_expense_group"
+	        		action="pabi_budget_fund_rule.action_budget_fund_expense_group"
+	        		sequence="3" parent="menu_budget_external_fund_rule"
+	          		groups="pabi_base.group_nstda_admin_business"/>
             
     </data>
 </openerp>
