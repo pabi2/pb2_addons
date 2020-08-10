@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
-from asn1crypto._ffi import null
 
 
 class PabiRegister_iCash(models.Model):
