@@ -1374,7 +1374,7 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                                                      period, adjust_date,
                                                      amount_depre)
         move.write({'line_id': line_dict})
-        analytic = self._update_move_line_expense(move)
+        analytic = self._update_move_line_expense(move, adjust)
         if adjust.journal_id.entry_posted:
             del ctx['novalidate']
             move.with_context(ctx).post()
@@ -1386,10 +1386,13 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         return move
 
     @api.multi
-    def _update_move_line_expense(self, move):
+    def _update_move_line_expense(self, move, adjust):
         # update activity_id = activity_rpt_id
         analytic = None
-        invoice_line = self.invoice_line_id
+        ivl = False
+        if len(adjust.invoice_id.invoice_line) == 1:
+            ivl = adjust.invoice_id.invoice_line
+        invoice_line = self.invoice_line_id or ivl
         for movl in move.line_id:
             if movl.debit:
                 movl.write({'activity_id': movl.activity_rpt_id.id})
@@ -1469,12 +1472,13 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         # follow by invl_analytic_line
         analytic_line_credit = analytic_line.search([
             ('move_id', '=', ml_credit.id)])
-        analytic_line_credit.update({
-            'name': invl_analytic_line.name,
-            'general_account_id': invl_analytic_line.general_account_id.id,
-            'journal_id': invl_analytic_line.journal_id.id,
-            'document_line': invl_analytic_line.document_line,
-        })
+        if analytic_line_credit:
+            analytic_line_credit.update({
+                'name': invl_analytic_line.name,
+                'general_account_id': invl_analytic_line.general_account_id.id,
+                'journal_id': invl_analytic_line.journal_id.id,
+                'document_line': invl_analytic_line.document_line,
+            })
         # values = {
         #     'name': invl_analytic_line.name,
         #     'journal_id': invl_analytic_line.journal_id.id,
