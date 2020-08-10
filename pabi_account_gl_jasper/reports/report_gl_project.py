@@ -132,42 +132,42 @@ class ReportGlProject(models.TransientModel):
         Result = self.env['account.move.line']
         dom = []
         if self.account_type_id:
-            dom += [('account_id.user_type', '=', self.account_type_id.id)]
+            dom += [('aa.user_type', '=', self.account_type_id.id)]
         if self.account_ids:
-            dom += [('account_id', 'in', self.account_ids.ids)]
+            dom += [('aml.account_id', 'in', self.account_ids.ids)]
         if self.activity_group_ids:
-            dom += [('activity_group_id', 'in', self.activity_group_ids.ids)]
+            dom += [('aml.activity_group_id', 'in', self.activity_group_ids.ids)]
         if self.activity_ids:
-            dom += [('activity_id', 'in', self.activity_ids.ids)]
+            dom += [('aml.activity_id', 'in', self.activity_ids.ids)]
         if self.charge_type:
-            dom += [('charge_type', '=', self.charge_type)]
+            dom += [('aml.charge_type', '=', self.charge_type)]
         # Filter chart view
         if self.chart_view == 'personnel':
-            dom += [('org_id', '!=', False)]
+            dom += [('aml.org_id', '!=', False)]
         elif self.chart_view == 'invest_asset':
-            dom += [('invest_asset_id', '!=', False)]
+            dom += [('aml.invest_asset_id', '!=', False)]
         elif self.chart_view == 'unit_base':
-            dom += [('section_id', '!=', False)]
+            dom += [('aml.section_id', '!=', False)]
         elif self.chart_view == 'project_base':
-            dom += [('project_id', '!=', False)]
+            dom += [('aml.project_id', '!=', False)]
         elif self.chart_view == 'invest_construction':
-            dom += [('invest_construction_id', '!=', False)]
+            dom += [('aml.invest_construction_id', '!=', False)]
         if self.org_ids:
-            dom += [('org_id', 'in', self.org_ids.ids)]
+            dom += [('aml.org_id', 'in', self.org_ids.ids)]
         if self.invest_asset_ids:
-            dom += [('invest_asset_id', 'in', self.invest_asset_ids.ids)]
+            dom += [('aml.invest_asset_id', 'in', self.invest_asset_ids.ids)]
         if self.section_ids:
-            dom += [('section_id', 'in', self.section_ids.ids)]
+            dom += [('aml.section_id', 'in', self.section_ids.ids)]
         if self.fund_ids:
-            dom += [('fund_id', 'in', self.fund_ids.ids)]
+            dom += [('aml.fund_id', 'in', self.fund_ids.ids)]
         if self.project_ids:
-            dom += [('project_id', 'in', self.project_ids.ids)]
+            dom += [('aml.project_id', 'in', self.project_ids.ids)]
         if self.invest_construction_ids:
-            dom += [('invest_construction_id', 'in',
+            dom += [('aml.invest_construction_id', 'in',
                      self.invest_construction_ids.ids)]
             
         if self.job_order_ids:
-            dom += [('cost_control_id', 'in', self.job_order_ids.ids)]
+            dom += [('aml.cost_control_id', 'in', self.job_order_ids.ids)]
             
         if self.chartfield_ids:
             # map beetween chartfield_id with chartfield type
@@ -189,20 +189,20 @@ class ReportGlProject(models.TransientModel):
             if res_ids:
                 sql = "select id from account_move_line where " + where_str
                 self._cr.execute(sql, res_ids)
-                dom += [('id', 'in', map(lambda l: l[0], self._cr.fetchall()))]
+                dom += [('aml.id', 'in', map(lambda l: l[0], self._cr.fetchall()))]
         # Filter date
         if self.fiscalyear_start_id:
-            dom += [('date', '>=', self.fiscalyear_start_id.date_start)]
+            dom += [('aml.date', '>=', self.fiscalyear_start_id.date_start)]
         if self.fiscalyear_end_id:
-            dom += [('date', '<=', self.fiscalyear_end_id.date_stop)]
+            dom += [('aml.date', '<=', self.fiscalyear_end_id.date_stop)]
         if self.period_start_id:
-            dom += [('period_id', '>=', self.period_start_id.id)]
+            dom += [('aml.period_id', '>=', self.period_start_id.id)]
         if self.period_end_id:
-            dom += [('period_id', '<=', self.period_end_id.id)]
+            dom += [('aml.period_id', '<=', self.period_end_id.id)]
         if self.date_start:
-            dom += [('date', '>=', self.date_start)]
+            dom += [('aml.date', '>=', self.date_start)]
         if self.date_end:
-            dom += [('date', '<=', self.date_end)]
+            dom += [('aml.date', '<=', self.date_end)]
         if self.cleaning_date_start and self.cleaning_date_end:
             check=Result.with_context(active=False).search(dom)
             cleaning_ids = []
@@ -225,7 +225,7 @@ class ReportGlProject(models.TransientModel):
                             cleaning_ids.append(record.id)
                 else:
                     cleaning_ids.append(record.id)
-            dom = [('id','in',cleaning_ids)]
+            dom = [('aml.id','in',cleaning_ids)]
             #self.results = Result.search([['id','in',cleaning_ids]])
         #else:
             #self.results = Result.with_context(active=False).search(dom)
