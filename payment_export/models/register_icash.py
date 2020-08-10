@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
+from asn1crypto._ffi import null
 
 
 class PabiRegister_iCash(models.Model):
@@ -103,6 +104,18 @@ class PabiRegister_iCash(models.Model):
             register_line.partner_email_accountant = line.partner_id.email_accountant
             register_line.bank_branch_code = line.bank_branch.code
             self.line_ids += register_line
+            
+    @api.multi
+    #@api.depends('line_filter')
+    def _check_data_partner_bank(self, domain=None):
+        PartnerBankObj = self.env['res.partner.bank']
+        
+        if domain is not None:
+            domain.append(('is_register','!=',True))
+            parner_bank_search = PartnerBankObj.search(domain)
+            parner_bank_ids = parner_bank_search.filtered(lambda l: l.partner_id.email_accountant is False)
+            if parner_bank_ids:
+                raise ValidationError('กรุณาใส่ข้อมูล email accountant ให้ครบถ้วน')
 
     @api.onchange('line_filter')
     def _onchange_compute_register_icash_line(self):
@@ -111,7 +124,8 @@ class PabiRegister_iCash(models.Model):
             acc_number = [x.strip() for x in acc_number]
             acc_number = tuple(acc_number)
             domain = [('acc_number', 'in', acc_number)]
-
+            self._check_data_partner_bank(domain)
+            
             self._create_register_icash_line(domain)
 
     @api.onchange('service_type')

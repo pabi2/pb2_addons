@@ -20,8 +20,8 @@
             <field name="arch" type="xml">
                 <form string="Payment Export">
                     <header>
-                    	<button name="generate_record" string="Generate" type="object" states="draft" class="oe_highlight"
-                    			confirm="confirm generate record?"/>
+                    	<!-- <button name="generate_record" string="Generate" type="object" states="draft" class="oe_highlight"
+                    			confirm="confirm generate record?"/> -->
                     	<button name="reload" string="Reload" type="object" states="draft" class="oe_highlight"
                     			confirm="confirm reload record?"/>
                     	<button name="register_cancel" string="Cancel" type="object" states="draft" class="oe_highlight"
