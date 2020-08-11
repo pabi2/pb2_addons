@@ -845,7 +845,7 @@
 			<delete id="pabi_procurement_report.menu_purchase_billing_report_wizard" model="ir.ui.menu"/>
 			<delete id="pabi_procurement_report.menu_purchase_invoice_plan_report_wizard" model="ir.ui.menu"/>
 			
-        	<menuitem name="Purchase Report" id="menu_purchase_report"
+        	<menuitem name="Purchase Report" id="menu_procurement_report"
             	sequence="5" parent="base.menu_purchase_root"/>
         		<menuitem name="Purchase Tracking" id="menu_xlsx_report_pabi_purchase_tracking"
         			action="pabi_procurement_report.action_xlsx_report_pabi_purchase_tracking"

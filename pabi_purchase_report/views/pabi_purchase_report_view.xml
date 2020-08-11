@@ -1,5 +1,7 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
+        <menuitem id="menu_purchase_report" name="Purchase Report"
+            parent="base.menu_purchase_root" sequence="67"/>
     </data>
 </openerp>
