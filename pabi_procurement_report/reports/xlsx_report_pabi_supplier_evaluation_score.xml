@@ -25,7 +25,6 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_pabi_supplier_evaluation_score" name="Supplier Evaluation Score" parent="menu_procurement_report" action="action_xlsx_report_pabi_supplier_evaluation_score" sequence="101"/>
 
 
     </data>
