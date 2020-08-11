@@ -31,11 +31,5 @@
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
-
-        <menuitem id="menu_report_supplier_consignment"
-            name="Supplier Consign Report"
-            parent="menu_pos_root"
-            action="action_report_supplier_consignment"
-            sequence="10"/>
     </data>
 </openerp>

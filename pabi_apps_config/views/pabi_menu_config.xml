@@ -720,7 +720,65 @@
                   	action="pabi_hr_advance_status_report.action_pabi_hr_advance_status_report_wizard"
                   	sequence="3" parent="hr.menu_hr_report"
                   	groups="account.group_account_user"/>
-				
+		# Sales
+        <menuitem name="Sales" id="base.menu_base_partner"
+        	sequence="7"
+            groups="base.group_sale_salesman,base.group_sale_manager"/>
+            
+			# Sales/Sales
+            <menuitem name="Sales" id="base.menu_sales"
+            	sequence="1" parent="base.menu_base_partner"/>
+        		<menuitem name="Quotations" id="sale.menu_sale_quotations"
+	                action="sale.action_quotations"
+	                sequence="1" parent="base.menu_sales"/>
+        		<menuitem name="Sales Orders" id="sale.menu_sale_order"
+        			action="sale.action_orders"
+        			sequence="2" parent="base.menu_sales"
+        			groups="base.group_sale_salesman,base.group_sale_manager"/>
+            
+			# Sales/POS
+			<delete id="pabi_pos.menu_pos_root" model="ir.ui.menu"/>
+			<delete id="pabi_pos.menu_pos_order" model="ir.ui.menu"/>
+			<delete id="pabi_pos.menu_report_supplier_consignment" model="ir.ui.menu"/>
+			<delete id="pabi_pos.menu_xlsx_import_consigned_order" model="ir.ui.menu"/>
+			
+        	<menuitem name="POS" id="menu_pos_root"
+        		sequence="2" parent="base.menu_base_partner"/>
+        		<menuitem name="POS Orders" id="menu_pos_order"
+        			action="pabi_pos.action_pos_orders"
+        			sequence="1" parent="menu_pos_root"
+        			groups="base.group_sale_salesman,base.group_sale_manager"/>
+        		<menuitem name="Supplier Consign Report" id="menu_report_supplier_consignment"
+		            action="pabi_pos.action_report_supplier_consignment"
+		            sequence="2" parent="menu_pos_root"/>
+        		<menuitem name="Import Consigned Order" id="menu_xlsx_import_consigned_order"
+		          	action="pabi_pos.action_xlsx_import_consigned_order"
+		          	sequence="3" parent="menu_pos_root"/>
+        	
+			# Sales/Product Variants
+        	<menuitem name="Product Variants" id="base.menu_product"
+        		sequence="3" parent="base.menu_base_partner"/>
+        		<menuitem name="Products" id="product.menu_product_template_action"
+        			action="product.product_template_action"
+            		sequence="1" parent="base.menu_product"/>
+        		<menuitem name="Product Variants" id="product.menu_products"
+        			action="product.product_normal_action_sell"
+        			sequence="2" parent="base.menu_product"
+        			groups="base.group_no_one"/>
+        		<menuitem name="Products by Category" id="product.menu_products_category"
+            		action="product.product_category_action"
+            		sequence="3" parent="base.menu_product"
+            		groups="base.group_no_one"/>
+        	
+			# Sales/Reports
+			<delete id="pabi_procurement_report.product.menu_products_report" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_xlsx_report_pabi_book_stock_balance" model="ir.ui.menu"/>
+
+			<menuitem name="Reports" id="product.menu_products_report"
+            	sequence="4" parent="base.menu_base_partner"/>
+        		<menuitem name="Book Stock Balance" id="menu_xlsx_report_pabi_book_stock_balance"
+        			action="pabi_procurement_report.action_xlsx_report_pabi_book_stock_balance"
+        			sequence="1" parent="product.menu_products_report"/>
             
     </data>
 </openerp>
