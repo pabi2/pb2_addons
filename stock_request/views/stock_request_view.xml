@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-
-        <!-- Top menu item -->
-        <menuitem name="Stock" id="menu_stock_request" groups="base.group_user" sequence="69"/>
-        <menuitem name="Stock Operation" id="menu_stock_operation" parent="menu_stock_request" groups="base.group_user" sequence="10"/>
-
         # Stock Request
         <record id="view_stock_request_filter" model="ir.ui.view">
             <field name="name">view.stock.request.filter</field>
@@ -188,8 +183,6 @@
             </field>
         </record>
 
-        <menuitem action="action_my_stock_request" sequence="10" id="menu_action_my_stock_request" parent="menu_stock_operation" groups="base.group_user"/>
-
         <record id="action_stock_request" model="ir.actions.act_window">
             <field name="name">Stock Request</field>
             <field name="res_model">stock.request</field>
@@ -205,8 +198,6 @@
                 </p>
             </field>
         </record>
-
-        <menuitem action="action_stock_request" sequence="11" id="menu_action_stock_request" parent="menu_stock_operation" groups="stock.group_stock_user"/>
 
         <record id="action_stock_transfer" model="ir.actions.act_window">
             <field name="name">Stock Transfer</field>
@@ -224,8 +215,6 @@
             </field>
         </record>
 
-        <menuitem action="action_stock_transfer" sequence="12" id="menu_action_stock_transfer" parent="menu_stock_operation" groups="stock.group_stock_user"/>
-
         <record id="action_stock_borrow" model="ir.actions.act_window">
             <field name="name">Stock Borrow</field>
             <field name="res_model">stock.request</field>
@@ -241,8 +230,6 @@
                 </p>
             </field>
         </record>
-
-        <menuitem action="action_stock_borrow" sequence="13" id="menu_action_stock_borrow" parent="menu_stock_operation" groups="stock.group_stock_user"/>
 
     </data>
 </openerp>

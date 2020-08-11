@@ -111,7 +111,5 @@
             <field name="context">{'default_template': True}</field> -->
         </record>
 
-        <menuitem id="menu_pabi_advance_dunning_letter" action="action_pabi_advance_dunning_letter" groups="" parent="hr.menu_hr_report" sequence="10"/>
-
     </data>
 </openerp>

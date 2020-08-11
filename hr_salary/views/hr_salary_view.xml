@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-    		<!-- Salary & Welfare Sheet-->
-    		<menuitem id="menu_hr_salary_root" name="Salary &amp; Welfare" parent="hr.menu_hr_root"
-          groups="hr_salary.group_hr_salary" sequence="200"/>
 
         <record id="view_hr_salary_expense_tree" model="ir.ui.view">
             <field name="name">view.hr.salary.expense.tree</field>
@@ -149,9 +146,6 @@
               </p>
             </field>
         </record>
-
-        <menuitem action="action_hr_salary_expense" id="menu_hr_salary_expense" name="Salary Expense"
-          parent="menu_hr_salary_root" groups="hr_salary.group_hr_salary"/>
 
     </data>
 </openerp>

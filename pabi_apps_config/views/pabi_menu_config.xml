@@ -39,37 +39,6 @@
         <delete model="ir.ui.menu" id="hr.menu_view_employee_category_form"/>
         <delete model="ir.ui.menu" id="hr_expense.menu_hr_product"/>
 
-        # New HR Menu
-        <!-- HR -->
-        <menuitem id="hr.menu_hr_root" name="Expenses"/>
-        <menuitem id="hr.menu_hr_main" name="Directory" parent="hr.menu_hr_configuration" sequence="450"/>
-        <menuitem id="hr.menu_hr_report" name="Reporting" parent="hr.menu_hr_root" sequence="500"/>
-        <!-- Expenses -->
-        <menuitem action="hr_expense.expense_all"
-                  id="hr_expense.menu_expense_all"
-                  name="Expenses"
-                  parent="hr_expense.next_id_49"
-                  sequence="10"
-                  groups="account.group_account_user,base.group_hr_manager"/>
-        <menuitem action="hr_expense_advance_clearing.action_expense_advance"
-                  id="hr_expense_advance_clearing.menu_expense_advance"
-                  name="Employee Advance"
-                  parent="hr_expense.next_id_49"
-                  sequence="20"
-                  groups="account.group_account_user,base.group_hr_manager"/>
-        <menuitem action="hr_expense_advance_clearing.action_expense_clearing"
-                  id="hr_expense_advance_clearing.menu_expense_clearing"
-                  name="Employee Clearing"
-                  parent="hr_expense.next_id_49"
-                  sequence="30"
-                  groups="account.group_account_user,base.group_hr_manager"/>
-        <menuitem action="account_pettycash.action_expense_pettycash"
-                  id="account_pettycash.menu_expense_pettycash"
-                  name="Petty Cash"
-                  parent="hr_expense.next_id_49"
-                  sequence="100"
-                  groups="account.group_account_user,base.group_hr_manager"/>
-
         <!-- Purchase rearrange-->
         <menuitem id="base.menu_purchase_root" name="Purchases" sequence="40"/>
       	<menuitem id="purchase_request.menu_purchase_request_pro_mgt"
@@ -82,6 +51,8 @@
       		name="Quotation" sequence="3" parent="purchase.menu_procurement_management"/>
       	<menuitem id="purchase.menu_purchase_form_action"
       		name="Purchase Orders" sequence="4" parent="purchase.menu_procurement_management"/>
+        
+        <menuitem id="hr.menu_hr_main" name="Directory" parent="hr.menu_hr_configuration" sequence="450"/>
 
         # All configurations moved here.
         <!-- New Configurations Menu, move configuration of every module here -->
@@ -244,7 +215,7 @@
 			sequence="1"
 			groups="pabi_base.group_budget_user"/>
 			
-			# Budget Plan
+			# Budgeting/Budget Plan
 			<delete id="pabi_budget_plan.menu_action_budget_plan" model="ir.ui.menu"/>
 			<delete id="pabi_budget_plan.menu_action_budget_plan_unit" model="ir.ui.menu"/>
 			<delete id="pabi_budget_plan.menu_budget_plan_unit_view" model="ir.ui.menu"/>
@@ -366,7 +337,7 @@
           			action="pabi_budget_plan.action_generate_budget_plan"
          			groups="pabi_base.group_cooperate_budget"/>
 			
-			# Budget Policy
+			# Budgeting/Budget Policy
 			<delete id="pabi_budget_plan.menu_action_budget_policy" model="ir.ui.menu"/>
 			<delete id="pabi_budget_plan.menu_fiscalyear_budget_allocation" model="ir.ui.menu"/>
 			<delete id="pabi_budget_plan.menu_budget_policy_unit_view" model="ir.ui.menu"/>
@@ -403,7 +374,7 @@
 					action="pabi_budget_plan.action_budget_policy_invest_construction_view"
 					groups="pabi_base.group_cooperate_budget_policy"/>
 			
-			# Budget Breakdown
+			# Budgeting/Budget Breakdown
 			<delete id="pabi_budget_plan.menu_action_budget_breakdown" model="ir.ui.menu"/>
 			<delete id="pabi_budget_plan.menu_unit_base_breakdown_view" model="ir.ui.menu"/>
 			<delete id="pabi_budget_plan.menu_personnel_breakdown_view" model="ir.ui.menu"/>
@@ -425,7 +396,7 @@
 					action="pabi_budget_plan.action_invest_asset_breakdown_view"
 					groups="pabi_base.group_cooperate_budget"/>
 			
-			# Budget Control
+			# Budgeting/Budget Control
 			<delete id="account_budget_activity.menu_action_account_budget_control" model="ir.ui.menu"/>
 			<delete id="account_budget_activity.menu_act_account_budget_view" model="ir.ui.menu"/>
 			<delete id="pabi_chartfield.menu_act_account_budget_view_project_base" model="ir.ui.menu"/>
@@ -459,7 +430,7 @@
 					sequence="6" parent="menu_action_account_budget_control"
 					action="account_budget_activity.act_account_budget_line_view"/>
 			
-			# Budget Transfer
+			# Budgeting/Budget Transfer
 			<delete id="pabi_budget_transfer.menu_budget_transfer" model="ir.ui.menu"/>
 			<delete id="pabi_budget_transfer.menu_section_budget_transfer" model="ir.ui.menu"/>
 			
@@ -470,7 +441,7 @@
 					sequence="20" parent="menu_budget_transfer"
 					action="pabi_budget_transfer.action_section_budget_transfer"/>
 			
-			# Budget Monitor
+			# Budgeting/Budget Monitor
 			<delete id="account_budget_activity.menu_action_budget_report" model="ir.ui.menu"/>
 			<delete id="account_budget_activity.menu_action_budget_consume_report" model="ir.ui.menu"/>
 			<delete id="account_budget_activity.menu_action_budget_plan_report" model="ir.ui.menu"/>
@@ -497,7 +468,7 @@
           			sequence="5" parent="menu_action_budget_report"
 					action="pabi_budget_drilldown_report.action_budget_drilldown_report_wizard"/>
 			
-			# Year End Process
+			# Budgeting/Year End Process
 			<delete id="pabi_budget_yearend_process.menu_action_budget_year_end_process" model="ir.ui.menu"/>
 			<delete id="pabi_budget_yearend_process.menu_action_budget_carry_over" model="ir.ui.menu"/>
 			<delete id="pabi_budget_yearend_process.menu_project_balance_carry_forward" model="ir.ui.menu"/>
@@ -513,7 +484,7 @@
           			action="pabi_budget_yearend_process.action_project_balance_carry_forward"
           			groups="pabi_budget_yearend_process.group_project_balance_carry_forward"/>
 			
-			# Budget Report
+			# Budgeting/Budget Report
 			<delete id="pabi_budget_report.menu_budget_report" model="ir.ui.menu"/>
 			<delete id="pabi_budget_drilldown_report.menu_my_budget_drilldown_report" model="ir.ui.menu"/>
 			
@@ -523,7 +494,7 @@
 	          		sequence="1" parent="menu_budget_report"
 					action="pabi_budget_drilldown_report.action_my_budget_drilldown_report_wizard"/>
 			
-			# Configuration
+			# Budgeting/Configuration
 			<delete id="account_budget_activity.menu_action_account_budget_config" model="ir.ui.menu"/>
 			<delete id="account_budget_activity.menu_account_activity_group" model="ir.ui.menu"/>
 			<delete id="account_budget_activity.menu_account_activity" model="ir.ui.menu"/>
@@ -550,7 +521,7 @@
 					action="pabi_budget_plan.action_budget_plan_import_template"
             		groups="base.group_no_one"/>
 			
-			# Account Report
+			# Budgeting/Account Report
 			<delete id="pabi_budget_report.menu_budgeting_account_report" model="ir.ui.menu"/>
 			<delete id="pabi_budget_report.menu_xlsx_report_expense_ledger_account_report" model="ir.ui.menu"/>
 			<delete id="pabi_budget_report.menu_xlsx_report_revenue_ledger" model="ir.ui.menu"/>
@@ -571,7 +542,7 @@
         	sequence="2"
           	groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget,pabi_base.group_nstda_admin_business" />
 			
-			# Projects
+			# myProjects/Projects
 			<delete id="pabi_my_project.menu_project" model="ir.ui.menu"/>
 			<delete id="pabi_my_project.menu_my_project" model="ir.ui.menu"/>
 			<delete id="pabi_my_project.menu_my_project_small" model="ir.ui.menu"/>
@@ -587,7 +558,7 @@
 		        	action="pabi_my_project.action_project_small"
 		          	groups="pabi_base.group_nstda_admin_business"/>
         	
-        	# External Fund Rule
+        	# myProjects/External Fund Rule
 			<delete id="pabi_budget_fund_rule.menu_budget_external_fund_rule" model="ir.ui.menu"/>
 			<delete id="pabi_budget_fund_rule.menu_budget_fund_rule" model="ir.ui.menu"/>
 			<delete id="pabi_budget_fund_rule.menu_budget_fund_rule_template" model="ir.ui.menu"/>
@@ -608,6 +579,206 @@
 	        		action="pabi_budget_fund_rule.action_budget_fund_expense_group"
 	        		sequence="3" parent="menu_budget_external_fund_rule"
 	          		groups="pabi_base.group_nstda_admin_business"/>
+           
+		# Project-C
+		<delete id="pabi_invest_construction.menu_main_construction" model="ir.ui.menu"/>
+		
+      	<menuitem name="Project-C" id="menu_main_construction"
+      		sequence="3"
+            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget" />
+            
+            # Project-C/Construction Projects
+			<delete id="pabi_invest_construction.menu_construction" model="ir.ui.menu"/>
+			<delete id="pabi_invest_construction.menu_invest_construction" model="ir.ui.menu"/>
+			<delete id="pabi_invest_construction.menu_invest_construction_phase" model="ir.ui.menu"/>
+		
+        	<menuitem name="Construction Projects" id="menu_construction"
+        		sequence="1" parent="menu_main_construction"
+            	groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget" />
+        		<menuitem name="Projects" id="menu_invest_construction"
+        			action="pabi_invest_construction.action_invest_construction"
+        			sequence="1" parent="menu_construction"
+            		groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget" />
+        		<menuitem name="Phases" id="menu_invest_construction_phase"
+        			action="pabi_invest_construction.action_invest_construction_phase"
+        			sequence="2" parent="menu_construction"
+            		groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget" />
+            
+            # Project-C/Reports
+			<delete id="pabi_invest_construction.menu_construction_report" model="ir.ui.menu"/>
+			<delete id="pabi_invest_construction.menu_invest_construction_budget_plan" model="ir.ui.menu"/>
+			<delete id="pabi_invest_construction.menu_invest_construction_phase_plan" model="ir.ui.menu"/>
+			
+        	<menuitem name="Reports" id="menu_construction_report"
+        		sequence="2" parent="menu_main_construction"
+            	groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget" />
+		        <menuitem name="Project Plan Report" id="menu_invest_construction_budget_plan"
+		        	action="pabi_invest_construction.action_invest_construction_project_plan_report"
+		        	sequence="1" parent="menu_construction_report"
+		            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget" />
+		        <menuitem name="Project Phase Report" id="menu_invest_construction_phase_plan"
+		        	action="pabi_invest_construction.action_invest_construction_phase_plan_report"
+		        	sequence="2" parent="menu_construction_report"
+		            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget" />
+            
+		# Stock
+		<delete id="stock_request.menu_stock_request" model="ir.ui.menu"/>
+		
+        <menuitem name="Stock" id="menu_stock_request"
+        	sequence="5"
+        	groups="base.group_user"/>
+        	
+        	# Stock/Stock Operation
+			<delete id="stock_request.menu_stock_operation" model="ir.ui.menu"/>
+			<delete id="stock_request.menu_action_stock_request" model="ir.ui.menu"/>
+			<delete id="stock_request.menu_action_my_stock_request" model="ir.ui.menu"/>
+			<delete id="stock_request.menu_action_stock_transfer" model="ir.ui.menu"/>
+			<delete id="stock_request.menu_action_stock_borrow" model="ir.ui.menu"/>
+			
+        	<menuitem name="Stock Operation" id="menu_stock_operation"
+        		sequence="1" parent="menu_stock_request"
+        		groups="base.group_user"/>
+        		<menuitem name="Stock Request" id="menu_action_stock_request"
+        			action="stock_request.action_stock_request"
+        			sequence="1" parent="menu_stock_operation"
+        			groups="stock.group_stock_user"/>
+        		<menuitem name="My Stock Request" id="menu_action_my_stock_request"
+        			action="stock_request.action_my_stock_request"
+        			sequence="2" parent="menu_stock_operation"
+        			groups="base.group_user"/>
+        		<menuitem name="Stock Transfer" id="menu_action_stock_transfer"
+        			action="stock_request.action_stock_transfer"
+        			sequence="3" parent="menu_stock_operation"
+        			groups="stock.group_stock_user"/>
+        		<menuitem name="Stock Borrow" id="menu_action_stock_borrow"
+        			action="stock_request.action_stock_borrow"
+        			sequence="4" parent="menu_stock_operation"
+        			groups="stock.group_stock_user"/>
+        			
+		# Expenses
+        <menuitem name="Expenses" id="hr.menu_hr_root"
+        	sequence="6"/>
+        	
+        	# Expenses/Expenses
+			<delete id="hr_expense_advance_clearing.menu_expense_advance" model="ir.ui.menu"/>
+			<delete id="hr_expense_advance_clearing.menu_expense_clearing" model="ir.ui.menu"/>
+			<delete id="account_pettycash.menu_expense_pettycash" model="ir.ui.menu"/>
+			<delete id="pabi_budget_internal_charge.menu_internal_charge_line" model="ir.ui.menu"/>
+			
+        	<menuitem name="Expenses" id="hr_expense.next_id_49"
+        		sequence="1" parent="hr.menu_hr_root"/>
+		        <menuitem name="Expenses" id="hr_expense.menu_expense_all"
+		        	action="hr_expense.expense_all"
+					sequence="1" parent="hr_expense.next_id_49"
+					groups="account.group_account_user,base.group_hr_manager"/>
+		        <menuitem name="Employee Advance" id="menu_expense_advance"
+		        	action="hr_expense_advance_clearing.action_expense_advance"
+					sequence="2" parent="hr_expense.next_id_49"
+					groups="account.group_account_user,base.group_hr_manager"/>
+		        <menuitem name="Employee Clearing" id="menu_expense_clearing"
+		        	action="hr_expense_advance_clearing.action_expense_clearing"
+		        	sequence="3" parent="hr_expense.next_id_49"
+		        	groups="account.group_account_user,base.group_hr_manager"/>
+		        <menuitem name="Petty Cash" id="menu_expense_pettycash"
+		        	action="account_pettycash.action_expense_pettycash"
+		        	sequence="4" parent="hr_expense.next_id_49"
+		        	groups="account.group_account_user,base.group_hr_manager"/>
+		        <menuitem name="Internal Charge" id="menu_internal_charge_line"
+		        	action="pabi_budget_internal_charge.action_internal_charge_line"
+		        	sequence="5" parent="hr_expense.next_id_49"
+		        	groups="pabi_budget_internal_charge.group_approve_ic_activity"/>
+			
+			# Expenses/Salary and Welfare
+			<delete id="hr_salary.menu_hr_salary_root" model="ir.ui.menu"/>
+			<delete id="hr_salary.menu_hr_salary_expense" model="ir.ui.menu"/>
+			
+    		<menuitem name="Salary &amp; Welfare" id="menu_hr_salary_root"
+    			sequence="2" parent="hr.menu_hr_root"
+          		groups="hr_salary.group_hr_salary"/>
+        		<menuitem name="Salary Expense" id="menu_hr_salary_expense"
+        			action="hr_salary.action_hr_salary_expense"
+          			sequence="1" parent="menu_hr_salary_root"
+          			groups="hr_salary.group_hr_salary"/>
+          		
+			# Expenses/Reporting
+			<delete id="pabi_hr_expense.hr.menu_hr_report" model="ir.ui.menu"/>
+			<delete id="pabi_advance_dunning_letter.menu_pabi_advance_dunning_letter" model="ir.ui.menu"/>
+			<delete id="pabi_hr_advance_clearing_followup_report.menu_expense_clearing_followup_report" model="ir.ui.menu"/>
+			<delete id="pabi_hr_advance_status_report.menu_pabi_hr_advance_status_report_wizard" model="ir.ui.menu"/>
+			
+			<menuitem name="Reporting" id="hr.menu_hr_report"
+				sequence="3" parent="hr.menu_hr_root"/>
+        		<menuitem name="Advance Dunning Letter" id="menu_pabi_advance_dunning_letter"
+        			action="pabi_advance_dunning_letter.action_pabi_advance_dunning_letter"
+        			sequence="1" parent="hr.menu_hr_report"
+        			groups=""/>
+        		<menuitem name="Advance Clearing Followup" id="menu_expense_clearing_followup_report"
+        			action="pabi_hr_advance_clearing_followup_report.action_advance_clearing_followup_wizard"
+        			sequence="2" parent="hr.menu_hr_report"
+          			groups="account.group_account_user"/>
+        		<menuitem name="Advance Status Report" id="menu_pabi_hr_advance_status_report_wizard"
+                  	action="pabi_hr_advance_status_report.action_pabi_hr_advance_status_report_wizard"
+                  	sequence="3" parent="hr.menu_hr_report"
+                  	groups="account.group_account_user"/>
+		# Sales
+        <menuitem name="Sales" id="base.menu_base_partner"
+        	sequence="7"
+            groups="base.group_sale_salesman,base.group_sale_manager"/>
+            
+			# Sales/Sales
+            <menuitem name="Sales" id="base.menu_sales"
+            	sequence="1" parent="base.menu_base_partner"/>
+        		<menuitem name="Quotations" id="sale.menu_sale_quotations"
+	                action="sale.action_quotations"
+	                sequence="1" parent="base.menu_sales"/>
+        		<menuitem name="Sales Orders" id="sale.menu_sale_order"
+        			action="sale.action_orders"
+        			sequence="2" parent="base.menu_sales"
+        			groups="base.group_sale_salesman,base.group_sale_manager"/>
+            
+			# Sales/POS
+			<delete id="pabi_pos.menu_pos_root" model="ir.ui.menu"/>
+			<delete id="pabi_pos.menu_pos_order" model="ir.ui.menu"/>
+			<delete id="pabi_pos.menu_report_supplier_consignment" model="ir.ui.menu"/>
+			<delete id="pabi_pos.menu_xlsx_import_consigned_order" model="ir.ui.menu"/>
+			
+        	<menuitem name="POS" id="menu_pos_root"
+        		sequence="2" parent="base.menu_base_partner"/>
+        		<menuitem name="POS Orders" id="menu_pos_order"
+        			action="pabi_pos.action_pos_orders"
+        			sequence="1" parent="menu_pos_root"
+        			groups="base.group_sale_salesman,base.group_sale_manager"/>
+        		<menuitem name="Supplier Consign Report" id="menu_report_supplier_consignment"
+		            action="pabi_pos.action_report_supplier_consignment"
+		            sequence="2" parent="menu_pos_root"/>
+        		<menuitem name="Import Consigned Order" id="menu_xlsx_import_consigned_order"
+		          	action="pabi_pos.action_xlsx_import_consigned_order"
+		          	sequence="3" parent="menu_pos_root"/>
+        	
+			# Sales/Product Variants
+        	<menuitem name="Product Variants" id="base.menu_product"
+        		sequence="3" parent="base.menu_base_partner"/>
+        		<menuitem name="Products" id="product.menu_product_template_action"
+        			action="product.product_template_action"
+            		sequence="1" parent="base.menu_product"/>
+        		<menuitem name="Product Variants" id="product.menu_products"
+        			action="product.product_normal_action_sell"
+        			sequence="2" parent="base.menu_product"
+        			groups="base.group_no_one"/>
+        		<menuitem name="Products by Category" id="product.menu_products_category"
+            		action="product.product_category_action"
+            		sequence="3" parent="base.menu_product"
+            		groups="base.group_no_one"/>
+        	
+			# Sales/Reports
+			<delete id="pabi_procurement_report.product.menu_products_report" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_xlsx_report_pabi_book_stock_balance" model="ir.ui.menu"/>
+
+			<menuitem name="Reports" id="product.menu_products_report"
+            	sequence="4" parent="base.menu_base_partner"/>
+        		<menuitem name="Book Stock Balance" id="menu_xlsx_report_pabi_book_stock_balance"
+        			action="pabi_procurement_report.action_xlsx_report_pabi_book_stock_balance"
+        			sequence="1" parent="product.menu_products_report"/>
             
     </data>
 </openerp>

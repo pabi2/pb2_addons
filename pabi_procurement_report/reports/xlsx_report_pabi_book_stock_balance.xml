@@ -33,17 +33,6 @@
             <field name="target">new</field>
         </record>
 
-		<menuitem
-            id="product.menu_products_report"
-            name = "Reports"
-            parent="base.menu_base_partner"
-            sequence="10"/>
-            
-        <menuitem id="menu_xlsx_report_pabi_book_stock_balance" 
-        	name="Book Stock Balance" 
-        	parent="product.menu_products_report" 
-        	action="action_xlsx_report_pabi_book_stock_balance" sequence="1"/>
-
 
     </data>
 </openerp>
