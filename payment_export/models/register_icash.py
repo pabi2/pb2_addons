@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
 
 
@@ -33,7 +33,9 @@ class PabiRegister_iCash(models.Model):
     line_ids = fields.One2many(
         'pabi.register.icash.line',
         'register_id',
-        'Supplier Account'
+        'Supplier Account',
+        readonly=True,
+        states={'draft': [('readonly', False)]},
     )
     line_filter = fields.Char(
         string='Filter',
@@ -105,16 +107,21 @@ class PabiRegister_iCash(models.Model):
             self.line_ids += register_line
             
     @api.multi
-    #@api.depends('line_filter')
+    @api.depends('line_filter')
     def _check_data_partner_bank(self, domain=None):
         PartnerBankObj = self.env['res.partner.bank']
         
         if domain is not None:
             domain.append(('is_register','!=',True))
             parner_bank_search = PartnerBankObj.search(domain)
-            parner_bank_ids = parner_bank_search.filtered(lambda l: l.partner_id.email_accountant is False)
+            parner_bank_ids = parner_bank_search.filtered(lambda l: l.partner_id.email_accountant is False
+                                                                or l.owner_name_en is False)
             if parner_bank_ids:
-                raise ValidationError('กรุณาใส่ข้อมูล email accountant ให้ครบถ้วน')
+                partners = []
+                for rec in parner_bank_ids:
+                    partners.append(rec.partner_id.name)
+
+                raise ValidationError(u'กรุณาใส่ข้อมูล Email Accountant, Account Name EN ของ Partner ต่อไปนี้ให้ครบถ้วน\n{}'.format('\n'.join(tuple(partners))))
 
     @api.onchange('line_filter')
     def _onchange_compute_register_icash_line(self):
