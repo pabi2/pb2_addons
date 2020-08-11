@@ -33,12 +33,5 @@
             <field name="target">new</field>
             <field name="help">Print Advance Status Report</field>
         </record>
-
-        <menuitem id="menu_pabi_hr_advance_status_report_wizard"
-                  action="action_pabi_hr_advance_status_report_wizard"
-                  name="Advance Status Report"
-                  parent="hr.menu_hr_report"
-                  sequence="110"
-                  groups="account.group_account_user"/>
     </data>
 </openerp>

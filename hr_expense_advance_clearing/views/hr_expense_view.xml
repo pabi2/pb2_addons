@@ -168,15 +168,5 @@
             </field>
         </record>
 
-        <menuitem action="action_expense_advance"
-                  id="menu_expense_advance"
-                  name="Employee Advance"
-                  parent="hr_expense.next_id_49"/>
-
-        <menuitem action="action_expense_clearing"
-                  id="menu_expense_clearing"
-                  name="Employee Clearing"
-                  parent="hr_expense.next_id_49"/>
-
     </data>
 </openerp>
