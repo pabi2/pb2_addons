@@ -33,7 +33,6 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_pabi_green_product_summary" name="Green Product Summary" parent="menu_procurement_report" action="action_xlsx_report_pabi_green_product_summary" sequence="100"/>
 
 
     </data>

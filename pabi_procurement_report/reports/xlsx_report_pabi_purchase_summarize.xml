@@ -35,8 +35,5 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_pabi_purchase_summarize" name="Purchase Summarize" parent="menu_procurement_report" action="action_xlsx_report_pabi_purchase_summarize" sequence="100"/>
-
-
     </data>
 </openerp>

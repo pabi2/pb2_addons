@@ -30,8 +30,6 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_pabi_supplier_list" name="Supplier List" parent="menu_procurement_report" action="action_xlsx_report_pabi_supplier_list" sequence="100"/>
-
 
     </data>
 </openerp>

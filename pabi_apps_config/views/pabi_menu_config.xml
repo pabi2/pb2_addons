@@ -38,19 +38,6 @@
         <delete model="ir.ui.menu" id="base.menu_partner_form"/>
         <delete model="ir.ui.menu" id="hr.menu_view_employee_category_form"/>
         <delete model="ir.ui.menu" id="hr_expense.menu_hr_product"/>
-
-        <!-- Purchase rearrange-->
-        <menuitem id="base.menu_purchase_root" name="Purchases" sequence="40"/>
-      	<menuitem id="purchase_request.menu_purchase_request_pro_mgt"
-      		name="Purchase Requests" sequence="0" parent="purchase.menu_procurement_management"/>
-      	<menuitem id="purchase_request.menu_purchase_request_line"
-      		name="Purchase Request Lines" sequence="1" parent="purchase.menu_procurement_management"/>
-      	<menuitem id="purchase_requisition.menu_purchase_requisition_pro_mgt"
-      		name="Calls for Bids" sequence="2" parent="purchase.menu_procurement_management"/>
-      	<menuitem id="purchase.menu_purchase_rfq"
-      		name="Quotation" sequence="3" parent="purchase.menu_procurement_management"/>
-      	<menuitem id="purchase.menu_purchase_form_action"
-      		name="Purchase Orders" sequence="4" parent="purchase.menu_procurement_management"/>
         
         <menuitem id="hr.menu_hr_main" name="Directory" parent="hr.menu_hr_configuration" sequence="450"/>
 
@@ -175,9 +162,6 @@
         <menuitem id="account.menu_account_supplier" name="Suppliers"
             parent="account.menu_finance_payables"
             action="base.action_partner_supplier_form" sequence="0"/>
-        <menuitem id="purchase.menu_purchase_supplier" name="Suppliers"
-            parent="purchase.menu_procurement_management"
-            action="base.action_partner_supplier_form" sequence="15"/>
 
         # Move Bank Receipt to under Customers
         <menuitem name="Accounting"
@@ -779,6 +763,141 @@
         		<menuitem name="Book Stock Balance" id="menu_xlsx_report_pabi_book_stock_balance"
         			action="pabi_procurement_report.action_xlsx_report_pabi_book_stock_balance"
         			sequence="1" parent="product.menu_products_report"/>
+        			
+        # Purchases
+        <menuitem name="Purchases" id="base.menu_purchase_root"
+        	sequence="8"/>
+
+			# Purchase
+			<delete id="pabi_purchase_work_acceptance.menu_purchase_work_acceptance_action" model="ir.ui.menu"/>
+			<delete id="pabi_purchase_billing.menu_action_purchase_billing" model="ir.ui.menu"/>
+			
+        	<menuitem name="Purchase" id="purchase.menu_procurement_management"
+            	sequence="1" parent="base.menu_purchase_root"/>
+		      	<menuitem name="Purchase Requests" id="purchase_request.menu_purchase_request_pro_mgt"
+		      		sequence="1" parent="purchase.menu_procurement_management"/>
+		      	<menuitem name="Purchase Request Lines" id="purchase_request.menu_purchase_request_line"
+		      		sequence="2" parent="purchase.menu_procurement_management"/>
+		      	<menuitem name="Calls for Bids" id="purchase_requisition.menu_purchase_requisition_pro_mgt"
+		      		sequence="3" parent="purchase.menu_procurement_management"/>
+		      	<menuitem name="Quotation" id="purchase.menu_purchase_rfq"
+		      		sequence="4" parent="purchase.menu_procurement_management"/>
+		      	<menuitem name="Purchase Orders" id="purchase.menu_purchase_form_action"
+		      		sequence="5" parent="purchase.menu_procurement_management"/>
+		       	<menuitem name="Purchase Work Acceptance" id="menu_purchase_work_acceptance_action"
+		       		action="pabi_purchase_work_acceptance.action_purchase_work_acceptance_tree"
+		            sequence="6" parent="purchase.menu_procurement_management"/>
+        		<menuitem name="Purchase Billing" id="menu_action_purchase_billing"
+        			action="pabi_purchase_billing.action_purchase_billing"
+        			sequence="7" parent="purchase.menu_procurement_management"/>
+        		<menuitem name="Suppliers" id="purchase.menu_purchase_supplier"
+        			action="base.action_partner_supplier_form"
+            		sequence="8" parent="purchase.menu_procurement_management"/>
+
+	      	# Incoming Products
+      		<menuitem name="Incoming Products" id="purchase.menu_procurement_management_inventory"
+            	sequence="2" parent="base.menu_purchase_root"/>
+      			<menuitem name="Incoming Products" id="purchase.menu_action_picking_tree_in_move"
+      				action="stock.action_receipt_picking_move"
+            		sequence="1" parent="purchase.menu_procurement_management_inventory"/>
+            	
+	      	# Invoice Control
+    		<menuitem name="Invoice Control" id="purchase.menu_procurement_management_invoice"
+        		sequence="3" parent="base.menu_purchase_root"/>
+	     		<menuitem name="On Draft Invoices" id="purchase.menu_procurement_management_pending_invoice"
+	          		action="purchase.action_invoice_pending"
+	          		sequence="1" parent="purchase.menu_procurement_management_invoice"/>
+        		<menuitem name="On Purchase Order Lines" id="purchase.menu_purchase_line_order_draft"
+            		action="purchase.purchase_line_form_action2"
+            		sequence="2" parent="purchase.menu_procurement_management_invoice"/>
+        		<menuitem name="On Incoming Shipments" id="purchase.menu_action_picking_tree_picking_to_invoice"
+        			action="purchase.action_picking_tree_picking_to_invoice"
+            		sequence="3" parent="purchase.menu_procurement_management_invoice"/>
+        
+	      	# Products
+      		<menuitem name="Products" id="purchase.menu_procurement_management_product"
+          		sequence="4" parent="base.menu_purchase_root"/>
+      			<menuitem name="Products by Category" id="purchase.menu_product_by_category_purchase_form"
+      				action="product.product_category_action"
+           			sequence="1" parent="purchase.menu_procurement_management_product"/>
+      			<menuitem name="Products" id="purchase.menu_procurement_partner_contact_form"
+      				action="purchase.product_normal_action_puchased"
+          			sequence="2" parent="purchase.menu_procurement_management_product"/>
+          
+	      	# Purchase Report
+			<delete id="pabi_purchase_report.menu_purchase_report" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_purchase_report" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_xlsx_report_pabi_purchase_tracking" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_xlsx_report_pabi_purchase_summarize" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_xlsx_report_pabi_standard_asset" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_xlsx_report_pabi_stock_card_for_accounting" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_xlsx_report_pabi_monthly_work_acceptance" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_xlsx_report_pabi_sla_balance" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_xlsx_report_pabi_supplier_list" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_xlsx_report_pabi_stock_balance" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_xlsx_report_pabi_procurement_result" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_xlsx_report_pabi_hiring_summary" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_xlsx_report_pabi_green_product_summary" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_xlsx_report_pabi_purchase_annual" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_xlsx_report_pabi_supplier_evaluation" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_xlsx_report_pabi_comparison_po_no" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_xlsx_report_pabi_supplier_evaluation_score" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_purchase_billing_report_wizard" model="ir.ui.menu"/>
+			<delete id="pabi_procurement_report.menu_purchase_invoice_plan_report_wizard" model="ir.ui.menu"/>
+			
+        	<menuitem name="Purchase Report" id="menu_procurement_report"
+            	sequence="5" parent="base.menu_purchase_root"/>
+        		<menuitem name="Purchase Tracking" id="menu_xlsx_report_pabi_purchase_tracking"
+        			action="pabi_procurement_report.action_xlsx_report_pabi_purchase_tracking"
+        			sequence="1" parent="menu_procurement_report"/>
+        		<menuitem name="Purchase Summarize" id="menu_xlsx_report_pabi_purchase_summarize"
+        			action="pabi_procurement_report.action_xlsx_report_pabi_purchase_summarize"
+        			sequence="2" parent="menu_procurement_report"/>
+        		<menuitem name="Standard Asset" id="menu_xlsx_report_pabi_standard_asset"
+        			action="pabi_procurement_report.action_xlsx_report_pabi_standard_asset"
+        			sequence="3" parent="menu_procurement_report"/>
+        		<menuitem name="Stock Card for Accounting" id="menu_xlsx_report_pabi_stock_card_for_accounting"
+        			action="pabi_procurement_report.action_xlsx_report_pabi_stock_card_for_accounting"
+        			sequence="4" parent="menu_procurement_report"/>
+        		<menuitem name="Monthly Work Acceptance" id="menu_xlsx_report_pabi_monthly_work_acceptance"
+        			action="pabi_procurement_report.action_xlsx_report_pabi_monthly_work_acceptance"
+        			sequence="5" parent="menu_procurement_report"/>
+        		<menuitem name="SLA Balance" id="menu_xlsx_report_pabi_sla_balance"
+        			action="pabi_procurement_report.action_xlsx_report_pabi_sla_balance"
+        			sequence="6" parent="menu_procurement_report"/>
+        		<menuitem name="Supplier List" id="menu_xlsx_report_pabi_supplier_list"
+        			action="pabi_procurement_report.action_xlsx_report_pabi_supplier_list"
+        			sequence="7" parent="menu_procurement_report"/>
+        		<menuitem name="Stock Balance" id="menu_xlsx_report_pabi_stock_balance"
+        			action="pabi_procurement_report.action_xlsx_report_pabi_stock_balance"
+        			sequence="8" parent="menu_procurement_report"/>
+        		<menuitem name="Procurement Result" id="menu_xlsx_report_pabi_procurement_result"
+        			action="pabi_procurement_report.action_xlsx_report_pabi_procurement_result"
+        			sequence="9" parent="menu_procurement_report"/>
+		        <menuitem name="Hiring Summary" id="menu_xlsx_report_pabi_hiring_summary"
+		        	action="pabi_procurement_report.action_xlsx_report_pabi_hiring_summary"
+		        	sequence="10" parent="menu_procurement_report"/>
+        		<menuitem name="Green Product Summary" id="menu_xlsx_report_pabi_green_product_summary"
+        			action="pabi_procurement_report.action_xlsx_report_pabi_green_product_summary"
+        			sequence="11" parent="menu_procurement_report"/>
+        		<menuitem name="Purchase Annual Report" id="menu_xlsx_report_pabi_purchase_annual"
+        			action="pabi_procurement_report.action_xlsx_report_pabi_purchase_annual"
+        			sequence="12" parent="menu_procurement_report"/>
+        		<menuitem name="Supplier Evaluation" id="menu_xlsx_report_pabi_supplier_evaluation"
+        			action="pabi_procurement_report.action_xlsx_report_pabi_supplier_evaluation"
+        			sequence="13" parent="menu_procurement_report"/>
+        		<menuitem name="PR and PO Comparison" id="menu_xlsx_report_pabi_comparison_po_no"
+        			action="pabi_procurement_report.action_xlsx_report_pabi_comparison_pr_po"
+        			sequence="14" parent="menu_procurement_report"/>
+        		<menuitem name="Supplier Evaluation Score" id="menu_xlsx_report_pabi_supplier_evaluation_score"
+        			action="pabi_procurement_report.action_xlsx_report_pabi_supplier_evaluation_score"
+        			sequence="15" parent="menu_procurement_report"/>
+        		<menuitem name="Purchase Billing" id="menu_purchase_billing_report_wizard"
+		            action="pabi_procurement_report.action_menu_purchase_billing_report_wizard"
+		            sequence="16" parent="menu_procurement_report"/>
+        		<menuitem name="Purchase Invoice Plan" id="menu_purchase_invoice_plan_report_wizard"
+            		action="pabi_procurement_report.action_menu_purchase_invoice_plan_report_wizard"
+            		sequence="17" parent="menu_procurement_report"/>
             
     </data>
 </openerp>

@@ -30,7 +30,6 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_pabi_purchase_annual" name="Purchase Annual Report" parent="menu_procurement_report" action="action_xlsx_report_pabi_purchase_annual" sequence="100"/>
 
 
     </data>
