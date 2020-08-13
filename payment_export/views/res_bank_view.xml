@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_partner_bank_form" model="ir.ui.view">
+            <field name="name">view.partner.bank.form</field>
+            <field name="model">res.partner.bank</field>
+            <field name="inherit_id" ref="pabi_account.view_partner_bank_form"/>
+            <field name="arch" type="xml">
+                <field name="owner_name" position="after">
+                	<field name="owner_name_en" placeholder="Name En" required="1"/>
+                </field>
+                <field name="bank_branch" position="after">
+                	<field name="register_no" string="ส่งข้อมูลลงทะเบียบครั้งที่" readonly="1"
+                			attrs="{'invisible': ['|',('register_no', '=', False),('register_no', '=', 0)]}"/>
+                	<field name="register_date" string="วันที่ส่งข้อมูล" readonly="1"
+                			attrs="{'invisible': [('register_date', '=', False)]}"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>
