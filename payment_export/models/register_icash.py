@@ -97,7 +97,7 @@ class PabiRegister_iCash(models.Model):
             
             register_line = RegisterLineObj.new()
             register_line.partner_bank_id = line
-            register_line.beneficiary_code = 'NSTDA_%s' % line.acc_number.strip()
+            register_line.beneficiary_code = 'NSTDA_%s' % account_number
             register_line.account_number = account_number
             register_line.owner_name_en = line.owner_name_en
             register_line.partner_searchkey = line.partner_id.search_key
@@ -210,7 +210,7 @@ class PabiRegister_iCashLine(models.Model):
                 else:
                     account_number = rec.partner_bank_id.acc_number.strip()
                 
-                rec.beneficiary_code = 'NSTDA_%s' % rec.partner_bank_id.acc_number.strip()
+                rec.beneficiary_code = 'NSTDA_%s' % account_number
                 rec.account_number = account_number
                 rec.owner_name_en = rec.partner_bank_id.owner_name_en
                 rec.partner_searchkey = rec.partner_bank_id.partner_id.search_key
