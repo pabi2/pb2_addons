@@ -40,6 +40,8 @@
     ],
     "data": [
         "data/default_value.xml",
+        'data/ir_cron_data.xml',
+        'data/email_template.xml',
         "security/security_group.xml",
         "security/ir.model.access.csv",
         "wizard/print_wht_cert_wizard.xml",
