@@ -88,7 +88,7 @@ class XLSXReportRevenueLedger(models.TransientModel):
             if not(accountant_id in self.env.user.groups_id.ids): #group_user != Accountant
                 if 'Budget User' in [g.name for g in self.env.user.groups_id]: #group_user = Budget User
                     if not(org_co_id in self.env.user.operating_unit_ids.ids): #org != สก.        
-                        dom += [('org_id', 'in', self.env.user.operating_unit_ids.ids)]
+                        dom += [('org_id.operating_unit_id', 'in', self.env.user.operating_unit_ids.ids)]
         if self.chartfield_ids:
             # map beetween chartfield_id with chartfield type
             chartfields = [('section_id', 'sc:'),
