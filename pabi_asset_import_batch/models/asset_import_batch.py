@@ -74,7 +74,7 @@ class AccountAssetImportBatch(models.Model):
         asset_line_obj = self.env['account.asset.line']
         asset_normal = self.asset_batch_ids.filtered(
             lambda l: l.profile_id.profile_type == 'normal')
-        if asset_normal and not asset_normal.purchase_value:
+        if asset_normal and not all(asset_normal.mapped('purchase_value')):
             raise ValidationError(_(
                 'Can not import Asset type normal that purchase value is 0.0'))
         for line in self.asset_batch_ids:
