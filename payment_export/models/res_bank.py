@@ -17,3 +17,4 @@ class ResPartnerBank(models.Model):
     is_register = fields.Boolean(
         'Is Register'
     )
+
