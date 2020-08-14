@@ -8,7 +8,7 @@
             name="Account Report"
             parent="account_budget_activity.menu_budgeting"
             sequence="120"
-            groups="pabi_base.group_budget_user"
+            groups="group_budget_user_account_report"
             />
         
         <!-- Budgeting > Account Report == Expense Ledger   -->  

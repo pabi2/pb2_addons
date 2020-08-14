@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" ?>
 <openerp>
     <data>
 
-        <!-- Budget User to have access to all OU -->
-        <!--  update in application-->
-<!--         <record id="pabi_base.group_budget_user" model="res.groups">
-            <field name="access_all_operating_unit">True</field>
-        </record> -->
-
+		<record id="group_budget_user_account_report" model="res.groups">
+            <field name="name">Budget User Account Report</field>
+            <field name="users" eval="[(4, ref('base.user_root'))]"/>
+            <field name="category_id" ref="pabi_base.module_category_account_budget"/> 	
+        </record>
+		
     </data>
 </openerp>
