@@ -15,5 +15,14 @@
   			<field name="context" eval="{'template_fname': 'import_asset_batch.xlsx'}"/>
         </record>
 
+		<!-- Download -->
+        <act_window id="action_dowload_asset_master_xlsx"
+          name="Download"
+          src_model="account.asset.import.batch"
+          res_model="asset.export.report"
+          view_type="form"
+          view_mode="form"
+          key2="client_action_multi"
+          target="new"/>
     </data>
 </openerp>

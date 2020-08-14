@@ -70,6 +70,65 @@
             }
           </field>
         </record>
-
+        
+        <!-- Download -->
+        <record id="export_asset_master" model="ir.attachment">
+            <field name="res_model">asset.export.report</field>
+            <field name="datas"></field>
+            <field name="datas_fname">export_asset.xlsx</field>
+            <field name="name">Export Asset Master</field>
+            <field name="parent_id" eval="ref('dir_account_asset')"/>
+            <field name="description">
+	              {
+	                '__EXPORT__': {
+	                    'Assets': {
+	                        '_HEAD_': {
+	                        },
+	                        'results': {
+	                            'B3': 'code2${value or ""}#{number_format=text}',
+	                            'C3': 'name${value or ""}#{number_format=text}',
+	                            'D3': 'status${value and value.name or ""}#{number_format=text}',
+	                            'E3': 'is_standard#{number_format=text}',
+	                            'F3': 'asset_brand${value or ""}#{number_format=text}',
+	                            'G3': 'asset_model${value or ""}#{number_format=text}',
+	                            'H3': 'purchase_value${value or ""}#{number_format=number}',
+	                            'I3': 'salvage_value${value or "0"}',
+								'J3': 'date_start${value and value.date() or ""}#{align=left}',
+	                            'K3': 'section_id${value and value.code or ""}#{align=right;number_format=text}',
+	                            'L3': 'project_id${value and value.code or ""}#{align=left;number_format=text}',
+	                            'M3': 'invest_asset_id${value.code or ""}#{number_format=text}',
+	                            'N3': 'invest_construction_phase_id${value.code or ""}#{number_format=text}',
+	                            'O3': 'profile_id${value and value.code or ""}#{align=right;number_format=text}',
+	                            'P3': 'product_id${value and value.code or ""}#{number_format=text}',
+	                            'Q3': 'purchase_id${value and value.name or ""}#{number_format=text}',
+	                            'R3': 'partner_id${value and value.id or ""}#{number_format=text}',
+	                            'S3': 'method_number${value or "0"}#{align=right;number_format=text}',
+	                            'T3': 'owner_section_id${value.code or ""}#{align=right;number_format=text}',
+	                            'U3': 'owner_project_id${value.code or ""}#{number_format=text}',
+	                            'V3': 'owner_invest_asset_id${value.code or ""}#{number_format=text}',
+	                            'W3': 'owner_invest_construction_phase_id${value.code or ""}#{number_format=text}',
+	                            'X3': 'asset_purchase_method_id${value.name or ""}#{number_format=text}',
+	                            'Y3': 'responsible_user_id${value.login or ""}#{number_format=text}',
+	                            'Z3': 'room_id${value.code or ""}#{number_format=text}',
+	                            'AA3': 'floor_id${value.code or ""}#{number_format=text}',
+	                            'AB3': 'building_id${value.code or ""}#{number_format=text}',
+	                            'AC3': 'serial_number${value or ""}#{number_format=text}',
+	                            'AD3': 'warranty_start_date${value and value.date() or ""}#{align=left}',
+	                            'AE3': 'warranty_expire_date${value and value.date() or ""}#{align=left}',
+                            	'AF3': 'code${value or ""}#{number_format=text}',
+	                            'AG3': 'method_period${value or 0}#{number_format=text}',
+	                            'AH3': 'days_calc${value or ""}#{number_format=text}',
+	                            'AI3': 'prorata${value or ""}#{number_format=text}',
+	                            # depreciation_lines
+	                            'AJ3': 'depreciation4${value or ""}#{number_format=date}',
+                            	'AK3': 'depreciation2${value or ""}#{number_format=text}',
+                            	'AL3': 'depreciation3${value or ""}#{number_format=text}',
+                            	'AM3': 'depreciation1${value or ""}#{number_format=text}',
+	                        }
+	                    }
+	                }
+	            }
+          </field>
+        </record>
     </data>
 </openerp>
