@@ -946,8 +946,8 @@
             
             # Bank and Cash
 			<delete id="bank_account_transfer.menu_bank_account_transfer" model="ir.ui.menu"/>
-			<delete id="account_bank_payment.menu_bank_payment_tree" model="ir.ui.menu"/>
-			<delete id="account_bank_receipt.menu_bank_receipt_tree" model="ir.ui.menu"/>
+			<!-- <delete id="account_bank_payment.menu_bank_payment_tree" model="ir.ui.menu"/>
+			<delete id="account_bank_receipt.menu_bank_receipt_tree" model="ir.ui.menu"/> -->
 			
         	<menuitem name="Bank and Cash" id="account.menu_finance_bank_and_cash"
         		sequence="3" parent="account.menu_finance"
@@ -955,12 +955,12 @@
       			<menuitem name="Bank Account Transfer" id="menu_bank_account_transfer"
       				action="bank_account_transfer.action_bank_account_transfer"
       				sequence="1" parent="account.menu_finance_bank_and_cash"/>
-        		<menuitem name="Bank Payments" id="menu_bank_payment_tree"
+        		<!-- <menuitem name="Bank Payments" id="menu_bank_payment_tree"
         			action="account_bank_payment.action_bank_payment_tree"
         			sequence="2" parent="account.menu_finance_bank_and_cash"/>
         		<menuitem name="Bank Receipts" id="menu_bank_receipt_tree"
         			action="account_bank_receipt.action_bank_receipt_tree"
-        			sequence="3" parent="account.menu_finance_bank_and_cash"/>
+        			sequence="3" parent="account.menu_finance_bank_and_cash"/> -->
             
             # Loan Receivables
 			<delete id="pabi_loan_receivable.menu_loan_receivable" model="ir.ui.menu"/>
