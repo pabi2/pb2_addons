@@ -12,6 +12,7 @@ class SalesOrder(models.Model):
     def _check_current_stock(self, data_dict):
         WorkFlow = self.env['sale.workflow.process']
         try:
+            res = {'is_success': True}
             product_dict = {}
             stock_err = {}
             products = [x['product_id'] for x in data_dict['order_line']]
@@ -38,8 +39,6 @@ class SalesOrder(models.Model):
                     'result': {'location': workflow.location_id.name, 'stock_line': stock_err},
                     'messages': _('Stock Error!!'),
                 }
-            else:
-                res = {'is_success': True}
         except Exception, e:
             res = {
                 'is_success': False,
