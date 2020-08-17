@@ -106,10 +106,5 @@
             <field name="context">{'lang': 'th_TH'}</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_purchase_invoice_plan"
-            name="Purchase Invoice Plan"
-            parent="menu_pabi_payable_report"
-            action="action_xlsx_report_purchase_invoice_plan_form"
-            sequence="130"/>
     </data>
 </openerp>

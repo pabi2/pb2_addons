@@ -25,10 +25,5 @@
             <field name="context">{'lang': 'th_TH'}</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_sla_procurement"
-            name="SLA Procurement"
-            parent="menu_pabi_payable_report"
-            action="action_xlsx_report_sla_procurement_form"
-            sequence="91"/>
     </data>
 </openerp>

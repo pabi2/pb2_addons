@@ -58,7 +58,6 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem action="action_account_general_ledger_wizard" sequence="180" id="menu_account_general_ledger_report" parent="account.menu_finance_legal_statement"/>
 
     </data>
 </openerp>

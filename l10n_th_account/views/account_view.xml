@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-        # New menu for Thai Tax Reports
-        <menuitem id="menu_thai_tax_report" sequence="100" name="Thai Tax Reports" parent="account.menu_finance_reports" />
 
         <record id="view_tax_form_ext" model="ir.ui.view">
             <field name="name">view.tax.form.ext</field>

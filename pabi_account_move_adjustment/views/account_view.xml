@@ -204,7 +204,6 @@
             <field name="act_window_id" ref="action_journal_adjust_budget"/>
         </record>
 
-        <menuitem action="action_journal_adjust_budget" id="menu_journal_adjust_budget" parent="account.menu_finance_entries" groups="account.group_account_user" sequence="20"/>
 
         # Journal Adj. No. Bud.
         <record id="view_journal_adjust_no_budget_form" model="ir.ui.view">
@@ -359,7 +358,6 @@
             <field name="act_window_id" ref="action_journal_adjust_no_budget"/>
         </record>
 
-        <menuitem action="action_journal_adjust_no_budget" id="menu_journal_adjust_no_budget" parent="account.menu_finance_entries" groups="account.group_account_user" sequence="22"/>
 
         # Model
         <record id="view_model_line_tree" model="ir.ui.view">

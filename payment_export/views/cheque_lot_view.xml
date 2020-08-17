@@ -103,8 +103,6 @@
             </field>
         </record>
 
-        <menuitem action="action_cheque_lot" sequence="2" id="menu_action_cheque_lot" parent="menu_payment_export"/>
-
         # Cheque Register
         <record id="view_cheque_register_filter" model="ir.ui.view">
             <field name="name">view.cheque.register.filter</field>
@@ -159,6 +157,5 @@
             </field>
         </record>
 
-        <menuitem action="action_cheque_register" sequence="3" id="menu_action_cheque_register" parent="menu_payment_export"/>
     </data>
 </openerp>

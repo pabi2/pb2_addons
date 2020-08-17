@@ -141,7 +141,6 @@
             <field name="view_mode">tree,form</field>
         </record>
 
-        <menuitem action="action_bank_payment_tree" id="menu_bank_payment_tree" parent="account.menu_finance_bank_and_cash" sequence="30"/>
 
     </data>
 </openerp>

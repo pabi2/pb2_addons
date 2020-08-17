@@ -3,7 +3,6 @@
 <openerp>
 	<data>
 
-			<menuitem id="menu_pabi_customer_dunning" sequence="200" name="Customer Dunning" parent="account.menu_finance_reports"/>
 
 		<!-- Can't do graph for amount_residual, it is function field -->
 		<!-- <record id="view_pabi_partner_dunning_report_graph" model="ir.ui.view">

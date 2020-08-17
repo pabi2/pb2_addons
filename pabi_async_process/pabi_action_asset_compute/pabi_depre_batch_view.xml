@@ -94,8 +94,6 @@
             <field name="view_id" ref="view_pabi_asset_depre_batch_tree"/>
         </record>
 
-        <menuitem action="action_pabi_asset_depre_batch" id="menu_pabi_asset_depre_batch" parent="account.menu_finance_recurrent_entries" sequence="20"/>
-
 
     </data>
 </openerp>

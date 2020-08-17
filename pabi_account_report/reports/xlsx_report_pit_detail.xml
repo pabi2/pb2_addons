@@ -43,10 +43,5 @@
             <field name="context">{'lang': 'th_TH'}</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_pit_detail"
-            name="PIT Detail"
-            parent="menu_pabi_payable_report"
-            action="action_xlsx_report_pit_detail_form"
-            sequence="20"/>
     </data>
 </openerp>

@@ -53,10 +53,5 @@
             <field name="context">{'lang': 'th_TH'}</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_cheque_register"
-            name="Cheque Register"
-            parent="menu_pabi_payable_report"
-            action="action_xlsx_report_cheque_register_form"
-            sequence="30"/>
     </data>
 </openerp>

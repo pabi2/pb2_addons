@@ -25,10 +25,6 @@
             <field name="target">new</field>
         </record>
         
-        <menuitem id="menu_xlsx_report_pabi_employee_advance_report" 
-        	name="Employee Advance Report" 
-        	parent="menu_pabi_payable_report" 
-        	action="action_xlsx_report_pabi_employee_advance_report" sequence="1"/>
         
          
     

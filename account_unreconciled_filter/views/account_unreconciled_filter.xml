@@ -79,9 +79,6 @@
             <field name="view_mode">tree,form</field>
         </record>
 
-        <menuitem action="action_account_unreconciled_filter"
-          id="menu_account_unreconciled_filter"
-          parent="account.periodical_processing_reconciliation" sequence="20"/>
 
     </data>
 </openerp>

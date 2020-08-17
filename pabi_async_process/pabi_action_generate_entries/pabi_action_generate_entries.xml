@@ -34,10 +34,5 @@
             <field name="context">{'return_action': 'account.action_move_journal_line'}</field>
         </record>
 
-        <menuitem id="account.menu_generate_subscription"
-          name="Generate Entries"
-          parent="account.menu_finance_recurrent_entries"
-          action="action_pabi_action_generate_entries"
-          sequence="1"/>
     </data>
 </openerp>

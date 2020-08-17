@@ -150,38 +150,6 @@
           name="Knowledge" parent="menu_pabi2_config_unused_menu" sequence="100"
           groups="pabi_base.group_nstda_admin_business"/>
 
-        <!-- Main Master -->
-        # Customers
-        <!-- to be deleted -->
-        <menuitem id="account.menu_account_customer" name="Customers"
-            parent="account.menu_finance_receivables"
-            action="base.action_partner_customer_form" sequence="0"/>
-
-        # Suppliers
-        <!-- to be deleted -->
-        <menuitem id="account.menu_account_supplier" name="Suppliers"
-            parent="account.menu_finance_payables"
-            action="base.action_partner_supplier_form" sequence="0"/>
-
-        # Move Bank Receipt to under Customers
-        <menuitem name="Accounting"
-            id="account.menu_finance"
-            groups="account.group_account_manager,account.group_account_user,group_cd_report"
-            sequence="50"/>
-
-        <menuitem id="account.menu_finance_receivables" name="Customers"
-          parent="account.menu_finance" sequence="1"
-          groups="account.group_account_user,account.group_account_manager"/>
-        <menuitem id="account.menu_finance_payables" name="Suppliers"
-          parent="account.menu_finance" sequence="2"
-          groups="account.group_account_user,account.group_account_manager"/>
-        <menuitem id="payment_export.menu_payment_export" name="Payment Exports"
-          parent="account.menu_finance" sequence="3"
-          groups="account.group_account_user,account.group_account_manager"/>
-        <menuitem action="account_bank_receipt.action_bank_receipt_tree"
-          id="account_bank_receipt.menu_bank_receipt_tree"
-          parent="account.menu_finance_receivables" sequence="20"/>
-
         # Event Calendar
         <menuitem name="Calendar" id="calendar.mail_menu_calendar" parent="calendar.menu_calendar_configuration" sequence="10" action="calendar.action_calendar_event"/>
 
@@ -898,6 +866,697 @@
         		<menuitem name="Purchase Invoice Plan" id="menu_purchase_invoice_plan_report_wizard"
             		action="pabi_procurement_report.action_menu_purchase_invoice_plan_report_wizard"
             		sequence="17" parent="menu_procurement_report"/>
+        			
+        # PO Contract
+		<delete id="pabi_purchase_contract.main_purchase_contract_menu" model="ir.ui.menu"/>
+
+		<menuitem name="PO Contract" id="main_purchase_contract_menu"
+			sequence="9"
+			groups="pabi_purchase_contract.group_pabi_purchase_contract_user,pabi_purchase_contract.group_pabi_purchase_contract_verify,pabi_purchase_contract.group_pabi_purchase_contract_close"/>
+		
+			# Contract Management
+			<delete id="pabi_purchase_contract.purchase_contract_sub_menu" model="ir.ui.menu"/>
+			<delete id="pabi_purchase_contract.purchase_contract_menu" model="ir.ui.menu"/>
+			<delete id="pabi_purchase_contract.purchase_contract_accept_menu" model="ir.ui.menu"/>
+			
+			<menuitem name="Contract Management" id="purchase_contract_sub_menu"
+				sequence="1" parent="main_purchase_contract_menu"
+				groups="pabi_purchase_contract.group_pabi_purchase_contract_user,pabi_purchase_contract.group_pabi_purchase_contract_verify,pabi_purchase_contract.group_pabi_purchase_contract_close"/>
+				<menuitem name="PO Contract" id="purchase_contract_menu"
+					action="pabi_purchase_contract.purchase_contract_action"
+					sequence="1" parent="purchase_contract_sub_menu"/>
+				<menuitem name="Waiting for Accept" id="purchase_contract_accept_menu"
+					action="pabi_purchase_contract.purchase_contract_accept_action"
+					sequence="2" parent="purchase_contract_sub_menu"/>
+        
+        # Accounting
+        <menuitem name="Accounting" id="account.menu_finance"
+        	sequence="10"
+            groups="account.group_account_manager,account.group_account_user,group_cd_report"/>
+            
+            # Customers
+        	<menuitem name="Customers" id="account.menu_finance_receivables"
+          		sequence="1" parent="account.menu_finance"
+          		groups="account.group_account_user,account.group_account_manager"/>
+        		<menuitem name="Customers" id="account.menu_account_customer"
+            		action="base.action_partner_customer_form"
+            		sequence="1" parent="account.menu_finance_receivables"/>
+        		<menuitem name="Customer Invoices" id="account.menu_action_invoice_tree1"
+        			action="account.action_invoice_tree1"
+        			sequence="2" parent="account.menu_finance_receivables"/>
+        		<menuitem name="Customer Refunds" id="account.menu_action_invoice_tree3"
+        			action="account.action_invoice_tree3"
+        			sequence="3" parent="account.menu_finance_receivables"/>
+       	 		<menuitem name="Customer Payments" id="account_voucher.menu_action_vendor_receipt"
+        			action="account_voucher.action_vendor_receipt"
+        			sequence="4" parent="account.menu_finance_receivables"/>
+        		<menuitem name="Bank Receipts" id="account_bank_receipt.menu_bank_receipt_tree"
+        			action="account_bank_receipt.action_bank_receipt_tree"
+          			sequence="5" parent="account.menu_finance_receivables"/>
+			
+            # Suppliers
+			<delete id="pabi_purchase_billing.menu_action_account_purchase_billing" model="ir.ui.menu"/>
+			<delete id="l10n_th_account.menu_print_wht_cert" model="ir.ui.menu"/>
+			<delete id="account_voucher_net_payment.menu_action_vendor_paymen_net_payment" model="ir.ui.menu"/>
+            
+        	<menuitem name="Suppliers" id="account.menu_finance_payables"
+          		sequence="2" parent="account.menu_finance"
+          		groups="account.group_account_user,account.group_account_manager"/>
+        		<menuitem name="Suppliers" id="account.menu_account_supplier"
+            		action="base.action_partner_supplier_form"
+            		sequence="1" parent="account.menu_finance_payables"/>
+        		<menuitem name="Supplier Invoices" id="account.menu_action_invoice_tree2"
+        			action="account.action_invoice_tree2"
+        			sequence="2" parent="account.menu_finance_payables"/>
+        		<menuitem name="Supplier Refunds" id="account.menu_action_invoice_tree4"
+        			action="account.action_invoice_tree4"
+        			sequence="3" parent="account.menu_finance_payables"/>
+        		<menuitem name="Purchase Billing" id="menu_action_account_purchase_billing"
+        			action="pabi_purchase_billing.action_purchase_billing"
+            		sequence="4" parent="account.menu_finance_payables"/>
+        		<menuitem name="Supplier Payments" id="account_voucher.menu_action_vendor_payment"
+        			action="account_voucher.action_vendor_payment"
+        			sequence="5" parent="account.menu_finance_payables"/>
+        		<menuitem name="Withholding Certs" id="menu_print_wht_cert"
+        			action="l10n_th_account.action_print_wht_cert_menu"
+        			sequence="6" parent="account.menu_finance_payables"/>
+        		<menuitem name="Supplier Payments (net AR)" id="menu_action_vendor_paymen_net_payment"
+        			action="account_voucher_net_payment.action_vendor_payment_net_payment"
+        			sequence="7" parent="account.menu_finance_payables"/>
+            
+            # Bank and Cash
+			<delete id="bank_account_transfer.menu_bank_account_transfer" model="ir.ui.menu"/>
+			<delete id="account_bank_payment.menu_bank_payment_tree" model="ir.ui.menu"/>
+			<delete id="account_bank_receipt.menu_bank_receipt_tree" model="ir.ui.menu"/>
+			
+        	<menuitem name="Bank and Cash" id="account.menu_finance_bank_and_cash"
+        		sequence="3" parent="account.menu_finance"
+            	groups="group_account_user,group_account_manager"/>
+      			<menuitem name="Bank Account Transfer" id="menu_bank_account_transfer"
+      				action="bank_account_transfer.action_bank_account_transfer"
+      				sequence="1" parent="account.menu_finance_bank_and_cash"/>
+        		<menuitem name="Bank Payments" id="menu_bank_payment_tree"
+        			action="account_bank_payment.action_bank_payment_tree"
+        			sequence="2" parent="account.menu_finance_bank_and_cash"/>
+        		<menuitem name="Bank Receipts" id="menu_bank_receipt_tree"
+        			action="account_bank_receipt.action_bank_receipt_tree"
+        			sequence="3" parent="account.menu_finance_bank_and_cash"/>
+            
+            # Loan Receivables
+			<delete id="pabi_loan_receivable.menu_loan_receivable" model="ir.ui.menu"/>
+			<delete id="pabi_loan_receivable.menu_action_loan_bank_mou" model="ir.ui.menu"/>
+			<delete id="pabi_loan_receivable.menu_action_loan_customer_agreement" model="ir.ui.menu"/>
+
+        	<menuitem name="Loan Receivables" id="menu_loan_receivable"
+        		sequence="4" parent="account.menu_finance"
+       	 		groups="account.group_account_user,account.group_account_manager"/>
+        		<menuitem name="Bank Loan MOU" id="menu_action_loan_bank_mou"
+        			action="pabi_loan_receivable.action_loan_bank_mou"
+        			sequence="1" parent="menu_loan_receivable"/>
+        		<menuitem name="Loan Agreement" id="menu_action_loan_customer_agreement"
+        			action="pabi_loan_receivable.action_loan_customer_agreement"
+        			sequence="2" parent="menu_loan_receivable"/>
+            		
+            # Payment Exports
+			<delete id="payment_export.menu_payment_export" model="ir.ui.menu"/>
+			<delete id="payment_export.menu_action_payment_export" model="ir.ui.menu"/>
+			<delete id="payment_export.menu_action_cheque_lot" model="ir.ui.menu"/>
+			<delete id="payment_export.menu_action_cheque_register" model="ir.ui.menu"/>
+			
+        	<menuitem name="Payment Exports" id="menu_payment_export"
+          		sequence="5" parent="account.menu_finance"
+          		groups="account.group_account_user,account.group_account_manager"/>
+        		<menuitem name="Payment Export" id="menu_action_payment_export"
+        			action="payment_export.action_payment_export"
+        			sequence="1" parent="menu_payment_export"/>
+        		<menuitem name="Cheque Lot" id="menu_action_cheque_lot"
+        			action="menu_action_cheque_lot.action_cheque_lot"
+        			sequence="2" parent="menu_payment_export"/>
+        		<menuitem name="Cheque Register" id="menu_action_cheque_register"
+        			action="payment_export.action_cheque_register"
+        			sequence="3" parent="menu_payment_export"/>
+        			
+            # Loan Installments
+			<delete id="pabi_loan_installment.menu_loan_installment_menu" model="ir.ui.menu"/>
+			<delete id="pabi_loan_installment.menu_loan_installment" model="ir.ui.menu"/>
+
+        	<menuitem name="Loan Installments" id="menu_loan_installment_menu"
+        		sequence="6" parent="account.menu_finance"
+        		groups="account.group_account_user"/>
+        		<menuitem name="Loan Installment" id="menu_loan_installment"
+        			action="pabi_loan_installment.action_loan_installment"
+        			sequence="1" parent="menu_loan_installment_menu"/>
+            		
+            # Journal Entries
+			<delete id="pabi_account_move_adjustment.menu_journal_adjust_budget" model="ir.ui.menu"/>
+			<delete id="pabi_account_move_adjustment.menu_journal_adjust_no_budget" model="ir.ui.menu"/>
+			<delete id="pabi_asset_management.menu_action_account_asset_adjust2" model="ir.ui.menu"/>
+			<delete id="pabi_import_journal_entries.menu_pabi_import_journal_entries" model="ir.ui.menu"/>
+			
+        	<menuitem name="Journal Entries" id="account.menu_finance_entries"
+        		sequence="7" parent="account.menu_finance"
+        		groups="group_account_user,group_account_manager"/>
+        		<menuitem name="Journal Items" id="account.menu_action_account_moves_all"
+            		action="account.action_account_moves_all_a"
+            		sequence="1" parent="account.menu_finance_entries"
+            		groups="group_account_user"/>
+	    		<menuitem name="Journal Items Search All" id="account_move_line_search_extension.menu_account_move_line_search_extension"
+	        		action="account_move_line_search_extension.action_account_move_line_search_extension"
+	        		sequence="2" parent="account.menu_finance_entries"
+	        		groups="account.group_account_user"/>
+        		<menuitem name="Journal Entries" id="account.menu_action_move_journal_line_form"
+            		action="account.action_move_journal_line"
+            		sequence="3" parent="account.menu_finance_entries"
+            		groups="group_account_user"/>
+        		<menuitem name="Journal Vouchers" id="account_voucher.menu_encode_entries_by_voucher"
+        			action="account_voucher.action_voucher_list"
+        			sequence="4" parent="account.menu_finance_entries"
+        			groups="base.group_no_one"/>
+		        <menuitem name="Analytic Journal Items" id="account.account_analytic_journal_entries"
+		            action="account.action_account_analytic_journal_open_form"
+		            sequence="5" parent="account.menu_finance_entries"
+		            groups="analytic.group_analytic_accounting"/>
+		        <menuitem name="Journal Adj.Budget" id="menu_journal_adjust_budget"
+		        	action="pabi_account_move_adjustment.action_journal_adjust_budget"
+		        	sequence="6" parent="account.menu_finance_entries"
+		        	groups="account.group_account_user"/>
+		        <menuitem name="Journal Adj.No.Budget" id="menu_journal_adjust_no_budget"
+		        	action="pabi_account_move_adjustment.action_journal_adjust_no_budget"
+		        	sequence="7" parent="account.menu_finance_entries"
+		        	groups="account.group_account_user"/>
+		        <menuitem name="Asset Adjustment" id="menu_action_account_asset_adjust2"
+		        	action="pabi_asset_management.action_account_asset_adjust2"
+		        	sequence="8" parent="account.menu_finance_entries"
+		        	groups="account.group_account_user"/>
+		        <menuitem name="Import Journal Entries" id="menu_pabi_import_journal_entries"
+		        	action="pabi_import_journal_entries.action_pabi_import_journal_entries"
+		        	sequence="9" parent="account.menu_finance_entries"
+		        	groups="account.group_account_user"/>
+            		
+            # Charts
+	        <menuitem name="Charts" id="account.menu_finance_charts"
+	        	sequence="8" parent="account.menu_finance"
+	        	groups="account.group_account_user"/>
+		        <menuitem name="Chart of Accounts" id="account.menu_action_account_tree2"
+		        	action="account.action_account_chart"
+		            sequence="1" parent="account.menu_finance_charts"/>
+		        <menuitem name="Chart of Analytic Accounts" id="account.menu_action_analytic_account_tree2"
+		            action="account.action_account_analytic_chart"
+		            sequence="2" parent="account.menu_finance_charts"
+		            groups="analytic.group_analytic_accounting"/>
+		        <menuitem name="Chart of Taxes" id="account.menu_action_tax_code_tree"
+		            action="account.action_account_tax_chart"
+		            sequence="3" parent="account.menu_finance_charts"
+		            groups="group_account_user,group_account_manager"/>
+            		
+            # Periodic Processing
+	        <menuitem name="Periodic Processing" id="account.menu_finance_periodical_processing"
+	        	sequence="9" parent="account.menu_finance"
+	        	groups="group_account_user,group_account_manager"/>
+        
+				# Draft Entries
+				<delete id="pabi_ar_late_payment_penalty.menu_pabi_ar_late_payment_penalty" model="ir.ui.menu"/>
+				
+		        <menuitem name="Draft Entries" id="account.periodical_processing_journal_entries_validation"
+		        	sequence="1" parent="account.menu_finance_periodical_processing"/>
+			        <menuitem name="Penalty AR Late Payment" id="menu_pabi_ar_late_payment_penalty"
+			        	action="pabi_ar_late_payment_penalty.action_pabi_ar_late_payment_penalty"
+			        	sequence="1" parent="account.periodical_processing_journal_entries_validation"/>
+			        <menuitem name="Post Journal Entries" id="account.menu_validate_account_moves"
+			            action="account.action_validate_account_move"
+			            sequence="2" parent="account.periodical_processing_journal_entries_validation"/>
+				
+				# Reconciliation
+				<delete id="account_unreconciled_filter.menu_account_unreconciled_filter" model="ir.ui.menu"/>
+				<delete id="pabi_account.menu_account_move_reconcile" model="ir.ui.menu"/>
+				
+        		<menuitem name="Reconciliation" id="account.periodical_processing_reconciliation"
+        			sequence="2" parent="account.menu_finance_periodical_processing"/>
+			        <menuitem name="Manual Reconciliation" id="account.menu_manual_reconcile"
+			        	action="account.action_account_manual_reconcile"
+			            sequence="1" parent="account.periodical_processing_reconciliation"/>
+			        <menuitem name="Automatic Reconciliation" id="account.menu_automatic_reconcile"
+			      		action="account.action_account_automatic_reconcile"
+			            sequence="2" parent="account.periodical_processing_reconciliation"/>
+			        <menuitem name="Unreconciled Filters" id="menu_account_unreconciled_filter"
+			        	action="account_unreconciled_filter.action_account_unreconciled_filter"          
+			          	sequence="3" parent="account.periodical_processing_reconciliation"/>
+        			<menuitem name="Reconcile ID" id="menu_account_move_reconcile"
+        				action="pabi_account.action_account_move_reconcile"
+          				sequence="4" parent="account.periodical_processing_reconciliation"
+          				groups="account.group_account_manager"/>
+        
+				# Recurring Entries
+				<delete id="pabi_async_process.account.menu_generate_subscription" model="ir.ui.menu"/>
+				<delete id="pabi_account.account.menu_action_subscription_form" model="ir.ui.menu"/>
+				<delete id="account_subscription_enhanced.menu_account_model_type" model="ir.ui.menu"/>
+				<delete id="pabi_async_process.account_asset_management.account_asset_compute_menu" model="ir.ui.menu"/>
+				<delete id="pabi_async_process.menu_pabi_asset_depre_batch" model="ir.ui.menu"/>
+			
+        		<menuitem name="Recurring Entries" id="account.menu_finance_recurrent_entries"
+            		sequence="3" parent="account.menu_finance_periodical_processing"/>
+        			<menuitem name="Generate Entries" id="account.menu_generate_subscription"
+          				action="pabi_async_process.action_pabi_action_generate_entries"
+          				sequence="1" parent="account.menu_finance_recurrent_entries"/>
+        			<menuitem name="Define Recurring" id="account.menu_action_subscription_form"
+        				action="account.action_subscription_form"
+            			sequence="2" parent="account.menu_finance_recurrent_entries"/>
+        			<menuitem name="Models" id="account.menu_action_model_form"
+            			action="account.action_model_form"
+            			sequence="3" parent="account.menu_finance_recurrent_entries"/>
+        			<menuitem name="Model Type" id="menu_account_model_type"
+        				action="account_subscription_enhanced.action_account_model_type"
+        				sequence="4" parent="account.menu_finance_recurrent_entries"/>
+        			<menuitem name="Compute Assets" id="account_asset_management.account_asset_compute_menu"
+          				action="pabi_async_process.action_pabi_action_asset_compute"
+          				sequence="5" parent="account.menu_finance_recurrent_entries"/>
+        			<menuitem name="Asset Depre. Batch" id="menu_pabi_asset_depre_batch"
+        				action="pabi_async_process.action_pabi_asset_depre_batch"
+        				sequence="6" parent="account.menu_finance_recurrent_entries"/>
+            
+				# End of Period
+        		<menuitem name="End of Period" id="account.menu_account_end_year_treatments"
+            		sequence="4" parent="account.menu_finance_periodical_processing"/>
+        			<menuitem name="Close a Period" id="account.menu_action_account_period_close_tree"
+            			action="account.action_account_period_tree"
+            			sequence="1" parent="account.menu_account_end_year_treatments"/>
+        			<menuitem name="Generate Opening Entries" id="account.menu_wizard_fy_close"
+        				action="account.action_account_fiscalyear_close"
+            			sequence="2" parent="account.menu_account_end_year_treatments" />
+    				<menuitem name="Journal Entries to be Reversed" id="account_reversal.menu_move_to_be_reversed"
+         				action="account_reversal.action_move_to_be_reversed"
+         				sequence="3" parent="account.menu_account_end_year_treatments"/>
+        			<menuitem name="Cancel Closing Entries" id="account.menu_wizard_account_open_closed_fiscalyear"
+        				action="account.action_account_open_closed_fiscalyear"
+            			sequence="4" parent="account.menu_account_end_year_treatments" />
+            		
+            # Reporting
+        	<menuitem name="Reporting" id="account.menu_finance_reports"
+        		sequence="10" parent="account.menu_finance"
+        		groups="group_account_user,group_account_manager"/>
+            
+				# Legal Reports
+				<delete id="account_general_ledger_report.menu_account_general_ledger_report" model="ir.ui.menu"/>
+				<delete id="account_trial_balance_report.menu_account_trial_balance_report" model="ir.ui.menu"/>
+				
+        		<menuitem name="Legal Reports" id="account.menu_finance_legal_statement"
+        			sequence="1" parent="account.menu_finance_reports"/>
+        		
+					# Accounting Reports
+					<delete id="pabi_account_financial_report_webkit.account.menu_general_ledger" model="ir.ui.menu"/>
+					<delete id="pabi_account_financial_report_webkit.account.menu_general_Balance_report" model="ir.ui.menu"/>
+			
+        			<menuitem name="Accounting Reports" id="account.final_accounting_reports"
+        				sequence="1" parent="account.menu_finance_legal_statement"/>
+        				<menuitem name="General Ledger" id="account.menu_general_ledger"
+        					action="pabi_account_financial_report_webkit.action_account_general_ledger_menu_webkit"
+            				sequence="1" parent="account.final_accounting_reports"
+            				groups="account.group_account_manager,account.group_account_user"/>
+        				<menuitem name="Trial Balance" id="account.menu_general_Balance_report"
+        					action="pabi_account_financial_report_webkit.action_account_trial_balance_menu_webkit"
+            				sequence="2" parent="account.final_accounting_reports"
+            				groups="account.group_account_manager,account.group_account_user"/>
+        				<menuitem name="Balance Sheet" id="account.menu_account_report_bs"
+				        	action="account.action_account_report_bs"
+				        	sequence="3" parent="account.final_accounting_reports"/>
+        				<menuitem name="Profit And Loss" id="account.menu_account_report_pl"
+				        	action="account.action_account_report_pl"
+				        	sequence="4" parent="account.final_accounting_reports"/>
+        				<menuitem name="Account Financial Report (Multireports)" id="account_financial_report.menu_wizard_report"
+				            action="account_financial_report.action_wizard_report"
+				            sequence="5" parent="account.final_accounting_reports"
+				            groups="account_financial_report.group_afreport"/>
+        				<menuitem name="Account Financial Report (Templates)" id="account_financial_report.account_financial_report_menu"
+            				action="account_financial_report.account_financial_report_action"
+				            sequence="6" parent="account.final_accounting_reports"
+				            groups="account_financial_report.group_afreport"/>
+        			
+					# Journals
+					<delete id="pabi_account_financial_report_webkit.account.menu_account_print_journal" model="ir.ui.menu"/>
+					
+        			<menuitem name="Journals" id="account.menu_journals_report"
+            			sequence="2" parent="account.menu_finance_legal_statement"
+            			groups="group_account_user,group_account_manager"/>
+      					<menuitem name="Journal by Period" id="account_journal_report_xls.menu_print_journal_by_period_xls"
+        					action="account_journal_report_xls.action_print_journal_by_period_xls"
+        					sequence="1" parent="account.menu_journals_report"/>
+      					<menuitem name="Journal by Fiscal Year" id="account_journal_report_xls.menu_print_journal_by_fiscalyear_xls"
+					        action="account_journal_report_xls.action_print_journal_by_fiscalyear_xls"
+					        sequence="2" parent="account.menu_journals_report"/>
+        				<menuitem name="Sale/Purchase Journals" id="account.menu_account_print_sale_purchase_journal"
+				            action="account.action_account_print_sale_purchase_journal"
+				            sequence="3" parent="account.menu_journals_report"/>
+        				<menuitem name="Journals" id="account.menu_account_print_journal"
+				        	action="pabi_account_financial_report_webkit.action_account_print_journal_menu_webkit"
+				            sequence="4" parent="account.menu_journals_report"
+				            groups="account.group_account_manager,account.group_account_user"/>
+				        <menuitem name="General Journals" id="account.menu_account_general_journal"
+				            action="account.action_account_general_journal"
+				            sequence="5" parent="account.menu_journals_report"/>
+        				<menuitem name="Centralizing Journal" id="account.menu_account_central_journal"
+            				action="account.action_account_central_journal"
+            				sequence="6" parent="account.menu_journals_report"/>
+            		
+        			<menuitem name="General Ledger (web)" id="menu_account_general_ledger_report"
+        				action="account_general_ledger_report.action_account_general_ledger_wizard"
+        				sequence="3" parent="account.menu_finance_legal_statement"/>
+        			<menuitem name="Trial Balance (web)" id="menu_account_trial_balance_report"
+			        	action="account_trial_balance_report.action_account_trial_balance_wizard"
+			        	sequence="4" parent="account.menu_finance_legal_statement"/>
+					
+				# Generic Reporting
+				<delete id="" model="ir.ui.menu"/>
+				
+        		<menuitem name="Generic Reporting" id="account.menu_finance_generic_reporting"
+        			sequence="2" parent="account.menu_finance_reports"/>
+        			
+        			# Partners
+					<delete id="pabi_account_financial_report_webkit.account.menu_account_partner_balance_report" model="ir.ui.menu"/>
+					<delete id="pabi_account_financial_report_webkit.account.menu_aged_trial_balance" model="ir.ui.menu"/>
+					<delete id="pabi_account_financial_report_webkit.account.menu_account_partner_ledger" model="ir.ui.menu"/>
+					<delete id="pabi_account_financial_report_webkit.menu_account_open_invoices" model="ir.ui.menu"/>
+					
+        			<menuitem name="Partners" id="account.next_id_22"
+        				sequence="1" parent="account.menu_finance_generic_reporting"/>
+        				<menuitem name="Partner Balance" id="account.menu_account_partner_balance_report"
+        					action="pabi_account_financial_report_webkit.action_account_partner_balance_menu_webkit"
+            				sequence="1" parent="account.next_id_22"
+            				groups="account.group_account_manager,account.group_account_user"/>
+				        <menuitem name="Aged Partner Balance" id="account.menu_aged_trial_balance"
+				        	action="pabi_account_financial_report_webkit.action_account_aged_trial_balance_menu_webkit"
+				            sequence="2" parent="account.next_id_22"
+				            groups="account.group_account_manager,account.group_account_user"/>
+        				<menuitem name="Partner Ledger" id="account.menu_account_partner_ledger"
+				        	action="pabi_account_financial_report_webkit.action_account_partners_ledger_menu_webkit"
+				            sequence="3" parent="account.next_id_22"
+				            groups="account.group_account_manager,account.group_account_user"/>
+				        <menuitem name="Open Invoices" id="menu_account_open_invoices"
+				        	action="pabi_account_financial_report_webkit.action_account_open_invoices_menu_webkit"
+				            sequence="4" parent="account.next_id_22"
+				            groups="account.group_account_manager,account.group_account_user"/>
+        			
+        			# Taxes
+        			<menuitem name="Taxes" id="account.menu_tax_report"
+            			sequence="2" parent="account.menu_finance_generic_reporting"
+            			groups="group_account_user,group_account_manager"/>
+				        <menuitem name="Taxes Report" id="account.menu_account_vat_declaration"
+				            action="account.action_account_vat_declaration"
+				            sequence="1" parent="account.menu_tax_report"/>
+            
+        			# Analytic
+        			<menuitem name="Analytic" id="account.next_id_40"
+            			sequence="3" parent="account.menu_finance_generic_reporting"
+            			groups="analytic.group_analytic_accounting"/>
+				        <menuitem name="Analytic Journal" id="account.account_analytic_journal_print"
+				            action="account.action_account_analytic_journal"
+				            sequence="1" parent="account.next_id_40"
+				        	groups="analytic.group_analytic_accounting"/>
+            
+        			# Multi-Currencies
+        			<menuitem name="Multi-Currencies" id="account.menu_multi_currency"
+        				sequence="4" parent="account.menu_finance_generic_reporting"
+        				groups="base.group_multi_currency"/>
+				        <menuitem name="Unrealized Gain or Loss" id="account.menu_unrealized_gains_losses"
+				            action="account.action_account_gain_loss"
+				            sequence="1" parent="account.menu_multi_currency"
+				            groups="account.group_account_user"/>
+        
+        			# Investment
+					<delete id="pabi_long_term_investment_report.menu_pabi_investment_report" model="ir.ui.menu"/>
+					<delete id="pabi_long_term_investment_report.menu_pabi_long_term_investment_report_wizard" model="ir.ui.menu"/>
+
+        			<menuitem name="Investment" id="menu_pabi_investment_report"
+            			sequence="5" parent="account.menu_finance_generic_reporting"/>
+        				<menuitem name="Long Term Investment" id="menu_pabi_long_term_investment_report_wizard"
+				            action="pabi_long_term_investment_report.action_pabi_long_term_investment_report_wizard"
+				            sequence="1" parent="menu_pabi_investment_report"/>
+        		
+				# Thai Tax Reports
+				<delete id="l10n_th_account.menu_thai_tax_report" model="ir.ui.menu"/>
+				<delete id="l10n_th_account_pnd_form.menu_print_pnd_form" model="ir.ui.menu"/>
+				
+        		<menuitem name="Thai Tax Reports" id="menu_thai_tax_report"
+        			sequence="3" parent="account.menu_finance_reports" />
+        			<menuitem name="Print PND Form" id="menu_print_pnd_form"
+        				action="l10n_th_account_pnd_form.action_print_pnd_form"
+              			sequence="1" parent="menu_thai_tax_report"
+              			groups=""/>
+              	
+        		<menuitem name="MIS Reports" id="mis_builder.mis_report_instance_view_menu"
+        			action="mis_builder.mis_report_instance_view_action"
+        			sequence="4" parent="account.menu_finance_reports"/>
+        
+				# Customer Dunning
+				<delete id="pabi_partner_dunning_report.menu_pabi_customer_dunning" model="ir.ui.menu"/>
+				<delete id="pabi_partner_dunning_report.menu_pabi_partner_dunning_report" model="ir.ui.menu"/>
+				<delete id="pabi_partner_dunning_report.menu_pabi_partner_dunning_letter" model="ir.ui.menu"/>
+				<delete id="pabi_partner_dunning_report.menu_pabi_dunning_config" model="ir.ui.menu"/>
+				
+				<menuitem name="Customer Dunning" id="menu_pabi_customer_dunning"
+					sequence="5" parent="account.menu_finance_reports"/>
+					<menuitem name="Dunning Report" id="menu_pabi_partner_dunning_report"
+						action="pabi_partner_dunning_report.action_pabi_partner_dunning_wizard"
+						sequence="1" parent="menu_pabi_customer_dunning"/>
+					<menuitem name="Dunning Letters" id="menu_pabi_partner_dunning_letter"
+						action="pabi_partner_dunning_report.action_pabi_partner_dunning_letter"
+						sequence="2" parent="menu_pabi_customer_dunning"/>
+			        <menuitem name="Dunning Config" id="menu_pabi_dunning_config"
+			        	action="pabi_partner_dunning_report.action_pabi_dunning_config"
+			        	sequence="3" parent="menu_pabi_customer_dunning"/>
+			
+				# Bank Reconcile
+				<delete id="pabi_bank_statement_reconcile.menu_pabi_bank_statement_main" model="ir.ui.menu"/>
+				<delete id="pabi_bank_statement_reconcile.menu_pabi_bank_statement" model="ir.ui.menu"/>
+				<delete id="pabi_bank_statement_reconcile.menu_xlsx_import_bank_statement_reconcile" model="ir.ui.menu"/>
+			
+        		<menuitem name="Bank Reconcile" id="menu_pabi_bank_statement_main"
+        			sequence="6" parent="account.menu_finance_reports"/>
+			        <menuitem name="Bank Statement" id="menu_pabi_bank_statement"
+			        	action="pabi_bank_statement_reconcile.action_pabi_bank_statement"
+			        	sequence="1" parent="menu_pabi_bank_statement_main"/>
+        			<menuitem name="Import Bank Statement(s)" id="menu_xlsx_import_bank_statement_reconcile"
+          				action="pabi_bank_statement_reconcile.action_xlsx_import_bank_statement_reconcile"
+          				sequence="2" parent="menu_pabi_bank_statement_main"/>
+        
+            		
+            # Reports
+			<delete id="pabi_account_report.menu_pabi_account_report" model="ir.ui.menu"/>
+			
+        	<menuitem name="Reports" id="menu_pabi_account_report"
+            	sequence="11" parent="account.menu_finance"
+            	groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report"/>
+            	
+            	# Payable
+				<delete id="pabi_account_report.menu_pabi_payable_report" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_pabi_employee_advance_report" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_input_tax" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_pnd1" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_partner_detail" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_advance_status" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_pit_detail" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_cheque_register" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_contract_collateral" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_advance_payment" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_payable_detail" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_payable_balance" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_purchase_billing" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_sla_employee" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_sla_procurement" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_sla_supplier" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_supplier_receipt_follow_up" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_qweb_report_payable_confirmation_letter" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_purchase_invoice_plan" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_pv_pe" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_cgd" model="ir.ui.menu"/>
+				
+        		<menuitem name="Payable" id="menu_pabi_payable_report"
+            		sequence="1" parent="menu_pabi_account_report"
+            		groups="account.group_account_manager,account.group_account_user"/>
+        			<menuitem name="Employee Advance Report" id="menu_xlsx_report_pabi_employee_advance_report"
+        				action="pabi_account_report.action_xlsx_report_pabi_employee_advance_report"
+        				sequence="1" parent="menu_pabi_payable_report"/>
+        			<menuitem name="Input Tax" id="menu_xlsx_report_input_tax"
+            			action="pabi_account_report.action_xlsx_report_input_tax_form"
+            			sequence="2" parent="menu_pabi_payable_report"/>
+			        <menuitem name="PND1" id="menu_xlsx_report_pnd1"
+			            action="pabi_account_report.action_xlsx_report_pnd1_form"
+			            sequence="3" parent="menu_pabi_payable_report"/>
+			        <menuitem name="Partner Detail" id="menu_xlsx_report_partner_detail"
+			            action="pabi_account_report.action_xlsx_report_partner_detail_form"
+			            sequence="4" parent="menu_pabi_payable_report"/>
+        			<menuitem name="Advance Status" id="menu_xlsx_report_advance_status"
+			            action="pabi_account_report.action_xlsx_report_advance_status_form"
+			            sequence="5" parent="menu_pabi_payable_report"/>
+			        <menuitem name="PIT Detail" id="menu_xlsx_report_pit_detail"
+			            action="pabi_account_report.action_xlsx_report_pit_detail_form"
+			            sequence="6" parent="menu_pabi_payable_report"/>
+			        <menuitem name="Cheque Register" id="menu_xlsx_report_cheque_register"
+			            action="pabi_account_report.action_xlsx_report_cheque_register_form"
+			            sequence="7" parent="menu_pabi_payable_report"/>
+			        <menuitem name="Contract Collateral" id="menu_xlsx_report_contract_collateral"
+			            action="pabi_account_report.action_xlsx_report_contract_collateral_form"
+			            sequence="8" parent="menu_pabi_payable_report"/>
+			        <menuitem name="Advance Payment" id="menu_xlsx_report_advance_payment"
+			            action="pabi_account_report.action_xlsx_report_advance_payment_form"
+			            sequence="9" parent="menu_pabi_payable_report"/>
+			        <menuitem name="Payable Detail" id="menu_xlsx_report_payable_detail"
+			            action="pabi_account_report.action_xlsx_report_payable_detail_form"
+			            sequence="10" parent="menu_pabi_payable_report"/>
+			        <menuitem name="Payable Balance" id="menu_xlsx_report_payable_balance"
+			            action="pabi_account_report.action_xlsx_report_payable_balance_form"
+			            sequence="11" parent="menu_pabi_payable_report"/>
+			        <menuitem name="Purchase Billing" id="menu_xlsx_report_purchase_billing"
+			            action="pabi_account_report.action_xlsx_report_purchase_billing_form"
+			            sequence="12" parent="menu_pabi_payable_report"/>
+        			<menuitem name="SLA Expense/Advance Report" id="menu_xlsx_report_sla_employee"
+			            action="pabi_account_report.action_xlsx_report_sla_employee_form"
+			            sequence="13" parent="menu_pabi_payable_report"/>
+			        <menuitem name="SLA Procurement" id="menu_xlsx_report_sla_procurement"
+			            action="pabi_account_report.action_xlsx_report_sla_procurement_form"
+			            sequence="14" parent="menu_pabi_payable_report"/>
+			        <menuitem name="SLA Supplier" id="menu_xlsx_report_sla_supplier"
+			            action="pabi_account_report.action_xlsx_report_sla_supplier_form"
+			            sequence="15" parent="menu_pabi_payable_report"/>
+			        <menuitem name="Supplier Receipt Follow Up" id="menu_xlsx_report_supplier_receipt_follow_up"
+			            action="pabi_account_report.action_xlsx_report_supplier_receipt_follow_up_form"
+			            sequence="16" parent="menu_pabi_payable_report"/>
+			        <menuitem name="Payable Confirmation Letter" id="menu_qweb_report_payable_confirmation_letter"
+			            action="pabi_account_report.action_qweb_report_payable_confirmation_letter_form"
+			            sequence="17" parent="menu_pabi_payable_report"/>
+			        <menuitem name="Purchase Invoice Plan" id="menu_xlsx_report_purchase_invoice_plan"
+			            action="pabi_account_report.action_xlsx_report_purchase_invoice_plan_form"
+			            sequence="18" parent="menu_pabi_payable_report"/>
+			        <menuitem name="PV PE Reports" id="menu_xlsx_report_pv_pe"
+			        	action="pabi_account_report.action_xlsx_report_pv_pe"
+			        	sequence="19" parent="menu_pabi_payable_report"/>
+			        <menuitem name="CGD Reports" id="menu_xlsx_report_cgd"
+			        	action="pabi_account_report.action_xlsx_report_cgd"
+			        	sequence="20" parent="menu_pabi_payable_report"/>
+            
+				# Receivable
+				<delete id="pabi_account_report.menu_pabi_receivable_report" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_tax_exemption_receipt" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_output_tax" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_jasper_report_cd_receivable_payment_history" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_jasper_report_cd_receivable_follow_up" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_cd_receivable_confirmation" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_cd_receivable_planning" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_cd_receivable_balance_sheet_summary" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_cd_receivable_balance_sheet_detail" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_report_receivable_detail" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_sla_receipt" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_registrar_of_guarantee" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_receivable_before_due" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_qweb_report_receivable_confirmation_letter" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_preprint_receipt" model="ir.ui.menu"/>
+				
+        		<menuitem name="Receivable" id="menu_pabi_receivable_report"
+            		sequence="2" parent="menu_pabi_account_report"
+            		groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report"/>
+        			<menuitem name="Output Tax Exemption Report" id="menu_xlsx_report_tax_exemption_receipt"
+			            action="pabi_account_report.action_xlsx_report_tax_exemption_receipt_form"
+			            sequence="1" parent="menu_pabi_receivable_report"
+			            groups="account.group_account_manager,account.group_account_user"/>
+			        <menuitem name="Output Tax" id="menu_xlsx_report_output_tax"
+			            action="pabi_account_report.action_xlsx_report_output_tax_form"
+			            sequence="2" parent="menu_pabi_receivable_report"
+			            groups="account.group_account_manager,account.group_account_user"/>
+			        <menuitem name="CD Receivable Payment History" id="menu_jasper_report_cd_receivable_payment_history"
+			            action="pabi_account_report.action_jasper_report_cd_receivable_payment_history_form"
+			            sequence="3" parent="menu_pabi_receivable_report"
+			            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report"/>
+			        <menuitem name="CD Receivable Follow Up" id="menu_jasper_report_cd_receivable_follow_up"
+			            action="pabi_account_report.action_jasper_report_cd_receivable_follow_up_form"
+			            sequence="4" parent="menu_pabi_receivable_report"
+			            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report"/>
+			        <menuitem name="CD Receivable Confirmation" id="menu_xlsx_report_cd_receivable_confirmation"
+			            action="pabi_account_report.action_xlsx_report_cd_receivable_confirmation_form"
+			            sequence="5" parent="menu_pabi_receivable_report"
+			            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report"/>
+			        <menuitem name="CD Receivable Planning" id="menu_xlsx_report_cd_receivable_planning"
+			            action="pabi_account_report.action_xlsx_report_cd_receivable_planning_form"
+			            sequence="6" parent="menu_pabi_receivable_report"
+			            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report"/>
+			        <menuitem name="CD Receivable Balance Sheet Summary" id="menu_xlsx_report_cd_receivable_balance_sheet_summary"
+			            action="pabi_account_report.action_xlsx_report_cd_receivable_balance_sheet_summary_form"
+			            sequence="7" parent="menu_pabi_receivable_report"
+			            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report"/>
+			        <menuitem name="CD Receivable Balance Sheet Detail" id="menu_xlsx_report_cd_receivable_balance_sheet_detail"
+			            action="pabi_account_report.action_xlsx_report_cd_receivable_balance_sheet_detail_form"
+			            sequence="8" parent="menu_pabi_receivable_report"
+			            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report"/>
+			        <menuitem name="Receivable Detail" id="menu_report_receivable_detail"
+			            action="pabi_account_report.action_report_receivable_detail"
+			            sequence="9" parent="menu_pabi_receivable_report"
+			            groups="account.group_account_manager,account.group_account_user"/>
+			        <menuitem name="SLA Receipt" id="menu_xlsx_report_sla_receipt"
+			            action="pabi_account_report.action_xlsx_report_sla_receipt_form"
+			            sequence="10" parent="menu_pabi_receivable_report"
+			            groups="account.group_account_manager,account.group_account_user"/>
+			        <menuitem name="Registrar of Guarantee" id="menu_xlsx_report_registrar_of_guarantee"
+			            action="pabi_account_report.action_xlsx_report_registrar_of_guarantee_form"
+			            sequence="11" parent="menu_pabi_receivable_report"
+			            groups="account.group_account_manager,account.group_account_user"/>
+			        <menuitem name="Receivable Before Due" id="menu_xlsx_report_receivable_before_due"
+			            action="pabi_account_report.action_xlsx_report_receivable_before_due_form"
+			            sequence="12" parent="menu_pabi_receivable_report"
+			            groups="account.group_account_manager,account.group_account_user"/>
+			        <menuitem name="Receivable Confirmation Letter" id="menu_qweb_report_receivable_confirmation_letter"
+			            action="pabi_account_report.action_qweb_report_receivable_confirmation_letter_form"
+			            sequence="13" parent="menu_pabi_receivable_report"
+			            groups="account.group_account_manager,account.group_account_user"/>
+			        <menuitem name="Preprint Receipt" id="menu_xlsx_report_preprint_receipt"
+			            action="pabi_account_report.action_xlsx_report_preprint_receipt_form"
+			            sequence="14" parent="menu_pabi_receivable_report"
+			            groups="account.group_account_manager,account.group_account_user"/>
+            
+				# General Ledger
+				<delete id="pabi_account_report.menu_pabi_general_ledger_report" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_expense_ledger" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_gl_project" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_xlsx_report_revenue_ledger" model="ir.ui.menu"/>
+				<delete id="pabi_account_report.menu_report_gl_allowance_doubtful_accounts" model="ir.ui.menu"/>
+				<delete id="pabi_account_gl_jasper.menu_jasper_report_journal_document_entry" model="ir.ui.menu"/>
+				
+        		<menuitem name="General Ledger" id="menu_pabi_general_ledger_report"
+            		sequence="3" parent="menu_pabi_account_report"
+            		groups="account.group_account_manager,account.group_account_user"/>
+			        <menuitem name="Expense Ledger" id="menu_xlsx_report_expense_ledger"
+			            action="pabi_account_report.action_xlsx_report_expense_ledger_form"
+			            sequence="1" parent="menu_pabi_general_ledger_report"/>
+			        <menuitem name="GL Project" id="menu_xlsx_report_gl_project"
+			            action="pabi_account_report.action_xlsx_report_gl_project_form"
+			            sequence="2" parent="menu_pabi_general_ledger_report"/>
+			        <menuitem name="Revenue Ledger" id="menu_xlsx_report_revenue_ledger"
+			            action="pabi_account_report.action_xlsx_report_revenue_ledger_form"
+			            sequence="3" parent="menu_pabi_general_ledger_report"/>
+			        <menuitem name="Allowance for Doubtful Accounts" id="menu_report_gl_allowance_doubtful_accounts"
+			            action="pabi_account_report.action_report_gl_allowance_doubtful_accounts"
+			            sequence="4" parent="menu_pabi_general_ledger_report"/>
+			        <menuitem name="Journal document Entry" id="menu_jasper_report_journal_document_entry"
+			            action="pabi_account_gl_jasper.action_jasper_report_journal_document_entry_form"
+			            sequence="5" parent="pabi_account_report.menu_pabi_general_ledger_report"/>
+
+        # Assets
+		<delete id="" model="ir.ui.menu"/>
+        
+        # Warehouse
+		<delete id="" model="ir.ui.menu"/>
+        
+        # Reporting
+		<delete id="" model="ir.ui.menu"/>
+        
+        # My Jobs
+		<delete id="" model="ir.ui.menu"/>
+        
+        # Configurations
+		<delete id="" model="ir.ui.menu"/>
+        
+        # Connector
+		<delete id="" model="ir.ui.menu"/>
+        
+        # System Interface
+		<delete id="" model="ir.ui.menu"/>
             
     </data>
 </openerp>

@@ -193,7 +193,6 @@
             <field name="view_id" ref="view_account_model_type_tree"/>
         </record>
 
-        <menuitem action="action_account_model_type" id="menu_account_model_type" parent="account.menu_finance_recurrent_entries" sequence="6"/>
 
         # Model
         <record id="view_model_search" model="ir.ui.view">

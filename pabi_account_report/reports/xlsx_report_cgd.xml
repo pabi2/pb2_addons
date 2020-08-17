@@ -23,10 +23,6 @@
             <field name="target">new</field>
         </record>
         
-        <menuitem id="menu_xlsx_report_cgd" 
-        	name="CGD Reports" 
-        	parent="menu_pabi_payable_report" 
-        	action="action_xlsx_report_cgd" sequence="140"/>
     
     </data>
 </openerp>

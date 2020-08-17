@@ -55,10 +55,5 @@
             <field name="context">{'lang': 'th_TH'}</field>
         </record>
 
-        <menuitem id="menu_jasper_report_journal_document_entry"
-            name="Journal document Entry"
-            parent="pabi_account_report.menu_pabi_general_ledger_report"
-            action="action_jasper_report_journal_document_entry_form"
-            sequence="70"/>
     </data>
 </openerp>
