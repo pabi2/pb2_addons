@@ -829,14 +829,14 @@ Order]]></text>
 				<text><![CDATA[Transferred to]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="128" y="174" width="149" height="15"/>
+				<reportElement x="128" y="182" width="149" height="15"/>
 				<textElement verticalAlignment="Middle" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[_____/_____/_____]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="58" y="239" width="68" height="15">
+				<reportElement x="58" y="247" width="68" height="15">
 					<printWhenExpression><![CDATA[$F{payment_type} == "cheque"]]></printWhenExpression>
 				</reportElement>
 				<textElement verticalAlignment="Middle" lineSpacing="Single" markup="none">
@@ -845,7 +845,7 @@ Order]]></text>
 				<text><![CDATA[Recipient]]></text>
 			</staticText>
 			<line>
-				<reportElement x="128" y="253" width="100" height="1">
+				<reportElement x="128" y="261" width="100" height="1">
 					<printWhenExpression><![CDATA[$F{payment_type} == "cheque"]]></printWhenExpression>
 				</reportElement>
 			</line>
@@ -857,7 +857,7 @@ Order]]></text>
 				<text><![CDATA[Reception No.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="203" width="128" height="15"/>
+				<reportElement x="0" y="211" width="128" height="15"/>
 				<textElement verticalAlignment="Middle" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
@@ -867,14 +867,14 @@ Order]]></text>
 				<reportElement x="398" y="253" width="100" height="1"/>
 			</line>
 			<textField>
-				<reportElement mode="Transparent" x="128" y="148" width="419" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="128" y="148" width="843" height="34" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{short_name_bank} + " " + $F{bank_branch} + " " + $F{bank_account} + " " + $F{bank_account_owner_name}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="128" y="217" width="100" height="1"/>
+				<reportElement x="128" y="225" width="100" height="1"/>
 			</line>
 			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="526" y="260" width="30" height="15"/>
