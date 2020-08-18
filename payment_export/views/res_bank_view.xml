@@ -8,7 +8,8 @@
             <field name="inherit_id" ref="pabi_account.view_partner_bank_form"/>
             <field name="arch" type="xml">
                 <field name="owner_name" position="after">
-                	<field name="owner_name_en" placeholder="Name En" required="1"/>
+                	<field name="owner_name_en" placeholder="Name En"
+                			attrs="{'required': [('active', '=', True)]}"/>
                 </field>
                 <field name="bank_branch" position="after">
                 	<field name="register_no" string="ส่งข้อมูลลงทะเบียบครั้งที่" readonly="1"
