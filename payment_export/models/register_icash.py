@@ -88,6 +88,7 @@ class PabiRegister_iCash(models.Model):
             domain.append(('bank.abbrev', '!=', 'BBL'))
 
         parner_bank_search = PartnerBankObj.search(domain)
+        parner_bank_search = parner_bank_search.filtered(lambda l: l.partner_id.active is True)
 
         for line in parner_bank_search:
             if line.bank.abbrev != 'BBL':
@@ -123,7 +124,8 @@ class PabiRegister_iCash(models.Model):
         
         if domain is not None:
             parner_bank_search = PartnerBankObj.search(domain)
-            parner_bank_ids = parner_bank_search.filtered(lambda l: l.partner_id.email_accountant is False
+            parner_bank_ids = parner_bank_search.filtered(lambda l: l.partner_id.active is True)
+            parner_bank_ids = parner_bank_ids.filtered(lambda l: l.partner_id.email_accountant is False
                                                                 or l.owner_name_en is False)
             
             if parner_bank_ids:
@@ -141,8 +143,7 @@ class PabiRegister_iCash(models.Model):
             acc_number = tuple(acc_number)
             domain = [('acc_number', 'in', acc_number),
                       ('is_register', '!=', True),
-                      ('active', '=', True),
-                      ('partner_id.active', '=', True)]
+                      ('active', '=', True)]
             self._check_data_partner_bank(domain)
             
             self._create_register_icash_line(domain)
