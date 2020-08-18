@@ -72,21 +72,12 @@ class PabiRegister_iCash(models.Model):
         return res
 
     @api.multi
-    def write(self, vals):
-        res = super(PabiRegister_iCash, self).write(vals)
-        """if 'service_type' in vals:
-            self.line_ids.unlink()
-            self._create_register_icash_line()"""
-        return res
-
-    @api.multi
     def _create_register_icash_line(self, domain=None):
         self.ensure_one()
         RegisterLineObj = self.env['pabi.register.icash.line']
         PartnerBankObj = self.env['res.partner.bank']
         if domain is None:
             domain = []
-        domain.append(('is_register','!=',True))
 
         if self.line_ids:
             ids = self.line_ids.mapped('partner_bank_id').ids
@@ -131,11 +122,9 @@ class PabiRegister_iCash(models.Model):
         PartnerBankObj = self.env['res.partner.bank']
         
         if domain is not None:
-            domain.append(('is_register','!=',True))
             parner_bank_search = PartnerBankObj.search(domain)
-            parner_bank_ids = parner_bank_search.filtered(lambda l: l.active == True and l.partner_id.active == True
-                                                          and (l.partner_id.email_accountant is False
-                                                                or l.owner_name_en is False))
+            parner_bank_ids = parner_bank_search.filtered(lambda l: l.partner_id.email_accountant is False
+                                                                or l.owner_name_en is False)
             
             if parner_bank_ids:
                 partners = []
@@ -150,7 +139,10 @@ class PabiRegister_iCash(models.Model):
             acc_number = self.line_filter.split(',')
             acc_number = [x.strip() for x in acc_number]
             acc_number = tuple(acc_number)
-            domain = [('acc_number', 'in', acc_number)]
+            domain = [('acc_number', 'in', acc_number),
+                      ('is_register', '!=', True),
+                      ('active', '=', True),
+                      ('partner_id.active', '=', True)]
             self._check_data_partner_bank(domain)
             
             self._create_register_icash_line(domain)
@@ -177,6 +169,9 @@ class PabiRegister_iCash(models.Model):
 
     @api.multi
     def generate_record(self):
+        domain = [('is_register', '!=', True),
+                  ('active', '=', True),
+                  ('partner_id.active', '=', True)]
         self._create_register_icash_line()
 
 
