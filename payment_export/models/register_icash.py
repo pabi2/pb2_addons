@@ -30,6 +30,11 @@ class PabiRegister_iCash(models.Model):
         readonly=True,
         track_visibility='onchange',
     )
+    nume_lines = fields.Float(
+        'Num Lines',
+        compute="_compute_num_line",
+        store=True
+    )
     line_ids = fields.One2many(
         'pabi.register.icash.line',
         'register_id',
@@ -44,12 +49,26 @@ class PabiRegister_iCash(models.Model):
         help="More filter. You can use complex search with comma and between.",
     )
 
+    @api.multi
+    @api.depends('line_ids')
+    def _compute_num_line(self):
+        for rec in self:
+            rec.nume_lines = len(rec.line_ids)
+    
+    @api.multi
+    def _check_access_config(self):
+        Config = self.env['pabi.register.icash.config']
+        user_id = Config.search([('user_id', '=', self._uid)])
+        user_id = user_id.filtered(lambda l: l.perm_create == True)
+        if not user_id:
+            raise ValidationError('ไม่สามารถดำเนินการได้ อนุญาตให้เฉพาะผู้จัดการด้านจ่ายเท่านั้น')
+
     @api.model
     def create(self, vals):
+        self._check_access_config()
         vals['state'] = 'draft'
         vals['name'] = self.env['ir.sequence'].next_by_code('register.icash')
         res = super(PabiRegister_iCash, self).create(vals)
-        #res._create_register_icash_line()
         return res
 
     @api.multi
@@ -217,3 +236,21 @@ class PabiRegister_iCashLine(models.Model):
                 rec.partner_name = rec.partner_bank_id.partner_id.name
                 rec.partner_email_accountant = rec.partner_bank_id.partner_id.email_accountant
                 rec.bank_branch_code = rec.partner_bank_id.bank_branch.code
+
+
+class PabiRegisterConfig(models.Model):
+    _name = 'pabi.register.icash.config'
+    
+    user_id = fields.Many2one(
+        'res.users',
+        'User'
+    )
+    perm_create = fields.Boolean(
+        string='Create Access'
+    )
+    """perm_unlink = fields.Boolean(
+        string='Delete Access'
+    )"""
+    
+    
+    
