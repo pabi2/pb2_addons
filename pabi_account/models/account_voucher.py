@@ -338,11 +338,11 @@ class AccountVoucher(models.Model):
         email_template_name = 'ReceiptVoucher employee - Send by Email'
         template = self.env['email.template'].search([('name','=',email_template_name)])
         if template:
-            if not self.partner_id.email:
+            if not self.company_id.group_email_ar:
                 raise ValidationError(
                     _('Please enter valid email address for group email!'))
-            if self.env.user.company_id.send_to_groupmail_only: #send email test
-                to_email = self.env.user.partner_id.email
+            if self.env.user.company_id.ar_send_to_groupmail_only: #send email test
+                to_email = self.env.user.company_id.group_email_ar
                 template.email_to = to_email
             else :
                 if not self.partner_id.email_accountant:
