@@ -809,6 +809,7 @@
                                             <t t-set="short_name_bank" t-value="''"/>
                                             <t t-set="bank_branch" t-value="''"/>
                                             <t t-set="bank_account" t-value="''"/>
+                                            <t t-set="bank_account_owner_name" t-value="''"/>
                                             <t t-if="o.document_id">
                                                 <t t-if="o.doctype in ['payment'] and o.document_id.supplier_bank_id and o.document_id.supplier_bank_id.bank and o.document_id.supplier_bank_id.bank.abbrev">
                                                     <t t-set="short_name_bank" t-value="o.document_id.supplier_bank_id.bank.abbrev"/>
@@ -831,9 +832,12 @@
                                                 <t t-if="o.document_id.supplier_bank_id and o.document_id.supplier_bank_id.acc_number">
                                                     <t t-set="bank_account" t-value="o.document_id.supplier_bank_id.acc_number"/>
                                                 </t>
+                                                <t t-if="o.document_id.supplier_bank_id and o.document_id.supplier_bank_id.owner_name">
+                                                    <t t-set="bank_account_owner_name" t-value="o.document_id.supplier_bank_id.owner_name"/>
+                                                </t>
                                                 <t t-if="o.doctype in ['payment']">
                                                     <t t-if="o.document_id.payment_type in ['transfer']">
-                                                        <span t-esc="' '.join([short_name_bank, bank_branch, bank_account])"/>
+                                                        <span t-esc="' '.join([short_name_bank, bank_branch, bank_account, bank_account_owner_name])"/>
                                                     </t>
                                                 </t>
                                                 <t t-if="o.doctype in ['receipt']">
