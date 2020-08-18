@@ -990,7 +990,7 @@
         			action="payment_export.action_payment_export"
         			sequence="1" parent="menu_payment_export"/>
         		<menuitem name="Cheque Lot" id="menu_action_cheque_lot"
-        			action="menu_action_cheque_lot.action_cheque_lot"
+        			action="payment_export.action_cheque_lot"
         			sequence="2" parent="menu_payment_export"/>
         		<menuitem name="Cheque Register" id="menu_action_cheque_register"
         			action="payment_export.action_cheque_register"
