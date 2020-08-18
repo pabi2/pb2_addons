@@ -412,7 +412,7 @@ class etl_issi_m_project_c(models.Model):
     """ % self._table)
 
 class issi_m_investment_construction_phase_view(models.Model):
-    _name = 'issi.m.investment.construction.phase.view '
+    _name = 'issi.m.investment.construction.phase.view'
     _auto = False
     _description = 'ETL Master Project C Phase'
 
