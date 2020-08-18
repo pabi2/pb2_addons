@@ -410,6 +410,73 @@ class etl_issi_m_project_c(models.Model):
 			  ORDER BY conphase.code, conphase.sequence
 		)
     """ % self._table)
+
+class issi_m_investment_construction_phase_view(models.Model):
+    _name = 'issi.m.investment.construction.phase.view '
+    _auto = False
+    _description = 'ETL Master Project C Phase'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""
+            CREATE or REPLACE VIEW %s as (  
+			SELECT conphase.invest_construction_id,
+			con.code AS construction_code,
+			con.name AS construction_name,
+			con.name_short AS construction_name_short,
+			org.id AS org_id,
+			org.code AS org_code,
+			org.name_short AS org_name_short,
+			org.name AS org_name,
+			mission.name AS mission,
+			cctr.costcenter_code,
+			cctr.costcenter_name,
+			hr.employee_code AS pm_code,
+			((((COALESCE(hr.title_th, ''::text) || ' '::text) || hr.first_name_th) || ' '::text) || hr.last_name_th) AS pm_name,
+			sec.section_id AS pm_section_id,
+			sec.section_code AS pm_section_code,
+			sec.section_name AS pm_section_name,
+			con.date_start,
+			con.date_end,
+			con.date_expansion,
+			con.state,
+			con.active,
+			con.special,
+			con.approval_info,
+			con.operation_area,
+			con.reason,
+			con.project_readiness,
+			con.legacy_ref,
+			conphase.id AS invest_construction_phase_id,
+			conphase.code,
+			conphase.name AS phase_name,
+			conphase.name_short AS phase_name_short,
+			conphase.sequence AS phase_sequence,
+			conphase.phase,
+			fund.name AS phase_fund_type,
+			COALESCE(conphase.amount_phase_approve, (0)::double precision) AS amount_phase_approve,
+			conphase.date_start AS phase_date_start,
+			conphase.date_end AS phase_date_end,
+			conphase.contract_date_start AS phase_contract_date_start,
+			conphase.contract_date_end AS phase_contract_date_end,
+			conphase.date_expansion AS phase_date_expansion,
+			conphase.active AS phase_active,
+			conphase.state AS phase_state,
+			conphase.special AS phase_special,
+			conphase.legacy_ref AS phase_legacy_ref,
+			fund.code AS phase_fund_type_code,
+			cctr.costcenter_id
+		   FROM (((((((res_invest_construction_phase conphase
+			 LEFT JOIN res_invest_construction con ON ((conphase.invest_construction_id = con.id)))
+			 LEFT JOIN res_org org ON ((con.org_id = org.id)))
+			 LEFT JOIN project_fund_type fund ON ((conphase.fund_type_id = fund.id)))
+			 LEFT JOIN etl_issi_m_costcenter cctr ON ((con.costcenter_id = cctr.costcenter_id)))
+			 LEFT JOIN issi_hr_employee_view hr ON ((con.pm_employee_id = hr.id)))
+			 LEFT JOIN etl_issi_m_section sec ON ((con.pm_section_id = sec.section_id)))
+			 LEFT JOIN res_mission mission ON ((con.mission_id = mission.id)))
+		  ORDER BY conphase.code, conphase.sequence
+		)
+    """ % self._table)
 	
 class etl_issi_m_investment_asset(models.Model):
     _name = 'etl.issi.m.investment.asset'
