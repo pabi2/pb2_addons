@@ -17,6 +17,7 @@ class StockMove(models.Model):
                     'location_id': picking.workflow_process_id.location_id.id})
         return res
 
+
 class StockPicking(models.Model):
 
     _inherit = 'stock.picking'
@@ -37,5 +38,25 @@ class StockPicking(models.Model):
                 to_force.do_transfer()
         else:
             return super(StockPicking, self).do_enter_transfer_details()
-        
-        
+
+
+class StockLocation(models.Model):
+
+    _inherit = 'stock.location'
+
+    @api.multi
+    def get_current_stock(self, product_names=None):
+        Quant = self.env['stock.quant']
+        stock = {}
+        if product_names is not None:
+            product_ids = self.env['product.product'].search([('name', 'in', product_names)])
+            quant_ids = Quant.search([('location_id', 'child_of', self.id),('product_id', 'in', product_ids.ids)])
+        else:
+            quant_ids = Quant.search([('location_id', 'child_of', self.id)])
+            
+        product_ids = quant_ids.mapped('product_id')
+        for product in product_ids:
+            quantity = quant_ids.filtered(lambda l: l.product_id == product)
+            stock[product.name] = sum(quantity.mapped('qty'))
+
+        return stock
