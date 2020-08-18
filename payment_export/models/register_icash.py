@@ -133,8 +133,8 @@ class PabiRegister_iCash(models.Model):
         if domain is not None:
             domain.append(('is_register','!=',True))
             parner_bank_search = PartnerBankObj.search(domain)
-            parner_bank_ids = parner_bank_search.filtered(lambda l: l.partner_id.email_accountant is False
-                                                                or l.owner_name_en is False)
+            parner_bank_ids = parner_bank_search.filtered(lambda l: l.active == True and (l.partner_id.email_accountant is False
+                                                                or l.owner_name_en is False))
             if parner_bank_ids:
                 partners = []
                 for rec in parner_bank_ids:
