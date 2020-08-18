@@ -74,6 +74,36 @@ class issi_hr_employee_view(models.Model):
         )
         """ % self._table)
 	
+class etl_issi_m_costcenter(models.Model):
+    _name = 'etl.issi.m.costcenter'
+    _auto = False
+    _description = 'etl_issi_m_costcenter'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""
+        CREATE or REPLACE VIEW %s as (  
+	SELECT c.id AS costcenter_id,
+	c.code AS costcenter_code,
+	COALESCE(irc.value, (c.name)::text) AS costcenter_name,
+	(c.name)::text AS costcenter_name_en,
+	c.active,
+	COALESCE(irshort.value, (c.name_short)::text) AS costcenter_name_short,
+	c.name_short AS costcenter_name_short_en,
+	c.create_date,
+	c.write_date
+	  FROM ((res_costcenter c
+	 LEFT JOIN ( SELECT ir_translation.res_id,
+		ir_translation.value
+		FROM ir_translation
+		WHERE (((ir_translation.name)::text = 'res.costcenter,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irc ON ((c.id = irc.res_id)))
+	 LEFT JOIN ( SELECT ir_translation.res_id,
+		ir_translation.value
+	        FROM ir_translation
+	WHERE (((ir_translation.name)::text = 'res.costcenter,name_short'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irshort ON ((c.id = irshort.res_id)))
+		)
+    """ % self._table)
+	
 class etl_issi_m_section(models.Model):
     _name = 'etl.issi.m.project'
     _auto = False
