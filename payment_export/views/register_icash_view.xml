@@ -23,9 +23,9 @@
                     	<!-- <button name="generate_record" string="Generate" type="object" states="draft" class="oe_highlight"
                     			confirm="confirm generate record?"/> -->
                     	<button name="reload" string="Reload" type="object" states="draft" class="oe_highlight"
-                    			confirm="confirm reload record?"/>
+                    			confirm="confirm Reload?"/>
                     	<button name="register_cancel" string="Cancel" type="object" states="draft" class="oe_highlight"
-                    			confirm="confirm cancel record?"/>
+                    			confirm="confirm Cancel?"/>
                     	<field name="state" widget="statusbar" statusbar_visible="draft,exported"/>
                     </header>
                     <sheet>
@@ -46,6 +46,7 @@
                     		<group>
                     			<field name="name" readonly="1"/>
                     			<field name="export_date" readonly="1"/>
+                    			<field name="nume_lines" readonly="1"/>
                     		</group>
                     	</group>
                     	<notebook>
@@ -74,6 +75,18 @@
                 </form>
             </field>
         </record>
+        
+        
+        <record model="ir.ui.view" id="view_pabi_register_config_tree">
+            <field name="name">view.pabi.register.icash.config.tree</field>
+            <field name="model">pabi.register.icash.config</field>
+            <field name="arch" type="xml">
+                <tree string="Pre Register Config" editable="bottom">
+                    <field name="user_id" required="1"/>
+                    <field name="perm_create"/>
+                </tree>
+            </field>
+        </record>
 
         <record id="action_pre_register_icash" model="ir.actions.act_window">
             <field name="name">Pre register iCash</field>
@@ -83,7 +96,16 @@
             <field name="view_id" ref="view_pabi_register_icash_tree"/>
         </record>
 
+        <record id="action_pre_register_icash_config" model="ir.actions.act_window">
+            <field name="name">Pre register Config</field>
+            <field name="res_model">pabi.register.icash.config</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_pabi_register_config_tree"/>
+        </record>
+
         <menuitem action="action_pre_register_icash" sequence="1" id="menu_action_pre_register_icash" parent="menu_payment_export"/>
+        <menuitem action="action_pre_register_icash_config" sequence="1" id="menu_action_pre_register_icash_config" parent="menu_payment_export"/>
 
     </data>
 </openerp>
