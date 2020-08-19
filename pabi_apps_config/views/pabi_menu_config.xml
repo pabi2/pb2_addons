@@ -982,6 +982,8 @@
 			<delete id="payment_export.menu_action_payment_export" model="ir.ui.menu"/>
 			<delete id="payment_export.menu_action_cheque_lot" model="ir.ui.menu"/>
 			<delete id="payment_export.menu_action_cheque_register" model="ir.ui.menu"/>
+			<delete id="payment_export.menu_action_pre_register_icash" model="ir.ui.menu"/>
+			<delete id="payment_export.menu_action_pre_register_icash_config" model="ir.ui.menu"/>
 			
         	<menuitem name="Payment Exports" id="menu_payment_export"
           		sequence="5" parent="account.menu_finance"
