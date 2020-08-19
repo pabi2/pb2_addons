@@ -63,6 +63,7 @@
                                         <field name="partner_email_accountant" readonly="1"/>
                                         <field name="partner_searchkey" readonly="1"/>
                                         <field name="partner_name" readonly="1"/>
+                                        <field name="create_uid" string="Create By" readonly="1"/>
                                     </tree>
                                 </field>
                             </page>
@@ -104,8 +105,6 @@
             <field name="view_id" ref="view_pabi_register_config_tree"/>
         </record>
 
-        <menuitem action="action_pre_register_icash" sequence="1" id="menu_action_pre_register_icash" parent="menu_payment_export"/>
-        <menuitem action="action_pre_register_icash_config" sequence="1" id="menu_action_pre_register_icash_config" parent="menu_payment_export"/>
 
     </data>
 </openerp>
