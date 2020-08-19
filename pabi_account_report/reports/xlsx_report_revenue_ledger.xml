@@ -47,10 +47,5 @@
             <field name="context">{'lang': 'th_TH'}</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_revenue_ledger"
-            name="Revenue Ledger"
-            parent="menu_pabi_general_ledger_report"
-            action="action_xlsx_report_revenue_ledger_form"
-            sequence="20"/>
     </data>
 </openerp>

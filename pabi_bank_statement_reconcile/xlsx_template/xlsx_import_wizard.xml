@@ -15,11 +15,6 @@
             </field>
         </record>
 
-        <menuitem id="menu_xlsx_import_bank_statement_reconcile"
-          name="Import Bank Statement(s)"
-          parent="menu_pabi_bank_statement_main"
-          action="action_xlsx_import_bank_statement_reconcile"
-          sequence="20"/>
 
     </data>
 </openerp>

@@ -114,7 +114,6 @@
             <field name="view_id" ref="view_pabi_import_journal_entries_tree"/>
         </record>
 
-        <menuitem action="action_pabi_import_journal_entries" id="menu_pabi_import_journal_entries" parent="account.menu_finance_entries" groups="account.group_account_user" sequence="30"/>
 
     </data>
 </openerp>

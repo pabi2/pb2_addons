@@ -35,11 +35,5 @@
             <field name="context">{'lang': 'th_TH'}</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_tax_exemption_receipt"
-            name="Output Tax Exemption Report"
-            parent="menu_pabi_receivable_report"
-            action="action_xlsx_report_tax_exemption_receipt_form"
-            groups="account.group_account_manager,account.group_account_user"
-            sequence="2"/>
     </data>
 </openerp>

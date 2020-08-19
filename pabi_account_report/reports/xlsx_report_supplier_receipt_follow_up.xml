@@ -32,10 +32,5 @@
             <field name="context">{'lang': 'th_TH'}</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_supplier_receipt_follow_up"
-            name="Supplier Receipt Follow Up"
-            parent="menu_pabi_payable_report"
-            action="action_xlsx_report_supplier_receipt_follow_up_form"
-            sequence="110"/>
     </data>
 </openerp>

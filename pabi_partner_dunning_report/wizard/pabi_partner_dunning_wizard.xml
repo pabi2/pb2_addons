@@ -52,7 +52,6 @@
 			<field name="target">new</field>
 		</record>
 
-		<menuitem action="action_pabi_partner_dunning_wizard" id="menu_pabi_partner_dunning_report" sequence="10" name="Dunning Report" parent="menu_pabi_customer_dunning"/>
 
 	</data>
 </openerp>

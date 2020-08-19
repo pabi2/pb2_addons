@@ -36,7 +36,6 @@
             <field name="act_window_id" ref="action_vendor_payment_net_payment"/>
         </record>
 
-        <menuitem action="action_vendor_payment_net_payment" sequence="13" id="menu_action_vendor_paymen_net_payment" parent="account.menu_finance_payables"/>
 
     </data>
 </openerp>

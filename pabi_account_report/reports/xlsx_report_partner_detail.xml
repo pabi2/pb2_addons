@@ -42,10 +42,5 @@
             <field name="context">{'lang': 'th_TH'}</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_partner_detail"
-            name="Partner Detail"
-            parent="menu_pabi_payable_report"
-            action="action_xlsx_report_partner_detail_form"
-            sequence="20"/>
     </data>
 </openerp>

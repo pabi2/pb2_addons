@@ -196,7 +196,6 @@
             <field name="search_view_id" ref="view_account_asset_adjust_search"/>
         </record>
 
-        <menuitem parent="account.menu_finance_entries" id="menu_action_account_asset_adjust2" action="action_account_asset_adjust2" groups="account.group_account_user" sequence="25"/>
 
     </data>
 </openerp>

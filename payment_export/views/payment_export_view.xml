@@ -2,7 +2,6 @@
 <openerp>
     <data>
 
-        <menuitem id="menu_payment_export" name="Payment Exports" parent="account.menu_finance" sequence="4" groups="account.group_account_user,account.group_account_manager"/>
 
         # Payment Export
         <record id="view_payment_export_filter" model="ir.ui.view">
@@ -159,6 +158,5 @@
             <field name="act_window_id" ref="action_payment_export"/>
         </record>
 
-        <menuitem action="action_payment_export" sequence="1" id="menu_action_payment_export" parent="menu_payment_export"/>
     </data>
 </openerp>

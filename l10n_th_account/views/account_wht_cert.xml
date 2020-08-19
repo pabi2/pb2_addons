@@ -135,7 +135,6 @@
             <field name="view_id" ref="view_print_wht_cert_tree"/>
         </record>
 
-        <menuitem name="Withholding Certs" id="menu_print_wht_cert" action="action_print_wht_cert_menu" parent="account.menu_finance_payables" sequence="13"/>
 
 
     </data>

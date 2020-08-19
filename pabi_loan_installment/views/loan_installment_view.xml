@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-
-        <menuitem id="menu_loan_installment_menu" name="Loan Installments" parent="account.menu_finance" sequence="4" groups="account.group_account_user"/>
-
         # Loan Installment
         <record id="view_loan_installment_filter" model="ir.ui.view">
             <field name="name">view.loan.installment.filter</field>
@@ -233,7 +230,5 @@
             <field name="view_id" ref="view_loan_installment_form"/>
             <field name="act_window_id" ref="action_loan_installment"/>
         </record>
-
-        <menuitem action="action_loan_installment" sequence="1" id="menu_loan_installment" parent="menu_loan_installment_menu"/>
     </data>
 </openerp>

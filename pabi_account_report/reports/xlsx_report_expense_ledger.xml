@@ -47,10 +47,5 @@
             <field name="context">{'lang': 'th_TH'}</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_expense_ledger"
-            name="Expense Ledger"
-            parent="menu_pabi_general_ledger_report"
-            action="action_xlsx_report_expense_ledger_form"
-            sequence="10"/>
     </data>
 </openerp>
