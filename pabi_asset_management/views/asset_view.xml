@@ -2,11 +2,6 @@
 <openerp>
     <data>
 
-        <menuitem id="menu_asset_main" name="Assets" parent="" groups="purchase.group_purchase_user,account.group_account_user,pabi_asset_management.group_assets_report" sequence="51"/>
-
-        <menuitem id="account_asset_management.menu_finance_assets" name="Assets" parent="menu_asset_main" sequence="10" groups="purchase.group_purchase_user,account.group_account_user"/>
-
-        <menuitem id="account_asset_management.account_asset_menu" name="Assets" parent="account_asset_management.menu_finance_assets" groups="purchase.group_purchase_user,account.group_account_user"/>
 
         <menuitem id="account_asset_management.menu_finance_config_assets" name="Configurations" parent="menu_asset_main" sequence="20" groups="purchase.group_purchase_user,account.group_account_user"/>
 
@@ -17,8 +12,6 @@
             sequence="10"
             groups="purchase.group_purchase_user,account.group_account_user"/>
 
-        <menuitem id="menu_asset_actions" name="Asset Actions"
-          sequence="20" parent="menu_asset_main"/>
 
         <!-- Account Asset View -->
         <record id="account_asset_view_search" model="ir.ui.view">
@@ -465,8 +458,6 @@
             <field name="act_window_id" ref="action_account_asset_parent_form"/>
         </record>
 
-        <menuitem parent="account_asset_management.menu_finance_assets" id="menu_action_account_asset_parent_form"
-          sequence="30" action="action_account_asset_parent_form" groups="purchase.group_purchase_user,account.group_account_user"/>
 
         <!-- Depreciation Line -->
         <record model="ir.ui.view" id="view_account_asset_line_tree">
@@ -511,8 +502,6 @@
             <field name="view_mode">tree</field>
         </record>
 
-        <menuitem parent="account_asset_management.menu_finance_assets" id="menu_action_account_asset_line"
-          sequence="15" action="action_account_asset_line" groups="purchase.group_purchase_user,account.group_account_user"/>
 
         <!-- Asset Actions Template (attachments) -->
         <record id="action_asset_action_import_template" model="ir.actions.act_window">

@@ -127,9 +127,6 @@
             <field name="act_window_id" ref="action_asset_import_batch_view"/>
         </record>
 
-        <menuitem id="menu_asset_import_batch_view" parent="pabi_asset_management.menu_asset_actions"
-          action="action_asset_import_batch_view"
-          groups="purchase.group_purchase_user,account.group_account_user"/>
 
     </data>
 </openerp>

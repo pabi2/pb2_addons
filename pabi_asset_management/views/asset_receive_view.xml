@@ -203,9 +203,6 @@
             <field name="act_window_id" ref="action_asset_direct_receive"/>
         </record>
 
-        <menuitem parent="menu_asset_actions" id="menu_asset_direct_receive"
-          action="action_asset_direct_receive"
-          groups="purchase.group_purchase_user,account.group_account_user"/>
 
     </data>
 </openerp>
