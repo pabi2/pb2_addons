@@ -484,5 +484,15 @@ class AssetRegisterReport(models.TransientModel):
             state_list.append(status)
         res['domain'] =  {'asset_ids': [('state','in',state_list)]}
         return res 
+    
+    @api.onchange('costcenter_ids')
+    def _onchange_costcenter(self):
+        res = {}
+        costcenter_list = []
+        for rec in self.costcenter_ids:
+            code = rec.code
+            costcenter_list.append(code)
+            res['domain'] =  {'budget': [('code','in',costcenter_list)],'owner_budget':[('code','in',costcenter_list)]}
+        return res
             
         
