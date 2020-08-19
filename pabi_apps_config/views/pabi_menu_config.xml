@@ -982,6 +982,8 @@
 			<delete id="payment_export.menu_action_payment_export" model="ir.ui.menu"/>
 			<delete id="payment_export.menu_action_cheque_lot" model="ir.ui.menu"/>
 			<delete id="payment_export.menu_action_cheque_register" model="ir.ui.menu"/>
+			<delete id="payment_export.menu_action_pre_register_icash" model="ir.ui.menu"/>
+			<delete id="payment_export.menu_action_pre_register_icash_config" model="ir.ui.menu"/>
 			
         	<menuitem name="Payment Exports" id="menu_payment_export"
           		sequence="5" parent="account.menu_finance"
@@ -995,6 +997,12 @@
         		<menuitem name="Cheque Register" id="menu_action_cheque_register"
         			action="payment_export.action_cheque_register"
         			sequence="3" parent="menu_payment_export"/>
+		        <menuitem name="Pre register iCash" id="menu_action_pre_register_icash"
+		        	action="payment_export.action_pre_register_icash"
+		        	sequence="4" parent="menu_payment_export"/>
+		        <menuitem name="Pre register Config" id="menu_action_pre_register_icash_config"
+		        	action="payment_export.action_pre_register_icash_config"
+		        	sequence="5" parent="menu_payment_export"/>
         			
             # Loan Installments
 			<delete id="pabi_loan_installment.menu_loan_installment_menu" model="ir.ui.menu"/>
