@@ -996,10 +996,10 @@
         			action="payment_export.action_cheque_register"
         			sequence="3" parent="menu_payment_export"/>
 		        <menuitem name="Pre register iCash" id="menu_action_pre_register_icash"
-		        	action="action_pre_register_icash"
+		        	action="payment_export.action_pre_register_icash"
 		        	sequence="4" parent="menu_payment_export"/>
 		        <menuitem name="Pre register Config" id="menu_action_pre_register_icash_config"
-		        	action="action_pre_register_icash_config"
+		        	action="payment_export.action_pre_register_icash_config"
 		        	sequence="5" parent="menu_payment_export"/>
         			
             # Loan Installments
