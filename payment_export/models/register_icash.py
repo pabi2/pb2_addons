@@ -167,7 +167,6 @@ class PabiRegister_iCash(models.Model):
                       ('active', '=', True)]
             
             self._check_data_partner_bank(domain)
-            
             self._create_register_icash_line(domain)
 
     @api.onchange('service_type')
@@ -200,6 +199,7 @@ class PabiRegister_iCash(models.Model):
     @api.multi
     def register(self):
         self._check_access_config()
+        self._check_record_registered
         self.write({'state': 'registered',
                     'export_date': datetime.now()})
 
