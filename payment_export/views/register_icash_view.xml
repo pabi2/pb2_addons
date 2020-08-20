@@ -32,10 +32,10 @@
                     </header>
                     <sheet>
                         <div class="oe_right oe_button_box" name="buttons">
-                            <button name="%(action_register_icash_direct_report)d" string="Export Pre Register" type="action"
+                            <button name="%(action_register_icash_direct_report)d" string="Export" type="action"
                             		attrs="{'invisible': ['|',('state','!=','draft'),
                             							'&amp;',('state','=','draft'),('service_type','!=','direct')]}"/>
-                            <button name="%(action_register_icash_smart_report)d" string="Export Pre Register" type="action"
+                            <button name="%(action_register_icash_smart_report)d" string="Export" type="action"
                             		attrs="{'invisible': ['|',('state','!=','draft'),
                             							'&amp;',('state','=','draft'),('service_type','!=','smart')]}"/>
                         </div>
