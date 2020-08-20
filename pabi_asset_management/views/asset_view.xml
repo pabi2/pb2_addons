@@ -2,17 +2,6 @@
 <openerp>
     <data>
 
-
-        <menuitem id="account_asset_management.menu_finance_config_assets" name="Configurations" parent="pabi_apps_config.menu_asset_main" sequence="20" groups="purchase.group_purchase_user,account.group_account_user"/>
-
-        <menuitem
-            id="account_asset_management.account_asset_profile_menu"
-            action="account_asset_management.account_asset_profile_action"
-            parent="account_asset_management.menu_finance_config_assets"
-            sequence="10"
-            groups="purchase.group_purchase_user,account.group_account_user"/>
-
-
         <!-- Account Asset View -->
         <record id="account_asset_view_search" model="ir.ui.view">
             <field name="name">account.asset.search</field>
@@ -511,9 +500,6 @@
             <field name="view_type">form</field>
             <field name="domain" eval="[('parent_id', '=', ref('pabi_asset_management.dir_asset_action_template'))]" />
         </record>
-        <menuitem action="action_asset_action_import_template" id="menu_asset_action_import_template"
-            parent="account_asset_management.menu_finance_config_assets" sequence="30"
-            groups="base.group_no_one"/>
 
 
     </data>

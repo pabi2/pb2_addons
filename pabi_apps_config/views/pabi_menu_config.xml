@@ -1647,6 +1647,23 @@
       			<menuitem name="Asset Estimate Report" id="menu_asset_estimate_report"
           			action="pabi_account_report.action_asset_estimate_report_form"
           			sequence="3" parent="menu_account_asset_report"/>
+          			
+          	# Configurations
+			<delete id="pabi_asset_management.account_asset_management.menu_finance_config_assets" model="ir.ui.menu"/>
+			<delete id="pabi_asset_management.account_asset_management.account_asset_profile_menu" model="ir.ui.menu"/>
+			<delete id="pabi_asset_management.menu_asset_action_import_template" model="ir.ui.menu"/>
+			
+        	<menuitem name="Configurations" id="account_asset_management.menu_finance_config_assets"
+        		sequence="4" parent="menu_asset_main"
+        		groups="purchase.group_purchase_user,account.group_account_user"/>
+		        <menuitem id="account_asset_management.account_asset_profile_menu"
+		            action="account_asset_management.account_asset_profile_action"
+		            sequence="1" parent="account_asset_management.menu_finance_config_assets"
+		            groups="purchase.group_purchase_user,account.group_account_user"/>
+        		<menuitem name="Actions Templates (xls)" id="menu_asset_action_import_template"
+        			action="pabi_asset_management.action_asset_action_import_template"
+            		sequence="2" parent="account_asset_management.menu_finance_config_assets"
+            		groups="base.group_no_one"/>
         
         # Warehouse
 		<delete id="" model="ir.ui.menu"/>
