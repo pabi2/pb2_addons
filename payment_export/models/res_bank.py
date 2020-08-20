@@ -11,7 +11,7 @@ class ResPartnerBank(models.Model):
     register_no = fields.Char(
         'Register No.'
     )
-    register_date = fields.Date(
+    register_date = fields.Datetime(
         'Register date'
     )
     is_register = fields.Boolean(

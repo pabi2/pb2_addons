@@ -18,8 +18,8 @@ class PabiRegister_iCash(models.Model):
         'Service Type',
         track_visibility='onchange',
     )
-    export_date = fields.Date(
-        'Register export date',
+    export_date = fields.Datetime(
+        'Register Date',
         #default=fields.Date.context_today,
         track_visibility='onchange',
     )
