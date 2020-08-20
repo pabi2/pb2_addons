@@ -1554,28 +1554,29 @@
         	
         	# Assets
 			<delete id="pabi_asset_management.account_asset_management.menu_finance_assets" model="ir.ui.menu"/>
+			<delete id="account_asset_management.menu_finance_assets" model="ir.ui.menu"/>
 			<delete id="pabi_asset_management.account_asset_management.account_asset_menu" model="ir.ui.menu"/>
 			<delete id="pabi_asset_management.menu_action_account_asset_line" model="ir.ui.menu"/>
 			<delete id="pabi_asset_management.menu_action_account_asset_parent_form" model="ir.ui.menu"/>
 		
-        	<menuitem name="Assets" id="account_asset_management.menu_finance_assets"
+        	<menuitem name="Assets" id="menu_finance_assets"
         		sequence="1" parent="menu_asset_main"
         		groups="purchase.group_purchase_user,account.group_account_user"/>
         		<menuitem name="Assets" id="account_asset_management.account_asset_menu"
               		action="account_asset_management.account_asset_action"
-        			sequence="1" parent="account_asset_management.menu_finance_assets"
+        			sequence="1" parent="menu_finance_assets"
         			groups="purchase.group_purchase_user,account.group_account_user"/>
         		<menuitem name="Asset's Depreciation Lines" id="menu_action_account_asset_line"
           			action="pabi_asset_management.action_account_asset_line"
-        			sequence="2" parent="account_asset_management.menu_finance_assets"
+        			sequence="2" parent="menu_finance_assets"
           			groups="purchase.group_purchase_user,account.group_account_user"/>
         		<menuitem name="Parent Assets" id="menu_action_account_asset_parent_form"
           			action="pabi_asset_management.action_account_asset_parent_form"
-       				sequence="3" parent="account_asset_management.menu_finance_assets"
+       				sequence="3" parent="menu_finance_assets"
           			groups="purchase.group_purchase_user,account.group_account_user"/>
     			<menuitem name="Asset Hierarchy" id="account_asset_management.account_asset_menu_hierarchy"
               		action="account_asset_management.account_asset_action_hierarchy"
-              		sequence="4" parent="account_asset_management.menu_finance_assets"/>
+              		sequence="4" parent="menu_finance_assets"/>
         	
         	# Asset Actions
 			<delete id="pabi_asset_management.menu_asset_actions" model="ir.ui.menu"/>
