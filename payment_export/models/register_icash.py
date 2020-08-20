@@ -204,7 +204,7 @@ class PabiRegister_iCash(models.Model):
                     'export_date': datetime.now()})
 
         for line in self.line_ids:
-            line.partner_bank_id.write({'register_no': self.register_id.name,
+            line.partner_bank_id.write({'register_no': self.name,
                                         'register_date': datetime.now(),
                                         'is_register': True})
 
