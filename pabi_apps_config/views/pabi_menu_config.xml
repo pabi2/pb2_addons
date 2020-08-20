@@ -1575,7 +1575,7 @@
           			groups="purchase.group_purchase_user,account.group_account_user"/>
     			<menuitem name="Asset Hierarchy" id="account_asset_management.account_asset_menu_hierarchy"
               		action="account_asset_management.account_asset_action_hierarchy"
-              		sequence="4" parent="menu_finance_assets"/>
+              		sequence="4" parent="account_asset_management.menu_finance_assets"/>
         	
         	# Asset Actions
 			<delete id="pabi_asset_management.menu_asset_actions" model="ir.ui.menu"/>
