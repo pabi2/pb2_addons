@@ -22,6 +22,8 @@
                     <header>
                     	<!-- <button name="generate_record" string="Generate" type="object" states="draft" class="oe_highlight"
                     			confirm="confirm generate record?"/> -->
+                    	<button name="register" string="Register" type="object" states="draft" class="oe_highlight"
+                    			confirm="confirm Register?"/>
                     	<button name="reload" string="Reload" type="object" states="draft" class="oe_highlight"
                     			confirm="confirm Reload?"/>
                     	<button name="register_cancel" string="Cancel" type="object" states="draft" class="oe_highlight"

@@ -27,19 +27,10 @@ class PabiRegister_iCashReportDirect(models.TransientModel):
             dom = [('register_id', '=', self.register_id.id)]
         self.register_line_ids = RegisterLine.search(dom)
         print('\n Results: '+str(self.register_line_ids))
-
-    @api.multi
-    def _check_access_config(self):
-        Config = self.env['pabi.register.icash.config']
-        user_id = Config.search([('user_id', '=', self._uid)])
-        user_id = user_id.filtered(lambda l: l.perm_create == True)
-        if not user_id:
-            raise ValidationError('ไม่สามารถดำเนินการได้ อนุญาตให้เฉพาะผู้จัดการด้านจ่ายเท่านั้น')
     
     @api.multi
     def action_get_report(self):
         self.ensure_one()
-        self._check_access_config()
         if self.register_id.state == 'draft':
             self.register_id._check_record_registered()
             out_file, out_name = self.get_report()
@@ -52,14 +43,14 @@ class PabiRegister_iCashReportDirect(models.TransientModel):
                 'res_id': self.register_id.id,
                 'type': 'binary',
             })
-            self.register_id.write({'state': 'exported',
+            """self.register_id.write({'state': 'registered',
                                     'export_date': datetime.now()})
 
             for line in self.register_line_ids:
                 line.partner_bank_id.write({
                     'register_no': self.register_id.name,
                     'register_date': datetime.now(),
-                    'is_register': True})
+                    'is_register': True})"""
 
 
 class PabiRegister_iCashReportSmart(models.TransientModel):
@@ -87,18 +78,8 @@ class PabiRegister_iCashReportSmart(models.TransientModel):
         print('\n Results: '+str(self.register_line_ids))
 
     @api.multi
-    def _check_access_config(self):
-        Config = self.env['pabi.register.icash.config']
-        user_id = Config.search([('user_id', '=', self._uid)])
-        user_id = user_id.filtered(lambda l: l.perm_create == True)
-        if not user_id:
-            raise ValidationError('ไม่สามารถดำเนินการได้ อนุญาตให้เฉพาะผู้จัดการด้านจ่ายเท่านั้น')
-
-    @api.multi
     def action_get_report(self):
         self.ensure_one()
-        self._check_access_config()
-
         if self.register_id.state == 'draft':
             self.register_id._check_record_registered()
             out_file, out_name = self.get_report()
@@ -111,11 +92,11 @@ class PabiRegister_iCashReportSmart(models.TransientModel):
                 'res_id': self.register_id.id,
                 'type': 'binary',
             })
-            self.register_id.write({'state': 'exported',
+            """self.register_id.write({'state': 'registered',
                                     'export_date': datetime.now()})
 
             for line in self.register_line_ids:
                 line.partner_bank_id.write({
                     'register_no': self.register_id.name,
                     'register_date': datetime.now(),
-                    'is_register': True})
+                    'is_register': True})"""
