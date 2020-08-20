@@ -494,6 +494,8 @@ class AssetRegisterReport(models.TransientModel):
             costcenter_list.append(code)
         if self.costcenter_ids:
             res['domain'] =  {'budget': [('code','in',costcenter_list)],'owner_budget':[('code','in',costcenter_list)],}
+        else :
+            res['domain'] =  {'budget': [('active','=',True)],'owner_budget':[('active','=',True)],}
         return res
     
     @api.onchange('asset_active')
@@ -501,7 +503,7 @@ class AssetRegisterReport(models.TransientModel):
         res = {}
         if self.asset_active == 'qctive':
             res['domain'] =  {'budget': [('active','=',True)],'owner_budget':[('active','=',True)],}
-        elif self.asset_active == 'inactive' :
+        if self.asset_active == 'inactive' :
             res['domain'] =  {'budget': [('active','=',False)],'owner_budget':[('active','=',False)],}
         return res
             
