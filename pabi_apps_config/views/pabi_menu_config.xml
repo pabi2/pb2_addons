@@ -1621,7 +1621,7 @@
           			groups="pabi_asset_management.group_assets_report"/>
         		<menuitem name="Asset Import Batch" id="menu_asset_import_batch_view"
           			action="pabi_asset_import_batch.action_asset_import_batch_view"
-        			sequence="8" parent="pabi_asset_management.menu_asset_actions"
+        			sequence="8" parent="menu_asset_actions"
           			groups="purchase.group_purchase_user,account.group_account_user"/>
         		<menuitem name="Change Master" id="menu_action_account_asset_changemaster"
           			action="pabi_asset_management.action_account_asset_changemaster"
