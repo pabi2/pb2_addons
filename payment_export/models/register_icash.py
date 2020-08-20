@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
 from openerp.exceptions import ValidationError
+from datetime import datetime
 
 
 class PabiRegister_iCash(models.Model):
     _name = 'pabi.register.icash'
     _inherit = ['mail.thread']
+    _description = 'Pre-Register iCash'
 
     name = fields.Char(
         'Register number',
@@ -16,14 +18,14 @@ class PabiRegister_iCash(models.Model):
         'Service Type',
         track_visibility='onchange',
     )
-    export_date = fields.Date(
-        'Register export date',
+    export_date = fields.Datetime(
+        'Register Date',
         #default=fields.Date.context_today,
         track_visibility='onchange',
     )
     state = fields.Selection(
         [('draft', 'Draft'),
-         ('exported', 'Exported'),
+         ('registered', 'Registered'),
          ('cancel', 'Cancelled')],
         string='Status',
         #default='draft',
@@ -91,7 +93,11 @@ class PabiRegister_iCash(models.Model):
         parner_bank_search = parner_bank_search.filtered(lambda l: l.partner_id.active is True)
 
         for line in parner_bank_search:
+            bank_branch = line.bank_branch.code
             if line.bank.abbrev != 'BBL':
+                if line.bank.code == '030':
+                    bank_branch = '0309990'
+
                 if line.bank.code == '033':
                     if len(line.acc_number) == 10:
                         account_number = '00' + line.acc_number[2:4] + '0' + line.acc_number[-6:]
@@ -114,7 +120,7 @@ class PabiRegister_iCash(models.Model):
             register_line.partner_searchkey = line.partner_id.search_key
             register_line.partner_name = line.partner_id.name
             register_line.partner_email_accountant = line.partner_id.email_accountant
-            register_line.bank_branch_code = line.bank_branch.code
+            register_line.bank_branch_code = bank_branch
             self.line_ids += register_line
             
     @api.multi
@@ -125,13 +131,28 @@ class PabiRegister_iCash(models.Model):
         if domain is not None:
             parner_bank_search = PartnerBankObj.search(domain)
             parner_bank_ids = parner_bank_search.filtered(lambda l: l.partner_id.active is True)
+            
+            # Check len(acc_number) > 1
+            partner_banks = {}
+            acc_number = parner_bank_ids.mapped('acc_number')
+            for acc in acc_number:
+                if len(parner_bank_ids.filtered(lambda l: l.acc_number == acc)) > 1:
+                    partner_name = [x.partner_id.display_name for x in parner_bank_ids.filtered(lambda l: l.acc_number == acc)]
+                    partner_banks[acc] = '\n'.join(partner_name)
+            
+            if partner_banks:
+                text_error = [u'เลขที่บัญชี {}\n {}'.format(key, value) for key, value in partner_banks.iteritems()]
+                text_error = '\n\n'.join(text_error)
+                raise ValidationError(u'กรุณาตรวจสอบ ข้อมูลหลัก Accounting ซึ่งมีข้อมูลเลขที่บัญชีมากกว่า 1 partner ดังนี้ \n {}'.format(text_error))
+            
+            # Check email_accountant or owner_name_en is NULL
             parner_bank_ids = parner_bank_ids.filtered(lambda l: l.partner_id.email_accountant is False
                                                                 or l.owner_name_en is False)
             
             if parner_bank_ids:
                 partners = []
                 for rec in parner_bank_ids:
-                    partners.append(rec.partner_id.name)
+                    partners.append(rec.partner_id.display_name)
 
                 raise ValidationError(u'กรุณาใส่ข้อมูล Email Accountant, Account Name EN ของ Partner ต่อไปนี้ให้ครบถ้วน\n{}'.format('\n'.join(tuple(partners))))
 
@@ -144,8 +165,8 @@ class PabiRegister_iCash(models.Model):
             domain = [('acc_number', 'in', acc_number),
                       ('is_register', '!=', True),
                       ('active', '=', True)]
-            self._check_data_partner_bank(domain)
             
+            self._check_data_partner_bank(domain)
             self._create_register_icash_line(domain)
 
     @api.onchange('service_type')
@@ -174,10 +195,23 @@ class PabiRegister_iCash(models.Model):
                   ('active', '=', True),
                   ('partner_id.active', '=', True)]
         self._create_register_icash_line()
+        
+    @api.multi
+    def register(self):
+        self._check_access_config()
+        self._check_record_registered()
+        self.write({'state': 'registered',
+                    'export_date': datetime.now()})
+
+        for line in self.line_ids:
+            line.partner_bank_id.write({'register_no': self.name,
+                                        'register_date': datetime.now(),
+                                        'is_register': True})
 
 
 class PabiRegister_iCashLine(models.Model):
     _name = 'pabi.register.icash.line'
+    _description = 'Pre-Register iCash Line'
 
     register_id = fields.Many2one(
         'pabi.register.icash'
@@ -211,7 +245,11 @@ class PabiRegister_iCashLine(models.Model):
     def onchange_partner_bank_id(self):
         for rec in self:
             if rec.register_id.state == 'draft' and rec.partner_bank_id:
+                bank_branch = rec.partner_bank_id.bank_branch.code
                 if rec.partner_bank_id.bank.abbrev != 'BBL':
+                    if rec.partner_bank_id.bank.code == '030':
+                        bank_branch = '0309990'
+                    
                     if rec.partner_bank_id.bank.code == '033':
                         if len(rec.partner_bank_id.acc_number.strip()) == 10:
                             account_number = '00' + rec.partner_bank_id.acc_number.strip()[2:4] +\
@@ -233,11 +271,12 @@ class PabiRegister_iCashLine(models.Model):
                 rec.partner_searchkey = rec.partner_bank_id.partner_id.search_key
                 rec.partner_name = rec.partner_bank_id.partner_id.name
                 rec.partner_email_accountant = rec.partner_bank_id.partner_id.email_accountant
-                rec.bank_branch_code = rec.partner_bank_id.bank_branch.code
+                rec.bank_branch_code = bank_branch
 
 
 class PabiRegisterConfig(models.Model):
     _name = 'pabi.register.icash.config'
+    _description = 'Pre-Register iCash Config'
     
     user_id = fields.Many2one(
         'res.users',
@@ -246,9 +285,3 @@ class PabiRegisterConfig(models.Model):
     perm_create = fields.Boolean(
         string='Create Access'
     )
-    """perm_unlink = fields.Boolean(
-        string='Delete Access'
-    )"""
-    
-    
-    
