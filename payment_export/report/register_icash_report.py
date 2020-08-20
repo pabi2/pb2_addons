@@ -31,7 +31,6 @@ class PabiRegister_iCashReportDirect(models.TransientModel):
     @api.multi
     def action_get_report(self):
         self.ensure_one()
-        self.register_id._check_record_registered()
         out_file, out_name = self.get_report()
 
         self.env['ir.attachment'].create({
@@ -79,7 +78,6 @@ class PabiRegister_iCashReportSmart(models.TransientModel):
     @api.multi
     def action_get_report(self):
         self.ensure_one()
-        self.register_id._check_record_registered()
         out_file, out_name = self.get_report()
 
         self.env['ir.attachment'].create({
