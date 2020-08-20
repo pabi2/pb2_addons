@@ -31,26 +31,25 @@ class PabiRegister_iCashReportDirect(models.TransientModel):
     @api.multi
     def action_get_report(self):
         self.ensure_one()
-        if self.register_id.state == 'draft':
-            self.register_id._check_record_registered()
-            out_file, out_name = self.get_report()
+        self.register_id._check_record_registered()
+        out_file, out_name = self.get_report()
 
-            self.env['ir.attachment'].create({
-                'name': self.register_id.name+'.xlsx',
-                'datas': out_file,
-                'datas_fname': self.register_id.name+'.xlsx',
-                'res_model': 'pabi.register.icash',
-                'res_id': self.register_id.id,
-                'type': 'binary',
-            })
-            """self.register_id.write({'state': 'registered',
-                                    'export_date': datetime.now()})
+        self.env['ir.attachment'].create({
+            'name': self.register_id.name+'.xlsx',
+            'datas': out_file,
+            'datas_fname': self.register_id.name+'.xlsx',
+            'res_model': 'pabi.register.icash',
+            'res_id': self.register_id.id,
+            'type': 'binary',
+        })
+        """self.register_id.write({'state': 'registered',
+                                'export_date': datetime.now()})
 
-            for line in self.register_line_ids:
-                line.partner_bank_id.write({
-                    'register_no': self.register_id.name,
-                    'register_date': datetime.now(),
-                    'is_register': True})"""
+        for line in self.register_line_ids:
+            line.partner_bank_id.write({
+                'register_no': self.register_id.name,
+                'register_date': datetime.now(),
+                'is_register': True})"""
 
 
 class PabiRegister_iCashReportSmart(models.TransientModel):
@@ -80,23 +79,22 @@ class PabiRegister_iCashReportSmart(models.TransientModel):
     @api.multi
     def action_get_report(self):
         self.ensure_one()
-        if self.register_id.state == 'draft':
-            self.register_id._check_record_registered()
-            out_file, out_name = self.get_report()
+        self.register_id._check_record_registered()
+        out_file, out_name = self.get_report()
 
-            self.env['ir.attachment'].create({
-                'name': self.register_id.name+'.xlsx',
-                'datas': out_file,
-                'datas_fname': self.register_id.name+'.xlsx',
-                'res_model': 'pabi.register.icash',
-                'res_id': self.register_id.id,
-                'type': 'binary',
-            })
-            """self.register_id.write({'state': 'registered',
-                                    'export_date': datetime.now()})
+        self.env['ir.attachment'].create({
+            'name': self.register_id.name+'.xlsx',
+            'datas': out_file,
+            'datas_fname': self.register_id.name+'.xlsx',
+            'res_model': 'pabi.register.icash',
+            'res_id': self.register_id.id,
+            'type': 'binary',
+        })
+        """self.register_id.write({'state': 'registered',
+                                'export_date': datetime.now()})
 
-            for line in self.register_line_ids:
-                line.partner_bank_id.write({
-                    'register_no': self.register_id.name,
-                    'register_date': datetime.now(),
-                    'is_register': True})"""
+        for line in self.register_line_ids:
+            line.partner_bank_id.write({
+                'register_no': self.register_id.name,
+                'register_date': datetime.now(),
+                'is_register': True})"""
