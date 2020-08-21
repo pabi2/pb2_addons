@@ -12,6 +12,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'reports/jasper_report_account_gl_common.xml',
         'reports/jasper_report_journal_document_entry.xml',
         'data/jasper_data.xml',
     ],
