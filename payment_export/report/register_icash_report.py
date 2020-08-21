@@ -2,12 +2,17 @@
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 class PabiRegister_iCashReportDirect(models.TransientModel):
     _name = 'pabi.register.icash.direct.report'
     _inherit = 'xlsx.report'
 
+    run_date = fields.Datetime(
+        'Run Date',
+        default=lambda self: datetime.today() + relativedelta(hours=7),
+    )
     register_id = fields.Many2one(
         'pabi.register.icash',
         'Register iCash',
@@ -54,6 +59,10 @@ class PabiRegister_iCashReportSmart(models.TransientModel):
     _name = 'pabi.register.icash.smart.report'
     _inherit = 'xlsx.report'
 
+    run_date = fields.Datetime(
+        'Run Date',
+        default=lambda self: datetime.today() + relativedelta(hours=7),
+    )
     register_id = fields.Many2one(
         'pabi.register.icash',
         'Register iCash',

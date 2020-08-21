@@ -24,7 +24,7 @@
                             '_HEAD_': {
                                 'B1': '${env.user.with_context(lang="en_US").company_id.rml_header1}#{number_format=text}',
                                 'B2': 'register_id.service_type${value and ((value == "direct" and "DCB02") or (value == "smart" and "SMC06")) or ""}#{number_format=text}',
-                                'B3': '${time.strftime("%d/%m/%Y %H:%M:%S")}',
+                                'B3': 'run_date${value or ""}',
                                 'E2': 'register_id.name${value or ""}#{number_format=text}',
                             },
                             'register_line_ids': {
@@ -57,7 +57,7 @@
                             '_HEAD_': {
                                 'B1': '${env.user.with_context(lang="en_US").company_id.rml_header1}#{number_format=text}',
                                 'B2': 'register_id.service_type${value and ((value == "direct" and "DCB02") or (value == "smart" and "SMC06")) or ""}#{number_format=text}',
-                                'B3': '${time.strftime("%d/%m/%Y %H:%M:%S")}',
+                                'B3': 'run_date${value or ""}',
                                 'E2': 'register_id.name${value or ""}#{number_format=text}',
                             },
                             'register_line_ids': {
