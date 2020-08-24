@@ -1705,7 +1705,6 @@
 		        	sequence="1" parent="stock.menu_stock_product"/>
         
         # Reporting
-		<delete id="" model="ir.ui.menu"/>
         <menuitem name="Reporting" id="base.menu_reporting"
             sequence="13" groups="base.group_user"/>
             
@@ -1810,7 +1809,33 @@
 			        groups="base.group_no_one"/>
         
         # My Jobs
-		<delete id="" model="ir.ui.menu"/>
+		<delete id="pabi_utils.my_jobs_root" model="ir.ui.menu"/>
+		<delete id="pabi_utils.my_jobs" model="ir.ui.menu"/>
+		<delete id="pabi_utils.my_queue_job" model="ir.ui.menu"/>
+		<delete id="pabi_utils.menu_my_complete_job" model="ir.ui.menu"/>
+		<delete id="pabi_utils.my_spool_report" model="ir.ui.menu"/>
+		<delete id="pabi_utils.all_spool_report" model="ir.ui.menu"/>
+		
+        <menuitem name="My Jobs" id="my_jobs_root"
+          	sequence="14"
+          	groups="pabi_utils.group_see_own_spool_report"/>
+        	<menuitem name="My Jobs" id="my_jobs"
+        		sequence="1" parent="my_jobs_root"
+          		groups="base.group_user"/>
+	        	<menuitem name="In-Progress Jobs" id="my_queue_job"
+					action="pabi_utils.action_my_queue_job"
+	        		sequence="1" parent="my_jobs"/>
+	        	<menuitem name="Completed Jobs" id="menu_my_complete_job"
+					action="pabi_utils.action_my_complete_job"
+	        		sequence="2" parent="my_jobs"/>
+	        	<menuitem name="My Spool Reports" id="my_spool_report"
+					action="pabi_utils.action_my_spool_report"
+	        		sequence="3" parent="my_jobs" 
+          			groups="pabi_utils.group_see_own_spool_report"/>
+	        	<menuitem name="All Spool Reports" id="all_spool_report"
+					action="pabi_utils.action_all_spool_report"
+	        		sequence="4" parent="my_jobs" 
+          			groups="pabi_utils.group_see_all_spool_report"/>
         
         # Configurations
 		<delete id="pabi_asset_management.account_asset_management.menu_finance_config_assets" model="ir.ui.menu"/>
