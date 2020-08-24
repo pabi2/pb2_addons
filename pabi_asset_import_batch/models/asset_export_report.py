@@ -63,7 +63,7 @@ class AssetExportReport(models.TransientModel):
         'xlsx.report.status',
         string='Asset State',
         domain=[('location', '=', 'asset.register.view')],
-        default=lambda self: self.env['xlsx.report.status'].search([('location', '=', 'asset.register.view'),('status', 'in', ['draft', 'open', 'close'])]),
+        default=lambda self: self.env['xlsx.report.status'].search([('location', '=', 'asset.register.view'),('status', 'in', [])]),
     )
     account_ids = fields.Many2many(
         'account.account',
