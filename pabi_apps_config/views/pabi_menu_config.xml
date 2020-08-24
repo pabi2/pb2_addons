@@ -118,10 +118,6 @@
         <menuitem id="account_budget_activity.menu_action_account_budget_config"
           name="Budgeting" parent="menu_nstda_configurations" sequence="8"
           groups="pabi_base.group_nstda_admin_business"/>
-        # Assets
-        <menuitem id="account_asset_management.menu_finance_config_assets"
-          name="Assets" parent="menu_nstda_configurations" sequence="9"
-          groups="pabi_base.group_nstda_admin_business"/>
         # Warehouse
         <menuitem id="stock.menu_stock_configuration"
           name="Warehouse" parent="menu_nstda_configurations" sequence="10"
@@ -1546,7 +1542,109 @@
 			            sequence="5" parent="menu_pabi_general_ledger_report"/>
 
         # Assets
-		<delete id="" model="ir.ui.menu"/>
+		<delete id="pabi_asset_management.menu_asset_main" model="ir.ui.menu"/>
+		
+        <menuitem name="Assets" id="menu_asset_main"
+        	sequence="11"
+        	groups="purchase.group_purchase_user,account.group_account_user,pabi_asset_management.group_assets_report"/>
+        	
+        	# Assets
+			<delete id="pabi_asset_management.account_asset_management.menu_finance_assets" model="ir.ui.menu"/>
+			<delete id="account_asset_management.menu_finance_assets" model="ir.ui.menu"/>
+			<delete id="pabi_asset_management.account_asset_management.account_asset_menu" model="ir.ui.menu"/>
+			<delete id="pabi_asset_management.menu_action_account_asset_line" model="ir.ui.menu"/>
+			<delete id="pabi_asset_management.menu_action_account_asset_parent_form" model="ir.ui.menu"/>
+		
+        	<menuitem name="Assets" id="menu_finance_assets"
+        		sequence="1" parent="menu_asset_main"
+        		groups="purchase.group_purchase_user,account.group_account_user"/>
+        		<menuitem name="Assets" id="account_asset_management.account_asset_menu"
+              		action="account_asset_management.account_asset_action"
+        			sequence="1" parent="menu_finance_assets"
+        			groups="purchase.group_purchase_user,account.group_account_user"/>
+        		<menuitem name="Asset's Depreciation Lines" id="menu_action_account_asset_line"
+          			action="pabi_asset_management.action_account_asset_line"
+        			sequence="2" parent="menu_finance_assets"
+          			groups="purchase.group_purchase_user,account.group_account_user"/>
+        		<menuitem name="Parent Assets" id="menu_action_account_asset_parent_form"
+          			action="pabi_asset_management.action_account_asset_parent_form"
+       				sequence="3" parent="menu_finance_assets"
+          			groups="purchase.group_purchase_user,account.group_account_user"/>
+    			<menuitem name="Asset Hierarchy" id="account_asset_management.account_asset_menu_hierarchy"
+              		action="account_asset_management.account_asset_action_hierarchy"
+              		sequence="4" parent="menu_finance_assets"/>
+        	
+        	# Asset Actions
+			<delete id="pabi_asset_management.menu_asset_actions" model="ir.ui.menu"/>
+			<delete id="pabi_asset_management.menu_action_account_asset_request" model="ir.ui.menu"/>
+			<delete id="pabi_asset_management.menu_action_account_asset_changeowner" model="ir.ui.menu"/>
+			<delete id="pabi_asset_management.menu_action_account_asset_transfer" model="ir.ui.menu"/>
+			<delete id="pabi_asset_management.menu_action_account_asset_adjust" model="ir.ui.menu"/>
+			<delete id="pabi_asset_management.menu_action_account_asset_removal" model="ir.ui.menu"/>
+			<delete id="pabi_asset_management.menu_asset_direct_receive" model="ir.ui.menu"/>
+			<delete id="pabi_asset_management.menu_action_account_asset_request_only" model="ir.ui.menu"/>
+			<delete id="pabi_asset_import_batch.menu_asset_import_batch_view" model="ir.ui.menu"/>
+			<delete id="pabi_asset_management.menu_action_account_asset_changemaster" model="ir.ui.menu"/>
+			
+        	<menuitem name="Asset Actions" id="menu_asset_actions"
+          		sequence="2" parent="menu_asset_main"/>
+        		<menuitem name="Request" id="menu_action_account_asset_request"
+          			action="pabi_asset_management.action_account_asset_request"
+        			sequence="1" parent="menu_asset_actions"
+          			groups="purchase.group_purchase_user,account.group_account_user"/>
+        		<menuitem name="Change Owner" id="menu_action_account_asset_changeowner"
+          			action="pabi_asset_management.action_account_asset_changeowner"
+        			sequence="2" parent="menu_asset_actions"
+          			groups="purchase.group_purchase_user,account.group_account_user"/>
+        		<menuitem name="Transfer" id="menu_action_account_asset_transfer"
+          			action="pabi_asset_management.action_account_asset_transfer"
+        			sequence="3" parent="menu_asset_actions"
+          			groups="purchase.group_purchase_user,account.group_account_user"/>
+		        <menuitem name="Adjustment" id="menu_action_account_asset_adjust"
+			        action="pabi_asset_management.action_account_asset_adjust"
+			        sequence="4" parent="menu_asset_actions"
+			        groups="account.group_account_user"/>
+        		<menuitem name="Removal" id="menu_action_account_asset_removal"
+          			action="pabi_asset_management.action_account_asset_removal"
+        			sequence="5" parent="menu_asset_actions"
+          			groups="account.group_account_user"/>
+        		<menuitem name="Direct Receive" id="menu_asset_direct_receive"
+          			action="pabi_asset_management.action_asset_direct_receive"
+        			sequence="6" parent="menu_asset_actions"
+          			groups="purchase.group_purchase_user,account.group_account_user"/>
+         		<menuitem name="My Asset Request" id="menu_action_account_asset_request_only"
+          			action="pabi_asset_management.action_account_asset_request_only"
+         			sequence="7" parent="menu_asset_actions"
+          			groups="pabi_asset_management.group_assets_report"/>
+        		<menuitem name="Asset Import Batch" id="menu_asset_import_batch_view"
+          			action="pabi_asset_import_batch.action_asset_import_batch_view"
+        			sequence="8" parent="menu_asset_actions"
+          			groups="purchase.group_purchase_user,account.group_account_user"/>
+        		<menuitem name="Change Master" id="menu_action_account_asset_changemaster"
+          			action="pabi_asset_management.action_account_asset_changemaster"
+        			sequence="9" parent="menu_asset_actions"
+          			groups="purchase.group_purchase_user,account.group_account_user"/>
+        	
+        	# Reports
+			<delete id="pabi_account_report.menu_account_asset_report" model="ir.ui.menu"/>
+			<delete id="pabi_account_report.menu_asset_repair_report" model="ir.ui.menu"/>
+			<delete id="pabi_account_report.menu_asset_register_report" model="ir.ui.menu"/>
+			<delete id="pabi_account_report.menu_asset_estimate_report" model="ir.ui.menu"/>
+		
+        	<menuitem name="Reports" id="menu_account_asset_report"
+            	sequence="3" parent="menu_asset_main"
+            	groups="purchase.group_purchase_user,account.group_account_user"/>
+      			<menuitem name="Asset Repair Report" id="menu_asset_repair_report"
+          			action="pabi_account_report.action_xlsx_report_asset_repair_form"
+          			sequence="1" parent="menu_account_asset_report"/>
+      			<menuitem name="Asset Register Report" id="menu_asset_register_report"
+          			action="pabi_account_report.action_asset_register_report_form"
+          			sequence="2" parent="menu_account_asset_report"/>
+      			<menuitem name="Asset Estimate Report" id="menu_asset_estimate_report"
+          			action="pabi_account_report.action_asset_estimate_report_form"
+          			sequence="3" parent="menu_account_asset_report"/>
+          			
+          			
         
         # Warehouse
 		<delete id="" model="ir.ui.menu"/>
@@ -1558,8 +1656,23 @@
 		<delete id="" model="ir.ui.menu"/>
         
         # Configurations
-		<delete id="" model="ir.ui.menu"/>
-        
+		<delete id="pabi_asset_management.account_asset_management.menu_finance_config_assets" model="ir.ui.menu"/>
+		<delete id="pabi_asset_management.account_asset_management.account_asset_profile_menu" model="ir.ui.menu"/>
+		<delete id="pabi_asset_management.menu_asset_action_import_template" model="ir.ui.menu"/>
+		
+		<menuitem name="Assets" id="account_asset_management.menu_finance_config_assets"
+          	sequence="7" parent="menu_nstda_configurations" 
+          	groups="pabi_base.group_nstda_admin_business"/>
+			<menuitem name="Asset Profiles" id="account_asset_management.account_asset_profile_menu"
+				action="account_asset_management.account_asset_profile_action"
+		        sequence="1" parent="account_asset_management.menu_finance_config_assets"
+		        groups="purchase.group_purchase_user,account.group_account_user"/>
+        	<menuitem name="Actions Templates (xls)" id="menu_asset_action_import_template"
+        		action="pabi_asset_management.action_asset_action_import_template"
+            	sequence="2" parent="account_asset_management.menu_finance_config_assets"
+            	groups="base.group_no_one"/>
+		
+		
         # Connector
 		<delete id="" model="ir.ui.menu"/>
         

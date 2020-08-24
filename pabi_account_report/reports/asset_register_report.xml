@@ -102,11 +102,6 @@
           <field name="context">{'lang': 'th_TH'}</field>
       </record>
 
-      <menuitem id="menu_asset_register_report"
-          name="Asset Register Report"
-          parent="menu_account_asset_report"
-          action="action_asset_register_report_form"
-          sequence="20"/>
 
     </data>
 </openerp>
