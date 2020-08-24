@@ -1706,6 +1706,108 @@
         
         # Reporting
 		<delete id="" model="ir.ui.menu"/>
+        <menuitem name="Reporting" id="base.menu_reporting"
+            sequence="13" groups="base.group_user"/>
+            
+            # Dashboards
+            <menuitem name="Dashboards" id="base.menu_reporting_dashboard"
+            	sequence="1" parent="base.menu_reporting"/>
+		        <menuitem name="My Dashboard" id="board.menu_board_my_dash"
+		            action="board.open_board_my_dash_action"
+		            sequence="1" parent="base.menu_reporting_dashboard"/>
+            	
+            # Sales
+        	<menuitem name="Sales" id="sales_team.base.next_id_64"
+        		sequence="2" parent="base.menu_reporting"
+        		groups="base.group_sale_manager"/>
+    			<menuitem name="Sales Analysis" id="sale.menu_report_product_all"
+    				action="sale.action_order_report_all"
+    				sequence="1" parent="sales_team.base.next_id_64"/>
+            
+            # Purchase
+    		<menuitem name="Purchase" id="purchase.base.next_id_73"
+    			sequence="3" parent="base.menu_reporting"
+        		groups="purchase.group_purchase_manager"/>
+			    <menuitem name="Purchase Analysis" id="purchase.menu_action_purchase_order_report_all"
+			    	action="purchase.action_purchase_order_report_all"
+			    	sequence="1" parent="purchase.base.next_id_73"/>
+            
+            # Warehouse
+        	<menuitem name="Warehouse" id="stock.next_id_61"
+        		sequence="4" parent="base.menu_reporting"
+        		groups="stock.group_stock_manager"/>
+        		<menuitem name="Stock Valuation" id="stock_account.menu_action_wizard_valuation_history"
+        			action="stock_account.action_wizard_stock_valuation_history"
+        			sequence="1" parent="stock.next_id_61"/>
+		        <menuitem name="Latest Inventories &amp; Moves" id="stock.menu_report_stock_line_date"
+		        	action="stock.action_stock_line_date"
+		        	sequence="2" parent="stock.next_id_61"/>
+            
+            # Accounting
+	        <menuitem name="Accounting" id="account.menu_finance_reporting"
+	        	sequence="5" parent="base.menu_reporting"/>
+    			<menuitem name="Invoices Analysis" id="account.menu_action_account_invoice_report_all"
+    				action="account.action_account_invoice_report_all"
+    				sequence="1" parent="account.menu_finance_reporting"/>
+			    <menuitem name="Entries Analysis" id="account.menu_action_account_entries_report_all"
+			    	action="account.action_account_entries_report_all"
+			        sequence="2" parent="account.menu_finance_reporting"
+			        groups="account.group_account_manager"/>
+			    <menuitem name="Treasury Analysis" id="account.menu_action_account_treasury_report_all"
+			    	action="account.action_account_treasury_report_all"
+			        sequence="3" parent="account.menu_finance_reporting"
+			        groups="account.group_account_manager"/>
+			    <menuitem name="Sales Receipts Analysis" id="account_voucher.menu_action_sale_receipt_report_all"
+			    	action="account_voucher.action_sale_receipt_report_all"
+			    	sequence="4" parent="account.menu_finance_reporting"/>
+			    <menuitem name="Analytic Entries Analysis" id="account.menu_action_analytic_entries_report"
+			    	action="account.action_analytic_entries_report"
+			        sequence="5" parent="account.menu_finance_reporting"
+			        groups="analytic.group_analytic_accounting"/>
+			        
+            # Human Resources
+	        <menuitem name="Human Resources" id="hr.menu_hr_reporting"
+	        	sequence="6" parent="base.menu_reporting"/>
+			    <menuitem name="Expenses Analysis" id="hr_expense.menu_hr_expense_report_all"
+			    	action="hr_expense.action_hr_expense_report_all"
+			    	sequence="1" parent="hr.menu_hr_reporting"/>
+            
+            # Audit
+	        <menuitem name="Audit" id="auditlog.menu_audit"
+	            sequence="7" parent="base.menu_reporting"
+	            groups="base.group_system"/>
+		        <menuitem name="Rules" id="auditlog.menu_action_auditlog_rule_tree"
+		        	action="auditlog.action_auditlog_rule_tree"
+		        	sequence="1" parent="auditlog.menu_audit"/>
+		        <menuitem name="Logs" id="auditlog.menu_audit_logs"
+		            action="auditlog.action_auditlog_log_tree"
+		            sequence="2" parent="auditlog.menu_audit"/>
+		        <menuitem name="User sessions" id="auditlog.menu_action_auditlog_http_session_tree"
+		            action="auditlog.action_auditlog_http_session_tree"
+		            sequence="3" parent="auditlog.menu_audit"/>
+		        <menuitem name="HTTP Requests" id="auditlog.menu_action_auditlog_http_request_tree"
+		            action="auditlog.action_auditlog_http_request_tree"
+		            sequence="4" parent="auditlog.menu_audit"/>
+
+            # Sql Export
+    		<menuitem name="Sql Export" id="sql_export.sql_export_menu"
+    			sequence="8" parent="base.menu_reporting"/>
+			    <menuitem name="Sql Export" id="sql_export.sql_export_menu_view"
+			    	action="sql_export.sql_export_tree_action"
+			    	sequence="1" parent="sql_export.sql_export_menu"/>
+			    <menuitem name="Sql Export Variables" id="sql_export.sql_parameter_menu_view"
+			    	action="sql_export.sql_parameter_tree_action"
+			    	sequence="2" parent="sql_export.sql_export_menu"
+			    	groups="sql_request_abstract.group_sql_request_manager"/>
+            
+            # Configuration
+            <menuitem name="Configuration" id="base.menu_reporting_config"
+            	sequence="9" parent="base.menu_reporting"
+            	groups="base.group_system"/>
+			    <menuitem name="Create Board" id="board.menu_board_create"
+			    	action="board.action_board_create"
+			        sequence="1" parent="base.menu_reporting_config"
+			        groups="base.group_no_one"/>
         
         # My Jobs
 		<delete id="" model="ir.ui.menu"/>
