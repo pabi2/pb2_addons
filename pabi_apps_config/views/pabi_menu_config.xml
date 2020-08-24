@@ -1643,11 +1643,66 @@
       			<menuitem name="Asset Estimate Report" id="menu_asset_estimate_report"
           			action="pabi_account_report.action_asset_estimate_report_form"
           			sequence="3" parent="menu_account_asset_report"/>
-          			
-          			
         
         # Warehouse
-		<delete id="" model="ir.ui.menu"/>
+        <menuitem name="Warehouse" id="stock.menu_stock_root"
+        	sequence="12"
+            groups="stock.group_stock_manager,stock.group_stock_user"/>
+            
+            # Operations
+			<delete id="pabi_stock_easy_internal_transfer.menu_picking_easy_internal_transfer" model="ir.ui.menu"/>
+		
+        	<menuitem name="Operations" id="stock.menu_stock_warehouse_mgmt"
+        		sequence="1" parent="stock.menu_stock_root"/>
+		        <menuitem name="All Operations" id="stock.menu_action_picking_type_form"
+		            action="stock.action_picking_type_form"
+		            sequence="1" parent="stock.menu_stock_warehouse_mgmt"/>
+		        <menuitem name="Internal Transfers" id="menu_picking_easy_internal_transfer"
+		        	action="pabi_stock_easy_internal_transfer.action_picking_easy_internal_transfer"
+		            sequence="2" parent="stock.menu_stock_warehouse_mgmt"/>
+            
+            # Inventory Control
+        	<menuitem name="Inventory Control" id="stock.menu_stock_inventory_control"
+        		sequence="2" parent="stock.menu_stock_root"/>
+    			<menuitem name="Current Inventory Valuation" id="stock_account.menu_action_history_tree"
+    				action="stock_account.action_history_tree"
+            		sequence="1" parent="stock.menu_stock_inventory_control"
+            		groups="stock.group_locations"/>
+        		<menuitem name="Inventory Adjustments" id="stock.menu_action_inventory_form"
+        			action="stock.action_inventory_form"
+        			sequence="2" parent="stock.menu_stock_inventory_control"/>
+            
+            # Traceability
+        	<menuitem name="Traceability" id="stock.menu_traceability"
+        		sequence="3" parent="stock.menu_stock_root"/>
+		        <menuitem name="Stock Moves" id="stock.menu_action_move_form2"
+		        	action="stock.action_move_form2"
+		        	sequence="1" parent="stock.menu_traceability"
+		        	groups="stock.group_locations"/>
+		        <menuitem name="Quants" id="stock.menu_quants"
+		        	action="stock.quantsact"
+		        	sequence="2" parent="stock.menu_traceability"
+		        	groups="base.group_no_one"/>
+            
+            # Schedulers
+	        <menuitem name="Schedulers" id="stock.menu_stock_sched"
+	        	sequence="4" parent="stock.menu_stock_root"
+	        	groups="stock.group_stock_manager"/>
+        		<menuitem name="Compute Stock Minimum Rules Only" id="stock.menu_procurement_compute"
+        			action="stock.action_procurement_compute"
+        			sequence="1" parent="stock.menu_stock_sched"
+        			groups="base.group_no_one"/>
+            
+            # Products
+        	<menuitem name="Products" id="stock.menu_stock_product"
+        		sequence="5" parent="stock.menu_stock_root"/>
+		        <menuitem name="Products by Category" id="stock.menu_product_by_category_stock_form"
+		        	action="product.product_category_action"
+		            sequence="1" parent="stock.menu_stock_product"
+		            groups="base.group_no_one"/>
+		        <menuitem name="Products" id="stock.menu_stock_products_menu"
+		        	action="product.product_template_action"
+		        	sequence="1" parent="stock.menu_stock_product"/>
         
         # Reporting
 		<delete id="" model="ir.ui.menu"/>
