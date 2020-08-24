@@ -107,6 +107,6 @@
           parent="menu_account_asset_report"
           action="action_asset_register_report_form"
           sequence="20"/>
-
+	  <delete id = "view_xlsx_report_advance_history_form" model = "ir.ui.view" />
     </data>
 </openerp>

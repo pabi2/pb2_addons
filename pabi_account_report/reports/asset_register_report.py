@@ -238,6 +238,8 @@ class AssetRegisterReport(models.TransientModel):
         self.ensure_one()
         dom = []
         # Prepare DOM to filter assets
+        if self.asset_filter:
+            self._onchange_asset_filter()
         if self.asset_ids:
             dom += [('id', 'in', tuple(self.asset_ids.ids + [0]))]
         if self.asset_profile_ids:
@@ -291,7 +293,10 @@ class AssetRegisterReport(models.TransientModel):
         if self.room_ids:
             dom += [('room_id', 'in', tuple(self.room_ids.ids + [0]))]
         if self.asset_active:
-            dom += [('active', '=', True if (self.asset_active == 'active') else False)]
+            if self.asset_active == 'active':
+                dom += [('active', '=', True)]
+            elif self.asset_active == 'inactive':
+                dom += [('active', '=', False)]
         # date_start <= date_end
         if self.date_end:
             dom += [('date_start', '<=', self.date_end)]
@@ -475,14 +480,17 @@ class AssetRegisterReport(models.TransientModel):
             dom.append(('code', 'ilike', codes))
             self.owner_budget = Chartfield.search(dom, order='id')
                   
-    @api.onchange('asset_state')
-    def _onchange_asset_state(self):
+    @api.onchange('asset_state','asset_active')
+    def _onchange_asset_state_asset_active(self):
         res = {}
         state_list = []
         for rec in self.asset_state:
             status = rec.status
             state_list.append(status)
-        res['domain'] =  {'asset_ids': [('state','in',state_list)],}
+        if self.asset_active == 'active':
+            res['domain'] =  {'asset_ids': [('state','in',state_list),('active','=',True)]}
+        if self.asset_active == 'inactive' :
+            res['domain'] =  {'asset_ids': [('state','in',state_list),('active','!=',True)]}
         return res 
     
     @api.onchange('costcenter_ids')
@@ -496,15 +504,6 @@ class AssetRegisterReport(models.TransientModel):
             res['domain'] =  {'budget': [('code','in',costcenter_list)],'owner_budget':[('code','in',costcenter_list)]}
         else :
             res['domain'] =  {'budget': [('active','=',True)],'owner_budget':[('active','=',True)]}
-        return res
-    
-    @api.onchange('asset_active')
-    def _onchange_asset_active(self):
-        res = {}
-        if self.asset_active == 'active':
-            res['domain'] =  {'budget': [('active','=',True)],'owner_budget':[('active','=',True)]}
-        elif self.asset_active == 'inactive' :
-            res['domain'] =  {'budget': [('active','=',False)],'owner_budget':[('active','=',False)]}
         return res
             
             
