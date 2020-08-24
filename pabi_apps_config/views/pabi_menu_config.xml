@@ -1717,20 +1717,20 @@
 		            sequence="1" parent="base.menu_reporting_dashboard"/>
             	
             # Sales
-        	<menuitem name="Sales" id="sales_team.base.next_id_64"
+        	<menuitem name="Sales" id="base.next_id_64"
         		sequence="2" parent="base.menu_reporting"
         		groups="base.group_sale_manager"/>
     			<menuitem name="Sales Analysis" id="sale.menu_report_product_all"
     				action="sale.action_order_report_all"
-    				sequence="1" parent="sales_team.base.next_id_64"/>
+    				sequence="1" parent="base.next_id_64"/>
             
             # Purchase
-    		<menuitem name="Purchase" id="purchase.base.next_id_73"
+    		<menuitem name="Purchase" id="base.next_id_73"
     			sequence="3" parent="base.menu_reporting"
         		groups="purchase.group_purchase_manager"/>
 			    <menuitem name="Purchase Analysis" id="purchase.menu_action_purchase_order_report_all"
 			    	action="purchase.action_purchase_order_report_all"
-			    	sequence="1" parent="purchase.base.next_id_73"/>
+			    	sequence="1" parent="base.next_id_73"/>
             
             # Warehouse
         	<menuitem name="Warehouse" id="stock.next_id_61"
