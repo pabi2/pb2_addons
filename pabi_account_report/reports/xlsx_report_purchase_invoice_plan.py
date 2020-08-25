@@ -425,7 +425,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     left join purchase_order_line pol on pol.id = pip.order_line_id
                     left join account_invoice av on av.id = pip.ref_invoice_id and av.state <> 'cancel'
                     left join account_invoice_line avl on avl.invoice_id = av.id
-                         and avl.purchase_line_id = pol.id
+                         and (avl.purchase_line_id = pol.id or (avl.purchase_line_id is null and pip.order_line_id is null))
                     left join purchase_work_acceptance wa on wa.invoice_created = av.id and wa.state <> 'cancel'
                     left join purchase_work_acceptance_line wal 
                         on wal.acceptance_id = wa.id and wal.line_id = pol.id
