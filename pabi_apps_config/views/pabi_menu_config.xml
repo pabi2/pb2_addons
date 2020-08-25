@@ -1643,17 +1643,199 @@
       			<menuitem name="Asset Estimate Report" id="menu_asset_estimate_report"
           			action="pabi_account_report.action_asset_estimate_report_form"
           			sequence="3" parent="menu_account_asset_report"/>
-          			
-          			
         
         # Warehouse
-		<delete id="" model="ir.ui.menu"/>
+        <menuitem name="Warehouse" id="stock.menu_stock_root"
+        	sequence="12"
+            groups="stock.group_stock_manager,stock.group_stock_user"/>
+            
+            # Operations
+			<delete id="pabi_stock_easy_internal_transfer.menu_picking_easy_internal_transfer" model="ir.ui.menu"/>
+		
+        	<menuitem name="Operations" id="stock.menu_stock_warehouse_mgmt"
+        		sequence="1" parent="stock.menu_stock_root"/>
+		        <menuitem name="All Operations" id="stock.menu_action_picking_type_form"
+		            action="stock.action_picking_type_form"
+		            sequence="1" parent="stock.menu_stock_warehouse_mgmt"/>
+		        <menuitem name="Internal Transfers" id="menu_picking_easy_internal_transfer"
+		        	action="pabi_stock_easy_internal_transfer.action_picking_easy_internal_transfer"
+		            sequence="2" parent="stock.menu_stock_warehouse_mgmt"/>
+            
+            # Inventory Control
+        	<menuitem name="Inventory Control" id="stock.menu_stock_inventory_control"
+        		sequence="2" parent="stock.menu_stock_root"/>
+    			<menuitem name="Current Inventory Valuation" id="stock_account.menu_action_history_tree"
+    				action="stock_account.action_history_tree"
+            		sequence="1" parent="stock.menu_stock_inventory_control"
+            		groups="stock.group_locations"/>
+        		<menuitem name="Inventory Adjustments" id="stock.menu_action_inventory_form"
+        			action="stock.action_inventory_form"
+        			sequence="2" parent="stock.menu_stock_inventory_control"/>
+            
+            # Traceability
+        	<menuitem name="Traceability" id="stock.menu_traceability"
+        		sequence="3" parent="stock.menu_stock_root"/>
+		        <menuitem name="Stock Moves" id="stock.menu_action_move_form2"
+		        	action="stock.action_move_form2"
+		        	sequence="1" parent="stock.menu_traceability"
+		        	groups="stock.group_locations"/>
+		        <menuitem name="Quants" id="stock.menu_quants"
+		        	action="stock.quantsact"
+		        	sequence="2" parent="stock.menu_traceability"
+		        	groups="base.group_no_one"/>
+            
+            # Schedulers
+	        <menuitem name="Schedulers" id="stock.menu_stock_sched"
+	        	sequence="4" parent="stock.menu_stock_root"
+	        	groups="stock.group_stock_manager"/>
+        		<menuitem name="Compute Stock Minimum Rules Only" id="stock.menu_procurement_compute"
+        			action="stock.action_procurement_compute"
+        			sequence="1" parent="stock.menu_stock_sched"
+        			groups="base.group_no_one"/>
+            
+            # Products
+        	<menuitem name="Products" id="stock.menu_stock_product"
+        		sequence="5" parent="stock.menu_stock_root"/>
+		        <menuitem name="Products by Category" id="stock.menu_product_by_category_stock_form"
+		        	action="product.product_category_action"
+		            sequence="1" parent="stock.menu_stock_product"
+		            groups="base.group_no_one"/>
+		        <menuitem name="Products" id="stock.menu_stock_products_menu"
+		        	action="product.product_template_action"
+		        	sequence="1" parent="stock.menu_stock_product"/>
         
         # Reporting
-		<delete id="" model="ir.ui.menu"/>
+        <menuitem name="Reporting" id="base.menu_reporting"
+            sequence="13" groups="base.group_user"/>
+            
+            # Dashboards
+            <menuitem name="Dashboards" id="base.menu_reporting_dashboard"
+            	sequence="1" parent="base.menu_reporting"/>
+		        <menuitem name="My Dashboard" id="board.menu_board_my_dash"
+		            action="board.open_board_my_dash_action"
+		            sequence="1" parent="base.menu_reporting_dashboard"/>
+            	
+            # Sales
+        	<menuitem name="Sales" id="base.next_id_64"
+        		sequence="2" parent="base.menu_reporting"
+        		groups="base.group_sale_manager"/>
+    			<menuitem name="Sales Analysis" id="sale.menu_report_product_all"
+    				action="sale.action_order_report_all"
+    				sequence="1" parent="base.next_id_64"/>
+            
+            # Purchase
+    		<menuitem name="Purchase" id="base.next_id_73"
+    			sequence="3" parent="base.menu_reporting"
+        		groups="purchase.group_purchase_manager"/>
+			    <menuitem name="Purchase Analysis" id="purchase.menu_action_purchase_order_report_all"
+			    	action="purchase.action_purchase_order_report_all"
+			    	sequence="1" parent="base.next_id_73"/>
+            
+            # Warehouse
+        	<menuitem name="Warehouse" id="stock.next_id_61"
+        		sequence="4" parent="base.menu_reporting"
+        		groups="stock.group_stock_manager"/>
+        		<menuitem name="Stock Valuation" id="stock_account.menu_action_wizard_valuation_history"
+        			action="stock_account.action_wizard_stock_valuation_history"
+        			sequence="1" parent="stock.next_id_61"/>
+		        <menuitem name="Latest Inventories &amp; Moves" id="stock.menu_report_stock_line_date"
+		        	action="stock.action_stock_line_date"
+		        	sequence="2" parent="stock.next_id_61"/>
+            
+            # Accounting
+	        <menuitem name="Accounting" id="account.menu_finance_reporting"
+	        	sequence="5" parent="base.menu_reporting"/>
+    			<menuitem name="Invoices Analysis" id="account.menu_action_account_invoice_report_all"
+    				action="account.action_account_invoice_report_all"
+    				sequence="1" parent="account.menu_finance_reporting"/>
+			    <menuitem name="Entries Analysis" id="account.menu_action_account_entries_report_all"
+			    	action="account.action_account_entries_report_all"
+			        sequence="2" parent="account.menu_finance_reporting"
+			        groups="account.group_account_manager"/>
+			    <menuitem name="Treasury Analysis" id="account.menu_action_account_treasury_report_all"
+			    	action="account.action_account_treasury_report_all"
+			        sequence="3" parent="account.menu_finance_reporting"
+			        groups="account.group_account_manager"/>
+			    <menuitem name="Sales Receipts Analysis" id="account_voucher.menu_action_sale_receipt_report_all"
+			    	action="account_voucher.action_sale_receipt_report_all"
+			    	sequence="4" parent="account.menu_finance_reporting"/>
+			    <menuitem name="Analytic Entries Analysis" id="account.menu_action_analytic_entries_report"
+			    	action="account.action_analytic_entries_report"
+			        sequence="5" parent="account.menu_finance_reporting"
+			        groups="analytic.group_analytic_accounting"/>
+			        
+            # Human Resources
+	        <menuitem name="Human Resources" id="hr.menu_hr_reporting"
+	        	sequence="6" parent="base.menu_reporting"/>
+			    <menuitem name="Expenses Analysis" id="hr_expense.menu_hr_expense_report_all"
+			    	action="hr_expense.action_hr_expense_report_all"
+			    	sequence="1" parent="hr.menu_hr_reporting"/>
+            
+            # Audit
+	        <menuitem name="Audit" id="auditlog.menu_audit"
+	            sequence="7" parent="base.menu_reporting"
+	            groups="base.group_system"/>
+		        <menuitem name="Rules" id="auditlog.menu_action_auditlog_rule_tree"
+		        	action="auditlog.action_auditlog_rule_tree"
+		        	sequence="1" parent="auditlog.menu_audit"/>
+		        <menuitem name="Logs" id="auditlog.menu_audit_logs"
+		            action="auditlog.action_auditlog_log_tree"
+		            sequence="2" parent="auditlog.menu_audit"/>
+		        <menuitem name="User sessions" id="auditlog.menu_action_auditlog_http_session_tree"
+		            action="auditlog.action_auditlog_http_session_tree"
+		            sequence="3" parent="auditlog.menu_audit"/>
+		        <menuitem name="HTTP Requests" id="auditlog.menu_action_auditlog_http_request_tree"
+		            action="auditlog.action_auditlog_http_request_tree"
+		            sequence="4" parent="auditlog.menu_audit"/>
+
+            # Sql Export
+    		<menuitem name="Sql Export" id="sql_export.sql_export_menu"
+    			sequence="8" parent="base.menu_reporting"/>
+			    <menuitem name="Sql Export" id="sql_export.sql_export_menu_view"
+			    	action="sql_export.sql_export_tree_action"
+			    	sequence="1" parent="sql_export.sql_export_menu"/>
+			    <menuitem name="Sql Export Variables" id="sql_export.sql_parameter_menu_view"
+			    	action="sql_export.sql_parameter_tree_action"
+			    	sequence="2" parent="sql_export.sql_export_menu"
+			    	groups="sql_request_abstract.group_sql_request_manager"/>
+            
+            # Configuration
+            <menuitem name="Configuration" id="base.menu_reporting_config"
+            	sequence="9" parent="base.menu_reporting"
+            	groups="base.group_system"/>
+			    <menuitem name="Create Board" id="board.menu_board_create"
+			    	action="board.action_board_create"
+			        sequence="1" parent="base.menu_reporting_config"
+			        groups="base.group_no_one"/>
         
         # My Jobs
-		<delete id="" model="ir.ui.menu"/>
+		<delete id="pabi_utils.my_jobs_root" model="ir.ui.menu"/>
+		<delete id="pabi_utils.my_jobs" model="ir.ui.menu"/>
+		<delete id="pabi_utils.my_queue_job" model="ir.ui.menu"/>
+		<delete id="pabi_utils.menu_my_complete_job" model="ir.ui.menu"/>
+		<delete id="pabi_utils.my_spool_report" model="ir.ui.menu"/>
+		<delete id="pabi_utils.all_spool_report" model="ir.ui.menu"/>
+		
+        <menuitem name="My Jobs" id="my_jobs_root"
+          	sequence="14"
+          	groups="pabi_utils.group_see_own_spool_report"/>
+        	<menuitem name="My Jobs" id="my_jobs"
+        		sequence="1" parent="my_jobs_root"
+          		groups="base.group_user"/>
+	        	<menuitem name="In-Progress Jobs" id="my_queue_job"
+					action="pabi_utils.action_my_queue_job"
+	        		sequence="1" parent="my_jobs"/>
+	        	<menuitem name="Completed Jobs" id="menu_my_complete_job"
+					action="pabi_utils.action_my_complete_job"
+	        		sequence="2" parent="my_jobs"/>
+	        	<menuitem name="My Spool Reports" id="my_spool_report"
+					action="pabi_utils.action_my_spool_report"
+	        		sequence="3" parent="my_jobs" 
+          			groups="pabi_utils.group_see_own_spool_report"/>
+	        	<menuitem name="All Spool Reports" id="all_spool_report"
+					action="pabi_utils.action_all_spool_report"
+	        		sequence="4" parent="my_jobs" 
+          			groups="pabi_utils.group_see_all_spool_report"/>
         
         # Configurations
 		<delete id="pabi_asset_management.account_asset_management.menu_finance_config_assets" model="ir.ui.menu"/>
