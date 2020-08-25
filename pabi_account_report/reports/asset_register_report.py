@@ -490,7 +490,7 @@ class AssetRegisterReport(models.TransientModel):
         if self.asset_active == 'active':
             res['domain'] =  {'asset_ids': [('state','in',state_list),('active','=',True)]}
         if self.asset_active == 'inactive' :
-            res['domain'] =  {'asset_ids': [('state','in',state_list),('active','!=',True)]}
+            res['domain'] =  {'asset_ids': [('state','in',state_list),('active','=',False)]}
         return res 
     
     @api.onchange('costcenter_ids')
