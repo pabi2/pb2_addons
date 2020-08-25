@@ -41,7 +41,7 @@
                               <field name="asset_filter" placeholder="Paste list of asset codes" nolabel="1"/>
                           </group>
                           <group string="Assets">
-                              <field name="asset_ids" nolabel="1">
+                              <field name="asset_ids" nolabel="1" context="{'active_test': False}">
                                   <tree editable="bottom">
                                       <field name="code" readonly="1"/>
                                       <field name="name" readonly="1"/>
