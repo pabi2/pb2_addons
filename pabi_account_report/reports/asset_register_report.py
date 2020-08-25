@@ -195,7 +195,7 @@ class AssetRegisterReport(models.TransientModel):
         [('active', 'Active'),
          ('inactive', 'Inactive')],
         string='Asset Active',
-        default='active',
+#         default='active',
     )
     results = fields.Many2many(
         'asset.register.view',
