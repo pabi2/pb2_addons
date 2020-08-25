@@ -17,7 +17,7 @@ class SalesOrder(models.Model):
             stock_err = {}
             products = [x['product_id'] for x in data_dict['order_line']]
             for rec in data_dict['order_line']:
-                products.append(rec['product_id'])
+                #products.append(rec['product_id'])
                 product_dict[rec['product_id']] = rec['product_uom_qty']
             
             workflow = WorkFlow.search([('name', '=', data_dict['workflow_process_id'])])
