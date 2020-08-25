@@ -1,10 +1,6 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
-
-        <menuitem name="Configuration" groups="base.group_system,pabi_base.group_nstda_admin_business" id="account_budget_activity.menu_action_account_budget_config" parent="pabi_apps_config.menu_budgeting" sequence="120"/>
-
-
         <!-- Import Templates -->
         <record id="action_budget_plan_import_template" model="ir.actions.act_window">
             <field name="name">Budget Plan Templates (xls)</field>
