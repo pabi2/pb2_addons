@@ -23,15 +23,30 @@ class ResBank(models.Model):
 class ResPartnerBank(models.Model):
     _inherit = 'res.partner.bank'
 
+    @api.model
+    def _get_domain_bank_branch(self):
+        domain = []
+        if self.bank:
+            domain = [('bank_id', '=', self.bank.id)]
+
+        return {'domain': {'bank_branch': domain}}
+    
     bank_branch = fields.Many2one(
         'res.bank.branch',
-        domain="[('bank_id', '=', bank)]",
+        domain=_get_domain_bank_branch,
+        string='Bank Branch',
         required=True,  # for PABI2, this is required
     )
 
     def onchange_bank_id(self, cr, uid, ids, bank_id, context=None):
         result = super(ResPartnerBank, self).onchange_bank_id(cr, uid, ids, bank_id, context=context)
         result['value']['bank_branch'] = False
+        
+        PartnerBank = self.pool.get('res.partner.bank')
+        partner_bank_id = PartnerBank.browse(cr, uid, ids)
+        domain = partner_bank_id._get_domain_bank_branch()
+        
+        result['domain'] = domain['domain']
         return result
 
     @api.multi
