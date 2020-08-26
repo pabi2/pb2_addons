@@ -467,7 +467,7 @@
         <record id="budget_plan_project_base_xlsx_template" model="ir.attachment">
             <field name="res_model">budget.plan.project</field>
             <field name="datas"></field>
-            <field name="datas_fname">Budget_Plan_Project_20200825-form1.xlsx</field>
+            <field name="datas_fname">Budget_Plan_Project_20200825-form_test(1).xlsx</field>
             <field name="name">Project Based Template</field>
             <field name="parent_id" eval="ref('dir_budget_plan_template')"/>
             <field name="description">
