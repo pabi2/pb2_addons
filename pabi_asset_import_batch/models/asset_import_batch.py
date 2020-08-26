@@ -115,6 +115,7 @@ class AccountAssetImportBatch(models.Model):
                 'method_period': line.method_period,
                 'days_calc': line.days_calc,
                 'prorata': line.prorata,
+                'is_import': True,  # True only if import asset
             }
             new_asset = asset_obj.create(asset_dict)
             # purchase_id is field related can't create
