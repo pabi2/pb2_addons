@@ -29,9 +29,10 @@ class ResPartnerBank(models.Model):
         required=True,  # for PABI2, this is required
     )
 
-    @api.onchange('bank')
-    def _onchange_bank(self):
-        self.bank_branch = False
+    def onchange_bank_id(self, cr, uid, ids, bank_id, context=None):
+        result = super(ResPartnerBank, self).onchange_bank_id(cr, uid, ids, bank_id, context=context)
+        result['value']['bank_branch'] = False
+        return result
 
     @api.multi
     def name_get(self):

@@ -20,7 +20,6 @@
     'data': [
         'views/voucher_payment_receipt_view.xml',
         'views/partner_view.xml',
-        'views/account_bank_view.xml',
         'views/account_invoice_view.xml',
         'views/ir_sequence_view.xml',
     ],
