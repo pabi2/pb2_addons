@@ -33,7 +33,7 @@ class ResPartnerBank(models.Model):
     
     bank_branch = fields.Many2one(
         'res.bank.branch',
-        domain=_get_domain_bank_branch,
+        domain="[('bank_id', '=', bank)]",
         string='Bank Branch',
         required=True,  # for PABI2, this is required
     )
