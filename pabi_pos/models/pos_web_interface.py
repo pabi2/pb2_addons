@@ -15,9 +15,9 @@ class SalesOrder(models.Model):
             res = {'is_success': True}
             product_dict = {}
             stock_err = {}
+            product_err = []
             products = [x['product_id'] for x in data_dict['order_line']]
             for rec in data_dict['order_line']:
-                #products.append(rec['product_id'])
                 product_dict[rec['product_id']] = rec['product_uom_qty']
             
             workflow = WorkFlow.search([('name', '=', data_dict['workflow_process_id'])])
@@ -30,13 +30,17 @@ class SalesOrder(models.Model):
             else:
                 curr_stock = workflow.location_id.get_current_stock(products)
                 for prod in products:
-                    if curr_stock[prod] < product_dict[prod]:
+                    if prod not in curr_stock.keys():
+                        product_err.append(prod)
+                    elif curr_stock[prod] < product_dict[prod]:
                         stock_err[prod] = curr_stock[prod]
 
-            if len(stock_err) > 0:
+            if len(stock_err) > 0 or len(product_err) > 0:
                 res = {
                     'is_success': False,
-                    'result': {'location': workflow.location_id.name, 'stock_line': stock_err},
+                    'result': {'location': workflow.location_id.name,
+                               'stock_line': stock_err,
+                               'product_name': product_err},
                     'messages': _('Stock Error!!'),
                 }
         except Exception, e:
