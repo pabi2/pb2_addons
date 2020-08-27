@@ -26,6 +26,9 @@
 	            <group name="accounting" position="attributes">
 	            	<attribute name="attrs" >{}</attribute>
 	            </group>
+	            <field name="bank" position="replace">
+	            	<field name="bank" on_change="1"/>
+	            </field>
 	            <xpath expr="//field[@name='bank_bic']" position="after">
                     <field name="bank_branch"/>
                 </xpath>

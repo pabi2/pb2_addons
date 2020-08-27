@@ -37,17 +37,16 @@ class ResPartnerBank(models.Model):
         string='Bank Branch',
         required=True,  # for PABI2, this is required
     )
-
-    def onchange_bank_id(self, cr, uid, ids, bank_id, context=None):
-        result = super(ResPartnerBank, self).onchange_bank_id(cr, uid, ids, bank_id, context=context)
-        result['value']['bank_branch'] = False
-        
-        PartnerBank = self.pool.get('res.partner.bank')
-        partner_bank_id = PartnerBank.browse(cr, uid, ids)
-        domain = partner_bank_id._get_domain_bank_branch()
-        
-        result['domain'] = domain['domain']
-        return result
+    
+    @api.onchange('bank')
+    def _onchange_bank(self):
+        if self.bank:
+            self.bank_name = self.bank.name
+            self.bank_bic = self.bank.bic
+            self.bank_branch = False
+            
+            return {'domain': {'bank_branch': [('bank_id', '=', self.bank.id)]}}
+    
 
     @api.multi
     def name_get(self):
