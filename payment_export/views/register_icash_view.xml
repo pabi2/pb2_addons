@@ -54,7 +54,7 @@
                             	<field name="line_filter" placeholder="Extend search with comma and between. e.g., 111111111,222222222"
                             			attrs="{'readonly': [('state', 'in', ('registered','cancel'))]}"/>
                                 <field name="line_ids">
-                                    <tree editable="bottom" create="0" edit="1">
+                                    <tree editable="bottom" create="0" edit="1" default_order="create_date DESC">
                                         <field name="partner_bank_id" invisible="1"/>
                                         <field name="beneficiary_code" readonly="1"/>
                                         <field name="owner_name_en" readonly="1"/>
