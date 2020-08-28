@@ -14,7 +14,7 @@ This module allow easy management of security for each user.
     'installable': True,
     'depends': [
         'meta_groups',
-        'pabi_utils',
+        #'pabi_utils',
         'base',
         'pabi_readonly_group',
     ],
