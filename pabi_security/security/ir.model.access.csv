@@ -245,3 +245,7 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 "pos_stock_move","pos_stock_move","stock.model_stock_move","group_pabi_pos",1,0,0,0
 "pos_stock_quant","pos_stock_quant","stock.model_stock_quant","group_pabi_pos",1,0,0,0
 "pos_product_category","pos_product_category","product.model_product_category","group_pabi_pos",1,1,1,0
+
+"hr_hr_salary_expense","hr_hr_salary_expense","hr_salary.model_hr_salary_expense","group_pabi_hr",1,1,1,0
+"hr_queue_job","hr_queue_job","connector.model_queue_job","group_pabi_hr",1,0,0,0
+"hr_ir_attachment","hr_ir_attachment","base.model_ir_attachment","group_pabi_hr",1,1,1,0
