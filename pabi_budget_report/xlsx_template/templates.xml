@@ -54,7 +54,7 @@
                             'T11': 'activity_unit_price#{number_format=number}',
                             'U11': 'activity_unit#{number_format=number}',
                             'V11': 'total_budget#{number_format=number}',
-                            'W11': 'name${value or ""}',
+                            'W11': 'description${value or ""}',
                             'X11': 'reason${value or ""}',
                             'Y11': 'm0#{number_format=number}',
                             'Z11': 'next_fy_commitment#{number_format=number}',
