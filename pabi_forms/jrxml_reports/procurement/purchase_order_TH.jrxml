@@ -648,7 +648,7 @@ WHERE $X{IN, po.id, PIDS}  and pol.active = True
 				<reportElement x="407" y="4" width="74" height="43">
 					<printWhenExpression><![CDATA[$F{ou_id} == 7]]></printWhenExpression>
 				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"/pabi_forms/jrxml_reports/procurement/logo_nanotec.gif"]]></imageExpression>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"logo_nanotec.gif"]]></imageExpression>
 			</image>
 			<image>
 				<reportElement x="407" y="4" width="74" height="43">
@@ -660,7 +660,7 @@ WHERE $X{IN, po.id, PIDS}  and pol.active = True
 				<reportElement x="407" y="4" width="74" height="43">
 					<printWhenExpression><![CDATA[$F{ou_id} == 5]]></printWhenExpression>
 				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"/../../pabi_forms/jrxml_reports/procurement/logo_nectec.gif"]]></imageExpression>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"logo_nectec.gif"]]></imageExpression>
 			</image>
 			<image>
 				<reportElement x="407" y="4" width="74" height="43">
