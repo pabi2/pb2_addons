@@ -25,6 +25,8 @@
                 			<field name="date_contract_action_end"/>
                 			<field name="invoice_plan"/>
                 			<field name="po_not_closed"/>
+                			<field name="no_finlease"/>
+                			<field name="no_po_draft"/>
                 		</group>
                 	</group>
                 </group>
