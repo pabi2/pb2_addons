@@ -93,17 +93,17 @@
 					eval="[(4, ref('base.group_user')),]"/>
 	    </record>
 
-<!--PABI2 Budget-->
-        <record id="group_pabi_budget" model="res.groups">
-            <field name="name">PABI2 Budget</field>
+<!--PABI2 HR-->
+        <record id="group_pabi_hr" model="res.groups">
+            <field name="name">PABI2 HR</field>
             <field name="category_id" ref="pabi_security"/>
 	        <field name="implied_ids"
 					eval="[(4, ref('base.group_user')),]"/>
 	    </record>
 
-<!--PABI2 HR-->
-        <record id="group_pabi_hr" model="res.groups">
-            <field name="name">PABI2 HR</field>
+<!--PABI2 Budget-->
+        <record id="group_pabi_budget" model="res.groups">
+            <field name="name">PABI2 Budget</field>
             <field name="category_id" ref="pabi_security"/>
 	        <field name="implied_ids"
 					eval="[(4, ref('base.group_user')),]"/>
