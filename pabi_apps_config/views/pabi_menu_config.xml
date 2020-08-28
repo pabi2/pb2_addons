@@ -475,11 +475,12 @@
 			<delete id="pabi_budget_report.menu_xlsx_report_revenue_ledger" model="ir.ui.menu"/>
 			
 			<menuitem name="Account Report" id="menu_budgeting_account_report"
-            	sequence="10" parent="menu_budgeting"/>
+            	sequence="10" parent="menu_budgeting"
+            	 groups="pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget"/>
             	<menuitem name="Expense Ledger" id="menu_xlsx_report_expense_ledger_account_report"
 		            sequence="1" parent="menu_budgeting_account_report"
 		            action="pabi_account_report.action_xlsx_report_expense_ledger_form"/>
-				<menuitem name="Revenue Ledger" id="menu_xlsx_report_revenue_ledger"
+				<menuitem name="Revenue Ledger" id="menu_xlsx_report_revenue_ledger_account_report"
 		            sequence="2" parent="menu_budgeting_account_report"
 		            action="pabi_account_report.action_xlsx_report_revenue_ledger_form"/>
            
