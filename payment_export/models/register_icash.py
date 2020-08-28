@@ -81,16 +81,8 @@ class PabiRegister_iCash(models.Model):
         if domain is None:
             domain = []
 
-        if self.line_ids:
-            ids = self.line_ids.mapped('partner_bank_id').ids
-            domain.append(('id', 'not in', ids))
-        if self.service_type == 'direct':
-            domain.append(('bank.abbrev', '=', 'BBL'))
-        if self.service_type == 'smart':
-            domain.append(('bank.abbrev', '!=', 'BBL'))
-
         parner_bank_search = PartnerBankObj.search(domain)
-        parner_bank_search = parner_bank_search.filtered(lambda l: l.partner_id.active is True)
+        #parner_bank_search = parner_bank_search.filtered(lambda l: l.partner_id.active is True)
 
         for line in parner_bank_search:
             bank_branch = line.bank_branch.code
@@ -129,11 +121,11 @@ class PabiRegister_iCash(models.Model):
         PartnerBankObj = self.env['res.partner.bank']
         
         if domain is not None:
-            parner_bank_search = PartnerBankObj.search(domain)
-            parner_bank_ids = parner_bank_search.filtered(lambda l: l.partner_id.active is True)
+            parner_bank_ids = PartnerBankObj.search(domain)
+            #parner_bank_ids = parner_bank_ids.filtered(lambda l: l.partner_id.active is True)
             
             # Check len(acc_number) > 1
-            partner_banks = {}
+            """partner_banks = {}
             acc_number = parner_bank_ids.mapped('acc_number')
             for acc in acc_number:
                 if len(parner_bank_ids.filtered(lambda l: l.acc_number == acc)) > 1:
@@ -143,7 +135,7 @@ class PabiRegister_iCash(models.Model):
             if partner_banks:
                 text_error = [u'เลขที่บัญชี {}\n {}'.format(key, value) for key, value in partner_banks.iteritems()]
                 text_error = '\n\n'.join(text_error)
-                raise ValidationError(u'กรุณาตรวจสอบ ข้อมูลหลัก Accounting ซึ่งมีข้อมูลเลขที่บัญชีมากกว่า 1 partner ดังนี้ \n {}'.format(text_error))
+                raise ValidationError(u'กรุณาตรวจสอบ ข้อมูลหลัก Accounting ซึ่งมีข้อมูลเลขที่บัญชีมากกว่า 1 partner ดังนี้ \n {}'.format(text_error))"""
             
             # Check email_accountant or owner_name_en is NULL
             parner_bank_ids = parner_bank_ids.filtered(lambda l: l.partner_id.email_accountant is False
@@ -156,15 +148,38 @@ class PabiRegister_iCash(models.Model):
 
                 raise ValidationError(u'กรุณาใส่ข้อมูล Email Accountant, Account Name EN ของ Partner ต่อไปนี้ให้ครบถ้วน\n{}'.format('\n'.join(tuple(partners))))
 
-    @api.onchange('line_filter')
-    def _onchange_compute_register_icash_line(self):
+    @api.multi
+    def _get_domain_partner_bank(self):
+        PartnerBank = self.env['res.partner.bank']
+        domain = []
         if self.line_filter:
             acc_number = self.line_filter.split(',')
             acc_number = [x.strip() for x in acc_number]
-            acc_number = tuple(acc_number)
-            domain = [('acc_number', 'in', acc_number),
-                      ('is_register', '!=', True),
-                      ('active', '=', True)]
+            
+            ids = []
+            for number in acc_number:
+                pb = PartnerBank.search([('acc_number','=',number),
+                                         ('is_register', '!=', True),
+                                         ('active','=',True)
+                                         ], order="write_date DESC", limit=1)
+                if pb:
+                    ids.append(pb.id)
+            if ids:
+                domain = [('id', 'in', ids)]
+                if self.line_ids:
+                    ids = self.line_ids.mapped('partner_bank_id').ids
+                    domain.append(('id', 'not in', ids))
+                if self.service_type == 'direct':
+                    domain.append(('bank.abbrev', '=', 'BBL'))
+                if self.service_type == 'smart':
+                    domain.append(('bank.abbrev', '!=', 'BBL'))
+        return domain
+
+    @api.onchange('line_filter')
+    def _onchange_compute_register_icash_line(self):
+        if self.line_filter:
+            
+            domain = self._get_domain_partner_bank()
             
             self._check_data_partner_bank(domain)
             self._create_register_icash_line(domain)
@@ -198,15 +213,24 @@ class PabiRegister_iCash(models.Model):
         
     @api.multi
     def register(self):
+        PartnerBank = self.env['res.partner.bank']
         self._check_access_config()
         self._check_record_registered()
         self.write({'state': 'registered',
                     'export_date': datetime.now()})
 
-        for line in self.line_ids:
+        """for line in self.line_ids:
             line.partner_bank_id.write({'register_no': self.name,
                                         'register_date': datetime.now(),
-                                        'is_register': True})
+                                        'is_register': True})"""
+        acc_number = self.line_ids.mapped('partner_bank_id')
+        acc_number = acc_number.mapped('acc_number')
+        parner_bank_ids = PartnerBank.search([('acc_number', 'in', acc_number),
+                                              ('is_register', '!=', True)])
+        for line in parner_bank_ids:
+            line.write({'register_no': self.name,
+                        'register_date': datetime.now(),
+                        'is_register': True})
 
 
 class PabiRegister_iCashLine(models.Model):
