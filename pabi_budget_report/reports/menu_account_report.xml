@@ -6,7 +6,7 @@
         <menuitem
             id="menu_budgeting_account_report"
             name="Account Report"
-            parent="account_budget_activity.menu_budgeting"
+            parent="pabi_apps_config.menu_budgeting"
             sequence="120"
             groups="pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget"
             />
