@@ -1,11 +1,24 @@
 # -*- coding: utf-8 -*-
 from dateutil.relativedelta import relativedelta
 from openerp import models, fields, api, _
-from openerp.exceptions import ValidationError
+from openerp.exceptions import ValidationError, RedirectWarning
 from openerp.tools.float_utils import float_compare
+from openerp.addons.connector.queue.job import job
+from openerp.addons.connector.session import ConnectorSession
+from openerp.addons.connector.exception import RetryableJobError
 import logging
 
 _logger = logging.getLogger(__name__)
+
+
+@job
+def action_done_async_process(session, model_name, res_id):
+    try:
+        res = session.pool[model_name].action_done_backgruond(
+            session.cr, session.uid, [res_id], session.context)
+        return {'result': res}
+    except Exception, e:
+        raise RetryableJobError(e)
 
 
 class AccountAssetTransfer(models.Model):
@@ -149,6 +162,15 @@ class AccountAssetTransfer(models.Model):
         string='Journal Entries',
         readonly=True,
     )
+    transfer_job_id = fields.Many2one(
+        'queue.job',
+        string='Transfer Job',
+        compute='_compute_transfer_job_uuid',
+    )
+    transfer_uuid = fields.Char(
+        string='Transfer Job UUID',
+        compute='_compute_transfer_job_uuid',
+    )
     # move_ids = fields.Many2many(
     #     'account.move',
     #     string='Journal Entries',
@@ -165,6 +187,19 @@ class AccountAssetTransfer(models.Model):
     #         rec.move_ids = rec.target_asset_ids.mapped('move_id')
     #         rec.move_count = len(rec.move_ids)
     #     return True
+
+    @api.multi
+    def _compute_transfer_job_uuid(self):
+        for rec in self:
+            task_name = "%s('%s', %s)" % \
+                ('action_done_async_process', self._name, rec.id)
+            jobs = self.env['queue.job'].search([
+                ('func_string', 'like', task_name),
+                ('state', '!=', 'done')],
+                order='id desc', limit=1)
+            rec.transfer_job_id = jobs and jobs[0] or False
+            rec.transfer_uuid = jobs and jobs[0].uuid or False
+        return True
 
     @api.multi
     def _compute_asset_count(self):
@@ -275,6 +310,24 @@ class AccountAssetTransfer(models.Model):
     @api.multi
     def action_cancel(self):
         self.write({'state': 'cancel'})
+
+    @api.multi
+    def action_done_backgruond(self):
+        if self._context.get('transfer_async_process', False):
+            self.ensure_one()
+            if self._context.get('job_uuid', False):  # Called from @job
+                return self.action_done()
+            if self.transfer_job_id:
+                message = _('Confirm Transfer')
+                action = self.env.ref('pabi_utils.action_my_queue_job')
+                raise RedirectWarning(message, action.id, _('Go to My Jobs'))
+            session = ConnectorSession(self._cr, self._uid, self._context)
+            description = '%s - Confirm Transfer' % self.name
+            uuid = action_done_async_process.delay(
+                session, self._name, self.id, description=description)
+            self.env['queue.job'].search([('uuid', '=', uuid)], limit=1)
+        else:
+            return self.action_done()
 
     # @api.multi
     # def _transfer_new_asset(self):
