@@ -46,7 +46,10 @@ GROUP BY pol.id,pu.id]]>
 		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
-		<defaultValueExpression><![CDATA[System.getProperty("user.dir")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[System.getProperty("user.dir")+"/../"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR_1" class="java.lang.String">
+		<defaultValueExpression><![CDATA[System.getProperty("user.dir")+"./"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT DISTINCT
@@ -666,7 +669,7 @@ WHERE $X{IN, po.id, PIDS}  and pol.active = True
 				<reportElement x="407" y="4" width="74" height="43">
 					<printWhenExpression><![CDATA[$F{ou_id} == 2]]></printWhenExpression>
 				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"logo_nstda.gif"]]></imageExpression>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR_1}+"logo_nstda.gif"]]></imageExpression>
 			</image>
 			<image>
 				<reportElement x="407" y="4" width="74" height="43">
