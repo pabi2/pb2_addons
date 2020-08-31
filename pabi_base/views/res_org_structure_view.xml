@@ -37,6 +37,7 @@
                             <field name="active"/>
                             <field name="special"/>
                             <field name="ehr_id"/>
+                            <field name="logo_path"/>
                         </group>
                     </group>
                     <group string="Letter Head">
