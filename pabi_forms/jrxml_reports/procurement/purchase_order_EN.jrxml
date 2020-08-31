@@ -109,7 +109,7 @@ FROM purchase_order po
 LEFT JOIN operating_unit ou
 ON ou.id = po.operating_unit_id
 LEFT JOIN res_org ro
-ON ro.operating_id = ou.id
+ON ro.operating_unit_id = ou.id
 LEFT JOIN res_partner ou_partner
 ON ou.partner_id = ou_partner.id
 LEFT JOIN res_country_township ou_township
