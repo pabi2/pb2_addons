@@ -48,6 +48,9 @@ GROUP BY pol.id,pu.id]]>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[System.getProperty("user.dir")+"/../../../pb2_addons/pabi_forms/jrxml_reports/procurement/"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="SUBREPORT_DIR_1" class="java.lang.String">
+		<defaultValueExpression><![CDATA[System.getProperty("user.dir")+"/../../../pb2_addons/pabi_forms/static/src/img/"]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[SELECT DISTINCT
 po.id po_id,
@@ -703,6 +706,10 @@ WHERE $X{IN, po.id, PIDS}  and pol.active = True
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{vendor_search_key} == null ? "" : $F{vendor_search_key})]]></textFieldExpression>
 			</textField>
+			<image>
+				<reportElement x="0" y="74" width="108" height="24"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR_1}+"entec.jpg"]]></imageExpression>
+			</image>
 		</band>
 	</pageHeader>
 	<columnHeader>
