@@ -48,13 +48,11 @@ GROUP BY pol.id,pu.id]]>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[System.getProperty("user.dir")+"/../../pabi_forms/jrxml_reports/"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="SUBREPORT_DIR_1" class="java.lang.String">
-		<defaultValueExpression><![CDATA[System.getProperty("user.dir")+"./"]]></defaultValueExpression>
-	</parameter>
 	<queryString>
 		<![CDATA[SELECT DISTINCT
 po.id po_id,
 ou.id ou_id,
+ro.logo_path,
 ou_partner.image partner_image,
 (Case when ou.code = 'สำนักงานกลาง'
 then
@@ -327,6 +325,7 @@ WHERE $X{IN, po.id, PIDS}  and pol.active = True
 	</field>
 	<field name="tax_branch_org" class="java.lang.String"/>
 	<field name="vendor_search_key" class="java.lang.String"/>
+	<field name="logo_path" class="java.lang.String"/>
 	<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 	</variable>
@@ -648,40 +647,8 @@ WHERE $X{IN, po.id, PIDS}  and pol.active = True
 ($F{taxbranch_code} != null ? "สาขาที่ " + $F{taxbranch_code} : "")]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="407" y="4" width="74" height="43">
-					<printWhenExpression><![CDATA[$F{ou_id} == 7]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"logo_nanotec.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="407" y="4" width="74" height="43">
-					<printWhenExpression><![CDATA[$F{ou_id} == 6]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"logo_tmc.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="407" y="4" width="74" height="43">
-					<printWhenExpression><![CDATA[$F{ou_id} == 5]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"logo_nectec.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="407" y="4" width="74" height="43">
-					<printWhenExpression><![CDATA[$F{ou_id} == 2]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR_1}+"logo_nstda.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="407" y="4" width="74" height="43">
-					<printWhenExpression><![CDATA[$F{ou_id} == 4]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"logo_mtec.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="407" y="4" width="74" height="43">
-					<printWhenExpression><![CDATA[$F{ou_id} == 3]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"logo_biotec.gif"]]></imageExpression>
+				<reportElement x="407" y="4" width="74" height="43"/>
+				<imageExpression class="java.lang.String"><![CDATA[$F{logo_path}]]></imageExpression>
 			</image>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="304" y="308" width="178" height="21"/>
