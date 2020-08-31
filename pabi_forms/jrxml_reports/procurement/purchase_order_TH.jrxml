@@ -49,7 +49,7 @@ GROUP BY pol.id,pu.id]]>
 		<defaultValueExpression><![CDATA[System.getProperty("user.dir")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="SUBREPORT_DIR_1" class="java.lang.String">
-		<defaultValueExpression><![CDATA[System.getProperty("user.dir")+"./pabi_forms"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[System.getProperty("user.home")+"/pabi_forms"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT DISTINCT
