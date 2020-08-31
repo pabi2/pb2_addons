@@ -52,7 +52,6 @@ GROUP BY pol.id,pu.id]]>
 		<![CDATA[SELECT DISTINCT
 po.id po_id,
 ou.id ou_id,
-org.logo_path,
 ou_partner.image partner_image,
 (Case when ou.code = 'สำนักงานกลาง'
 then
@@ -325,7 +324,6 @@ WHERE $X{IN, po.id, PIDS}  and pol.active = True
 	</field>
 	<field name="tax_branch_org" class="java.lang.String"/>
 	<field name="vendor_search_key" class="java.lang.String"/>
-	<field name="logo_path" class="java.lang.String"/>
 	<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 	</variable>
@@ -656,7 +654,7 @@ WHERE $X{IN, po.id, PIDS}  and pol.active = True
 				<reportElement x="407" y="4" width="74" height="43">
 					<printWhenExpression><![CDATA[$F{ou_id} == 6]]></printWhenExpression>
 				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_tmc.gif"]]></imageExpression>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"logo_tmc.gif"]]></imageExpression>
 			</image>
 			<image>
 				<reportElement x="407" y="4" width="74" height="43">
@@ -668,19 +666,19 @@ WHERE $X{IN, po.id, PIDS}  and pol.active = True
 				<reportElement x="407" y="4" width="74" height="43">
 					<printWhenExpression><![CDATA[$F{ou_id} == 2]]></printWhenExpression>
 				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA[$F{logo_path}+"/logo_nstda.gif"]]></imageExpression>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"logo_nstda.gif"]]></imageExpression>
 			</image>
 			<image>
 				<reportElement x="407" y="4" width="74" height="43">
 					<printWhenExpression><![CDATA[$F{ou_id} == 4]]></printWhenExpression>
 				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_mtec.gif"]]></imageExpression>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"logo_mtec.gif"]]></imageExpression>
 			</image>
 			<image>
 				<reportElement x="407" y="4" width="74" height="43">
 					<printWhenExpression><![CDATA[$F{ou_id} == 3]]></printWhenExpression>
 				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_biotec.gif"]]></imageExpression>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"logo_biotec.gif"]]></imageExpression>
 			</image>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="304" y="308" width="178" height="21"/>
@@ -705,10 +703,6 @@ WHERE $X{IN, po.id, PIDS}  and pol.active = True
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{vendor_search_key} == null ? "" : $F{vendor_search_key})]]></textFieldExpression>
 			</textField>
-			<image>
-				<reportElement x="0" y="74" width="90" height="24"/>
-				<imageExpression class="java.lang.String"><![CDATA[$F{logo_path}+"/entec.jpg"]]></imageExpression>
-			</image>
 		</band>
 	</pageHeader>
 	<columnHeader>
