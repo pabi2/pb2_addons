@@ -1717,3 +1717,373 @@ class issi_budget_summary_commit_view(models.Model):
 			  WHERE (((aa.budget_commit_type)::text <> 'actual'::text) AND (aa.amount <> (0)::numeric))
         )
         """ % self._table)
+	
+class etl_issi_budget_actual(models.Model):
+    _name = 'etl.issi.budget.actual'
+    _auto = False
+    _description = 'etl_issi_budget_actual'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""
+            CREATE or REPLACE VIEW %s as (
+			 SELECT aa.budget_commit_type,
+				aa.charge_type,
+				aa.budget_method,
+				aa.doctype,
+				aa.chart_view,
+				fisyear.name AS fisyear,
+				perd.name AS period,
+					CASE
+						WHEN (((aa.document)::text = '/'::text) OR ((aa.document)::text = ''::text) OR (aa.document IS NULL)) THEN acmv.name
+						ELSE aa.document
+					END AS document,
+				aa.document_line AS detail,
+				ag.code AS activity_group,
+				ag.name AS activity_group_name,
+				a_rpt.code AS activity,
+				a_rpt.name AS activity_name,
+				a_rpt.code AS activity_rpt,
+				a_rpt.name AS activity_rpt_name,
+				sec2.section_code AS section,
+				sec2.section_name,
+				prj.project_code AS project,
+				prj.project_name,
+					CASE
+						WHEN ((aa.chart_view)::text = 'invest_construction'::text) THEN prjcsec.org_code
+						WHEN ((aa.chart_view)::text = 'invest_asset'::text) THEN invasset_sec.org_code
+						WHEN ((aa.chart_view)::text = 'project_base'::text) THEN prjsec.org_code
+						WHEN ((aa.chart_view)::text = 'unit_base'::text) THEN sec2.org_code
+						WHEN ((aa.chart_view)::text = 'personnel'::text) THEN persec.org_code
+						ELSE org.code
+					END AS org,
+					CASE
+						WHEN ((aa.chart_view)::text = 'invest_construction'::text) THEN (prjcsec.org_name_short)::character varying
+						WHEN ((aa.chart_view)::text = 'invest_asset'::text) THEN invasset_sec.org_name_short_en
+						WHEN ((aa.chart_view)::text = 'project_base'::text) THEN prjsec.org_name_short_en
+						WHEN ((aa.chart_view)::text = 'unit_base'::text) THEN sec2.org_name_short_en
+						WHEN ((aa.chart_view)::text = 'personnel'::text) THEN persec.org_name_short_en
+						ELSE org.name_short
+					END AS org_name,
+				cctr.costcenter_code AS costcenter,
+				cctr.costcenter_name,
+				aa.amount,
+				acmv.date_document AS date_doc,
+				replace(aa.document_ref, '_'::text, '.'::text) AS document_ref,
+				NULL::text AS document_ref_id,
+				NULL::text AS source_document_type,
+					CASE
+						WHEN ((((aa.document)::text = '/'::text) OR ((aa.document)::text = ''::text) OR (aa.document IS NULL)) AND (aa.document_ref = 'account_invoice'::text) AND (ref_inv.name IS NOT NULL)) THEN ref_inv.origin
+						WHEN ((((aa.document)::text = '/'::text) OR ((aa.document)::text = ''::text) OR (aa.document IS NULL)) AND (aa.document_ref = 'account_invoice'::text) AND (ref_inv.name IS NULL)) THEN acmv.ref
+						WHEN ((((aa.document)::text = '/'::text) OR ((aa.document)::text = ''::text) OR (aa.document IS NULL)) AND (aa.document_ref = 'hr_salary_expense'::text) AND (ref_salary.number IS NOT NULL)) THEN ref_salary.number
+						WHEN ((((aa.document)::text = '/'::text) OR ((aa.document)::text = ''::text) OR (aa.document IS NULL)) AND (aa.document_ref = 'hr_salary_expense'::text) AND (ref_salary.number IS NULL)) THEN acmv.ref
+						WHEN ((((aa.document)::text = '/'::text) OR ((aa.document)::text = ''::text) OR (aa.document IS NULL)) AND (aa.document_ref = 'interface_account_entry'::text) AND (ref_interface.number IS NOT NULL)) THEN ref_interface.number
+						WHEN ((((aa.document)::text = '/'::text) OR ((aa.document)::text = ''::text) OR (aa.document IS NULL)) AND (aa.document_ref = 'interface_account_entry'::text) AND (ref_interface.number IS NULL)) THEN acmv.ref
+						WHEN ((((aa.document)::text = '/'::text) OR ((aa.document)::text = ''::text) OR (aa.document IS NULL)) AND (aa.document_ref = 'stock_picking'::text) AND (ref_stock.name IS NOT NULL)) THEN ref_stock.origin
+						WHEN ((((aa.document)::text = '/'::text) OR ((aa.document)::text = ''::text) OR (aa.document IS NULL)) AND (aa.document_ref = 'stock_picking'::text) AND (ref_stock.name IS NULL)) THEN acmv.ref
+						WHEN ((((aa.document)::text = '/'::text) OR ((aa.document)::text = ''::text) OR (aa.document IS NULL)) AND (aa.document_ref = 'hr_expense_expense'::text) AND (ref_exp.number IS NOT NULL)) THEN ref_exp.number
+						WHEN ((((aa.document)::text = '/'::text) OR ((aa.document)::text = ''::text) OR (aa.document IS NULL)) AND (aa.document_ref = 'hr_expense_expense'::text) AND (ref_exp.number IS NULL)) THEN acmv.ref
+						WHEN ((((aa.document)::text <> '/'::text) OR ((aa.document)::text <> ''::text) OR (aa.document IS NOT NULL)) AND (aa.document_ref = 'account_invoice'::text)) THEN ref_inv.origin
+						WHEN ((((aa.document)::text <> '/'::text) OR ((aa.document)::text <> ''::text) OR (aa.document IS NOT NULL)) AND (aa.document_ref = 'hr_salary_expense'::text)) THEN ref_salary.number
+						WHEN ((((aa.document)::text <> '/'::text) OR ((aa.document)::text <> ''::text) OR (aa.document IS NOT NULL)) AND (aa.document_ref = 'interface_account_entry'::text)) THEN ref_interface.number
+						WHEN ((((aa.document)::text <> '/'::text) OR ((aa.document)::text <> ''::text) OR (aa.document IS NOT NULL)) AND (aa.document_ref = 'stock_picking'::text)) THEN ref_stock.origin
+						WHEN ((((aa.document)::text <> '/'::text) OR ((aa.document)::text <> ''::text) OR (aa.document IS NOT NULL)) AND (aa.document_ref = 'hr_expense_expense'::text)) THEN ref_exp.number
+						ELSE acmv.ref
+					END AS source_document,
+				NULL::text AS verify_employee,
+				NULL::text AS verify_employee_name,
+				NULL::text AS response_employee,
+				NULL::text AS response_employee_name,
+					CASE
+						WHEN (aa.document_ref = 'account_invoice'::text) THEN ref_inv2.requested_by
+						WHEN (aa.document_ref = 'hr_salary_expense'::text) THEN sal_hrreq.employee_code
+						WHEN (aa.document_ref = 'stock_picking'::text) THEN ref_stock2.requested_by
+						WHEN (aa.document_ref = 'hr_expense_expense'::text) THEN exp_hrreq.employee_code
+						ELSE NULL::character varying
+					END AS emp_employee,
+					CASE
+						WHEN (aa.document_ref = 'account_invoice'::text) THEN ref_inv2.requested_by_name
+						WHEN (aa.document_ref = 'hr_salary_expense'::text) THEN ((((COALESCE(sal_hrreq.title_th, ''::text) || ' '::text) || sal_hrreq.first_name_th) || ' '::text) || sal_hrreq.last_name_th)
+						WHEN (aa.document_ref = 'stock_picking'::text) THEN ref_stock2.requested_by_name
+						WHEN (aa.document_ref = 'hr_expense_expense'::text) THEN ((((COALESCE(exp_hrreq.title_th, ''::text) || ' '::text) || exp_hrreq.first_name_th) || ' '::text) || exp_hrreq.last_name_th)
+						ELSE NULL::text
+					END AS emp_employee_name,
+					CASE
+						WHEN (aa.document_ref = 'account_invoice'::text) THEN ref_inv2.approver
+						WHEN (aa.document_ref = 'hr_salary_expense'::text) THEN sal_hrapp.employee_code
+						WHEN (aa.document_ref = 'stock_picking'::text) THEN ref_stock2.approver
+						WHEN (aa.document_ref = 'hr_expense_expense'::text) THEN exp_hrapp.employee_code
+						ELSE NULL::character varying
+					END AS approver_employee,
+					CASE
+						WHEN (aa.document_ref = 'account_invoice'::text) THEN ref_inv2.approver_name
+						WHEN (aa.document_ref = 'hr_salary_expense'::text) THEN ((((COALESCE(sal_hrapp.title_th, ''::text) || ' '::text) || sal_hrapp.first_name_th) || ' '::text) || sal_hrapp.last_name_th)
+						WHEN (aa.document_ref = 'stock_picking'::text) THEN ref_stock2.approver_name
+						WHEN (aa.document_ref = 'hr_expense_expense'::text) THEN ((((COALESCE(exp_hrapp.title_th, ''::text) || ' '::text) || exp_hrapp.first_name_th) || ' '::text) || exp_hrapp.last_name_th)
+						ELSE NULL::text
+					END AS approver_employee_name,
+					CASE
+						WHEN (aa.document_ref = 'hr_salary_expense'::text) THEN sal_hrpre.employee_code
+						WHEN (aa.document_ref = 'hr_expense_expense'::text) THEN exp_hrpre.employee_code
+						ELSE NULL::character varying
+					END AS user_employee,
+					CASE
+						WHEN (aa.document_ref = 'hr_salary_expense'::text) THEN ((((COALESCE(sal_hrpre.title_th, ''::text) || ' '::text) || sal_hrpre.first_name_th) || ' '::text) || sal_hrpre.last_name_th)
+						WHEN (aa.document_ref = 'hr_expense_expense'::text) THEN ((((COALESCE(exp_hrpre.title_th, ''::text) || ' '::text) || exp_hrpre.first_name_th) || ' '::text) || exp_hrpre.last_name_th)
+						ELSE NULL::text
+					END AS user_employee_name,
+				acmv.date AS approve_date,
+				NULL::text AS source_system,
+				'AC'::text AS source_type,
+					CASE
+						WHEN ((aa.chart_view)::text = 'invest_construction'::text) THEN bgcon.code
+						WHEN ((aa.chart_view)::text = 'invest_asset'::text) THEN bgasset.code
+						WHEN ((aa.chart_view)::text = 'project_base'::text) THEN prj.project_code
+						WHEN ((aa.chart_view)::text = 'unit_base'::text) THEN sec2.section_code
+						WHEN ((aa.chart_view)::text = 'personnel'::text) THEN budper.code
+						ELSE ''::character varying
+					END AS source_budget_code,
+					CASE
+						WHEN ((aa.chart_view)::text = 'invest_construction'::text) THEN bgcon.phase_name
+						WHEN ((aa.chart_view)::text = 'invest_asset'::text) THEN bgasset.name
+						WHEN ((aa.chart_view)::text = 'project_base'::text) THEN (prj.project_name)::character varying
+						WHEN ((aa.chart_view)::text = 'unit_base'::text) THEN (sec2.section_name)::character varying
+						WHEN ((aa.chart_view)::text = 'personnel'::text) THEN budper.name
+						ELSE ''::character varying
+					END AS source_budget_name,
+				acmv.date AS posting_date,
+				job.code AS job_order,
+				job.name AS job_order_name,
+				jobtype.code AS job_order_type,
+				jobtype.name AS job_order_type_name
+			   FROM (((((((((((((((((((((((((((((((((((((((((((((((((((((((((((issi_budget_summary_consume_view aa
+				 LEFT JOIN account_period perd ON ((aa.period_id = perd.id)))
+				 LEFT JOIN account_fiscalyear fisyear ON ((aa.fiscalyear_id = fisyear.id)))
+				 LEFT JOIN account_activity_group ag ON ((aa.activity_group_id = ag.id)))
+				 LEFT JOIN account_activity a ON ((aa.activity_id = a.id)))
+				 LEFT JOIN account_activity a_rpt ON ((aa.activity_rpt_id = a_rpt.id)))
+				 LEFT JOIN account_account acct ON ((aa.account_id = acct.id)))
+				 LEFT JOIN account_account acct_rpt ON ((a_rpt.account_id = acct_rpt.id)))
+				 LEFT JOIN stock_picking ref_stock ON ((aa.document_ref_id = (ref_stock.id)::numeric)))
+				 LEFT JOIN account_invoice ref_inv ON ((aa.document_ref_id = (ref_inv.id)::numeric)))
+				 LEFT JOIN hr_salary_expense ref_salary ON ((aa.document_ref_id = (ref_salary.id)::numeric)))
+				 LEFT JOIN interface_account_entry ref_interface ON ((aa.document_ref_id = (ref_interface.id)::numeric)))
+				 LEFT JOIN hr_expense_expense ref_exp ON ((aa.document_ref_id = (ref_exp.id)::numeric)))
+				 LEFT JOIN issi_actual_ref_invoice_view ref_inv2 ON ((aa.document_ref_id = (ref_inv2.invoice_id)::numeric)))
+				 LEFT JOIN issi_actual_ref_stock_picking_view ref_stock2 ON ((aa.document_ref_id = (ref_stock2.stock_picking_id)::numeric)))
+				 LEFT JOIN account_move_line acmvl ON ((aa.move_id = acmvl.id)))
+				 LEFT JOIN account_move acmv ON ((acmvl.move_id = acmv.id)))
+				 LEFT JOIN res_partner acmv_patrner ON ((acmv.partner_id = acmv_patrner.id)))
+				 LEFT JOIN product_product ml_prod ON ((acmvl.product_id = ml_prod.id)))
+				 LEFT JOIN product_template ml_prod_tm ON ((ml_prod.product_tmpl_id = ml_prod_tm.id)))
+				 LEFT JOIN product_category ml_prodcat ON ((ml_prod_tm.categ_id = ml_prodcat.id)))
+				 LEFT JOIN issi_hr_employee_view exp_hrreq ON ((ref_exp.employee_id = exp_hrreq.id)))
+				 LEFT JOIN res_users exp_usrapp ON ((ref_exp.approver_id = exp_usrapp.id)))
+				 LEFT JOIN issi_hr_employee_view exp_hrapp ON (((exp_usrapp.login)::text = (exp_hrapp.employee_code)::text)))
+				 LEFT JOIN res_users exp_usrpre ON ((ref_exp.user_id = exp_usrpre.id)))
+				 LEFT JOIN issi_hr_employee_view exp_hrpre ON (((exp_usrpre.login)::text = (exp_hrpre.employee_code)::text)))
+				 LEFT JOIN res_users sal_usrreq ON ((ref_salary.submit_user_id = sal_usrreq.id)))
+				 LEFT JOIN issi_hr_employee_view sal_hrreq ON (((sal_usrreq.login)::text = (sal_hrreq.employee_code)::text)))
+				 LEFT JOIN res_users sal_usrapp ON ((ref_salary.approve_user_id = exp_usrapp.id)))
+				 LEFT JOIN issi_hr_employee_view sal_hrapp ON (((exp_usrapp.login)::text = (sal_hrapp.employee_code)::text)))
+				 LEFT JOIN res_users sal_usrpre ON ((ref_salary.user_id = exp_usrpre.id)))
+				 LEFT JOIN issi_hr_employee_view sal_hrpre ON (((exp_usrpre.login)::text = (sal_hrpre.employee_code)::text)))
+				 LEFT JOIN purchase_contract stock_po_con ON ((ref_stock2.contract_id = stock_po_con.id)))
+				 LEFT JOIN purchase_contract inv_po_con ON ((ref_inv2.contract_id = stock_po_con.id)))
+				 LEFT JOIN purchase_order stock_rfq ON ((ref_stock2.quote_id = stock_rfq.id)))
+				 LEFT JOIN purchase_requisition stoc_pd ON ((stock_rfq.requisition_id = stoc_pd.id)))
+				 LEFT JOIN purchase_method stock_pomethod ON ((stoc_pd.purchase_method_id = stock_pomethod.id)))
+				 LEFT JOIN purchase_order inv_rfq ON ((ref_inv2.quote_id = inv_rfq.id)))
+				 LEFT JOIN purchase_requisition inv_pd ON ((inv_rfq.requisition_id = inv_pd.id)))
+				 LEFT JOIN purchase_method inv_pomethod ON ((inv_pd.purchase_method_id = inv_pomethod.id)))
+				 LEFT JOIN res_mission miss ON ((aa.mission_id = miss.id)))
+				 LEFT JOIN res_org org ON ((aa.org_id = org.id)))
+				 LEFT JOIN etl_issi_m_section sec2 ON ((aa.section_id = sec2.section_id)))
+				 LEFT JOIN res_section res_sec ON ((aa.section_id = res_sec.id)))
+				 LEFT JOIN res_section_program ressecpg ON ((res_sec.section_program_id = ressecpg.id)))
+				 LEFT JOIN res_section_program secpg ON ((aa.section_program_id = secpg.id)))
+				 LEFT JOIN etl_issi_m_costcenter cctr ON ((aa.costcenter_id = cctr.costcenter_id)))
+				 LEFT JOIN etl_issi_m_project prj ON ((aa.project_id = prj.pb2_project_id)))
+				 LEFT JOIN etl_issi_m_section prjsec ON ((prj.pm_section_id = prjsec.section_id)))
+				 LEFT JOIN res_project res_prj ON ((aa.project_id = res_prj.id)))
+				 LEFT JOIN res_program prjpg ON ((res_prj.program_id = prjpg.id)))
+				 LEFT JOIN res_section_program prjsecpg ON ((prjpg.section_program_id = prjsecpg.id)))
+				 LEFT JOIN issi_m_investment_construction_phase_view bgcon ON ((aa.invest_construction_phase_id = bgcon.invest_construction_phase_id)))
+				 LEFT JOIN etl_issi_m_section prjcsec ON ((bgcon.pm_section_id = prjcsec.section_id)))
+				 LEFT JOIN res_invest_asset bgasset ON ((aa.invest_asset_id = bgasset.id)))
+				 LEFT JOIN etl_issi_m_section invasset_sec ON ((bgasset.owner_section_id = invasset_sec.section_id)))
+				 LEFT JOIN res_personnel_costcenter budper ON ((aa.personnel_costcenter_id = budper.id)))
+				 LEFT JOIN issi_m_personel_costcenter_view persec ON ((budper.id = persec.id)))
+				 LEFT JOIN cost_control job ON ((aa.cost_control_id = job.id)))
+				 LEFT JOIN cost_control_type jobtype ON ((aa.cost_control_type_id = jobtype.id)))
+			  WHERE (((aa.budget_commit_type)::text = 'actual'::text) AND (aa.amount <> (0)::numeric))
+        )
+        """ % self._table)
+
+class etl_issi_budget_commit(models.Model):
+    _name = 'etl.issi.budget.commit'
+    _auto = False
+    _description = 'etl_issi_budget_commit'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""
+            CREATE or REPLACE VIEW %s as (
+			 SELECT aa.budget_commit_type,
+				aa.charge_type,
+				aa.budget_method,
+				aa.doctype,
+				aa.chart_view,
+				fisyear.name AS fisyear,
+				perd.name AS period,
+				aa.document,
+				aa.document_line AS detail,
+				ag.code AS activity_group,
+				ag.name AS activity_group_name,
+				a_rpt.code AS activity,
+				a_rpt.name AS activity_name,
+				sec2.section_code AS section,
+				sec2.section_name,
+				prj.project_code AS project,
+				prj.project_name,
+					CASE
+						WHEN ((aa.chart_view)::text = 'invest_construction'::text) THEN prjcsec.org_code
+						WHEN ((aa.chart_view)::text = 'invest_asset'::text) THEN invasset_sec.org_code
+						WHEN ((aa.chart_view)::text = 'project_base'::text) THEN prjsec.org_code
+						WHEN ((aa.chart_view)::text = 'unit_base'::text) THEN sec2.org_code
+						WHEN ((aa.chart_view)::text = 'personnel'::text) THEN persec.org_code
+						ELSE org.code
+					END AS org,
+					CASE
+						WHEN ((aa.chart_view)::text = 'invest_construction'::text) THEN (prjcsec.org_name_short)::character varying
+						WHEN ((aa.chart_view)::text = 'invest_asset'::text) THEN invasset_sec.org_name_short_en
+						WHEN ((aa.chart_view)::text = 'project_base'::text) THEN prjsec.org_name_short_en
+						WHEN ((aa.chart_view)::text = 'unit_base'::text) THEN sec2.org_name_short_en
+						WHEN ((aa.chart_view)::text = 'personnel'::text) THEN persec.org_name_short_en
+						ELSE org.name_short
+					END AS org_name,
+				cctr.costcenter_code AS costcenter,
+				cctr.costcenter_name,
+				popr.name AS ref_document,
+				NULL::text AS ref_document_seq,
+					CASE
+						WHEN ((aa.doctype)::text = 'purchase_request'::text) THEN (pr.date_approve)::timestamp without time zone
+						WHEN ((aa.doctype)::text = 'purchase_order'::text) THEN po.date_order
+						WHEN ((aa.doctype)::text = 'employee_expense'::text) THEN (exp.date)::timestamp without time zone
+						ELSE NULL::timestamp without time zone
+					END AS approve_date,
+					CASE
+						WHEN ((aa.doctype)::text = 'purchase_request'::text) THEN pr_hrreq.employee_code
+						WHEN ((aa.doctype)::text = 'purchase_order'::text) THEN popr_hrreq.employee_code
+						WHEN ((aa.doctype)::text = 'employee_expense'::text) THEN exp_hrreq.employee_code
+						ELSE NULL::character varying
+					END AS employee_request,
+					CASE
+						WHEN ((aa.doctype)::text = 'purchase_request'::text) THEN ((((COALESCE(pr_hrreq.title_th, ''::text) || ' '::text) || pr_hrreq.first_name_th) || ' '::text) || pr_hrreq.last_name_th)
+						WHEN ((aa.doctype)::text = 'purchase_order'::text) THEN ((((COALESCE(popr_hrreq.title_th, ''::text) || ' '::text) || popr_hrreq.first_name_th) || ' '::text) || popr_hrreq.last_name_th)
+						WHEN ((aa.doctype)::text = 'employee_expense'::text) THEN ((((COALESCE(exp_hrreq.title_th, ''::text) || ' '::text) || exp_hrreq.first_name_th) || ' '::text) || exp_hrreq.last_name_th)
+						ELSE NULL::text
+					END AS employee_request_name,
+					CASE
+						WHEN ((aa.doctype)::text = 'purchase_request'::text) THEN pr_hrapp.employee_code
+						WHEN ((aa.doctype)::text = 'purchase_order'::text) THEN popr_hrapp.employee_code
+						WHEN ((aa.doctype)::text = 'employee_expense'::text) THEN exp_hrapp.employee_code
+						ELSE NULL::character varying
+					END AS employee_approve,
+					CASE
+						WHEN ((aa.doctype)::text = 'purchase_request'::text) THEN ((((COALESCE(pr_hrapp.title_th, ''::text) || ' '::text) || pr_hrapp.first_name_th) || ' '::text) || pr_hrapp.last_name_th)
+						WHEN ((aa.doctype)::text = 'purchase_order'::text) THEN ((((COALESCE(popr_hrapp.title_th, ''::text) || ' '::text) || popr_hrapp.first_name_th) || ' '::text) || popr_hrapp.last_name_th)
+						WHEN ((aa.doctype)::text = 'employee_expense'::text) THEN ((((COALESCE(exp_hrapp.title_th, ''::text) || ' '::text) || exp_hrapp.first_name_th) || ' '::text) || exp_hrapp.last_name_th)
+						ELSE NULL::text
+					END AS employee_approve_name,
+				aa.amount,
+					CASE
+						WHEN ((aa.doctype)::text = 'purchase_request'::text) THEN (pr.date_start)::timestamp without time zone
+						WHEN ((aa.doctype)::text = 'purchase_order'::text) THEN po.date_order
+						WHEN ((aa.doctype)::text = 'employee_expense'::text) THEN (exp.date)::timestamp without time zone
+						ELSE NULL::timestamp without time zone
+					END AS date_doc,
+					CASE
+						WHEN ((aa.chart_view)::text = 'invest_construction'::text) THEN bgcon.code
+						WHEN ((aa.chart_view)::text = 'invest_asset'::text) THEN bgasset.code
+						WHEN ((aa.chart_view)::text = 'project_base'::text) THEN prj.project_code
+						WHEN ((aa.chart_view)::text = 'unit_base'::text) THEN sec2.section_code
+						WHEN ((aa.chart_view)::text = 'personnel'::text) THEN budper.code
+						ELSE ''::character varying
+					END AS source_budget_code,
+					CASE
+						WHEN ((aa.chart_view)::text = 'invest_construction'::text) THEN bgcon.phase_name
+						WHEN ((aa.chart_view)::text = 'invest_asset'::text) THEN bgasset.name
+						WHEN ((aa.chart_view)::text = 'project_base'::text) THEN (prj.project_name)::character varying
+						WHEN ((aa.chart_view)::text = 'unit_base'::text) THEN (sec2.section_name)::character varying
+						WHEN ((aa.chart_view)::text = 'personnel'::text) THEN budper.name
+						ELSE ''::character varying
+					END AS source_budget_name,
+				job.code AS job_order,
+				job.name AS job_order_name,
+				jobtype.code AS job_order_type,
+				jobtype.name AS job_order_type_name
+			   FROM ((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((issi_budget_summary_consume_view aa
+				 LEFT JOIN account_period perd ON ((aa.period_id = perd.id)))
+				 LEFT JOIN account_fiscalyear fisyear ON ((aa.fiscalyear_id = fisyear.id)))
+				 LEFT JOIN account_activity_group ag ON ((aa.activity_group_id = ag.id)))
+				 LEFT JOIN account_activity a ON ((aa.activity_id = a.id)))
+				 LEFT JOIN account_activity a_rpt ON ((aa.activity_rpt_id = a_rpt.id)))
+				 LEFT JOIN account_account acct ON ((aa.account_id = acct.id)))
+				 LEFT JOIN account_account acct_rpt ON ((a_rpt.account_id = acct_rpt.id)))
+				 LEFT JOIN res_mission miss ON ((aa.mission_id = miss.id)))
+				 LEFT JOIN res_org org ON ((aa.org_id = org.id)))
+				 LEFT JOIN etl_issi_m_section sec2 ON ((aa.section_id = sec2.section_id)))
+				 LEFT JOIN res_section res_sec ON ((aa.section_id = res_sec.id)))
+				 LEFT JOIN res_section_program ressecpg ON ((res_sec.section_program_id = ressecpg.id)))
+				 LEFT JOIN res_section_program secpg ON ((aa.section_program_id = secpg.id)))
+				 LEFT JOIN etl_issi_m_costcenter cctr ON ((aa.costcenter_id = cctr.costcenter_id)))
+				 LEFT JOIN etl_issi_m_project prj ON ((aa.project_id = prj.pb2_project_id)))
+				 LEFT JOIN etl_issi_m_section prjsec ON ((prj.pm_section_id = prjsec.section_id)))
+				 LEFT JOIN res_project res_prj ON ((aa.project_id = res_prj.id)))
+				 LEFT JOIN res_program prjpg ON ((res_prj.program_id = prjpg.id)))
+				 LEFT JOIN res_section_program prjsecpg ON ((prjpg.section_program_id = prjsecpg.id)))
+				 LEFT JOIN issi_m_investment_construction_phase_view bgcon ON ((aa.invest_construction_phase_id = bgcon.invest_construction_phase_id)))
+				 LEFT JOIN etl_issi_m_section prjcsec ON ((bgcon.pm_section_id = prjcsec.section_id)))
+				 LEFT JOIN res_invest_asset bgasset ON ((aa.invest_asset_id = bgasset.id)))
+				 LEFT JOIN etl_issi_m_section invasset_sec ON ((bgasset.owner_section_id = invasset_sec.section_id)))
+				 LEFT JOIN res_personnel_costcenter budper ON ((aa.personnel_costcenter_id = budper.id)))
+				 LEFT JOIN issi_m_personel_costcenter_view persec ON ((budper.id = persec.id)))
+				 LEFT JOIN purchase_request_line pr_line ON ((aa.purchase_request_line_id = pr_line.id)))
+				 LEFT JOIN purchase_request pr ON ((pr_line.request_id = pr.id)))
+				 LEFT JOIN product_product pr_prod ON ((pr_line.product_id = pr_prod.id)))
+				 LEFT JOIN product_template pr_prod_tm ON ((pr_prod.product_tmpl_id = pr_prod_tm.id)))
+				 LEFT JOIN product_category pr_prodcat ON ((pr_prod_tm.categ_id = pr_prodcat.id)))
+				 LEFT JOIN res_users pr_usreq ON ((pr.requested_by = pr_usreq.id)))
+				 LEFT JOIN issi_hr_employee_view pr_hrreq ON (((pr_usreq.login)::text = (pr_hrreq.employee_code)::text)))
+				 LEFT JOIN res_users pr_usrapp ON ((pr.assigned_to = pr_usrapp.id)))
+				 LEFT JOIN issi_hr_employee_view pr_hrapp ON (((pr_usrapp.login)::text = (pr_hrapp.employee_code)::text)))
+				 LEFT JOIN purchase_order_line po_line ON ((aa.purchase_line_id = po_line.id)))
+				 LEFT JOIN purchase_order po ON ((po_line.order_id = po.id)))
+				 LEFT JOIN purchase_request_purchase_order_line_rel prpo_rel ON ((po_line.id = prpo_rel.purchase_order_line_id)))
+				 LEFT JOIN purchase_request_line popr_line ON ((prpo_rel.purchase_request_line_id = popr_line.id)))
+				 LEFT JOIN purchase_request popr ON ((popr_line.request_id = popr.id)))
+				 LEFT JOIN purchase_order po_rfq ON ((po.quote_id = po_rfq.id)))
+				 LEFT JOIN purchase_requisition poreq ON ((po_rfq.requisition_id = poreq.id)))
+				 LEFT JOIN purchase_method pometh ON ((poreq.purchase_method_id = pometh.id)))
+				 LEFT JOIN purchase_contract po_con ON ((po.contract_id = po_con.id)))
+				 LEFT JOIN product_product po_prod ON ((po_line.product_id = po_prod.id)))
+				 LEFT JOIN product_template po_prod_tm ON ((po_prod.product_tmpl_id = po_prod_tm.id)))
+				 LEFT JOIN product_category po_prodcat ON ((po_prod_tm.categ_id = po_prodcat.id)))
+				 LEFT JOIN res_partner po_partner ON ((po.partner_id = po_partner.id)))
+				 LEFT JOIN res_users popr_usreq ON ((popr.requested_by = popr_usreq.id)))
+				 LEFT JOIN issi_hr_employee_view popr_hrreq ON (((popr_usreq.login)::text = (popr_hrreq.employee_code)::text)))
+				 LEFT JOIN res_users popr_usrapp ON ((popr.assigned_to = popr_usrapp.id)))
+				 LEFT JOIN issi_hr_employee_view popr_hrapp ON (((popr_usrapp.login)::text = (popr_hrapp.employee_code)::text)))
+				 LEFT JOIN hr_expense_line exp_line ON ((aa.expense_line_id = exp_line.id)))
+				 LEFT JOIN hr_expense_expense exp ON ((exp_line.expense_id = exp.id)))
+				 LEFT JOIN issi_hr_employee_view exp_hrreq ON ((exp.employee_id = exp_hrreq.id)))
+				 LEFT JOIN res_users exp_usrapp ON ((exp.approver_id = exp_usrapp.id)))
+				 LEFT JOIN issi_hr_employee_view exp_hrapp ON (((exp_usrapp.login)::text = (exp_hrapp.employee_code)::text)))
+				 LEFT JOIN res_users exp_usrpre ON ((exp.user_id = exp_usrpre.id)))
+				 LEFT JOIN issi_hr_employee_view exp_hrpre ON (((exp_usrpre.login)::text = (exp_hrpre.employee_code)::text)))
+				 LEFT JOIN cost_control job ON ((aa.cost_control_id = job.id)))
+				 LEFT JOIN cost_control_type jobtype ON ((aa.cost_control_type_id = jobtype.id)))
+			  WHERE (((aa.budget_commit_type)::text <> 'actual'::text) AND (aa.amount <> (0)::numeric))
+        )
+        """ % self._table)
