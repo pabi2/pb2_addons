@@ -703,6 +703,10 @@ WHERE $X{IN, po.id, PIDS}  and pol.active = True
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{vendor_search_key} == null ? "" : $F{vendor_search_key})]]></textFieldExpression>
 			</textField>
+			<image>
+				<reportElement x="0" y="74" width="90" height="24"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"/../../pabi_forms/static/src/img/entec.jpg"]]></imageExpression>
+			</image>
 		</band>
 	</pageHeader>
 	<columnHeader>
