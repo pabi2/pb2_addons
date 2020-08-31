@@ -46,7 +46,7 @@ GROUP BY pol.id,pu.id]]>
 		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
 	</parameter>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
-		<defaultValueExpression><![CDATA[System.getProperty("user.dir")+"/../../"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[System.getProperty("user.dir")+"/../../pabi_forms/jrxml_reports/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="SUBREPORT_DIR_1" class="java.lang.String">
 		<defaultValueExpression><![CDATA[System.getProperty("user.dir")+"./"]]></defaultValueExpression>
