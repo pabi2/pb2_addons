@@ -11,7 +11,7 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-@job
+@job(default_channel='root')
 def action_done_async_process(session, model_name, res_id):
     try:
         res = session.pool[model_name].action_done_backgruond(
