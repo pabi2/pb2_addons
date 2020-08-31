@@ -821,6 +821,167 @@ class issi_budget_summary_consume_view(models.Model):
         )
         """ % self._table)
 
+class issi_actual_ref_invoice_view(models.Model):
+    _name = 'issi.actual.ref.invoice.view'
+    _auto = False
+    _description = 'issi_actual_ref_invoice_view'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""
+            CREATE or REPLACE VIEW %s as (
+			 SELECT aa.invoice_id,
+				aa.invoice_number,
+				aa.invoice_description,
+				aa.origin,
+				aa.state AS invoice_state,
+				aa.doc_date,
+				aa.posting_date,
+					CASE
+						WHEN (aa.document_ref = 'purchase_order'::text) THEN po.name
+						WHEN (aa.document_ref = 'sale_order'::text) THEN so.name
+						WHEN (aa.document_ref = 'hr_expense_expense'::text) THEN hr_exp.number
+						ELSE ''::character varying
+					END AS ref1_doc,
+					CASE
+						WHEN (aa.document_ref = 'purchase_order'::text) THEN po.date_order
+						WHEN (aa.document_ref = 'sale_order'::text) THEN so.date_order
+						WHEN (aa.document_ref = 'hr_expense_expense'::text) THEN (hr_exp.date)::timestamp without time zone
+						ELSE NULL::timestamp without time zone
+					END AS ref1_doc_date,
+					CASE
+						WHEN (aa.document_ref = 'purchase_order'::text) THEN po.state
+						WHEN (aa.document_ref = 'sale_order'::text) THEN so.state
+						WHEN (aa.document_ref = 'hr_expense_expense'::text) THEN hr_exp.state
+						ELSE NULL::character varying
+					END AS ref1_doc_state,
+					CASE
+						WHEN (aa.document_ref = 'purchase_order'::text) THEN pd.name
+						ELSE ''::character varying
+					END AS ref2_doc,
+					CASE
+						WHEN (aa.document_ref = 'purchase_order'::text) THEN pd.create_date
+						ELSE NULL::timestamp without time zone
+					END AS ref2_doc_date,
+					CASE
+						WHEN (aa.document_ref = 'purchase_order'::text) THEN pd.state
+						ELSE ''::character varying
+					END AS ref2_doc_state,
+					CASE
+						WHEN (aa.document_ref = 'purchase_order'::text) THEN pd_hrreq.employee_code
+						WHEN (aa.document_ref = 'sale_order'::text) THEN ''::character varying
+						WHEN (aa.document_ref = 'hr_expense_expense'::text) THEN exp_hrreq.employee_code
+						ELSE NULL::character varying
+					END AS requested_by,
+					CASE
+						WHEN (aa.document_ref = 'purchase_order'::text) THEN ((((COALESCE(pd_hrreq.title_th, ''::text) || ' '::text) || pd_hrreq.first_name_th) || ' '::text) || pd_hrreq.last_name_th)
+						WHEN (aa.document_ref = 'sale_order'::text) THEN ''::text
+						WHEN (aa.document_ref = 'hr_expense_expense'::text) THEN ((((COALESCE(exp_hrreq.title_th, ''::text) || ' '::text) || exp_hrreq.first_name_th) || ' '::text) || exp_hrreq.last_name_th)
+						ELSE NULL::text
+					END AS requested_by_name,
+					CASE
+						WHEN (aa.document_ref = 'purchase_order'::text) THEN pd_hrapp.employee_code
+						WHEN (aa.document_ref = 'sale_order'::text) THEN ''::character varying
+						WHEN (aa.document_ref = 'hr_expense_expense'::text) THEN exp_hrapp.employee_code
+						ELSE NULL::character varying
+					END AS approver,
+					CASE
+						WHEN (aa.document_ref = 'purchase_order'::text) THEN ((((COALESCE(pd_hrapp.title_th, ''::text) || ' '::text) || pd_hrapp.first_name_th) || ' '::text) || pd_hrapp.last_name_th)
+						WHEN (aa.document_ref = 'sale_order'::text) THEN ''::text
+						WHEN (aa.document_ref = 'hr_expense_expense'::text) THEN ((((COALESCE(exp_hrapp.title_th, ''::text) || ' '::text) || exp_hrapp.first_name_th) || ' '::text) || exp_hrapp.last_name_th)
+						ELSE NULL::text
+					END AS approver_name,
+				aa.source_document,
+				po.date_contract_start AS po_date_contract_start,
+				po.date_contract_end AS po_date_contract_end,
+				po.date_approve AS po_date_approve,
+				po.contract_id,
+				aa.ref_docs,
+				po.order_id AS po_order_id,
+				po.requisition_id,
+				po.quote_id,
+				po.id AS po_id
+			   FROM (((((((((((( SELECT a.id AS invoice_id,
+						a.number AS invoice_number,
+						a.invoice_description,
+						a.reference,
+						a.origin,
+						a.date_document AS doc_date,
+						a.ref_docs,
+						a.date_invoice AS posting_date,
+						a.date_paid AS paid_date,
+						a.partner_id,
+						a.partner_code,
+						a.state,
+						a.expense_id,
+						a.advance_expense_id,
+						a.source_document_type,
+						a.source_document,
+						a.source_document_id,
+						replace("substring"((a.source_document_id)::text, 0, "position"((a.source_document_id)::text, ','::text)), '.'::text, '_'::text) AS document_ref,
+						to_number("substring"((a.source_document_id)::text, ("position"((a.source_document_id)::text, ','::text) + 1)), '999999999'::text) AS document_ref_id,
+						a.amount_expense_request,
+						a.amount_retention,
+						a.amount_untaxed,
+						a.amount_tax,
+						a.amount_total
+					   FROM account_invoice a) aa
+				 LEFT JOIN purchase_order po ON ((aa.document_ref_id = (po.id)::numeric)))
+				 LEFT JOIN purchase_requisition pd ON ((po.requisition_id = pd.id)))
+				 LEFT JOIN res_users pd_requsr ON ((pd.request_uid = pd_requsr.id)))
+				 LEFT JOIN issi_hr_employee_view pd_hrreq ON (((pd_requsr.login)::text = (pd_hrreq.employee_code)::text)))
+				 LEFT JOIN res_users pd_appusr ON ((pd.assign_uid = pd_appusr.id)))
+				 LEFT JOIN issi_hr_employee_view pd_hrapp ON (((pd_appusr.login)::text = (pd_hrapp.employee_code)::text)))
+				 LEFT JOIN sale_order so ON ((aa.document_ref_id = (so.id)::numeric)))
+				 LEFT JOIN hr_expense_expense hr_exp ON ((aa.document_ref_id = (hr_exp.id)::numeric)))
+				 LEFT JOIN issi_hr_employee_view exp_hrreq ON ((hr_exp.employee_id = exp_hrreq.id)))
+				 LEFT JOIN res_users exp_usrapp ON ((hr_exp.approver_id = exp_usrapp.id)))
+				 LEFT JOIN issi_hr_employee_view exp_hrapp ON (((exp_usrapp.login)::text = (exp_hrapp.employee_code)::text)))
+        )
+        """ % self._table)
+
+class issi_actual_ref_stock_picking_view(models.Model):
+    _name = 'issi.actual.ref.stock.picking.view'
+    _auto = False
+    _description = 'issi_actual_ref_stock_picking_view'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""
+            CREATE or REPLACE VIEW %s as (
+			 SELECT a.id AS stock_picking_id,
+				a.name AS stock_picking_doc,
+				a.state AS stock_picking_state,
+				a.origin AS stock_picking_origin,
+				wa.name AS ref1_doc,
+				wa.date_accept AS ref1_doc_date,
+				wa.state AS ref1_doc_state,
+				po.name AS ref2_doc,
+				po.date_order AS ref2_doc_date,
+				po.state AS ref2_doc_state,
+				pd_hrreq.employee_code AS requested_by,
+				((((COALESCE(pd_hrreq.title_th, ''::text) || ' '::text) || pd_hrreq.first_name_th) || ' '::text) || pd_hrreq.last_name_th) AS requested_by_name,
+				pd_hrapp.employee_code AS approver,
+				((((COALESCE(pd_hrapp.title_th, ''::text) || ' '::text) || pd_hrapp.first_name_th) || ' '::text) || pd_hrapp.last_name_th) AS approver_name,
+				po.date_contract_start AS po_date_contract_start,
+				po.date_contract_end AS po_date_contract_end,
+				po.date_approve AS po_date_approve,
+				po.contract_id,
+				po.order_id AS po_order_id,
+				po.requisition_id,
+				po.quote_id,
+				po.id AS po_id
+			   FROM (((((((stock_picking a
+				 LEFT JOIN purchase_work_acceptance wa ON ((a.acceptance_id = wa.id)))
+				 LEFT JOIN purchase_order po ON ((wa.order_id = po.id)))
+				 LEFT JOIN purchase_requisition pd ON ((po.requisition_id = pd.id)))
+				 LEFT JOIN res_users pd_requsr ON ((pd.request_uid = pd_requsr.id)))
+				 LEFT JOIN issi_hr_employee_view pd_hrreq ON (((pd_requsr.login)::text = (pd_hrreq.employee_code)::text)))
+				 LEFT JOIN res_users pd_appusr ON ((pd.assign_uid = pd_appusr.id)))
+				 LEFT JOIN issi_hr_employee_view pd_hrapp ON (((pd_appusr.login)::text = (pd_hrapp.employee_code)::text)))
+        )
+        """ % self._table)
+	
 class issi_budget_summary_actual_view(models.Model):
     _name = 'issi.budget.summary.actual.view'
     _auto = False
