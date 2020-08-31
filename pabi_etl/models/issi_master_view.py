@@ -101,8 +101,8 @@ class etl_issi_m_costcenter(models.Model):
 		ir_translation.value
 	        FROM ir_translation
 	WHERE (((ir_translation.name)::text = 'res.costcenter,name_short'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irshort ON ((c.id = irshort.res_id)))
-		)
-    """ % self._table)
+        )
+        """ % self._table)
 	
 class etl_issi_m_section(models.Model):
     _name = 'etl.issi.m.project'
@@ -208,8 +208,8 @@ class etl_issi_m_section(models.Model):
 				  WHERE (((ir_translation.name)::text = 'res.division,name_short'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) ird_short ON ((s.division_id = ird_short.res_id)))
 			 LEFT JOIN res_mission miss ON ((miss.id = s.mission_id)))
 		  ORDER BY s.code
-		)
-    """ % self._table)
+        )
+        """ % self._table)
 
 class issi_selection_project_view(models.Model):
     _name = 'issi.selection.project.view'
@@ -314,8 +314,8 @@ class issi_selection_project_view(models.Model):
 					   FROM ir_translation
 					  WHERE (((ir_translation.name)::text = 'res.costcenter,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) ircctr ON ((p.costcenter_id = ircctr.res_id)))
 			  WHERE ((e.employee_code)::text <> ''::text)
-		)
-    """ % self._table)
+        )
+        """ % self._table)
 		
 class etl_issi_m_project(models.Model):
     _name = 'etl.issi.m.project'
@@ -428,8 +428,8 @@ class etl_issi_m_project(models.Model):
 			 LEFT JOIN hr_employee hr ON ((prj.pm_employee_id = hr.id)))
 			 LEFT JOIN etl_issi_m_section pmsec ON ((hr.section_id = pmsec.section_id)))
 			 LEFT JOIN issi_hr_employee_view analyst ON ((prj.analyst_employee_id = analyst.id)))
-		)
-    """ % self._table)
+        )
+        """ % self._table)
 
 class etl_issi_m_project_c(models.Model):
     _name = 'etl.issi.m.project.c'
@@ -544,8 +544,8 @@ class etl_issi_m_project_c(models.Model):
 				 LEFT JOIN res_program secprg ON ((ressec.section_program_id = secprg.id)))
 				 LEFT JOIN res_mission mission ON ((con.mission_id = mission.id)))
 			  ORDER BY conphase.code, conphase.sequence
-		)
-    """ % self._table)
+        )
+        """ % self._table)
 
 class issi_m_investment_construction_phase_view(models.Model):
     _name = 'issi.m.investment.construction.phase.view'
@@ -611,8 +611,8 @@ class issi_m_investment_construction_phase_view(models.Model):
 			 LEFT JOIN etl_issi_m_section sec ON ((con.pm_section_id = sec.section_id)))
 			 LEFT JOIN res_mission mission ON ((con.mission_id = mission.id)))
 		  ORDER BY conphase.code, conphase.sequence
-		)
-    """ % self._table)
+        )
+        """ % self._table)
 	
 class etl_issi_m_investment_asset(models.Model):
     _name = 'etl.issi.m.investment.asset'
@@ -682,7 +682,9 @@ class etl_issi_m_investment_asset(models.Model):
                  LEFT JOIN account_fiscalyear fis ON a.fiscalyear_id = fis.id
                  LEFT JOIN res_program assetprg ON a.owner_program_id = assetprg.id
                  LEFT JOIN issi_m_program_view ownerprg ON a.owner_program_id = ownerprg.id
-                 ORDER BY a.id)""" % self._table)
+                 ORDER BY a.id
+        )
+        """ % self._table)
 
 class issi_m_investment_asset_view(models.Model):
     _name = 'issi.m.investment.asset.view'
@@ -747,8 +749,8 @@ class issi_m_investment_asset_view(models.Model):
 				 LEFT JOIN account_fiscalyear fis ON ((a.fiscalyear_id = fis.id)))
 				 LEFT JOIN res_program assetprg ON ((a.owner_program_id = assetprg.id)))
 				 LEFT JOIN issi_m_program_view ownerprg ON ((a.owner_program_id = ownerprg.id))) 
-		)
-    """ % self._table)
+        )
+        """ % self._table)
 
 class issi_m_personel_costcenter_view(models.Model):
     _name = 'issi.m.personel.costcenter.view'
@@ -845,8 +847,8 @@ class issi_m_personel_costcenter_view(models.Model):
 					  WHERE (((ir_translation.name)::text = 'res.division,name_short'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) ird_short ON ((s.division_id = ird_short.res_id)))
 				 LEFT JOIN res_mission miss ON ((miss.id = s.mission_id)))
 			  ORDER BY s.code
-		)
-    """ % self._table)
+        )
+        """ % self._table)
 	
 class issi_m_source_budget_view(models.Model):
     _name = 'issi.m.source.budget.view'
@@ -1265,8 +1267,8 @@ class issi_m_source_budget_view(models.Model):
 				p.costcenter_id
 			   FROM (issi_m_personel_costcenter_view p
 				 LEFT JOIN res_personnel_costcenter per ON ((p.id = per.id)))
-		)
-    """ % self._table)
+        )
+        """ % self._table)
 
 class etl_issi_m_asset_room(models.Model):
     _name = 'etl.issi.m.asset.room'
@@ -1288,5 +1290,6 @@ class etl_issi_m_asset_room(models.Model):
 		   FROM ((res_room a
 			 LEFT JOIN res_floor b ON ((a.floor_id = b.id)))
 			 LEFT JOIN res_building c ON ((b.building_id = c.id)))
-		)
-    """ % self._table)
+        )
+        """ % self._table)
+
