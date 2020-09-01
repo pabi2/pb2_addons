@@ -89,6 +89,8 @@ class PabiRegister_iCash(models.Model):
             if line.bank.abbrev != 'BBL':
                 if line.bank.code == '030':
                     bank_branch = '0309990'
+                if line.bank.code == '034':
+                    bank_branch = '0340000'
 
                 if line.bank.code == '033':
                     if len(line.acc_number) == 10:
