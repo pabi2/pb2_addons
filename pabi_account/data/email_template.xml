@@ -12,7 +12,7 @@
             <field name="email_to"></field>
             <field name="reply_to">${(object.env.user.company_id.group_email_ar or 'noreply@localhost')|safe}</field>
             <field name="report_template" ref="pabi_forms.customer_receipt_voucher_form_th"/>
-            <field name="report_name">${object.account_voucher_id.number}</field>
+            <field name="report_name">${object.number}</field>
             <field name="lang">th_TH</field>
 			<field name="subject">หลักฐานประกอบการรับเงิน</field>
             <field name="body_html"><![CDATA[
