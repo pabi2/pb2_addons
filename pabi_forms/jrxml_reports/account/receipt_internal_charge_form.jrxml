@@ -237,7 +237,7 @@ Description]]></text>
 				<reportElement style="table_1" mode="Transparent" x="0" y="279" width="421" height="222" printWhenGroupChanges="Internal Charge"/>
 			</rectangle>
 			<textField isBlankWhenNull="false">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="110" y="627" width="515" height="18" isPrintWhenDetailOverflows="true" printWhenGroupChanges="Internal Charge" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="108" y="627" width="515" height="18" isPrintWhenDetailOverflows="true" printWhenGroupChanges="Internal Charge" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
