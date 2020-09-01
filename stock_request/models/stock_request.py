@@ -332,6 +332,16 @@ class StockRequest(models.Model):
             'state': 'done',
             'date_transfer': fields.Date.context_today(self),
         })
+        section_id = self.location_id.section_id or False
+        # update credit from section
+        if section_id:
+            move = self.env['account.move'].search([
+                ('document', '=', self.transfer_picking_id.name)])
+            for line in move.mapped('line_id').filtered('credit'):
+                line.write({
+                    'costcenter_id': section_id.costcenter_id.id,
+                    'section_id': section_id.id,
+                    'org_id': section_id.org_id.id})
         if self.type == 'borrow':  # prepare for return
             self.sudo().create_picking('return')
 

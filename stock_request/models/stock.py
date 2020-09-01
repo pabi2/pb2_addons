@@ -16,3 +16,7 @@ class StockLocation(models.Model):
         string='Products',
         ondelete='restrict',
     )
+    section_id = fields.Many2one(
+        comodel_name='res.section',
+        string='Section',
+    )
