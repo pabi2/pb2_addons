@@ -101,6 +101,7 @@
                                 <field name="target_asset_value"/>
                             </group>
                             <group>
+                                <field name="commit_every" invisible="True"/>
                                 <field name="journal_id"/>
                                 <field name="user_id"/>
                                 <field name="date_accept"/>
@@ -138,6 +139,7 @@
                                         <field name="asset_profile_id"/>
                                         <field name="asset_name"/>
                                         <field name="depreciation_base" sum="Total"/>
+                                        <field name="check_commit" invisible="True"/>
                                         <!-- <field name="move_id"/>
                                         <field name="ref_asset_id"/> -->
                                     </tree>
