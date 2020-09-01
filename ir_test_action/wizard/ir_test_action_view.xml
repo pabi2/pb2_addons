@@ -11,9 +11,12 @@
                         <label string="Please specify Object, Method and Arguments, then Execute" />
                     </group>	
                     <group>
+                        <field name="extra_loop"/>
                         <field name="model" placeholder="e.g., res.partner"/>
                         <field name="function" placeholder="e.g., write"/>
-                        <field name="args" placeholder="e.g., ([2,3,4], {'name': 'MyCompany', 'code': 'MC})"/>
+                        <field name="args" placeholder="e.g., ([2,3,4], {'name': 'MyCompany', 'code': 'MC})" attrs="{'invisible': [('extra_loop', '=', True)]}"/>
+                        <field name="extra_args" placeholder="e.g., [([2,3,4], {'name': 'MyCompany', 'code': 'MC'}), ([4,5,6], {'name': 'MyCompany2', 'code': 'AC'})]"
+                        		attrs="{'invisible': [('extra_loop', '!=', True)]}"/>
                     </group>
 					<h2><p>
 						<field name="state" invisible="1"/>
@@ -21,7 +24,8 @@
 					</p></h2>	
                     <footer>
                         <div>
-                            <button name="execute" string="Execute" type="object" class="oe_highlight"/> or
+                            <button name="execute" string="Execute" type="object" class="oe_highlight"/>
+                            or
                             <button special="cancel" string="Cancel" class="oe_link"/>
                         </div>
                     </footer>
