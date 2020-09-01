@@ -41,7 +41,7 @@ class IrTestAction(models.TransientModel):
         size=500,
     )
     extra_loop = fields.Boolean(
-        'Advance',
+        'Extra Loop',
         default=False
     )
     extra_args = fields.Text(
