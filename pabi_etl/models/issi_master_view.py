@@ -73,7 +73,114 @@ class issi_hr_employee_view(models.Model):
                       WHERE (((ir_translation.name)::text = 'hr.position,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irp ON ((po.id = irp.res_id)))
         )
         """ % self._table)
-	
+
+class issi_selection_project_view(models.Model):
+    _name = 'issi.selection.project.view'
+    _auto = False
+    _description = 'issi_selection_project_view'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""
+            CREATE or REPLACE VIEW %s as (
+			 SELECT p.id,
+				p.name,
+				p.code,
+				COALESCE(irp.value, (p.name)::text) AS name_th,
+				o.name AS org_name,
+				COALESCE(iro.value, (o.name)::text) AS org_name_th,
+				o.name_short AS org_name_short,
+				fa.id AS functional_area_id,
+				fa.code AS functional_area_code,
+				COALESCE(irfa.value, (fa.name)::text) AS functional_area_name,
+				fa.name AS functional_area_name_en,
+				pgg.id AS program_group_id,
+				pgg.code AS program_group_code,
+				COALESCE(irpgg.value, (pgg.name)::text) AS program_group_name,
+				pgg.name AS program_group_name_en,
+				pg.id AS program_id,
+				pg.code AS program_code,
+				COALESCE(irpg.value, (pg.name)::text) AS program_name,
+				pg.name AS program_name_en,
+				pg.reference_code AS reference_program_code,
+				pjg.id AS project_group_id,
+				pjg.code AS project_group_code,
+				COALESCE(irpjg.value, (pjg.name)::text) AS project_group_name,
+				pjg.name AS project_group_name_en,
+				cctr.id AS costcenter_id,
+				cctr.code AS costcenter_code,
+				COALESCE(ircctr.value, (cctr.name)::text) AS costcenter_name,
+				cctr.name AS costcenter_name_en,
+				COALESCE(iro_short.value, (o.name_short)::text) AS org_name_short_th,
+				e.employee_code AS pm_code,
+				(((((t.name)::text || ' '::text) || (e.first_name)::text) || ' '::text) || (e.last_name)::text) AS pm_name,
+				((((COALESCE(irt.value, (t.name)::text) || ' '::text) || COALESCE(irf.value, (e.first_name)::text)) || ' '::text) || COALESCE(irl.value, (e.last_name)::text)) AS pm_name_th,
+				concat('[', btrim((p.code)::text), '] ', p.name) AS description,
+				concat('[', btrim((p.code)::text), '] ', COALESCE(irp.value, (p.name)::text)) AS description_th,
+				p.state,
+				p.active,
+				p.date_start,
+				p.date_end,
+				e.section_id,
+				o.id AS org_id
+			   FROM (((((((((((((((((((res_project p
+				 LEFT JOIN res_org o ON ((p.org_id = o.id)))
+				 LEFT JOIN hr_employee e ON ((p.pm_employee_id = e.id)))
+				 LEFT JOIN res_partner_title t ON ((e.title_id = t.id)))
+				 LEFT JOIN res_functional_area fa ON ((p.functional_area_id = fa.id)))
+				 LEFT JOIN res_program_group pgg ON ((p.program_group_id = pgg.id)))
+				 LEFT JOIN res_program pg ON ((p.program_id = pg.id)))
+				 LEFT JOIN res_project_group pjg ON ((p.project_group_id = pjg.id)))
+				 LEFT JOIN res_costcenter cctr ON ((p.costcenter_id = cctr.id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.project,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irp ON ((p.id = irp.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.org,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) iro ON ((p.org_id = iro.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.org,name_short'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) iro_short ON ((p.org_id = iro_short.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.partner.title,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irt ON ((e.title_id = irt.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'hr.employee,first_name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irf ON ((e.id = irf.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'hr.employee,last_name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irl ON ((e.id = irl.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.functional.area,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irfa ON ((p.functional_area_id = irfa.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.program.group,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irpgg ON ((p.program_group_id = irpgg.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.program,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irpg ON ((p.program_id = irpg.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.project.group,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irpjg ON ((p.project_group_id = irpjg.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.costcenter,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) ircctr ON ((p.costcenter_id = ircctr.res_id)))
+			  WHERE ((e.employee_code)::text <> ''::text)
+        )
+        """ % self._table)
+
+
 class etl_issi_m_costcenter(models.Model):
     _name = 'etl.issi.m.costcenter'
     _auto = False
@@ -1161,3 +1268,215 @@ class issi_m_source_budget_view(models.Model):
 				 LEFT JOIN res_personnel_costcenter per ON ((p.id = per.id)))
 		)
     """ % self._table)
+
+class etl_project_funds(models.Model):
+    _name = 'etl.project.funds'
+    _auto = False
+    _description = 'Project funds'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""
+            CREATE or REPLACE VIEW %s as (
+			 SELECT prj.id AS prj_id,
+				prj.code AS prj_code,
+				prj.name AS prj_name,
+				fnd.id AS fund_id,
+				fnd.code AS fund_code,
+				fnd.name AS fund_name
+			   FROM ((res_project prj
+				 JOIN res_fund_project_rel prel ON ((prel.project_id = prj.id)))
+				 JOIN res_fund fnd ON ((fnd.id = prel.fund_id)))
+			  WHERE ((prj.active = true) AND ((prj.state)::text = 'approve'::text) AND (NOT (prj.id IN ( SELECT budget_fund_rule.project_id
+					   FROM budget_fund_rule
+					  WHERE ((budget_fund_rule.active = true) AND ((budget_fund_rule.state)::text = 'confirmed'::text))
+					  GROUP BY budget_fund_rule.project_id, budget_fund_rule.fund_id))))
+			UNION ALL
+			 SELECT prj.id AS prj_id,
+				prj.code AS prj_code,
+				prj.name AS prj_name,
+				fnd.id AS fund_id,
+				fnd.code AS fund_code,
+				fnd.name AS fund_name
+			   FROM (((res_project prj
+				 JOIN res_fund_project_rel prel ON ((prel.project_id = prj.id)))
+				 JOIN res_fund fnd ON ((fnd.id = prel.fund_id)))
+				 JOIN ( SELECT budget_fund_rule.project_id,
+						budget_fund_rule.fund_id
+					   FROM budget_fund_rule
+					  WHERE ((budget_fund_rule.active = true) AND ((budget_fund_rule.state)::text = 'confirmed'::text))
+					  GROUP BY budget_fund_rule.project_id, budget_fund_rule.fund_id) rul ON (((rul.project_id = prj.id) AND (rul.fund_id = fnd.id))))
+			  WHERE ((prj.active = true) AND ((prj.state)::text = 'approve'::text))
+        )
+        """ % self._table)
+
+class etl_issi_m_asset_room(models.Model):
+    _name = 'etl.issi.m.asset.room'
+    _auto = False
+    _description = 'Master Rooms'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""
+            CREATE or REPLACE VIEW %s as (
+			 SELECT a.id AS room_id,
+				a.code AS room_code,
+				a.name AS room_name,
+				a.active AS room_active,
+				b.code AS floor_code,
+				b.name AS floor_name,
+				c.code AS building_code,
+				c.name AS building_name
+			   FROM ((res_room a
+				 LEFT JOIN res_floor b ON ((a.floor_id = b.id)))
+				 LEFT JOIN res_building c ON ((b.building_id = c.id)))
+        )
+        """ % self._table)
+
+class etl_issi_m_asset(models.Model):
+    _name = 'etl.issi.m.asset'
+    _auto = False
+    _description = 'Master Assets'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""
+            CREATE or REPLACE VIEW %s as (
+			 SELECT ou.name AS ba,
+				pro_cat.name AS product_category,
+				aap.code AS asset_class_code,
+				aap.name AS asset_class_name,
+				a.code2 AS asset_number,
+				a.code AS nstda_code,
+				a.name AS description1,
+				a.code2 AS description2,
+				a.serial_number,
+				a.date_start AS capitalize_date,
+				cost.costcenter_code AS fund_center_code,
+				cost.costcenter_name AS fund_center_name,
+				room.id AS room_id,
+				room.name AS room_name,
+				users.login AS emp_id,
+				use_part.display_name2 AS emp_name,
+				as_st.name AS asset_status,
+				pom.name AS purchasing_order,
+				a2.name AS asset_super_number,
+				part.search_key AS vendor_code,
+				part.display_name2 AS vendor_name,
+				po.name AS po_number,
+				( SELECT fis.name
+					   FROM account_fiscalyear fis
+					  WHERE ((a.date_start >= fis.date_start) AND (a.date_start <= fis.date_stop))) AS fiscal_year,
+				a.depreciation_base AS current_acq_amount,
+				a.method_number AS use_life,
+				aa.code AS account_code,
+				aa.name AS account_name,
+				prod_tem.name AS asset_type,
+				pwa.date_accept AS acceptance_date,
+				stm_pick.date_done AS picking_date,
+				pick.name AS picking_number,
+				fund.name AS fund_owner,
+				sbv.division_name AS division,
+				sbv.sub_sector_name AS subsector,
+				sbv.sector_name AS sector,
+				build.name AS building,
+				flo.name AS floors,
+				pr.name AS pr_number,
+				aar.name AS asset_req_code,
+				aar.name AS asset_req_name,
+				req_part.search_key AS pr_req_code,
+				req_part.display_name2 AS pr_req_name,
+				pr.date_approve AS pr_approve_date,
+				a.warranty_start_date,
+				a.warranty_expire_date,
+				aaa.name AS adjustment,
+				a.state AS asset_state,
+				( SELECT COALESCE(sum((ml.credit - ml.debit)), 0.0) AS "coalesce"
+					   FROM account_move_line ml
+					  WHERE ((ml.asset_id = a.id) AND (ml.date < ( SELECT fis.date_start
+							   FROM account_fiscalyear fis
+							  WHERE ((fis.name)::text = ((date_part('year'::text, (CURRENT_DATE + 92)))::character varying)::text))) AND (ml.account_id IN ( SELECT account_account.id
+							   FROM account_account
+							  WHERE (account_account.user_type = ( SELECT account_account_type.id
+									   FROM account_account_type
+									  WHERE ((account_account_type.name)::text = 'Accumulated Depreciation'::text))))))) AS fiscal_dep_amount,
+				( SELECT abs(COALESCE(sum((ml.debit - ml.credit)), 0.0)) AS abs
+					   FROM account_move_line ml
+					  WHERE ((ml.asset_id = a.id) AND (ml.date >= ( SELECT fis.date_start
+							   FROM account_fiscalyear fis
+							  WHERE ((fis.name)::text = ((date_part('year'::text, (CURRENT_DATE + 92)))::character varying)::text))) AND (ml.date <= ( SELECT fis.date_stop
+							   FROM account_fiscalyear fis
+							  WHERE ((fis.name)::text = ((date_part('year'::text, (CURRENT_DATE + 92)))::character varying)::text))) AND (ml.account_id IN ( SELECT account_account.id
+							   FROM account_account
+							  WHERE (account_account.user_type = ( SELECT account_account_type.id
+									   FROM account_account_type
+									  WHERE ((account_account_type.name)::text = 'Accumulated Depreciation'::text))))))) AS current_dep_amount,
+				( SELECT COALESCE(sum((ml.credit - ml.debit)), 0.0) AS "coalesce"
+					   FROM account_move_line ml
+					  WHERE ((ml.asset_id = a.id) AND (ml.date <= ( SELECT fis.date_stop
+							   FROM account_fiscalyear fis
+							  WHERE ((fis.name)::text = ((date_part('year'::text, (CURRENT_DATE + 92)))::character varying)::text))) AND (ml.account_id IN ( SELECT account_account.id
+							   FROM account_account
+							  WHERE (account_account.user_type = ( SELECT account_account_type.id
+									   FROM account_account_type
+									  WHERE ((account_account_type.name)::text = 'Accumulated Depreciation'::text))))))) AS dep_fy_end_amount,
+				(a.purchase_value - (a.value_depreciated)::double precision) AS bv_fy_end_amont,
+				sbv.costcenter_used AS cost_center_code,
+				sbv.costcenter_name_used AS cost_center_name,
+				sbv.source_budget AS source_of_budget,
+				sbv.source_budget_name AS source_of_budget_name,
+					CASE
+						WHEN (a.section_id IS NOT NULL) THEN 'Section'::text
+						WHEN (a.project_id IS NOT NULL) THEN 'Project'::text
+						WHEN (a.invest_asset_id IS NOT NULL) THEN 'Invest Asset'::text
+						WHEN (a.invest_construction_phase_id IS NOT NULL) THEN 'Invest Construction'::text
+						ELSE NULL::text
+					END AS source_of_budget_type,
+					CASE
+						WHEN (date_part('year'::text, (a.date_start + 92)) <> date_part('year'::text, (CURRENT_DATE + 92))) THEN COALESCE(a.purchase_value, (0.0)::double precision)
+						ELSE NULL::double precision
+					END AS purchase_value_bf_curr_fy,
+					CASE
+						WHEN (date_part('year'::text, (a.date_start + 92)) = date_part('year'::text, (CURRENT_DATE + 92))) THEN COALESCE(a.purchase_value, (0.0)::double precision)
+						ELSE NULL::double precision
+					END AS purchase_value_curr_fy,
+				a.asset_brand,
+				a.asset_model
+			   FROM ((((((((((((((((((((((((((((((((((account_asset a
+				 LEFT JOIN account_asset_profile aap ON ((a.profile_id = aap.id)))
+				 LEFT JOIN product_category pro_cat ON ((pro_cat.id = aap.product_categ_id)))
+				 LEFT JOIN issi_m_source_budget_view sbv ON (((a.owner_section_id = sbv.section_id) OR (a.owner_project_id = sbv.project_id) OR (a.owner_invest_asset_id = sbv.invest_asset_id) OR (a.owner_invest_construction_phase_id = sbv.invest_construction_phase_id))))
+				 LEFT JOIN account_account aa ON ((aap.account_asset_id = aa.id)))
+				 LEFT JOIN res_org org ON ((org.id = a.org_id)))
+				 LEFT JOIN operating_unit ou ON ((ou.id = org.operating_unit_id)))
+				 LEFT JOIN product_product prod ON ((prod.id = a.product_id)))
+				 LEFT JOIN product_template prod_tem ON ((prod_tem.id = prod.product_tmpl_id)))
+				 LEFT JOIN etl_issi_m_costcenter cost ON ((cost.costcenter_id = a.costcenter_id)))
+				 LEFT JOIN res_fund fund ON ((fund.id = a.fund_id)))
+				 LEFT JOIN res_room room ON ((room.id = a.room_id)))
+				 LEFT JOIN res_users users ON ((users.id = a.responsible_user_id)))
+				 LEFT JOIN res_partner use_part ON ((use_part.id = users.partner_id)))
+				 LEFT JOIN account_asset_status as_st ON ((as_st.id = a.status)))
+				 LEFT JOIN asset_purchase_method pom ON ((pom.id = a.asset_purchase_method_id)))
+				 LEFT JOIN account_asset a2 ON ((a2.id = a.parent_id)))
+				 LEFT JOIN res_partner part ON ((part.id = a.partner_id)))
+				 LEFT JOIN purchase_order po ON ((po.id = a.purchase_id)))
+				 LEFT JOIN stock_picking pick ON ((pick.id = a.picking_id)))
+				 LEFT JOIN purchase_work_acceptance pwa ON ((pwa.id = pick.acceptance_id)))
+				 LEFT JOIN res_building build ON ((build.id = a.building_id)))
+				 LEFT JOIN res_floor flo ON ((flo.id = a.floor_id)))
+				 LEFT JOIN account_asset_adjust aaa ON ((aaa.id = a.adjust_id)))
+				 LEFT JOIN account_asset_request aar ON ((aar.id = a.doc_request_id)))
+				 LEFT JOIN stock_move stm ON ((stm.id = a.move_id)))
+				 LEFT JOIN stock_picking stm_pick ON ((stm_pick.id = stm.picking_id)))
+				 LEFT JOIN purchase_order_line pol ON ((pol.id = stm.purchase_line_id)))
+				 LEFT JOIN purchase_order_line pol_quo ON ((pol_quo.id = pol.quo_line_id)))
+				 LEFT JOIN purchase_requisition_line prel ON ((prel.id = pol_quo.requisition_line_id)))
+				 LEFT JOIN purchase_request_purchase_requisition_line_rel pr_rel ON ((prel.id = pr_rel.purchase_requisition_line_id)))
+				 LEFT JOIN purchase_request_line prl ON ((prl.id = pr_rel.purchase_request_line_id)))
+				 LEFT JOIN purchase_request pr ON ((pr.id = prl.request_id)))
+				 LEFT JOIN res_users req_user ON ((req_user.id = pr.requested_by)))
+				 LEFT JOIN res_partner req_part ON ((req_part.id = req_user.partner_id)))
+			  ORDER BY a.code
+        )
+        """ % self._table)
