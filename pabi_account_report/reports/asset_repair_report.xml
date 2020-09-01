@@ -37,11 +37,6 @@
           <field name="target">new</field>
       </record>
 
-      <menuitem id="menu_asset_repair_report"
-          name="Asset Repair Report"
-          parent="menu_account_asset_report"
-          action="action_xlsx_report_asset_repair_form"
-          sequence="10"/>
 
     </data>
 </openerp>

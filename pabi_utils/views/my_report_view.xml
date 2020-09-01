@@ -112,14 +112,6 @@
             <field name="act_window_id" ref="action_my_spool_report"/>
         </record>
 
-        <record id="my_spool_report" model="ir.ui.menu">
-            <field name="name">My Spool Reports</field>
-            <field name="sequence" eval="50"/>
-            <field name="action" ref="action_my_spool_report"/>
-            <field name="parent_id" ref="my_jobs"/>
-            <field name="groups_id" eval="[(4,ref('group_see_own_spool_report'))]"/>
-        </record>
-
 
         # All Spool Report
 
@@ -153,14 +145,6 @@
             <field name="view_mode">calendar</field>
             <field name="view_id" ref="view_my_spool_report_calendar"/>
             <field name="act_window_id" ref="action_all_spool_report"/>
-        </record>
-
-        <record id="all_spool_report" model="ir.ui.menu">
-            <field name="name">All Spool Reports</field>
-            <field name="sequence" eval="51"/>
-            <field name="action" ref="action_all_spool_report"/>
-            <field name="parent_id" ref="my_jobs"/>
-            <field name="groups_id" eval="[(4,ref('group_see_all_spool_report'))]"/>
         </record>
 
     </data>

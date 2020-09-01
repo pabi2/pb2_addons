@@ -98,11 +98,6 @@
           <field name="context">{'lang': 'th_TH'}</field>
       </record>
 
-      <menuitem id="menu_asset_estimate_report"
-          name="Asset Estimate Report"
-          parent="menu_account_asset_report"
-          action="action_asset_estimate_report_form"
-          sequence="30"/>
 
     </data>
 </openerp>

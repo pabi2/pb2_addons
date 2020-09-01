@@ -45,6 +45,14 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
         string='PO Not Closed',
         default=True,
     )
+    no_finlease = fields.Boolean(
+        string='No Finlease',
+        default=True,
+    )
+    no_po_draft = fields.Boolean(
+        string='No PO Draft',
+        default=True,
+    )
     filter_description = fields.Char(
         string='Filter',
         compute='_compute_filter_description',
@@ -82,14 +90,18 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
     )
     
     @api.multi
-    @api.depends('invoice_plan', 'po_not_closed')
+    @api.depends('invoice_plan', 'po_not_closed', 'no_finlease', 'no_po_draft')
     def _compute_filter_description(self):
         for rec in self:
             filter_description = ''
             if rec.invoice_plan is True:
-                filter_description = 'invoice plan, '
+                filter_description = ' Invoice Plan,'
             if rec.po_not_closed:
-                filter_description += 'po not closed'
+                filter_description += ' PO Not Closed,'
+            if rec.no_finlease:
+                filter_description += ' No Finlease,'
+            if rec.no_po_draft:
+                filter_description += ' No Po Draft,'
             
             rec.filter_description = filter_description
 
@@ -267,6 +279,10 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
             dom += [('use_invoice_plan','=',True)]
         if self.po_not_closed is True:
             dom += [('technical_closed','!=',True)]
+        if self.no_finlease is True:
+            dom += [('is_fin_lease','!=',True)]
+        if self.no_po_draft is True:
+            dom += [('po_status','!=','draft')]
         
         if len(dom) > 0:
             where_str = self._domain_to_where_str(dom)
@@ -280,27 +296,63 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
 
         self._cr.execute("""
             select *,
-                (select count(*) from purchase_invoice_plan pip
-                where pip.order_id = purchase_id
-                    and pip.installment is not null
-                ) as no_of_installment,
-                (select sum(pip.invoice_amount) from purchase_invoice_plan pip
-                    left join purchase_order_line pol on pol.id = pip.order_line_id
-                where pip.order_id = purchase_id
-                     and pip.installment is not null
-                     and pol.fiscalyear_id = 
-                         (select id from account_fiscalyear
-                        where cast(NOW() as Date) between date_start and date_stop)
-                ) as amount_curr_fisyear,
-                (select sum(pip.invoice_amount) from purchase_invoice_plan pip
-                    left join purchase_order_line pol on pol.id = pip.order_line_id
-                where pip.order_id = purchase_id
-                     and pip.installment is not null
-                     and pol.fiscalyear_id = 
-                         (select id from account_fiscalyear
-                        where cast(NOW() + interval '1 year' as Date) between date_start and date_stop)
-                ) as amount_next_fisyear,
-                (select id from account_period where date_order between date_start and date_stop limit 1) as period_id
+                CASE 
+                    WHEN new.use_invoice_plan = True 
+                        THEN (select count(*) from purchase_invoice_plan pip
+                            where pip.order_id = new.purchase_id
+                                and pip.installment is not null
+                            )
+                    ELSE (select count(*) from account_invoice av
+                            left join purchase_invoice_rel pi_r on pi_r.invoice_id = av.id
+                        where pi_r.purchase_id = new.purchase_id and av.state <> 'cancel'
+                        )
+                END as no_of_installment,
+                (CASE
+                    WHEN new.use_invoice_plan = True
+                        THEN (select sum(pip.invoice_amount) from purchase_invoice_plan pip
+                             where pip.order_id = new.purchase_id and pip.state = 'draft'
+                                and pip.date_invoice >=
+                                    (select fis.date_start from account_fiscalyear fis
+                                        where cast(NOW() as Date) between fis.date_start and fis.date_stop)
+                                and pip.date_invoice <=
+                                    (select fis.date_stop from account_fiscalyear fis
+                                        where cast(NOW() as Date) between fis.date_start and fis.date_stop))
+                    ELSE
+                        (select sum(av.amount_total)
+                         from account_invoice av
+                            left join purchase_invoice_rel pi_r on pi_r.invoice_id = av.id
+                         where pi_r.purchase_id = new.purchase_id and av.state = 'draft'
+                            and av.date_invoice >=
+                                (select fis.date_start from account_fiscalyear fis
+                                    where cast(NOW() as Date) between fis.date_start and fis.date_stop)
+                            and av.date_invoice <=
+                                (select fis.date_stop from account_fiscalyear fis
+                                    where cast(NOW() as Date) between fis.date_start and fis.date_stop))
+                END)
+                as amount_curr_fisyear,
+                (CASE
+                    WHEN new.use_invoice_plan = True
+                        THEN (select sum(pip.invoice_amount) from purchase_invoice_plan pip
+                             where pip.order_id = new.purchase_id and pip.state = 'draft'
+                                and pip.date_invoice >=
+                                    (select fis.date_start from account_fiscalyear fis
+                                        where cast(NOW() + interval '1 year' as Date) between fis.date_start and fis.date_stop)
+                                and pip.date_invoice <=
+                                    (select fis.date_stop from account_fiscalyear fis
+                                        where cast(NOW() + interval '1 year' as Date) between fis.date_start and fis.date_stop))
+                    ELSE
+                        (select sum(av.amount_total)
+                         from account_invoice av
+                            left join purchase_invoice_rel pi_r on pi_r.invoice_id = av.id
+                         where pi_r.purchase_id = new.purchase_id and av.state = 'draft'
+                            and av.date_invoice >=
+                                (select fis.date_start from account_fiscalyear fis
+                                    where cast(NOW() + interval '1 year' as Date) between fis.date_start and fis.date_stop)
+                            and av.date_invoice <=
+                                (select fis.date_stop from account_fiscalyear fis
+                                    where cast(NOW() + interval '1 year' as Date) between fis.date_start and fis.date_stop))
+                END)
+                as amount_next_fisyear
              from (
                 (select
                     ou.org_id as org_id, po.id as purchase_id, pct.id as contract_id, 
@@ -317,6 +369,12 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     po.name as po_number, pol.docline_seq, 
                     cast(pip.installment as varchar) as installment,
                     pct.action_date,
+                    (select pe.id from account_period pe 
+                        where pip.date_invoice between pe.date_start and pe.date_stop limit 1
+                    ) as period_plan_id,
+                    (select pe.id from account_period pe 
+                        where av.date_invoice between pe.date_start and pe.date_stop limit 1
+                    ) as period_kv_id,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
                         else ''
@@ -351,24 +409,6 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                          LEFT JOIN purchase_order_taxe pot ON pot.tax_id = tax.id
                      WHERE pot.ord_id = pol.id
                     ) AS taxes,
-                    ROUND((CASE
-                        WHEN cur_po.name = 'THB' THEN 1
-                        WHEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_po.id and CAST(po.date_order AS DATE) = CAST(cur_r.name AS DATE) limit 1) IS NULL 
-                        THEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_po.id and CAST(po.date_order AS DATE) > CAST(cur_r.name AS DATE) order by cur_r.name limit 1)
-                        ELSE (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_po.id and CAST(po.date_order AS DATE) = CAST(cur_r.name AS DATE) limit 1)
-                    END), 2) as exchange_rate_po,
-                    ROUND((CASE
-                        WHEN cur_kv.name = 'THB' THEN 1
-                        WHEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_kv.id and av.date_invoice = CAST(cur_r.name AS DATE) limit 1) IS NULL 
-                        THEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_kv.id and av.date_invoice  > CAST(cur_r.name AS DATE) order by cur_r.name limit 1)
-                        ELSE (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_kv.id and av.date_invoice  = CAST(cur_r.name AS DATE) limit 1)
-                    END), 2) as exchange_rate_kv,
                      wa.name as wa_number, 
                     wa.date_accept as acceptance_date,
                     wal.to_receive_qty as plan_qty,
@@ -379,13 +419,13 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                         when po.use_deposit is False and po.use_advance is False then ''
                         else ads.name
                     end as advance_deposit,
-                    po.use_invoice_plan, po.technical_closed
+                    po.use_invoice_plan, po.technical_closed, po.is_fin_lease
                 from purchase_order po
-                    left join purchase_invoice_plan pip on pip.order_id = po.id and po.use_invoice_plan = True
+                    left join purchase_invoice_plan pip on pip.order_id = po.id
                     left join purchase_order_line pol on pol.id = pip.order_line_id
-                    left join account_invoice av on av.id = pip.ref_invoice_id
+                    left join account_invoice av on av.id = pip.ref_invoice_id and av.state <> 'cancel'
                     left join account_invoice_line avl on avl.invoice_id = av.id
-                         and avl.purchase_line_id = pol.id
+                         and (avl.purchase_line_id = pol.id or (avl.purchase_line_id is null and pip.order_line_id is null))
                     left join purchase_work_acceptance wa on wa.invoice_created = av.id and wa.state <> 'cancel'
                     left join purchase_work_acceptance_line wal 
                         on wal.acceptance_id = wa.id and wal.line_id = pol.id
@@ -420,6 +460,7 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     left join res_currency cur_kv on cur_kv.id = av.currency_id
                     left join account_account ads on ads.id = po.account_deposit_supplier
                 where pip.id is not null and (pip.order_line_id is null or pol.active = True)
+                    and po.use_invoice_plan = True
                 )
                 union
                 (select
@@ -437,6 +478,12 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     po.name as po_number, pol.docline_seq, 
                     cast(pip.installment as varchar) as installment,
                     pct.action_date,
+                    (select pe.id from account_period pe 
+                        where pip.date_invoice between pe.date_start and pe.date_stop limit 1
+                    ) as period_plan_id,
+                    (select pe.id from account_period pe 
+                        where av.date_invoice between pe.date_start and pe.date_stop limit 1
+                    ) as period_kv_id,
                     case
                         when po.po_contract_type_id is not null then po_pct_t.name
                         else ''
@@ -471,24 +518,6 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                          LEFT JOIN purchase_order_taxe pot ON pot.tax_id = tax.id
                      WHERE pot.ord_id = pol.id
                     ) AS taxes,
-                    ROUND((CASE
-                        WHEN cur_po.name = 'THB' THEN 1
-                        WHEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_po.id and CAST(po.date_order AS DATE) = CAST(cur_r.name AS DATE) limit 1) IS NULL 
-                        THEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_po.id and CAST(po.date_order AS DATE) > CAST(cur_r.name AS DATE) order by cur_r.name limit 1)
-                        ELSE (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_po.id and CAST(po.date_order AS DATE) = CAST(cur_r.name AS DATE) limit 1)
-                    END), 2) as exchange_rate_po,
-                    ROUND((CASE
-                        WHEN cur_kv.name = 'THB' THEN 1
-                        WHEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_kv.id and av.date_invoice = CAST(cur_r.name AS DATE) limit 1) IS NULL 
-                        THEN (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_kv.id and av.date_invoice  > CAST(cur_r.name AS DATE) order by cur_r.name limit 1)
-                        ELSE (SELECT cur_r.rate_input FROM res_currency_rate cur_r 
-                            WHERE cur_r.currency_id = cur_kv.id and av.date_invoice  = CAST(cur_r.name AS DATE) limit 1)
-                    END), 2) as exchange_rate_kv,
                      wa.name as wa_number, 
                     wa.date_accept as acceptance_date,
                     wal.to_receive_qty as plan_qty,
@@ -499,10 +528,10 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                         when po.use_deposit is False and po.use_advance is False then ''
                         else ads.name
                     end as advance_deposit,
-                    po.use_invoice_plan, po.technical_closed
+                    po.use_invoice_plan, po.technical_closed, po.is_fin_lease
                 from purchase_order po
                     left join purchase_order_line pol on pol.order_id = po.id
-                    left join purchase_invoice_plan pip on pip.order_line_id = pol.id and po.use_invoice_plan = True
+                    left join purchase_invoice_plan pip on pip.order_line_id = pol.id
                     left join account_invoice_line avl on avl.purchase_line_id = pol.id
                         and (select av2.state from account_invoice av2 where av2.id = avl.invoice_id) <> 'cancel'
                     left join account_invoice av on av.id = avl.invoice_id
@@ -536,19 +565,20 @@ class XLSXReportPurchaseInvoicePlan(models.TransientModel):
                     left join res_currency cur_po on cur_po.id = po.currency_id
                     left join res_currency cur_kv on cur_kv.id = av.currency_id
                     left join account_account ads on ads.id = po.account_deposit_supplier
-                where pol.active = True and pip.id is null
+                where (pol.id is null or pol.active = True) and pip.id is null
+                    and po.use_invoice_plan <> True
                 )
             ) as new
             where po_status not in ('except_picking','except_invoice','cancel') 
                 and order_type = 'purchase_order'
-                %s
+                %s 
             order by org_id, po_fiscalyear, date_order, po_number, docline_seq, installment
         """  % (where_str))
 
         invoice_plans = self._cr.dictfetchall()
         self.results = [Reports.new(line).id for line in invoice_plans]
         print 'results: '+str(self.results)
-
+ 
 
 class ReportPurchaseInvoicePlanView(models.AbstractModel):
     _name = 'report.purchase.invoice.plan.view'
@@ -565,7 +595,8 @@ class ReportPurchaseInvoicePlanView(models.AbstractModel):
     purchase_line_id = fields.Many2one('purchase.order.line')
     product_id = fields.Many2one('product.product')
     supplier_id = fields.Many2one('res.partner')
-    period_id = fields.Many2one('account.period')
+    period_plan_id = fields.Many2one('account.period')
+    period_kv_id = fields.Many2one('account.period')
     po_fiscalyear = fields.Char()
     po_contract_type = fields.Char()
     activity_group = fields.Char()
@@ -576,8 +607,6 @@ class ReportPurchaseInvoicePlanView(models.AbstractModel):
     fiscal_year_by_invoice_plan = fields.Char()
     currency = fields.Char()
     taxes = fields.Char()
-    exchange_rate_po = fields.Float()
-    exchange_rate_kv = fields.Float()
     wa_number = fields.Char()
     acceptance_date = fields.Date()
     plan_qty = fields.Char()
@@ -589,3 +618,14 @@ class ReportPurchaseInvoicePlanView(models.AbstractModel):
     no_of_installment = fields.Integer()
     amount_curr_fisyear = fields.Float()
     amount_next_fisyear = fields.Float()
+    amount_curr_fisyear_local = fields.Float(compute='_compute_amount_local')
+    amount_next_fisyear_local = fields.Float(compute='_compute_amount_local')
+
+    @api.multi
+    @api.depends('amount_curr_fisyear','amount_next_fisyear')
+    def _compute_amount_local(self):
+        for rec in self:
+            if rec.amount_curr_fisyear:
+                rec.amount_curr_fisyear_local = rec.amount_curr_fisyear * rec.purchase_id.currency_rate
+            if rec.amount_next_fisyear:
+                rec.amount_next_fisyear_local = rec.amount_next_fisyear * rec.purchase_id.currency_rate
