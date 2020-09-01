@@ -74,6 +74,81 @@ class issi_hr_employee_view(models.Model):
         )
         """ % self._table)
 
+class issi_selection_org_view(models.Model):
+    _name = 'issi.selection.org.view'
+    _auto = False
+    _description = 'issi_selection_org_view'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""
+			CREATE or REPLACE VIEW %s as (
+			 SELECT s.id AS section_id,
+				s.code AS section_code,
+				COALESCE(irs.value, (s.name)::text) AS section_name,
+				(s.name)::text AS section_name_en,
+				o.id AS org_id,
+				COALESCE(iro.value, (o.name)::text) AS org_name,
+				o.name AS org_name_en,
+				COALESCE(iro_short.value, (o.name_short)::text) AS org_name_short,
+				o.name_short AS org_name_short_en,
+				sc.id AS sector_id,
+				sc.code AS sector_code,
+				COALESCE(irsc.value, (sc.name)::text) AS sector_name,
+				(sc.name)::text AS sector_name_en,
+				sb.id AS subsector_id,
+				sb.code AS subsector_code,
+				COALESCE(irsb.value, (sb.name)::text) AS subsector_name,
+				(sb.name)::text AS subsector_name_en,
+				d.id AS division_id,
+				d.code AS division_code,
+				COALESCE(ird.value, (d.name)::text) AS division_name,
+				(d.name)::text AS division_name_en,
+				c.id AS coscenter_id,
+				c.code AS costcenter_code,
+				COALESCE(irc.value, (c.name)::text) AS costcenter_name,
+				(c.name)::text AS costcenter_name_en,
+				s.name_short AS section_name_short,
+				s.internal_charge,
+				o.code AS org_code
+			   FROM ((((((((((((res_section s
+				 LEFT JOIN res_org o ON ((s.org_id = o.id)))
+				 LEFT JOIN res_sector sc ON ((s.sector_id = sc.id)))
+				 LEFT JOIN res_subsector sb ON ((s.subsector_id = sb.id)))
+				 LEFT JOIN res_division d ON ((s.division_id = d.id)))
+				 LEFT JOIN res_costcenter c ON ((s.costcenter_id = c.id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.section,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irs ON ((s.id = irs.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.org,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) iro ON ((s.org_id = iro.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.org,name_short'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) iro_short ON ((s.org_id = iro_short.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.costcenter,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irc ON ((s.costcenter_id = irc.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.sector,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irsc ON ((s.sector_id = irsc.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.subsector,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irsb ON ((s.subsector_id = irsb.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.division,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) ird ON ((s.division_id = ird.res_id)))
+			  ORDER BY s.code
+        )
+        """ % self._table)
+	
 class issi_selection_project_view(models.Model):
     _name = 'issi.selection.project.view'
     _auto = False
@@ -180,6 +255,33 @@ class issi_selection_project_view(models.Model):
         )
         """ % self._table)
 
+class issi_selection_program_view(models.Model):
+    _name = 'issi.selection.program.view'
+    _auto = False
+    _description = 'issi_selection_program_view'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+		 SELECT pg.id,
+			pg.code,
+			COALESCE(irpg.value, (pg.name)::text) AS name,
+			pg.name AS name_en,
+			COALESCE(irpgsh.value, (pg.name)::text) AS name_short,
+			pg.name_short AS name_short_en,
+			pg.reference_code,
+			pg.active
+		   FROM ((res_program pg
+			 LEFT JOIN ( SELECT ir_translation.res_id,
+					ir_translation.value
+				   FROM ir_translation
+				  WHERE (((ir_translation.name)::text = 'res.program,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irpg ON ((pg.id = irpg.res_id)))
+			 LEFT JOIN ( SELECT ir_translation.res_id,
+					ir_translation.value
+				   FROM ir_translation
+				  WHERE (((ir_translation.name)::text = 'res.program,name_short'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irpgsh ON ((pg.id = irpgsh.res_id)))
+        )
+        """ % self._table)
 
 class etl_issi_m_costcenter(models.Model):
     _name = 'etl.issi.m.costcenter'
@@ -317,109 +419,6 @@ class etl_issi_m_section(models.Model):
 		  ORDER BY s.code
 		)
     """ % self._table)	
-
-class issi_selection_org_view(models.Model):
-    _name = 'issi.selection.org.view'
-    _auto = False
-    _description = 'issi_selection_org_view'
-
-    def init(self, cr):
-        tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""
-			CREATE or REPLACE VIEW %s as (
-			 SELECT s.id AS section_id,
-				s.code AS section_code,
-				COALESCE(irs.value, (s.name)::text) AS section_name,
-				(s.name)::text AS section_name_en,
-				o.id AS org_id,
-				COALESCE(iro.value, (o.name)::text) AS org_name,
-				o.name AS org_name_en,
-				COALESCE(iro_short.value, (o.name_short)::text) AS org_name_short,
-				o.name_short AS org_name_short_en,
-				sc.id AS sector_id,
-				sc.code AS sector_code,
-				COALESCE(irsc.value, (sc.name)::text) AS sector_name,
-				(sc.name)::text AS sector_name_en,
-				sb.id AS subsector_id,
-				sb.code AS subsector_code,
-				COALESCE(irsb.value, (sb.name)::text) AS subsector_name,
-				(sb.name)::text AS subsector_name_en,
-				d.id AS division_id,
-				d.code AS division_code,
-				COALESCE(ird.value, (d.name)::text) AS division_name,
-				(d.name)::text AS division_name_en,
-				c.id AS coscenter_id,
-				c.code AS costcenter_code,
-				COALESCE(irc.value, (c.name)::text) AS costcenter_name,
-				(c.name)::text AS costcenter_name_en,
-				s.name_short AS section_name_short,
-				s.internal_charge,
-				o.code AS org_code
-			   FROM ((((((((((((res_section s
-				 LEFT JOIN res_org o ON ((s.org_id = o.id)))
-				 LEFT JOIN res_sector sc ON ((s.sector_id = sc.id)))
-				 LEFT JOIN res_subsector sb ON ((s.subsector_id = sb.id)))
-				 LEFT JOIN res_division d ON ((s.division_id = d.id)))
-				 LEFT JOIN res_costcenter c ON ((s.costcenter_id = c.id)))
-				 LEFT JOIN ( SELECT ir_translation.res_id,
-						ir_translation.value
-					   FROM ir_translation
-					  WHERE (((ir_translation.name)::text = 'res.section,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irs ON ((s.id = irs.res_id)))
-				 LEFT JOIN ( SELECT ir_translation.res_id,
-						ir_translation.value
-					   FROM ir_translation
-					  WHERE (((ir_translation.name)::text = 'res.org,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) iro ON ((s.org_id = iro.res_id)))
-				 LEFT JOIN ( SELECT ir_translation.res_id,
-						ir_translation.value
-					   FROM ir_translation
-					  WHERE (((ir_translation.name)::text = 'res.org,name_short'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) iro_short ON ((s.org_id = iro_short.res_id)))
-				 LEFT JOIN ( SELECT ir_translation.res_id,
-						ir_translation.value
-					   FROM ir_translation
-					  WHERE (((ir_translation.name)::text = 'res.costcenter,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irc ON ((s.costcenter_id = irc.res_id)))
-				 LEFT JOIN ( SELECT ir_translation.res_id,
-						ir_translation.value
-					   FROM ir_translation
-					  WHERE (((ir_translation.name)::text = 'res.sector,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irsc ON ((s.sector_id = irsc.res_id)))
-				 LEFT JOIN ( SELECT ir_translation.res_id,
-						ir_translation.value
-					   FROM ir_translation
-					  WHERE (((ir_translation.name)::text = 'res.subsector,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irsb ON ((s.subsector_id = irsb.res_id)))
-				 LEFT JOIN ( SELECT ir_translation.res_id,
-						ir_translation.value
-					   FROM ir_translation
-					  WHERE (((ir_translation.name)::text = 'res.division,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) ird ON ((s.division_id = ird.res_id)))
-			  ORDER BY s.code
-        )
-        """ % self._table)
-	
-class issi_selection_program_view(models.Model):
-    _name = 'issi.selection.program.view'
-    _auto = False
-    _description = 'issi_selection_program_view'
-
-    def init(self, cr):
-        tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE or REPLACE VIEW %s as (
-		 SELECT pg.id,
-			pg.code,
-			COALESCE(irpg.value, (pg.name)::text) AS name,
-			pg.name AS name_en,
-			COALESCE(irpgsh.value, (pg.name)::text) AS name_short,
-			pg.name_short AS name_short_en,
-			pg.reference_code,
-			pg.active
-		   FROM ((res_program pg
-			 LEFT JOIN ( SELECT ir_translation.res_id,
-					ir_translation.value
-				   FROM ir_translation
-				  WHERE (((ir_translation.name)::text = 'res.program,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irpg ON ((pg.id = irpg.res_id)))
-			 LEFT JOIN ( SELECT ir_translation.res_id,
-					ir_translation.value
-				   FROM ir_translation
-				  WHERE (((ir_translation.name)::text = 'res.program,name_short'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irpgsh ON ((pg.id = irpgsh.res_id)))
-        )
-        """ % self._table)
 
 class etl_issi_m_project(models.Model):
     _name = 'etl.issi.m.project'
