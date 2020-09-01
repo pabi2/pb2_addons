@@ -180,9 +180,9 @@ class PabiRegister_iCash(models.Model):
         if self.line_filter:
             
             domain = self._get_domain_partner_bank()
-            
-            self._check_data_partner_bank(domain)
-            self._create_register_icash_line(domain)
+            if domain:
+                self._check_data_partner_bank(domain)
+                self._create_register_icash_line(domain)
 
     @api.onchange('service_type')
     def _onchange_service_type(self):
@@ -219,10 +219,6 @@ class PabiRegister_iCash(models.Model):
         self.write({'state': 'registered',
                     'export_date': datetime.now()})
 
-        """for line in self.line_ids:
-            line.partner_bank_id.write({'register_no': self.name,
-                                        'register_date': datetime.now(),
-                                        'is_register': True})"""
         acc_number = self.line_ids.mapped('partner_bank_id')
         acc_number = acc_number.mapped('acc_number')
         parner_bank_ids = PartnerBank.search([('acc_number', 'in', acc_number),
@@ -273,6 +269,8 @@ class PabiRegister_iCashLine(models.Model):
                 if rec.partner_bank_id.bank.abbrev != 'BBL':
                     if rec.partner_bank_id.bank.code == '030':
                         bank_branch = '0309990'
+                    if rec.partner_bank_id.bank.code == '034':
+                        bank_branch = '0340000'
                     
                     if rec.partner_bank_id.bank.code == '033':
                         if len(rec.partner_bank_id.acc_number.strip()) == 10:
