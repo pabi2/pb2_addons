@@ -41,6 +41,9 @@ class ResOrg(ResCommon, models.Model):
         translate=True,
         size=1000,
     )
+    logo_path = fields.Char(
+        string='Logo Path File',
+    )
 
     @api.model
     def _add_name_search_domain(self):

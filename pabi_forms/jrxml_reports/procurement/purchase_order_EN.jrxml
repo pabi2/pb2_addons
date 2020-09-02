@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_EN" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
 	<property name="ireport.zoom" value="1.6105100000000105"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -103,7 +103,8 @@ po.amount_total_text_en amount_total_EN,
 po.delivery_address,
 si.code incoterm,
 cur.name as currency,
-po.incoterm_text
+po.incoterm_text,
+ro.logo_path
 FROM purchase_order po
 LEFT JOIN operating_unit ou
 ON ou.id = po.operating_unit_id
@@ -149,6 +150,8 @@ LEFT JOIN stock_incoterms si
 ON si.id = po.incoterm_id
 LEFT JOIN res_currency cur
 ON cur.id = po.currency_id
+LEFT JOIN res_org ro
+ON ro.operating_unit_id = ou.id
 WHERE $X{IN,po.id,PIDS}]]>
 	</queryString>
 	<field name="po_id" class="java.lang.Integer"/>
@@ -235,6 +238,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 	</field>
 	<field name="buyer_phone" class="java.lang.String"/>
 	<field name="address_text" class="java.lang.String"/>
+	<field name="logo_path" class="java.lang.String"/>
 	<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
 		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
 	</variable>
@@ -588,40 +592,8 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{buyer_mail}]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="409" y="2" width="74" height="43">
-					<printWhenExpression><![CDATA[$F{ou_id} == 7]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_nanotec.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="409" y="2" width="74" height="43">
-					<printWhenExpression><![CDATA[$F{ou_id} == 6]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_tmc.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="409" y="2" width="74" height="43">
-					<printWhenExpression><![CDATA[$F{ou_id} == 5]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_nectec.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="409" y="2" width="74" height="43">
-					<printWhenExpression><![CDATA[$F{ou_id} == 2]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_nstda.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="409" y="2" width="74" height="43">
-					<printWhenExpression><![CDATA[$F{ou_id} == 4]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_mtec.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="409" y="2" width="74" height="43">
-					<printWhenExpression><![CDATA[$F{ou_id} == 3]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_biotec.gif"]]></imageExpression>
+				<reportElement x="409" y="2" width="74" height="43"/>
+				<imageExpression class="java.lang.String"><![CDATA[$F{logo_path}]]></imageExpression>
 			</image>
 		</band>
 	</pageHeader>

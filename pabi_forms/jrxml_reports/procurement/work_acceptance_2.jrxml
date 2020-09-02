@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="70" bottomMargin="107">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="work_acceptance_2" language="groovy" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="70" bottomMargin="107">
 	<property name="ireport.zoom" value="1.2100000000000017"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="79"/>
@@ -116,11 +116,12 @@ LTRIM(pwa.fine_per_day::numeric::money::varchar,'฿ ') fine_per_day,
 pwa.amount_fine_per_day_text_th,
 pwa.overdue_day::varchar,
 ou.code,
-ou.id ou_id
-
+ou.id ou_id,
+ou_org.logo_path
 from purchase_order po
 left join res_partner rp on po.partner_id = rp.id
 left join operating_unit ou on po.operating_unit_id = ou.id
+left join res_org ou_org on ou_org.operating_unit_id = ou.id
 left join res_partner rp_ou on ou.partner_id = rp_ou.id
 left join res_country rc on rp_ou.country_id = rc.id
 left join res_country_district rcd on rp_ou.district_id = rcd.id
@@ -183,6 +184,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 		<fieldDescription><![CDATA[Code]]></fieldDescription>
 	</field>
 	<field name="ou_id" class="java.lang.Integer"/>
+	<field name="logo_path" class="java.lang.String"/>
 	<variable name="current_date" class="java.util.Date" resetType="None">
 		<variableExpression><![CDATA[new java.util.Date()]]></variableExpression>
 	</variable>
@@ -221,40 +223,8 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 	<pageHeader>
 		<band height="81" splitType="Stretch">
 			<image>
-				<reportElement x="331" y="0" width="152" height="81">
-					<printWhenExpression><![CDATA[$F{ou_id} == 5]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_nectec.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="331" y="0" width="152" height="81">
-					<printWhenExpression><![CDATA[$F{ou_id} == 2]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_nstda.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="331" y="0" width="152" height="81">
-					<printWhenExpression><![CDATA[$F{ou_id} == 6]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_tmc.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="331" y="0" width="152" height="81">
-					<printWhenExpression><![CDATA[$F{ou_id} == 3]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_biotec.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="331" y="0" width="152" height="81">
-					<printWhenExpression><![CDATA[$F{ou_id} == 7]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_nanotec.gif"]]></imageExpression>
-			</image>
-			<image>
-				<reportElement x="331" y="0" width="152" height="81">
-					<printWhenExpression><![CDATA[$F{ou_id} == 4]]></printWhenExpression>
-				</reportElement>
-				<imageExpression class="java.lang.String"><![CDATA["/mnt/extra-addons/pb2_addons/pabi_forms/jrxml_reports/procurement/logo_mtec.gif"]]></imageExpression>
+				<reportElement x="331" y="0" width="152" height="81"/>
+				<imageExpression class="java.lang.String"><![CDATA[$F{logo_path}]]></imageExpression>
 			</image>
 		</band>
 	</pageHeader>
