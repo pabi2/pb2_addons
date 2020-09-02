@@ -71,7 +71,7 @@
             <field name="inherit_id" ref="account_voucher.view_vendor_receipt_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//button[@string='Unreconcile']" position="after">
-                    <button name="send_mail" string="e-Mail Employee" type="object" states="posted" class="oe_highlight" groups="account.group_account_user"/>
+                    <button name="send_mail" string="Send Mail - Receipt" type="object" states="posted" class="oe_highlight" groups="account.group_account_user"/>
                 </xpath>
                 <xpath expr="//sheet/h1" position="before">
                     <div class="oe_right oe_button_box" style="width: 300px;" name="buttons">
