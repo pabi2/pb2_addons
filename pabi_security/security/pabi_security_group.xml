@@ -8,7 +8,7 @@
 <!-- PABI2 OIA -->
         <record id="group_pabi_oia" model="res.groups">
             <field name="name">PABI2 OIA</field>
-            <field name="category_id" ref="base.module_category_hidden"/>
+            <field name="category_id" ref="pabi_security"/>
 	        <field name="implied_ids"
 	        	eval="[(4, ref('base.group_user')),
 	        			(4, ref('base.group_sale_salesman')),
