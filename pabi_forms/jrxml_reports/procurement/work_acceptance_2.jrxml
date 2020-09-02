@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="work_acceptance_2" language="groovy" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="70" bottomMargin="107">
 	<property name="ireport.zoom" value="1.2100000000000017"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="79"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="IDS" class="java.lang.Object"/>
 	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
@@ -223,7 +223,7 @@ WHERE $X{IN,pwa.id,PIDS}]]>
 	<pageHeader>
 		<band height="81" splitType="Stretch">
 			<image>
-				<reportElement x="331" y="0" width="152" height="81"/>
+				<reportElement x="331" y="2" width="150" height="78"/>
 				<imageExpression class="java.lang.String"><![CDATA[$F{logo_path}]]></imageExpression>
 			</image>
 		</band>
