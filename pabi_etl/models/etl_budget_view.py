@@ -700,7 +700,93 @@ class ISSIBudgetProjectMonitorView(models.Model):
                   GROUP BY query.fiscal_year, query.fiscalyear_id, project.code, project.id
         )
         """ % self._table)
-        
+
+class issi_budget_project_plan_view(models.Model):
+    _name = 'issi.budget.project.plan.view'
+    _auto = False
+    _description = 'issi_budget_project_plan_view'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+			 SELECT ss.project_id,
+				ss.fiscalyear_id,
+				ss.fiscal_year,
+				ss.old_data,
+				sum(ss.plan_expense_external) AS plan_expense_external,
+				sum(ss.released) AS released,
+				sum(ss.plan_revenue_external) AS plan_revenue_external,
+				sum(ss.plan_expense_internal) AS plan_expense_internal,
+				sum(ss.plan_revenue_internal) AS plan_revenue_internal
+			   FROM ( SELECT aa.project_id,
+						aa.fiscalyear_id,
+						aa.planned_amount AS plan_expense_external,
+						aa.released_amount AS released,
+						0 AS plan_revenue_external,
+						fis.name AS fiscal_year,
+							CASE
+								WHEN ((fis.name)::text <= '2018'::text) THEN true
+								ELSE false
+							END AS old_data,
+						0 AS plan_expense_internal,
+						0 AS plan_revenue_internal
+					   FROM (issi_res_project_budget_summary_view aa
+						 LEFT JOIN account_fiscalyear fis ON ((aa.fiscalyear_id = fis.id)))
+					  WHERE ((aa.budget_method)::text = 'expense'::text)
+					UNION
+					 SELECT bb.project_id,
+						bb.fiscalyear_id,
+						0 AS plan_expense_external,
+						0 AS released,
+						bb.planned_amount AS plan_revenue_external,
+						fis.name AS fiscal_year,
+							CASE
+								WHEN ((fis.name)::text <= '2018'::text) THEN true
+								ELSE false
+							END AS old_data,
+						0 AS plan_expense_internal,
+						0 AS plan_revenue_internal
+					   FROM (issi_res_project_budget_summary_view bb
+						 LEFT JOIN account_fiscalyear fis ON ((bb.fiscalyear_id = fis.id)))
+					  WHERE ((bb.budget_method)::text = 'revenue'::text)
+					UNION
+					 SELECT p.project_id,
+						p.fiscalyear_id,
+						0 AS plan_expense_external,
+						0 AS released,
+						0 AS plan_revenue_external,
+						fis.name AS fiscal_year,
+							CASE
+								WHEN ((fis.name)::text <= '2018'::text) THEN true
+								ELSE false
+							END AS old_data,
+						sum((((((((((((p.m1 + p.m2) + p.m3) + p.m4) + p.m5) + p.m6) + p.m7) + p.m8) + p.m9) + p.m10) + p.m11) + p.m12)) AS plan_expense_internal,
+						0 AS plan_revenue_internal
+					   FROM (res_project_budget_plan p
+						 JOIN account_fiscalyear fis ON ((p.fiscalyear_id = fis.id)))
+					  WHERE (((p.charge_type)::text = 'internal'::text) AND ((p.budget_method)::text = 'expense'::text))
+					  GROUP BY p.project_id, p.fiscalyear_id, p.budget_method, fis.name
+					UNION
+					 SELECT p.project_id,
+						p.fiscalyear_id,
+						0 AS plan_expense_external,
+						0 AS released,
+						0 AS plan_revenue_external,
+						fis.name AS fiscal_year,
+							CASE
+								WHEN ((fis.name)::text <= '2018'::text) THEN true
+								ELSE false
+							END AS old_data,
+						0 AS plan_expense_internal,
+						sum((((((((((((p.m1 + p.m2) + p.m3) + p.m4) + p.m5) + p.m6) + p.m7) + p.m8) + p.m9) + p.m10) + p.m11) + p.m12)) AS plan_revenue_internal
+					   FROM (res_project_budget_plan p
+						 JOIN account_fiscalyear fis ON ((p.fiscalyear_id = fis.id)))
+					  WHERE (((p.charge_type)::text = 'internal'::text) AND ((p.budget_method)::text = 'revenue'::text))
+					  GROUP BY p.project_id, p.fiscalyear_id, p.budget_method, fis.name) ss
+			  GROUP BY ss.project_id, ss.fiscalyear_id, ss.fiscal_year, ss.old_data
+        )
+        """ % self._table)
+
 class ETLISSIBudgetProjectQuery(models.Model):
     _name = 'etl.issi.budget_project.query'
     _auto = False
