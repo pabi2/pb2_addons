@@ -174,7 +174,75 @@ class issi_budget_query_view(models.Model):
 				   FROM issi_budget_consume_view) a		
         )
         """ % self._table)
-	
+
+class issi_res_project_budget_summary_view(models.Model):
+    _name = 'issi.res.project.budget.summary.view'
+    _auto = False
+    _description = 'issi_res_project_budget_summary_view'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+			 SELECT min(p.id) AS id,
+				p.project_id,
+				p.fiscalyear_id,
+				p.budget_method,
+				sum((((((((((((
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m1
+					END +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m2
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m3
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m4
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m5
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m6
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m7
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m8
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m9
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m10
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m11
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m12
+					END)) AS planned_amount,
+				sum(p.released_amount) AS released_amount
+			   FROM (res_project_budget_plan p
+				 JOIN account_fiscalyear f ON ((p.fiscalyear_id = f.id)))
+			  GROUP BY p.project_id, p.fiscalyear_id, p.budget_method
+        )
+        """ % self._table)
+
 class ISSIBudgetSummaryView(models.Model):
     _name = 'issi.budget.summary.view'
     _auto = False
