@@ -115,6 +115,152 @@ class issi_budget_plan_view(models.Model):
         )
         """ % self._table)
 
+class issi_budget_consume_view(models.Model):
+    _name = 'issi.budget.consume.view'
+    _auto = False
+    _description = 'issi_budget_consume_view'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+			 SELECT a.id,
+				a.analytic_line_id,
+				a.budget_commit_type,
+				a.charge_type,
+				a.user_id,
+				a.date,
+				a.fiscalyear_id,
+				a.amount,
+				a.budget_method,
+				a.amount_so_commit,
+				a.amount_pr_commit,
+				a.amount_po_commit,
+				a.amount_exp_commit,
+				a.amount_actual,
+				a.product_id,
+				a.activity_group_id,
+				a.activity_id,
+				a.account_id,
+				a.period_id,
+				a.quarter,
+				a.activity_rpt_id,
+				a.sector_id,
+				a.invest_construction_id,
+				a.section_program_id,
+				a.project_group_id,
+				a.program_group_id,
+				a.spa_id,
+				a.company_id,
+				a.subsector_id,
+				a.costcenter_id,
+				a.taxbranch_id,
+				a.tag_type_id,
+				a.project_id,
+				a.invest_construction_phase_id,
+				a.division_id,
+				a.cost_control_id,
+				a.section_id,
+				a.program_id,
+				a.mission_id,
+				a.tag_id,
+				a.cost_control_type_id,
+				a.personnel_costcenter_id,
+				a.functional_area_id,
+				a.org_id,
+				a.invest_asset_id,
+				a.fund_id,
+				a.chart_view,
+				a.doctype,
+				a.document,
+				a.document_line,
+				a.purchase_request_line_id,
+				a.sale_line_id,
+				a.purchase_line_id,
+				a.expense_line_id,
+				((((COALESCE(a.amount_so_commit, (0)::numeric) + COALESCE(a.amount_pr_commit, (0)::numeric)) + COALESCE(a.amount_po_commit, (0)::numeric)) + COALESCE(a.amount_exp_commit, (0)::numeric)) + COALESCE(a.amount_actual, (0)::numeric)) AS amount_consumed,
+				a.document_id
+			   FROM ( SELECT aal.id,
+						aal.id AS analytic_line_id,
+						aaj.budget_commit_type,
+						aal.charge_type,
+						aal.user_id,
+						aal.date,
+						aal.monitor_fy_id AS fiscalyear_id,
+							CASE
+								WHEN ((ag.budget_method)::text = 'expense'::text) THEN (- aal.amount)
+								ELSE aal.amount
+							END AS amount,
+						ag.budget_method,
+							CASE
+								WHEN ((aaj.budget_commit_type)::text = 'so_commit'::text) THEN aal.amount
+								ELSE NULL::numeric
+							END AS amount_so_commit,
+							CASE
+								WHEN ((aaj.budget_commit_type)::text = 'pr_commit'::text) THEN (- aal.amount)
+								ELSE NULL::numeric
+							END AS amount_pr_commit,
+							CASE
+								WHEN ((aaj.budget_commit_type)::text = 'po_commit'::text) THEN (- aal.amount)
+								ELSE NULL::numeric
+							END AS amount_po_commit,
+							CASE
+								WHEN ((aaj.budget_commit_type)::text = 'exp_commit'::text) THEN (- aal.amount)
+								ELSE NULL::numeric
+							END AS amount_exp_commit,
+							CASE
+								WHEN (((aaj.budget_commit_type)::text = 'actual'::text) AND ((ag.budget_method)::text = 'expense'::text)) THEN (- aal.amount)
+								WHEN (((aaj.budget_commit_type)::text = 'actual'::text) AND ((ag.budget_method)::text = 'revenue'::text)) THEN aal.amount
+								ELSE NULL::numeric
+							END AS amount_actual,
+						aal.product_id,
+						aal.activity_group_id,
+						aal.activity_id,
+						aal.general_account_id AS account_id,
+						aal.period_id,
+						aal.quarter,
+						aal.activity_rpt_id,
+						aal.sector_id,
+						aal.invest_construction_id,
+						aal.section_program_id,
+						aal.project_group_id,
+						aal.program_group_id,
+						aal.spa_id,
+						aal.company_id,
+						aal.subsector_id,
+						aal.costcenter_id,
+						aal.taxbranch_id,
+						aal.tag_type_id,
+						aal.project_id,
+						aal.invest_construction_phase_id,
+						aal.division_id,
+						aal.cost_control_id,
+						aal.section_id,
+						aal.program_id,
+						aal.mission_id,
+						aal.tag_id,
+						aal.cost_control_type_id,
+						aal.personnel_costcenter_id,
+						aal.functional_area_id,
+						aal.org_id,
+						aal.invest_asset_id,
+						aal.fund_id,
+						aal.chart_view,
+						aal.doctype,
+						aal.document,
+						aal.document_line,
+						aal.purchase_request_line_id,
+						aal.sale_line_id,
+						aal.purchase_line_id,
+						aal.expense_line_id,
+						aal.document_id
+					   FROM ((((account_analytic_line aal
+						 JOIN account_analytic_journal aaj ON ((aaj.id = aal.journal_id)))
+						 JOIN account_activity_group ag ON ((ag.id = aal.activity_group_id)))
+						 LEFT JOIN res_section section ON ((section.id = aal.section_id)))
+						 LEFT JOIN res_project project ON ((project.id = aal.project_id)))) a
+        )
+        """ % self._table)
+
 class issi_budget_query_view(models.Model):
     _name = 'issi.budget.query.view'
     _auto = False
