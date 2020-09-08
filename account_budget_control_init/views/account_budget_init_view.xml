@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="account_budget_init_view_form" model="ir.ui.view">
+            <field name="name">account.budget.view.form</field>
+            <field name="model">account.budget</field>
+            <field name="priority">30</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <notebook>
+                            <page string="Expense Init">
+                                <button name="%(action_budget_control_init_unit_base_export_xlsx_template)d"
+                                  type="action" string="Export to Excel" class="oe_highlight oe_right"/>
+                                <group>
+                                    <group>
+                                        <field name="budgeted_expense_init_internal" string="Internal"/>
+                                    </group>
+                                    <group>
+                                        <field name="budgeted_expense_init_external" string="External"/>
+                                    </group>
+                                </group>
+                                <field name="budget_init_line_ids">
+                                    <tree string="Budget Lines" editable="bottom">
+                                        <field name="charge_type"/>
+                                        <field name="income_section_id"/>
+                                        <field name="fund_id"/>
+                                        <field name="cost_control_id"/>
+                                        <field name="activity_group_id"/>
+                                        <field name="description"/>
+                                        <field name="planned_amount" sum="Planned Amount"/>
+                                        <field name="released_amount" sum="Released Amount"/>
+                                        <field name="m1" sum="m1"/>
+                                        <field name="m2" sum="m2"/>
+                                        <field name="m3" sum="m3"/>
+                                        <field name="m4" sum="m4"/>
+                                        <field name="m5" sum="m5"/>
+                                        <field name="m6" sum="m6"/>
+                                        <field name="m7" sum="m7"/>
+                                        <field name="m8" sum="m8"/>
+                                        <field name="m9" sum="m9"/>
+                                        <field name="m10" sum="m10"/>
+                                        <field name="m11" sum="m11"/>
+                                        <field name="m12" sum="m12"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_budget_init_view" model="ir.actions.act_window">
+            <field name="name">account.budget.view</field>
+            <field name="res_model">account.budget</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_budget_control_init.account_budget_init_view_form"/>
+        </record>
+    </data>
+</openerp>
