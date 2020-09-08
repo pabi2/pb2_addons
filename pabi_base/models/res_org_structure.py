@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
+from PIL import Image
+import glob, os
 from openerp import fields, models, api
 from openerp.addons.pabi_base.models.res_common import ResCommon
 from openerp import tools
+import tempfile
+try:
+    import cStringIO as StringIO
+except ImportError:
+    import StringIO
 
 # ORG Structure:
 #                                           (mission)
@@ -50,6 +57,37 @@ class ResOrg(ResCommon, models.Model):
         """ Additiona domain for context's name serach """
         domain = []
         return domain
+    
+    """@api.onchange('logo')
+    def onchange_logo_path(self):
+        for rec in self:
+            if rec.logo:
+                size = 128, 128
+                path = os.path.dirname(os.path.abspath(__file__))   #'W:\\Odoo\\Sourcecode PABI2\\pb2_addons\\pabi_base\\models'
+                path = path.split('models')[0]
+                file_path = path + 'logo'
+                #file, ext = os.path.splitext(rec.logo)
+                #im = Image.open(file)
+                #im.thumbnail(size)
+                #im.save(file + ".thumbnail", "JPEG")
+                image_stream = StringIO.StringIO((rec.logo).decode('base64'))
+                image = Image.open(image_stream)
+                image.save(file_path+'/'+rec.name_short, 'JPEG')"""
+    
+    @api.multi
+    def write(self, vals):
+        if vals.get('logo', False) and self.name_short:
+            path = tempfile.gettempdir() + '\logo'
+            if not os.path.exists(path):
+                os.makedirs(path)
+            image_stream = StringIO.StringIO((vals.get('logo', False)).decode('base64'))
+            image = Image.open(image_stream)
+            filetype = image.format
+            logo_path = path + '\logo_' + self.name_short + '.' + filetype
+            image.save(logo_path)
+            
+            vals['logo_path'] = logo_path
+        return super(ResOrg, self).write(vals)
 
 
 class ResSector(ResCommon, models.Model):
