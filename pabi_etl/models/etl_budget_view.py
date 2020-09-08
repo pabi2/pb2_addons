@@ -3,6 +3,522 @@ from openerp import models
 from openerp import tools
 
 
+class issi_budget_plan_view(models.Model):
+    _name = 'issi.budget.plan.view'
+    _auto = False
+    _description = 'issi_budget_plan_view'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+		 SELECT abl.id,
+			abl.budget_method,
+			ab.creating_user_id AS user_id,
+			abl.charge_type,
+			abl.fiscalyear_id,
+			ab.id AS budget_id,
+				CASE
+					WHEN (ablps.sequence = 1) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m1,
+				CASE
+					WHEN (ablps.sequence = 2) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m2,
+				CASE
+					WHEN (ablps.sequence = 3) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m3,
+				CASE
+					WHEN (ablps.sequence = 4) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m4,
+				CASE
+					WHEN (ablps.sequence = 5) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m5,
+				CASE
+					WHEN (ablps.sequence = 6) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m6,
+				CASE
+					WHEN (ablps.sequence = 7) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m7,
+				CASE
+					WHEN (ablps.sequence = 8) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m8,
+				CASE
+					WHEN (ablps.sequence = 9) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m9,
+				CASE
+					WHEN (ablps.sequence = 10) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m10,
+				CASE
+					WHEN (ablps.sequence = 11) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m11,
+				CASE
+					WHEN (ablps.sequence = 12) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m12,
+			ablps.amount AS planned_amount,
+				CASE
+					WHEN (ablps.sequence = 1) THEN abl.released_amount
+					ELSE (0.0)::double precision
+				END AS released_amount,
+			abl.budget_state AS state,
+			abl.activity_group_id,
+			abl.activity_id,
+			NULL::integer AS account_id,
+			NULL::integer AS product_id,
+			ablps.period_id,
+			ablps.quarter,
+			abl.activity_id AS activity_rpt_id,
+			abl.sector_id,
+			abl.invest_construction_id,
+			abl.section_program_id,
+			abl.project_group_id,
+			abl.program_group_id,
+			abl.spa_id,
+			abl.company_id,
+			abl.subsector_id,
+			abl.costcenter_id,
+			abl.taxbranch_id,
+			abl.tag_type_id,
+			abl.project_id,
+			abl.invest_construction_phase_id,
+			abl.division_id,
+			abl.cost_control_id,
+			abl.section_id,
+			abl.program_id,
+			abl.mission_id,
+			abl.tag_id,
+			abl.cost_control_type_id,
+			abl.personnel_costcenter_id,
+			abl.functional_area_id,
+			abl.org_id,
+			abl.invest_asset_id,
+			abl.fund_id,
+			abl.chart_view,
+			'account_budget'::text AS doctype,
+			ab.name AS document,
+			abl.description AS document_line
+		   FROM ((((account_budget_line_period_split ablps
+			 JOIN account_budget_line abl ON ((abl.id = ablps.budget_line_id)))
+			 JOIN account_budget ab ON ((ab.id = abl.budget_id)))
+			 LEFT JOIN res_section section ON ((section.id = abl.section_id)))
+			 LEFT JOIN res_project project ON ((project.id = abl.project_id)))
+        )
+        """ % self._table)
+
+class issi_budget_consume_view(models.Model):
+    _name = 'issi.budget.consume.view'
+    _auto = False
+    _description = 'issi_budget_consume_view'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+			 SELECT a.id,
+				a.analytic_line_id,
+				a.budget_commit_type,
+				a.charge_type,
+				a.user_id,
+				a.date,
+				a.fiscalyear_id,
+				a.amount,
+				a.budget_method,
+				a.amount_so_commit,
+				a.amount_pr_commit,
+				a.amount_po_commit,
+				a.amount_exp_commit,
+				a.amount_actual,
+				a.product_id,
+				a.activity_group_id,
+				a.activity_id,
+				a.account_id,
+				a.period_id,
+				a.quarter,
+				a.activity_rpt_id,
+				a.sector_id,
+				a.invest_construction_id,
+				a.section_program_id,
+				a.project_group_id,
+				a.program_group_id,
+				a.spa_id,
+				a.company_id,
+				a.subsector_id,
+				a.costcenter_id,
+				a.taxbranch_id,
+				a.tag_type_id,
+				a.project_id,
+				a.invest_construction_phase_id,
+				a.division_id,
+				a.cost_control_id,
+				a.section_id,
+				a.program_id,
+				a.mission_id,
+				a.tag_id,
+				a.cost_control_type_id,
+				a.personnel_costcenter_id,
+				a.functional_area_id,
+				a.org_id,
+				a.invest_asset_id,
+				a.fund_id,
+				a.chart_view,
+				a.doctype,
+				a.document,
+				a.document_line,
+				a.purchase_request_line_id,
+				a.sale_line_id,
+				a.purchase_line_id,
+				a.expense_line_id,
+				((((COALESCE(a.amount_so_commit, (0)::numeric) + COALESCE(a.amount_pr_commit, (0)::numeric)) + COALESCE(a.amount_po_commit, (0)::numeric)) + COALESCE(a.amount_exp_commit, (0)::numeric)) + COALESCE(a.amount_actual, (0)::numeric)) AS amount_consumed,
+				a.document_id
+			   FROM ( SELECT aal.id,
+						aal.id AS analytic_line_id,
+						aaj.budget_commit_type,
+						aal.charge_type,
+						aal.user_id,
+						aal.date,
+						aal.monitor_fy_id AS fiscalyear_id,
+							CASE
+								WHEN ((ag.budget_method)::text = 'expense'::text) THEN (- aal.amount)
+								ELSE aal.amount
+							END AS amount,
+						ag.budget_method,
+							CASE
+								WHEN ((aaj.budget_commit_type)::text = 'so_commit'::text) THEN aal.amount
+								ELSE NULL::numeric
+							END AS amount_so_commit,
+							CASE
+								WHEN ((aaj.budget_commit_type)::text = 'pr_commit'::text) THEN (- aal.amount)
+								ELSE NULL::numeric
+							END AS amount_pr_commit,
+							CASE
+								WHEN ((aaj.budget_commit_type)::text = 'po_commit'::text) THEN (- aal.amount)
+								ELSE NULL::numeric
+							END AS amount_po_commit,
+							CASE
+								WHEN ((aaj.budget_commit_type)::text = 'exp_commit'::text) THEN (- aal.amount)
+								ELSE NULL::numeric
+							END AS amount_exp_commit,
+							CASE
+								WHEN (((aaj.budget_commit_type)::text = 'actual'::text) AND ((ag.budget_method)::text = 'expense'::text)) THEN (- aal.amount)
+								WHEN (((aaj.budget_commit_type)::text = 'actual'::text) AND ((ag.budget_method)::text = 'revenue'::text)) THEN aal.amount
+								ELSE NULL::numeric
+							END AS amount_actual,
+						aal.product_id,
+						aal.activity_group_id,
+						aal.activity_id,
+						aal.general_account_id AS account_id,
+						aal.period_id,
+						aal.quarter,
+						aal.activity_rpt_id,
+						aal.sector_id,
+						aal.invest_construction_id,
+						aal.section_program_id,
+						aal.project_group_id,
+						aal.program_group_id,
+						aal.spa_id,
+						aal.company_id,
+						aal.subsector_id,
+						aal.costcenter_id,
+						aal.taxbranch_id,
+						aal.tag_type_id,
+						aal.project_id,
+						aal.invest_construction_phase_id,
+						aal.division_id,
+						aal.cost_control_id,
+						aal.section_id,
+						aal.program_id,
+						aal.mission_id,
+						aal.tag_id,
+						aal.cost_control_type_id,
+						aal.personnel_costcenter_id,
+						aal.functional_area_id,
+						aal.org_id,
+						aal.invest_asset_id,
+						aal.fund_id,
+						aal.chart_view,
+						aal.doctype,
+						aal.document,
+						aal.document_line,
+						aal.purchase_request_line_id,
+						aal.sale_line_id,
+						aal.purchase_line_id,
+						aal.expense_line_id,
+						aal.document_id
+					   FROM ((((account_analytic_line aal
+						 JOIN account_analytic_journal aaj ON ((aaj.id = aal.journal_id)))
+						 JOIN account_activity_group ag ON ((ag.id = aal.activity_group_id)))
+						 LEFT JOIN res_section section ON ((section.id = aal.section_id)))
+						 LEFT JOIN res_project project ON ((project.id = aal.project_id)))) a
+        )
+        """ % self._table)
+
+class issi_budget_query_view(models.Model):
+    _name = 'issi.budget.query.view'
+    _auto = False
+    _description = 'issi_budget_query_view'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+		 SELECT a.analytic_line_id,
+			a.budget_commit_type,
+			a.budget_method,
+			a.user_id,
+			a.charge_type,
+			a.fiscalyear_id,
+			a.planned_amount,
+			a.released_amount,
+			a.amount_so_commit,
+			a.amount_pr_commit,
+			a.amount_po_commit,
+			a.amount_exp_commit,
+			a.amount_actual,
+			a.amount_consumed,
+			a.amount_balance,
+			NULL::integer AS product_activity_id,
+			a.activity_group_id,
+			a.activity_id,
+			a.account_id,
+			a.product_id,
+			a.period_id,
+			a.quarter,
+			a.activity_rpt_id,
+			a.sector_id,
+			a.invest_construction_id,
+			a.section_program_id,
+			a.project_group_id,
+			a.program_group_id,
+			a.spa_id,
+			a.company_id,
+			a.subsector_id,
+			a.costcenter_id,
+			a.taxbranch_id,
+			a.tag_type_id,
+			a.project_id,
+			a.invest_construction_phase_id,
+			a.division_id,
+			a.cost_control_id,
+			a.section_id,
+			a.program_id,
+			a.mission_id,
+			a.tag_id,
+			a.cost_control_type_id,
+			a.personnel_costcenter_id,
+			a.functional_area_id,
+			a.org_id,
+			a.invest_asset_id,
+			a.fund_id,
+			a.chart_view,
+			a.doctype,
+			a.document,
+			a.document_line
+		   FROM ( SELECT NULL::integer AS analytic_line_id,
+					NULL::character varying AS budget_commit_type,
+					issi_budget_plan_view.budget_method,
+					issi_budget_plan_view.user_id,
+					issi_budget_plan_view.charge_type,
+					issi_budget_plan_view.fiscalyear_id,
+					issi_budget_plan_view.planned_amount,
+					issi_budget_plan_view.released_amount,
+					0.0 AS amount_so_commit,
+					0.0 AS amount_pr_commit,
+					0.0 AS amount_po_commit,
+					0.0 AS amount_exp_commit,
+					0.0 AS amount_actual,
+					0.0 AS amount_consumed,
+					issi_budget_plan_view.released_amount AS amount_balance,
+					issi_budget_plan_view.activity_group_id,
+					issi_budget_plan_view.activity_id,
+					issi_budget_plan_view.account_id,
+					issi_budget_plan_view.product_id,
+					issi_budget_plan_view.period_id,
+					issi_budget_plan_view.quarter,
+					issi_budget_plan_view.activity_rpt_id,
+					issi_budget_plan_view.sector_id,
+					issi_budget_plan_view.invest_construction_id,
+					issi_budget_plan_view.section_program_id,
+					issi_budget_plan_view.project_group_id,
+					issi_budget_plan_view.program_group_id,
+					issi_budget_plan_view.spa_id,
+					issi_budget_plan_view.company_id,
+					issi_budget_plan_view.subsector_id,
+					issi_budget_plan_view.costcenter_id,
+					issi_budget_plan_view.taxbranch_id,
+					issi_budget_plan_view.tag_type_id,
+					issi_budget_plan_view.project_id,
+					issi_budget_plan_view.invest_construction_phase_id,
+					issi_budget_plan_view.division_id,
+					issi_budget_plan_view.cost_control_id,
+					issi_budget_plan_view.section_id,
+					issi_budget_plan_view.program_id,
+					issi_budget_plan_view.mission_id,
+					issi_budget_plan_view.tag_id,
+					issi_budget_plan_view.cost_control_type_id,
+					issi_budget_plan_view.personnel_costcenter_id,
+					issi_budget_plan_view.functional_area_id,
+					issi_budget_plan_view.org_id,
+					issi_budget_plan_view.invest_asset_id,
+					issi_budget_plan_view.fund_id,
+					issi_budget_plan_view.chart_view,
+					issi_budget_plan_view.doctype,
+					issi_budget_plan_view.document,
+					issi_budget_plan_view.document_line
+				   FROM issi_budget_plan_view
+				  WHERE ((issi_budget_plan_view.state)::text = 'done'::text)
+				UNION ALL
+				 SELECT issi_budget_consume_view.analytic_line_id,
+					issi_budget_consume_view.budget_commit_type,
+					issi_budget_consume_view.budget_method,
+					issi_budget_consume_view.user_id,
+					issi_budget_consume_view.charge_type,
+					issi_budget_consume_view.fiscalyear_id,
+					0.0 AS planned_amount,
+					0.0 AS released_amount,
+					issi_budget_consume_view.amount_so_commit,
+					issi_budget_consume_view.amount_pr_commit,
+					issi_budget_consume_view.amount_po_commit,
+					issi_budget_consume_view.amount_exp_commit,
+					issi_budget_consume_view.amount_actual,
+					issi_budget_consume_view.amount_consumed,
+						CASE
+							WHEN ((issi_budget_consume_view.budget_method)::text = 'expense'::text) THEN (- issi_budget_consume_view.amount)
+							ELSE issi_budget_consume_view.amount
+						END AS amount_balance,
+					issi_budget_consume_view.activity_group_id,
+					issi_budget_consume_view.activity_id,
+					issi_budget_consume_view.account_id,
+					issi_budget_consume_view.product_id,
+					issi_budget_consume_view.period_id,
+					issi_budget_consume_view.quarter,
+					issi_budget_consume_view.activity_rpt_id,
+					issi_budget_consume_view.sector_id,
+					issi_budget_consume_view.invest_construction_id,
+					issi_budget_consume_view.section_program_id,
+					issi_budget_consume_view.project_group_id,
+					issi_budget_consume_view.program_group_id,
+					issi_budget_consume_view.spa_id,
+					issi_budget_consume_view.company_id,
+					issi_budget_consume_view.subsector_id,
+					issi_budget_consume_view.costcenter_id,
+					issi_budget_consume_view.taxbranch_id,
+					issi_budget_consume_view.tag_type_id,
+					issi_budget_consume_view.project_id,
+					issi_budget_consume_view.invest_construction_phase_id,
+					issi_budget_consume_view.division_id,
+					issi_budget_consume_view.cost_control_id,
+					issi_budget_consume_view.section_id,
+					issi_budget_consume_view.program_id,
+					issi_budget_consume_view.mission_id,
+					issi_budget_consume_view.tag_id,
+					issi_budget_consume_view.cost_control_type_id,
+					issi_budget_consume_view.personnel_costcenter_id,
+					issi_budget_consume_view.functional_area_id,
+					issi_budget_consume_view.org_id,
+					issi_budget_consume_view.invest_asset_id,
+					issi_budget_consume_view.fund_id,
+					issi_budget_consume_view.chart_view,
+					issi_budget_consume_view.doctype,
+					issi_budget_consume_view.document,
+					issi_budget_consume_view.document_line
+				   FROM issi_budget_consume_view) a		
+        )
+        """ % self._table)
+
+class issi_res_project_budget_summary_view(models.Model):
+    _name = 'issi.res.project.budget.summary.view'
+    _auto = False
+    _description = 'issi_res_project_budget_summary_view'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+			 SELECT min(p.id) AS id,
+				p.project_id,
+				p.fiscalyear_id,
+				p.budget_method,
+				sum((((((((((((
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m1
+					END +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m2
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m3
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m4
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m5
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m6
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m7
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m8
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m9
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m10
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m11
+					END) +
+					CASE
+						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
+						ELSE p.m12
+					END)) AS planned_amount,
+				sum(p.released_amount) AS released_amount
+			   FROM (res_project_budget_plan p
+				 JOIN account_fiscalyear f ON ((p.fiscalyear_id = f.id)))
+			  GROUP BY p.project_id, p.fiscalyear_id, p.budget_method
+        )
+        """ % self._table)
+
+class issi_invest_construction_phase_summary_view(models.Model):
+    _name = 'issi.invest.construction.phase.summary.view'
+    _auto = False
+    _description = 'issi_invest_construction_phase_summary_view'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+		 SELECT min(res_invest_construction_phase_plan.id) AS id,
+			res_invest_construction_phase_plan.invest_construction_phase_id AS phase_id,
+			res_invest_construction_phase_plan.fiscalyear_id,
+			sum(res_invest_construction_phase_plan.amount_plan) AS amount_plan,
+			sum(res_invest_construction_phase_plan.amount_plan_init) AS amount_plan_init
+		   FROM res_invest_construction_phase_plan
+		  GROUP BY res_invest_construction_phase_plan.invest_construction_phase_id, res_invest_construction_phase_plan.fiscalyear_id
+        )
+        """ % self._table)
+
 class ISSIBudgetSummaryView(models.Model):
     _name = 'issi.budget.summary.view'
     _auto = False
@@ -460,7 +976,93 @@ class ISSIBudgetProjectMonitorView(models.Model):
                   GROUP BY query.fiscal_year, query.fiscalyear_id, project.code, project.id
         )
         """ % self._table)
-        
+
+class issi_budget_project_plan_view(models.Model):
+    _name = 'issi.budget.project.plan.view'
+    _auto = False
+    _description = 'issi_budget_project_plan_view'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+			 SELECT ss.project_id,
+				ss.fiscalyear_id,
+				ss.fiscal_year,
+				ss.old_data,
+				sum(ss.plan_expense_external) AS plan_expense_external,
+				sum(ss.released) AS released,
+				sum(ss.plan_revenue_external) AS plan_revenue_external,
+				sum(ss.plan_expense_internal) AS plan_expense_internal,
+				sum(ss.plan_revenue_internal) AS plan_revenue_internal
+			   FROM ( SELECT aa.project_id,
+						aa.fiscalyear_id,
+						aa.planned_amount AS plan_expense_external,
+						aa.released_amount AS released,
+						0 AS plan_revenue_external,
+						fis.name AS fiscal_year,
+							CASE
+								WHEN ((fis.name)::text <= '2018'::text) THEN true
+								ELSE false
+							END AS old_data,
+						0 AS plan_expense_internal,
+						0 AS plan_revenue_internal
+					   FROM (issi_res_project_budget_summary_view aa
+						 LEFT JOIN account_fiscalyear fis ON ((aa.fiscalyear_id = fis.id)))
+					  WHERE ((aa.budget_method)::text = 'expense'::text)
+					UNION
+					 SELECT bb.project_id,
+						bb.fiscalyear_id,
+						0 AS plan_expense_external,
+						0 AS released,
+						bb.planned_amount AS plan_revenue_external,
+						fis.name AS fiscal_year,
+							CASE
+								WHEN ((fis.name)::text <= '2018'::text) THEN true
+								ELSE false
+							END AS old_data,
+						0 AS plan_expense_internal,
+						0 AS plan_revenue_internal
+					   FROM (issi_res_project_budget_summary_view bb
+						 LEFT JOIN account_fiscalyear fis ON ((bb.fiscalyear_id = fis.id)))
+					  WHERE ((bb.budget_method)::text = 'revenue'::text)
+					UNION
+					 SELECT p.project_id,
+						p.fiscalyear_id,
+						0 AS plan_expense_external,
+						0 AS released,
+						0 AS plan_revenue_external,
+						fis.name AS fiscal_year,
+							CASE
+								WHEN ((fis.name)::text <= '2018'::text) THEN true
+								ELSE false
+							END AS old_data,
+						sum((((((((((((p.m1 + p.m2) + p.m3) + p.m4) + p.m5) + p.m6) + p.m7) + p.m8) + p.m9) + p.m10) + p.m11) + p.m12)) AS plan_expense_internal,
+						0 AS plan_revenue_internal
+					   FROM (res_project_budget_plan p
+						 JOIN account_fiscalyear fis ON ((p.fiscalyear_id = fis.id)))
+					  WHERE (((p.charge_type)::text = 'internal'::text) AND ((p.budget_method)::text = 'expense'::text))
+					  GROUP BY p.project_id, p.fiscalyear_id, p.budget_method, fis.name
+					UNION
+					 SELECT p.project_id,
+						p.fiscalyear_id,
+						0 AS plan_expense_external,
+						0 AS released,
+						0 AS plan_revenue_external,
+						fis.name AS fiscal_year,
+							CASE
+								WHEN ((fis.name)::text <= '2018'::text) THEN true
+								ELSE false
+							END AS old_data,
+						0 AS plan_expense_internal,
+						sum((((((((((((p.m1 + p.m2) + p.m3) + p.m4) + p.m5) + p.m6) + p.m7) + p.m8) + p.m9) + p.m10) + p.m11) + p.m12)) AS plan_revenue_internal
+					   FROM (res_project_budget_plan p
+						 JOIN account_fiscalyear fis ON ((p.fiscalyear_id = fis.id)))
+					  WHERE (((p.charge_type)::text = 'internal'::text) AND ((p.budget_method)::text = 'revenue'::text))
+					  GROUP BY p.project_id, p.fiscalyear_id, p.budget_method, fis.name) ss
+			  GROUP BY ss.project_id, ss.fiscalyear_id, ss.fiscal_year, ss.old_data
+        )
+        """ % self._table)
+
 class ETLISSIBudgetProjectQuery(models.Model):
     _name = 'etl.issi.budget_project.query'
     _auto = False
