@@ -501,6 +501,24 @@ class issi_res_project_budget_summary_view(models.Model):
         )
         """ % self._table)
 
+class issi_invest_construction_phase_summary_view(models.Model):
+    _name = 'issi.invest.construction.phase.summary.view'
+    _auto = False
+    _description = 'issi_invest_construction_phase_summary_view'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+		 SELECT min(res_invest_construction_phase_plan.id) AS id,
+			res_invest_construction_phase_plan.invest_construction_phase_id AS phase_id,
+			res_invest_construction_phase_plan.fiscalyear_id,
+			sum(res_invest_construction_phase_plan.amount_plan) AS amount_plan,
+			sum(res_invest_construction_phase_plan.amount_plan_init) AS amount_plan_init
+		   FROM res_invest_construction_phase_plan
+		  GROUP BY res_invest_construction_phase_plan.invest_construction_phase_id, res_invest_construction_phase_plan.fiscalyear_id
+        )
+        """ % self._table)
+
 class ISSIBudgetSummaryView(models.Model):
     _name = 'issi.budget.summary.view'
     _auto = False
@@ -2669,23 +2687,5 @@ class etl_issi_budget_commit(models.Model):
 				 LEFT JOIN cost_control job ON ((aa.cost_control_id = job.id)))
 				 LEFT JOIN cost_control_type jobtype ON ((aa.cost_control_type_id = jobtype.id)))
 			  WHERE (((aa.budget_commit_type)::text <> 'actual'::text) AND (aa.amount <> (0)::numeric))
-        )
-        """ % self._table)
-
-class issi_invest_construction_phase_summary_view(models.Model):
-    _name = 'issi.invest.construction.phase.summary.view'
-    _auto = False
-    _description = 'issi_invest_construction_phase_summary_view'
-
-    def init(self, cr):
-        tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE or REPLACE VIEW %s as (
-		 SELECT min(res_invest_construction_phase_plan.id) AS id,
-			res_invest_construction_phase_plan.invest_construction_phase_id AS phase_id,
-			res_invest_construction_phase_plan.fiscalyear_id,
-			sum(res_invest_construction_phase_plan.amount_plan) AS amount_plan,
-			sum(res_invest_construction_phase_plan.amount_plan_init) AS amount_plan_init
-		   FROM res_invest_construction_phase_plan
-		  GROUP BY res_invest_construction_phase_plan.invest_construction_phase_id, res_invest_construction_phase_plan.fiscalyear_id
         )
         """ % self._table)
