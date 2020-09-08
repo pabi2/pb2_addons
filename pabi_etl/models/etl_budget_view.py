@@ -3,6 +3,118 @@ from openerp import models
 from openerp import tools
 
 
+class issi_budget_plan_view(models.Model):
+    _name = 'issi.budget.plan.view'
+    _auto = False
+    _description = 'issi_budget_plan_view'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+		 SELECT abl.id,
+			abl.budget_method,
+			ab.creating_user_id AS user_id,
+			abl.charge_type,
+			abl.fiscalyear_id,
+			ab.id AS budget_id,
+				CASE
+					WHEN (ablps.sequence = 1) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m1,
+				CASE
+					WHEN (ablps.sequence = 2) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m2,
+				CASE
+					WHEN (ablps.sequence = 3) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m3,
+				CASE
+					WHEN (ablps.sequence = 4) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m4,
+				CASE
+					WHEN (ablps.sequence = 5) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m5,
+				CASE
+					WHEN (ablps.sequence = 6) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m6,
+				CASE
+					WHEN (ablps.sequence = 7) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m7,
+				CASE
+					WHEN (ablps.sequence = 8) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m8,
+				CASE
+					WHEN (ablps.sequence = 9) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m9,
+				CASE
+					WHEN (ablps.sequence = 10) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m10,
+				CASE
+					WHEN (ablps.sequence = 11) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m11,
+				CASE
+					WHEN (ablps.sequence = 12) THEN ablps.amount
+					ELSE NULL::double precision
+				END AS m12,
+			ablps.amount AS planned_amount,
+				CASE
+					WHEN (ablps.sequence = 1) THEN abl.released_amount
+					ELSE (0.0)::double precision
+				END AS released_amount,
+			abl.budget_state AS state,
+			abl.activity_group_id,
+			abl.activity_id,
+			NULL::integer AS account_id,
+			NULL::integer AS product_id,
+			ablps.period_id,
+			ablps.quarter,
+			abl.activity_id AS activity_rpt_id,
+			abl.sector_id,
+			abl.invest_construction_id,
+			abl.section_program_id,
+			abl.project_group_id,
+			abl.program_group_id,
+			abl.spa_id,
+			abl.company_id,
+			abl.subsector_id,
+			abl.costcenter_id,
+			abl.taxbranch_id,
+			abl.tag_type_id,
+			abl.project_id,
+			abl.invest_construction_phase_id,
+			abl.division_id,
+			abl.cost_control_id,
+			abl.section_id,
+			abl.program_id,
+			abl.mission_id,
+			abl.tag_id,
+			abl.cost_control_type_id,
+			abl.personnel_costcenter_id,
+			abl.functional_area_id,
+			abl.org_id,
+			abl.invest_asset_id,
+			abl.fund_id,
+			abl.chart_view,
+			'account_budget'::text AS doctype,
+			ab.name AS document,
+			abl.description AS document_line
+		   FROM ((((account_budget_line_period_split ablps
+			 JOIN account_budget_line abl ON ((abl.id = ablps.budget_line_id)))
+			 JOIN account_budget ab ON ((ab.id = abl.budget_id)))
+			 LEFT JOIN res_section section ON ((section.id = abl.section_id)))
+			 LEFT JOIN res_project project ON ((project.id = abl.project_id)))
+        )
+        """ % self._table)
+
 class issi_budget_query_view(models.Model):
     _name = 'issi.budget.query.view'
     _auto = False
