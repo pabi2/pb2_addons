@@ -5,10 +5,10 @@
             <field name='name'>Mail Receipt Voucher Auto Send</field>
             <field name='interval_number'>1</field>
             <field name='interval_type'>days</field>
-            <field name="numbercall">-1</field>
-            <field name="active">True</field>
+            <field name="numbercall">1</field>
+            <field name="active">False</field>
             <field name="doall" eval="False" />
-            <field name="specific_time">18.00</field>
+            <field name="specific_time">08.00</field>
             <field name="model">account.voucher</field>
             <field name="function">process_mail_receipt_voucher_auto_send</field>
             <field name="args">()</field>
