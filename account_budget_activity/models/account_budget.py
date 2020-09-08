@@ -269,7 +269,11 @@ class AccountBudget(models.Model):
         # amount = sum(consumes.mapped('amount_actual'))
         # Change domain: [('x', '=', 'y')] to where str: x = 'y'
         sql = """
-            select coalesce(sum(amount_actual), 0.0) amount_actual
+            select coalesce(sum(amount_actual), 0.0) +
+                coalesce(sum(amount_so_commit), 0.0) +
+                coalesce(sum(amount_pr_commit), 0.0) +
+                coalesce(sum(amount_po_commit), 0.0) +
+                coalesce(sum(amount_exp_commit), 0.0) as amount_total_commit
             from budget_consume_report where %s
         """ % self._domain_to_where_str(dom)
         self._cr.execute(sql)
