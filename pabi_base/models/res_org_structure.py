@@ -77,13 +77,13 @@ class ResOrg(ResCommon, models.Model):
     @api.multi
     def write(self, vals):
         if vals.get('logo', False) and self.name_short:
-            path = tempfile.gettempdir() + '\logo'
+            path = tempfile.gettempdir() + '/logo'
             if not os.path.exists(path):
                 os.makedirs(path)
             image_stream = StringIO.StringIO((vals.get('logo', False)).decode('base64'))
             image = Image.open(image_stream)
             filetype = image.format
-            logo_path = path + '\logo_' + self.name_short + '.' + filetype
+            logo_path = path + '/logo_' + self.name_short + '.' + filetype
             image.save(logo_path)
             
             vals['logo_path'] = logo_path
