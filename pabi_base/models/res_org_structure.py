@@ -50,8 +50,6 @@ class ResOrg(ResCommon, models.Model):
     )
     logo_path = fields.Char(
         string='Logo Path File',
-        compute='_compute_logo_path',
-        store=True,
     )
 
     @api.model
@@ -59,22 +57,23 @@ class ResOrg(ResCommon, models.Model):
         """ Additiona domain for context's name serach """
         domain = []
         return domain
-    
+
     @api.multi
-    @api.depends('logo')
-    def _compute_logo_path(self):
-        for rec in self:
-            if rec.logo:
-                path = tempfile.gettempdir() + '/logo'
-                if not os.path.exists(path):
-                    os.makedirs(path)
-                image_stream = StringIO.StringIO(rec.logo.decode('base64'))
-                image = Image.open(image_stream)
-                filetype = image.format
-                logo_path = path + '/logo_' + rec.name_short or rec.code + '.' + filetype
-                image.save(logo_path)
-                
-                rec.logo_path = logo_path
+    def write(self, vals):
+        if vals.get('logo', False) and self.name_short:
+            path = tempfile.gettempdir() + '/logo'
+            if not os.path.exists(path):
+                os.makedirs(path)
+            image_stream = StringIO.StringIO((vals.get('logo', False)).decode('base64'))
+            image = Image.open(image_stream)
+            filetype = image.format
+            logo_path = '{}/logo_{}.{}'.format(path,
+                                               self.name_short,
+                                               filetype)
+            image.save(logo_path)
+            
+            vals['logo_path'] = logo_path
+        return super(ResOrg, self).write(vals)
 
 
 class ResSector(ResCommon, models.Model):
