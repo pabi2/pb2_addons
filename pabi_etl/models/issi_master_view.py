@@ -314,9 +314,9 @@ class etl_issi_m_costcenter(models.Model):
     """ % self._table)
 	
 class etl_issi_m_section(models.Model):
-    _name = 'etl.issi.m.project'
+    _name = 'etl.issi.m.section'
     _auto = False
-    _description = 'ETL Master Project'
+    _description = 'ETL Master Section'
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
@@ -418,8 +418,69 @@ class etl_issi_m_section(models.Model):
 			 LEFT JOIN res_mission miss ON ((miss.id = s.mission_id)))
 		  ORDER BY s.code
 		)
-    """ % self._table)	
+    """ % self._table)
 
+class issi_m_program_view(models.Model):
+    _name = 'issi.m.program.view'
+    _auto = False
+    _description = 'Master Program'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""
+            CREATE or REPLACE VIEW %s as (  
+			SELECT pg.id,
+				pg.code,
+				COALESCE(irpg.value, (pg.name)::text) AS name,
+				pg.name AS name_en,
+				COALESCE(irpgsh.value, (pg.name_short)::text) AS name_short,
+				pg.name_short AS name_short_en,
+				pg.reference_code,
+				pg.active,
+				fn.id AS functional_area_id,
+				fn.code AS functional_area_code,
+				COALESCE(irfn.value, (fn.name)::text) AS functional_area_name,
+				fn.name AS functional_area_name_en,
+				COALESCE(irfnsh.value, (fn.name_short)::text) AS functional_area_name_short,
+				fn.name_short AS functional_area_name_short_en,
+				fn.active AS functional_area_active,
+				pgg.id AS program_group_id,
+				pgg.code AS program_group_code,
+				COALESCE(irpgg.value, (pgg.name)::text) AS program_group_name,
+				pgg.name AS program_group_name_en,
+				COALESCE(irpggsh.value, (pgg.name_short)::text) AS program_group_name_short,
+				pgg.name AS program_group_name_short_en,
+				pgg.active AS program_group_active
+			   FROM ((((((((res_program pg
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.program,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irpg ON ((pg.id = irpg.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.program,name_short'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irpgsh ON ((pg.id = irpgsh.res_id)))
+				 LEFT JOIN res_program_group pgg ON ((pg.program_group_id = pgg.id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.program.group,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irpgg ON ((pgg.id = irpgg.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.program.group,name_short'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irpggsh ON ((pgg.id = irpggsh.res_id)))
+				 LEFT JOIN res_functional_area fn ON ((pgg.functional_area_id = fn.id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.functional.area,name'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irfn ON ((fn.id = irfn.res_id)))
+				 LEFT JOIN ( SELECT ir_translation.res_id,
+						ir_translation.value
+					   FROM ir_translation
+					  WHERE (((ir_translation.name)::text = 'res.functional.area,name_short'::text) AND ((ir_translation.type)::text = 'model'::text) AND ((ir_translation.lang)::text = 'th_TH'::text))) irfnsh ON ((fn.id = irfnsh.res_id)))
+		)
+    """ % self._table)	
+	
 class etl_issi_m_project(models.Model):
     _name = 'etl.issi.m.project'
     _auto = False
