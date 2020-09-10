@@ -161,7 +161,7 @@
             <field name="name">Print Internal Charge Receipt</field>
             <field name="res_model">hr.expense.expense</field>
             <field name="view_id" ref="view_print_internal_charge_tree"/>
-            <field name="domain">[('pay_to', '=', 'internal')]</field>
+            <field name="domain">[('pay_to', '=', 'internal')('expense_id.internal_section_id.division_id', 'in', [x.division_id.id for x in user.employee_id.section_assign_ids] + [user.employee_id.section_id.division_id.id])]</field>
         </record>
 
     </data>
