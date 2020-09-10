@@ -44,10 +44,10 @@
 							'K11': 'rfq_supplier${value or ""}',
 							'L11': 'amount_total${value or ""}#{number_format=number}',
 							'M11': 'reason${value or ""}',
-							'N11': 'selected_po_number${value or ""}',
-							'O11': 'po_id.date_order${value or ""}#{number_format=date}',
+							'N11': 'selected_po_id.name${value or ""}',
+							'O11': 'selected_po_id.date_order${value or ""}#{number_format=date}',
 							'P11': 'responsible_name${value or ""}',
-							'Q11': 'po_id.state${value or ""}',
+							'Q11': 'selected_po_id.state${value or ""}',
                         },
                         '_TAIL_0': {
                         }
