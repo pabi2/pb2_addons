@@ -14,9 +14,12 @@ This module allow easy management of security for each user.
     'installable': True,
     'depends': [
         'meta_groups',
-        'pabi_utils',
+        #'pabi_utils',
+        'base',
+        'pabi_readonly_group',
     ],
     'data': [
+        'security/pabi_security_group.xml',
         'security/ir.model.access.csv',
         'views/pabi_security_view.xml',
         'xlsx_template/templates.xml',

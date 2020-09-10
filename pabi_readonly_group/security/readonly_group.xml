@@ -73,5 +73,9 @@
             <field name="name">Account Move Line</field>
             <field name="category_id" ref="base.module_category_readonly"/>
         </record>
+        <record id="group_readonly_account_asset" model="res.groups">
+            <field name="name">Assets</field>
+            <field name="category_id" ref="base.module_category_readonly"/>
+        </record>
     </data>
 </openerp>
