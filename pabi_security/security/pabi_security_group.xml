@@ -108,6 +108,65 @@
 	        <field name="implied_ids"
 					eval="[(4, ref('base.group_user')),]"/>
 	    </record>
+
+<!--PABI2 Admin-->
+        <record id="group_pabi_admin" model="res.groups">
+            <field name="name">PABI2 Admin</field>
+            <field name="category_id" ref="pabi_security"/>
+	        <field name="implied_ids"
+				eval="[(4, ref('base.group_user')),
+	        			(4, ref('sql_request_abstract.group_sql_request_manager')),
+	        			(4, ref('base.group_sale_manager')),
+	        			(4, ref('base.group_document_user')),
+	        			(4, ref('stock.group_stock_manager')),
+	        			(4, ref('base.group_hr_manager')),
+	        			(4, ref('pabi_utils.group_see_all_spool_report')),
+	        			(4, ref('share.group_share_user')),
+	        			(4, ref('base.group_system')),
+	        			(4, ref('base.group_mono_salesteams')),
+	        			(4, ref('account_budget_activity.group_budget_trans_manager')),
+	        			(4, ref('stock_account.group_inventory_valuation')),
+	        			(4, ref('stock.group_locations')),
+	        			(4, ref('base.group_multi_currency')),
+	        			(4, ref('product.group_sale_pricelist')),
+	        			(4, ref('analytic.group_analytic_accounting')),
+	        			(4, ref('stock.group_tracking_owner')),
+	        			(4, ref('product.group_uom')),
+	        			(4, ref('stock.group_adv_location')),
+	        			(4, ref('product.group_purchase_pricelist')),
+	        			(4, ref('account.group_account_manager')),
+	        			(4, ref('pabi_apps_config.group_cd_report')),
+	        			(4, ref('purchase_requisition.group_purchase_requisition_manager')),
+	        			(4, ref('pabi_procurement.group_purchase_requisition_verify')),
+	        			(4, ref('purchase.group_purchase_manager')),
+	        			(4, ref('pabi_asset_management.group_assets_report')),
+	        			(4, ref('purchase_request.group_purchase_request_manager')),
+	        			(4, ref('pabi_purchase_contract.group_pabi_purchase_contract_close')),
+	        			(4, ref('pabi_purchase_contract.group_pabi_purchase_contract_user')),
+	        			(4, ref('pabi_purchase_contract.group_pabi_purchase_contract_verify')),
+	        			(4, ref('pabi_base.group_budget_manager')),
+	        			(4, ref('pabi_base.group_asset_ou_budget')),
+	        			(4, ref('pabi_base.group_budget_personnel')),
+	        			(4, ref('pabi_budget_yearend_process.group_budget_carry_over')),
+	        			(4, ref('pabi_base.group_program_secretary_budget')),
+	        			(4, ref('pabi_base.group_cooperate_budget_policy')),
+	        			(4, ref('pabi_base.group_construction_budget')),
+	        			(4, ref('pabi_base.group_operating_unit_budget')),
+	        			(4, ref('pabi_budget_yearend_process.group_project_balance_carry_forward')),
+	        			(4, ref('pabi_budget_drilldown_report.group_unit_base_see_own_division')),
+	        			(4, ref('pabi_base.group_nstda_account_admin')),
+	        			(4, ref('pabi_base.group_nstda_admin_business')),
+	        			(4, ref('pabi_base.group_nstda_admin_technical')),
+	        			(4, ref('operating_unit.group_multi_operating_unit')),
+	        			(4, ref('base.group_no_one')),
+	        			(4, ref('account_financial_report.group_afreport')),
+	        			(4, ref('base.group_partner_manager')),
+	        			(4, ref('pabi_apps_config.show_unuse_feature')),
+	        			(4, ref('pabi_budget_internal_charge.group_approve_ic_activity')),
+	        			(4, ref('disable_about_odoo.group_developer_mode')),
+	        			(4, ref('hr_salary.group_hr_salary')),
+	        		  ]"/>
+	    </record>
 	    
     </data>
 </openerp>
