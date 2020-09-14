@@ -188,6 +188,8 @@ class AssetExportReport(models.TransientModel):
         self.ensure_one()
         dom = []
         # Prepare DOM to filter assets
+        if self.asset_filter:
+            self._onchange_asset_filter()
         if self.asset_ids:
             dom += [('id', 'in', tuple(self.asset_ids.ids + [0]))]
         if self.asset_profile_ids:
