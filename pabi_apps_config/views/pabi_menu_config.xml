@@ -161,7 +161,7 @@
 		<delete id="account_budget_activity.menu_budgeting" model="ir.ui.menu"/>
 		<menuitem name="Budgeting" id="menu_budgeting"
 			sequence="1"
-			groups="pabi_base.group_budget_user,group_pabi_admin"/>
+			groups="pabi_base.group_budget_user"/>
 			
 			# Budgeting/Budget Plan
 			<delete id="pabi_budget_plan.menu_action_budget_plan" model="ir.ui.menu"/>
