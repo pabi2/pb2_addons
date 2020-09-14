@@ -433,6 +433,119 @@ class issi_budget_query_view(models.Model):
         )
         """ % self._table)
 
+class etl_issi_budget_section_query(models.Model):
+    _name = 'etl.issi.budget.section.query'
+    _auto = False
+    _description = 'etl_issi_budget_section_query'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+			 SELECT fis.name AS fiscal_year,
+				sec.code AS section,
+				ag.code AS ag,
+				ag.name AS ag_name,
+				COALESCE(sum(src.release), (0)::double precision) AS release,
+				COALESCE(sum(src.sum_pr), (0)::numeric) AS sum_pr,
+				COALESCE(sum(src.sum_po), (0)::numeric) AS sum_po,
+				COALESCE(sum(src.sum_ex), (0)::numeric) AS sum_ex,
+				COALESCE(sum(src.plan_overall_external), (0)::double precision) AS plan_expense_external,
+				COALESCE(sum(src.sum_actual), (0)::numeric) AS sum_actual_external,
+				COALESCE(sum(src.plan_overall_internal), (0)::double precision) AS plan_expense_internal,
+				COALESCE(sum(src.sum_actual_internal), (0)::numeric) AS sum_actual_internal,
+				COALESCE(sum(src.plan_overall_revenue), (0)::double precision) AS plan_revenue_external,
+				COALESCE(sum(src.sum_overall_revenue), (0)::numeric) AS sum_revenue_external,
+				COALESCE(sum(src.plan_revenue_internal), (0)::double precision) AS plan_revenue_internal,
+				COALESCE(sum(src.sum_revenue_internal), (0)::numeric) AS sum_revenue_internal,
+				now() AS import_date,
+				0 AS po_invoice_plan,
+				COALESCE(sum(src.sum_ex_internal), (0)::numeric) AS sum_ex_internal
+			   FROM (((( SELECT rpt.fiscalyear_id,
+						rpt.section_id,
+						rpt.activity_group_id,
+						sum(rpt.amount_pr_commit) AS sum_pr,
+						sum(rpt.amount_po_commit) AS sum_po,
+						sum(rpt.amount_actual) AS sum_actual,
+						sum(rpt.released_amount) AS release,
+						sum(rpt.amount_exp_commit) AS sum_ex,
+						sum(rpt.planned_amount) AS plan_overall_external,
+						0 AS sum_actual_internal,
+						0 AS plan_overall_internal,
+						0 AS sum_overall_revenue,
+						0 AS plan_overall_revenue,
+						0 AS sum_revenue_internal,
+						0 AS plan_revenue_internal,
+						0 AS sum_ex_internal
+					   FROM issi_budget_query_view rpt
+					  WHERE ((rpt.project_id IS NULL) AND ((rpt.charge_type)::text = 'external'::text) AND ((rpt.budget_method)::text = 'expense'::text))
+					  GROUP BY rpt.fiscalyear_id, rpt.section_id, rpt.activity_group_id
+					UNION
+					 SELECT rpt.fiscalyear_id,
+						rpt.section_id,
+						rpt.activity_group_id,
+						0 AS sum_pr,
+						0 AS sum_po,
+						0 AS sum_actual,
+						0 AS release,
+						0 AS sum_ex,
+						0 AS plan_overall_external,
+						0 AS sum_actual_internal,
+						0 AS plan_overall_internal,
+						sum(rpt.amount_actual) AS sum_overall_revenue,
+						sum(rpt.planned_amount) AS plan_overall_revenue,
+						0 AS sum_revenue_internal,
+						0 AS plan_revenue_internal,
+						sum(rpt.amount_exp_commit) AS sum_ex_internal
+					   FROM issi_budget_query_view rpt
+					  WHERE ((rpt.project_id IS NULL) AND ((rpt.charge_type)::text = 'external'::text) AND ((rpt.budget_method)::text = 'revenue'::text))
+					  GROUP BY rpt.fiscalyear_id, rpt.section_id, rpt.activity_group_id
+					UNION
+					 SELECT rpt.fiscalyear_id,
+						rpt.section_id,
+						rpt.activity_group_id,
+						0 AS sum_pr,
+						0 AS sum_po,
+						0 AS sum_actual,
+						0 AS release,
+						0 AS sum_ex,
+						0 AS plan_overall_external,
+						sum(rpt.amount_actual) AS sum_actual_internal,
+						sum(rpt.planned_amount) AS plan_overall_internal,
+						0 AS sum_overall_revenue,
+						0 AS plan_overall_revenue,
+						0 AS sum_revenue_internal,
+						0 AS plan_revenue_internal,
+						sum(rpt.amount_exp_commit) AS sum_ex_internal
+					   FROM issi_budget_query_view rpt
+					  WHERE ((rpt.project_id IS NULL) AND ((rpt.charge_type)::text = 'internal'::text) AND ((rpt.budget_method)::text = 'expense'::text))
+					  GROUP BY rpt.fiscalyear_id, rpt.section_id, rpt.activity_group_id
+					UNION
+					 SELECT rpt.fiscalyear_id,
+						rpt.section_id,
+						rpt.activity_group_id,
+						0 AS sum_pr,
+						0 AS sum_po,
+						0 AS sum_actual,
+						0 AS release,
+						0 AS sum_ex,
+						0 AS plan_overall_external,
+						0 AS sum_actual_internal,
+						0 AS plan_overall_internal,
+						0 AS sum_overall_revenuer,
+						0 AS plan_overall_revenue,
+						sum(rpt.amount_actual) AS sum_revenue_internal,
+						sum(rpt.planned_amount) AS plan_revenue_internal,
+						0 AS sum_ex_internal
+					   FROM issi_budget_query_view rpt
+					  WHERE ((rpt.project_id IS NULL) AND ((rpt.charge_type)::text = 'internal'::text) AND ((rpt.budget_method)::text = 'revenue'::text))
+					  GROUP BY rpt.fiscalyear_id, rpt.section_id, rpt.activity_group_id) src
+				 JOIN account_fiscalyear fis ON ((src.fiscalyear_id = fis.id)))
+				 LEFT JOIN res_section sec ON ((src.section_id = sec.id)))
+				 LEFT JOIN account_activity_group ag ON ((src.activity_group_id = ag.id)))
+			  GROUP BY fis.name, sec.id, sec.code, ag.code, ag.name
+        )
+        """ % self._table)
+
 class issi_res_project_budget_summary_view(models.Model):
     _name = 'issi.res.project.budget.summary.view'
     _auto = False
