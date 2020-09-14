@@ -434,6 +434,6 @@ class etl_issi_purchase_tracking(models.Model):
 			 LEFT JOIN issi_m_source_budget_view po_project ON aa.po_project_id = po_project.project_id
 			 LEFT JOIN issi_m_source_budget_view po_asset ON aa.po_invest_asset_id = po_asset.invest_asset_id
 			 LEFT JOIN issi_m_source_budget_view po_construction ON aa.po_invest_construction_phase_id = po_construction.invest_construction_phase_id
-			 LEFT JOIN issi_m_source_budget_view po_personnel ON aa.po_personnel_costcenter_id = po_personnel.personnel_costcenter_id;
+			 LEFT JOIN issi_m_source_budget_view po_personnel ON aa.po_personnel_costcenter_id = po_personnel.personnel_costcenter_id
         )
         """ % self._table)
