@@ -10,14 +10,5 @@
                                              (4, ref('pabi_interface.group_interface_user'))]"/>
         </record>
 
-        # Connector as top menu
-        <menuitem id="connector.menu_connector_root"
-          name="Connectors" parent="" sequence="451"
-          groups="connector.group_connector_manager"/>
-
-        # System Interface as top manu
-        <menuitem name="System Interface" id="pabi_interface.menu_system_interface"
-          parent="" groups="pabi_interface.group_interface_user" sequence="452"/>
-
     </data>
 </openerp>
