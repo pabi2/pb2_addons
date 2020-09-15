@@ -1731,34 +1731,34 @@
         	<menuitem name="Asset Actions" id="menu_asset_actions"
           		sequence="2" parent="menu_asset_main"
           		groups="pabi_security.group_pabi_accountant"/>
+         		<menuitem name="My Asset Request" id="menu_action_account_asset_request_only"
+          			action="pabi_asset_management.action_account_asset_request_only"
+         			sequence="1" parent="menu_asset_actions"
+          			groups="pabi_asset_management.group_assets_report,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Request" id="menu_action_account_asset_request"
           			action="pabi_asset_management.action_account_asset_request"
-        			sequence="1" parent="menu_asset_actions"
+        			sequence="2" parent="menu_asset_actions"
           			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Change Owner" id="menu_action_account_asset_changeowner"
           			action="pabi_asset_management.action_account_asset_changeowner"
-        			sequence="2" parent="menu_asset_actions"
+        			sequence="3" parent="menu_asset_actions"
           			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Transfer" id="menu_action_account_asset_transfer"
           			action="pabi_asset_management.action_account_asset_transfer"
-        			sequence="3" parent="menu_asset_actions"
+        			sequence="4" parent="menu_asset_actions"
           			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_accountant"/>
 		        <menuitem name="Adjustment" id="menu_action_account_asset_adjust"
 			        action="pabi_asset_management.action_account_asset_adjust"
-			        sequence="4" parent="menu_asset_actions"
+			        sequence="5" parent="menu_asset_actions"
 			        groups="account.group_account_user,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Removal" id="menu_action_account_asset_removal"
           			action="pabi_asset_management.action_account_asset_removal"
-        			sequence="5" parent="menu_asset_actions"
+        			sequence="6" parent="menu_asset_actions"
           			groups="account.group_account_user,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Direct Receive" id="menu_asset_direct_receive"
           			action="pabi_asset_management.action_asset_direct_receive"
-        			sequence="6" parent="menu_asset_actions"
+        			sequence="7" parent="menu_asset_actions"
           			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_accountant"/>
-         		<menuitem name="My Asset Request" id="menu_action_account_asset_request_only"
-          			action="pabi_asset_management.action_account_asset_request_only"
-         			sequence="7" parent="menu_asset_actions"
-          			groups="pabi_asset_management.group_assets_report,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Asset Import Batch" id="menu_asset_import_batch_view"
           			action="pabi_asset_import_batch.action_asset_import_batch_view"
         			sequence="8" parent="menu_asset_actions"
