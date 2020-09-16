@@ -71,11 +71,6 @@
               </p>
             </field>
         </record>
-        <menuitem action="action_asset_purchase_method"
-                 id="menu_action_asset_purchase_method"
-                 parent="pabi_procurement.menu_purchase_config_pabi_master"
-                 sequence="9"
-                 groups="purchase.group_purchase_manager"/>
 
     </data>
 </openerp>

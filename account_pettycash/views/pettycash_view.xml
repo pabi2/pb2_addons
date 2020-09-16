@@ -32,8 +32,5 @@
             <field name="view_type">form</field>
             <field name="view_id" ref="view_account_pettycash_tree"/>
         </record>
-
-        <menuitem name="Petty Cash" id="menu_account_pettycash" action="action_account_pettycash" parent="account.menu_configuration_misc" sequence="1"
-          groups="account.group_account_manager"/>
     </data>
 </openerp>

@@ -324,8 +324,6 @@
 			</field>
 		</record>
 
-		<menuitem id="menu_hr_expense_rule" name="Expense Regulations" parent="hr.menu_hr_configuration" action="hr_expense_rule" sequence="50"/>
-
 		<!-- As synced with PABI Web, should not be editable -->
 		<record id="view_expenses_form_advance" model="ir.ui.view">
 			<field name="name">view.expenses.form.advance</field>

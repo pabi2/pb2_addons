@@ -52,7 +52,6 @@
             <field name="act_window_id" ref="action_pabi_data_map_type"/>
         </record>
 
-        <menuitem action="action_pabi_data_map_type" sequence="100" id="menu_pabi_data_map_type" parent="account.account_account_menu" groups="account.group_account_user"/>
 
     </data>
 </openerp>

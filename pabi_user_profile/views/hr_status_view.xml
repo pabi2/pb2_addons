@@ -40,12 +40,6 @@
             <field name="view_type">form</field>
             <field name="view_id" ref="view_hr_status_tree"/>
         </record>
-        
-        <menuitem name="Status"
-         	id="menu_hr_status"
-        	action="action_hr_status" 
-        	parent="hr.menu_hr_configuration" 
-        	sequence=""/>	
 
     </data>
 </openerp>

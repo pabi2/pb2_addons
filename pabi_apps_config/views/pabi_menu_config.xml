@@ -39,113 +39,13 @@
         <delete model="ir.ui.menu" id="hr.menu_view_employee_category_form"/>
         <delete model="ir.ui.menu" id="hr_expense.menu_hr_product"/>
         
-        <menuitem id="hr.menu_hr_main" name="Directory" parent="hr.menu_hr_configuration" sequence="450"/>
-
-        # Unused Menu
-        <menuitem id="menu_pabi2_config_unused_menu" name="Unused Menus"
-          parent="menu_nstda_configurations" sequence="1000"
-          groups="pabi_apps_config.show_unuse_feature"/>
-
-        # Org Structure
-        <!-- PABI2 Org Structure -->
-        <menuitem id="pabi_base.menu_pabi2_top" name="Organization"
-          parent="menu_nstda_configurations" sequence="1"
-          groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_accountant_gl"/>
-
-        # Partners
-        <menuitem id="menu_pabi2_config_partner" name="Partners"
-          parent="menu_nstda_configurations" sequence="4"
-          groups="pabi_base.group_nstda_admin_business"/>
-
-        <menuitem id="menu_config_account_customer" name="Customers"
-          parent="menu_pabi2_config_partner"
-          action="base.action_partner_customer_form" sequence="1"
-          groups="pabi_base.group_nstda_admin_business"/>
-        <menuitem id="menu_config_account_supplier" name="Suppliers"
-          parent="menu_pabi2_config_partner"
-          action="base.action_partner_supplier_form" sequence="2"
-          groups="pabi_base.group_nstda_admin_business"/>
-        <menuitem id="base.menu_config_address_book" name="Address Book"
-          parent="menu_pabi2_config_partner" sequence="3"
-          groups="pabi_base.group_nstda_admin_business"/>
-
-        # POS
-        <menuitem id="menu_pabi2_config_pos" name="POS"
-          parent="menu_nstda_configurations" sequence="5"
-          groups="pabi_base.group_nstda_admin_business"/>
-
-        <menuitem action="sale_automatic_workflow.act_sale_workflow_process_form"
-          id="sale_automatic_workflow.menu_act_sale_workflow_process_form"
-          parent="menu_pabi2_config_pos" sequence="1"
-          groups="pabi_base.group_nstda_admin_business"/>
-        <menuitem action="pabi_pos.action_pos_product_vs_activity"
-          id="pabi_pos.menu_pos_product_vs_activity"
-          parent="menu_pabi2_config_pos" sequence="1"
-          groups="pabi_base.group_nstda_admin_business"/>
-
-        # Purchase
-        <menuitem id="pabi_procurement.menu_purchase_config_pabi_master" name="Purchase"
-            parent="menu_nstda_configurations" sequence="6" groups="pabi_base.group_nstda_admin_business"/>
-
-        # Accounting
-        <menuitem name="Accounting" id="account.menu_finance_configuration"
-          	sequence="7" parent="menu_nstda_configurations"
-          	groups="pabi_base.group_nstda_admin_business,pabi_base.group_nstda_account_admin,pabi_security.group_pabi_accountant_gl"/>
-        	<menuitem name="Journals" id="account.menu_journals"
-        		sequence="15" parent="account.menu_finance_configuration"
-        		groups="group_account_manager,pabi_security.group_pabi_accountant_gl"/>
-        	<menuitem name="Accounts" id="account.account_account_menu"
-        		sequence="15" parent="account.menu_finance_configuration"/>
-    			<menuitem name="Setup your Bank Accounts" id="account.menu_action_bank_tree"
-        			sequence="1" parent="account.account_account_menu"
-        			action="account.action_bank_tree"
-          			groups="pabi_security.group_pabi_admin"/>
-        		<menuitem name="Accounts" id="account.menu_action_account_form"
-        			sequence="2" parent="account.account_account_menu"
-        			action="account.action_account_form"
-          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
-        
         # Budgeting
         <menuitem id="account_budget_activity.menu_action_account_budget_config"
           name="Budgeting" parent="menu_nstda_configurations" sequence="8"
           groups="pabi_base.group_nstda_admin_business"/>
-        # Warehouse
-        <menuitem id="stock.menu_stock_configuration"
-          name="Warehouse" parent="menu_nstda_configurations" sequence="10"
-          groups="pabi_base.group_nstda_admin_business"/>
-        # HR
-        <menuitem id="hr.menu_hr_configuration"
-          name="Human Resources" parent="menu_nstda_configurations" sequence="11"
-          groups="pabi_base.group_nstda_admin_business"/>
-        # Documents
-        <menuitem name="Document Management"
-          id="document.menu_document_management_configuration"
-          parent="menu_nstda_configurations" sequence="12"
-          groups="pabi_base.group_nstda_admin_business"/>
-
-        # Moved all other configs to unused menu
-        <!-- Sales -->
-        <menuitem id="base.menu_base_config" name="Sales"
-          parent="menu_pabi2_config_unused_menu" sequence="10"
-          groups="pabi_base.group_nstda_admin_business"/>
-        <!-- Purchase -->
-        <menuitem id="purchase.menu_purchase_config_purchase"
-          name="Purchase" parent="menu_pabi2_config_unused_menu" sequence="20"
-          groups="pabi_base.group_nstda_admin_business"/>
-        <!-- Knowledge -->
-        <menuitem id="knowledge.menu_document_configuration"
-          name="Knowledge" parent="menu_pabi2_config_unused_menu" sequence="100"
-          groups="pabi_base.group_nstda_admin_business"/>
 
         # Event Calendar
         <menuitem name="Calendar" id="calendar.mail_menu_calendar" parent="calendar.menu_calendar_configuration" sequence="10" action="calendar.action_calendar_event"/>
-
-
-        # Hide some accounting menu
-        <menuitem name="PIT Rate" id="l10n_th_account_pit.menu_account_pit" action="l10n_th_account_pit.action_account_pit"
-            parent="menu_pabi2_config_unused_menu" sequence="50" groups="account.group_account_invoice"/>
-        <menuitem id="account.menu_account_reports" name="Financial Reports" parent="menu_pabi2_config_unused_menu" sequence="30" />
-        <menuitem id="account.menu_analytic_accounting" name="Analytic Accounting" parent="menu_pabi2_config_unused_menu" groups="analytic.group_analytic_accounting" sequence="40"/>
 
 		# Rearrange Menu
 		# Budgeting
@@ -2034,7 +1934,12 @@
           	sequence="450"
           	groups="pabi_base.group_nstda_admin_business,pabi_base.group_nstda_account_admin,pabi_security.group_pabi_accountant_gl"/>
 
-	        # Products
+	        # Configurations/Org Structure
+	        <menuitem name="Organization" id="pabi_base.menu_pabi2_top"
+	          	sequence="1" parent="menu_nstda_configurations"
+	          	groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
+
+	        # Configurations/Products
 	        <menuitem name="Products" id="menu_pabi2_config_product"
 	          	sequence="2" parent="menu_nstda_configurations"
 	          	groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
@@ -2049,6 +1954,18 @@
 		        <menuitem name="Pricelists" id="product.menu_product_pricelist_main"
 		          	sequence="3" parent="menu_pabi2_config_product"
 		          	groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+			        <menuitem name="Pricelists" id="menu_product_pricelist_action2"
+			            action="product.product_pricelist_action2"
+			            sequence="1" parent="product.menu_product_pricelist_main"
+			            groups="product.group_sale_pricelist,pabi_security.group_pabi_admin"/>
+			        <menuitem name="Pricelist Versions" id="menu_product_pricelist_action"
+			            action="product.product_pricelist_action"
+			            sequence="2" parent="product.menu_product_pricelist_main"
+			            groups="pabi_security.group_pabi_admin"/>
+			        <menuitem name="Price Types" id="menu_product_price_type"
+			            action="product.product_price_type_action"
+			            sequence="3" parent="product.menu_product_pricelist_main"
+			            groups="base.group_no_one,pabi_security.group_pabi_admin"/>
 		        <menuitem name="Unit of Measure Categories" id="product.menu_product_uom_categ_form_action"
 		          	sequence="4" parent="menu_pabi2_config_product"
 		          	action="product.product_uom_categ_form_action"
@@ -2057,8 +1974,254 @@
 		        	action="product.product_uom_form_action"
 		          	sequence="5" parent="menu_pabi2_config_product"
 		          	groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
-          
-			# Assets
+
+	        # Configurations/Partners
+	        <menuitem name="Partners" id="menu_pabi2_config_partner"
+	          	sequence="3" parent="menu_nstda_configurations"
+	          	groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+		        <menuitem name="Customers" id="menu_config_account_customer"
+		          	sequence="1" parent="menu_pabi2_config_partner"
+		          	action="base.action_partner_customer_form"
+		          	groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+	        	<menuitem name="Suppliers" id="menu_config_account_supplier"
+	          		sequence="2" parent="menu_pabi2_config_partner"
+	          		action="base.action_partner_supplier_form"
+	          		groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+	        	<menuitem name="Address Book" id="base.menu_config_address_book"
+	          		sequence="3" parent="menu_pabi2_config_partner"
+	          		groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+
+	        # Configurations/POS
+	        <menuitem name="POS" id="menu_pabi2_config_pos"
+	          	sequence="4" parent="menu_nstda_configurations"
+	          	groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+		        <menuitem name="Automatic Workflow" id="sale_automatic_workflow.menu_act_sale_workflow_process_form"
+		          	sequence="1" parent="menu_pabi2_config_pos"
+		          	action="sale_automatic_workflow.act_sale_workflow_process_form"
+		          	groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+        		<menuitem name="Product Cate. &amp; AG/A" id="pabi_pos.menu_pos_product_vs_activity"
+          			sequence="2" parent="menu_pabi2_config_pos"
+          			action="pabi_pos.action_pos_product_vs_activity"
+          			groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+
+	        # Configurations/Purchase
+			<delete id="pabi_asset_management.menu_action_asset_purchase_method" model="ir.ui.menu"/>
+			<delete id="pabi_procurement.menu_purchase_config_pabi_master" model="ir.ui.menu"/>
+			<delete id="pabi_procurement.menu_action_purchase_type_tree" model="ir.ui.menu"/>
+			<delete id="pabi_procurement.menu_action_purchase_method_tree" model="ir.ui.menu"/>
+			<delete id="pabi_procurement.menu_action_purchase_price_range_tree" model="ir.ui.menu"/>
+			<delete id="pabi_procurement.menu_action_purchase_condition_tree" model="ir.ui.menu"/>
+			<delete id="pabi_procurement.menu_action_purchase_condition_detail_tree" model="ir.ui.menu"/>
+			<delete id="pabi_procurement.menu_action_purchase_select_reason_tree" model="ir.ui.menu"/>
+			<delete id="pabi_procurement.menu_action_purchase_committee_type_tree" model="ir.ui.menu"/>
+			<delete id="pabi_procurement.menu_action__prweb_purchase_method_tree" model="ir.ui.menu"/>
+			<delete id="pabi_purchase_work_acceptance.menu_action_purchase_work_acceptance_case_tree" model="ir.ui.menu"/>
+			<delete id="pabi_purchase_work_acceptance.menu_action_purchase_work_acceptance_score_tree" model="ir.ui.menu"/>
+			
+	        <menuitem name="Purchase" id="menu_purchase_config_pabi_master"
+	          	sequence="5" parent="menu_nstda_configurations"
+	          	groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+		        <menuitem name="Asset Purchase Method" id="menu_action_asset_purchase_method"
+		        	action="pabi_asset_management.action_asset_purchase_method"
+		          	sequence="1" parent="menu_purchase_config_pabi_master"
+		         	groups="purchase.group_purchase_manager,pabi_security.group_pabi_admin"/>
+		       	<menuitem name="Purchase Type" id="menu_action_purchase_type_tree"
+		          	action="pabi_procurement.action_purchase_type_tree"
+		            sequence="2" parent="menu_purchase_config_pabi_master"
+		          	groups="purchase.group_purchase_manager,pabi_security.group_pabi_admin"/>
+		       <menuitem name="Purchase Method" id="menu_action_purchase_method_tree"
+		          	action="pabi_procurement.action_purchase_method_tree"
+		        	sequence="3" parent="menu_purchase_config_pabi_master"
+		         	groups="purchase.group_purchase_manager,pabi_security.group_pabi_admin"/>
+       			<menuitem name="Purchase Price Range" id="menu_action_purchase_price_range_tree"
+                 	action="pabi_procurement.action_purchase_price_range_tree"
+                 	sequence="4" parent="menu_purchase_config_pabi_master"
+                 	groups="purchase.group_purchase_manager,pabi_security.group_pabi_admin"/>
+       			<menuitem name="Purchase Condition" id="menu_action_purchase_condition_tree"
+                 	action="pabi_procurement.action_purchase_condition_tree"
+                 	sequence="5" parent="menu_purchase_config_pabi_master"
+                 	groups="purchase.group_purchase_manager,pabi_security.group_pabi_admin"/>
+       			<menuitem name="Purchase Condition Detail" id="menu_action_purchase_condition_detail_tree"
+                 	action="pabi_procurement.action_purchase_condition_detail_tree"
+                 	sequence="6" parent="menu_purchase_config_pabi_master"
+                 	groups="purchase.group_purchase_manager,pabi_security.group_pabi_admin"/>
+       			<menuitem name="Purchase Select Reason" id="menu_action_purchase_select_reason_tree"
+                 	action="pabi_procurement.action_purchase_select_reason_tree"
+                 	sequence="7" parent="menu_purchase_config_pabi_master"
+                 	groups="purchase.group_purchase_manager,pabi_security.group_pabi_admin"/>
+       			<menuitem name="Purchase Committee Type" id="menu_action_purchase_committee_type_tree"
+                 	action="pabi_procurement.action_purchase_committee_type_tree"
+                 	sequence="8" parent="menu_purchase_config_pabi_master"
+                 	groups="purchase.group_purchase_manager,pabi_security.group_pabi_admin"/>
+       			<menuitem name="PRWeb Method" id="menu_action__prweb_purchase_method_tree"
+                 	action="pabi_procurement.action_prweb_purchase_method_tree"
+                 	sequence="9" parent="menu_purchase_config_pabi_master"
+                 	groups="purchase.group_purchase_manager,pabi_security.group_pabi_admin"/>
+       			<menuitem name="Work Acceptance Case" id="menu_action_purchase_work_acceptance_case_tree"
+                 	action="pabi_purchase_work_acceptance.action_purchase_work_acceptance_case_tree"
+                 	sequence="10" parent="menu_purchase_config_pabi_master"
+                 	groups="purchase.group_purchase_manager,pabi_security.group_pabi_admin"/>
+       			<menuitem name="Work Acceptance Score" id="menu_action_purchase_work_acceptance_score_tree"
+                 	action="pabi_purchase_work_acceptance.action_purchase_work_acceptance_score_tree"
+                 	parent="menu_purchase_config_pabi_master"
+                 	groups="purchase.group_purchase_manager,pabi_security.group_pabi_admin"/>
+
+	        # Configurations/Accounting
+	        <menuitem name="Accounting" id="account.menu_finance_configuration"
+	          	sequence="6" parent="menu_nstda_configurations"
+	          	groups="pabi_base.group_nstda_admin_business,pabi_base.group_nstda_account_admin,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
+	          	
+	        	# Configurations/Accounting/Periods
+        		<menuitem name="Periods" id="account.next_id_23"
+        			sequence="1" parent="account.menu_finance_configuration"
+	          		groups="pabi_security.group_pabi_admin"/>
+        			<menuitem name="Fiscal Years" id="account.menu_action_account_fiscalyear"
+        				action="account.action_account_fiscalyear"
+        				sequence="1" parent="account.next_id_23"
+	          			groups="pabi_security.group_pabi_admin"/>
+        			<menuitem name="Periods" id="account.menu_action_account_period"
+        				action="account.action_account_period"
+        				sequence="2" parent="account.next_id_23"
+	          			groups="pabi_security.group_pabi_admin"/>
+	          	
+	        	# Configurations/Accounting/Journals
+				<delete id="pabi_account.menu_action_account_journal_bank" model="ir.ui.menu"/>
+				<delete id="pabi_account.menu_action_account_journal_cash" model="ir.ui.menu"/>
+			
+	        	<menuitem name="Journals" id="account.menu_journals"
+	        		sequence="2" parent="account.menu_finance_configuration"
+	        		groups="account.group_account_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
+        			<menuitem name="Journals" id="account.menu_action_account_journal_form"
+        				action="account.action_account_journal_form"
+        				sequence="1" parent="account.menu_journals"
+	          			groups="pabi_security.group_pabi_admin"/>
+        			<menuitem name="Bank Journals" id="menu_action_account_journal_bank"
+        				action="pabi_account.action_account_journal_bank"
+        				sequence="2" parent="account.menu_journals"
+	          			groups="pabi_security.group_pabi_admin"/>
+        			<menuitem name="Cash Journals" id="menu_action_account_journal_cash"
+        				action="pabi_account.action_account_journal_cash"
+        				sequence="3" parent="account.menu_journals"
+	          			groups="pabi_security.group_pabi_admin"/>
+	          	
+	        	# Configurations/Accounting/Accounts
+				<delete id="pabi_trial_balance_extension.menu_pabi_data_map_type" model="ir.ui.menu"/>
+			
+	        	<menuitem name="Accounts" id="account.account_account_menu"
+	        		sequence="3" parent="account.menu_finance_configuration"
+	          		groups="pabi_security.group_pabi_admin"/>
+	    			<menuitem name="Setup your Bank Accounts" id="account.menu_action_bank_tree"
+	        			sequence="1" parent="account.account_account_menu"
+	        			action="account.action_bank_tree"
+	          			groups="pabi_security.group_pabi_admin"/>
+	        		<menuitem name="Accounts" id="account.menu_action_account_form"
+	        			sequence="2" parent="account.account_account_menu"
+	        			action="account.action_account_form"
+	          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
+        			<menuitem name="Templates" id="account.account_template_folder"
+            			sequence="3" parent="account.account_account_menu"
+            			groups="account.group_account_manager,pabi_security.group_pabi_admin"/>
+				        <menuitem name="Accounts" id="account.account_template_accounts"
+				          	sequence="1" parent="account.account_template_folder"
+            				groups="pabi_security.group_pabi_admin"/>
+        					<menuitem name="Chart of Accounts Templates" id="account.menu_action_account_chart_template_form"
+        						action="account.action_account_chart_template_form"
+        						sequence="1" parent="account.account_template_accounts"
+            					groups="pabi_security.group_pabi_admin"/>
+        					<menuitem name="Account Templates" id="account.menu_action_account_template_form"
+        						action="account.action_account_template_form"
+        						sequence="2" parent="account.account_template_accounts"
+            					groups="pabi_security.group_pabi_admin"/>
+				        <menuitem name="Taxes" id="account.account_template_taxes"
+				            sequence="2" parent="account.account_template_folder"
+            				groups="pabi_security.group_pabi_admin"/>
+        					<menuitem name="Tax Templates" id="account.menu_action_account_tax_template_form"
+        						action="account.action_account_tax_template_form"
+        						sequence="1" parent="account.account_template_taxes"
+            					groups="pabi_security.group_pabi_admin"/>
+        					<menuitem name="Tax Code Templates" id="account.menu_action_account_tax_code_template_form"
+        						action="account.action_account_tax_code_template_form"
+        						sequence="2" parent="account.account_template_taxes"
+            					groups="pabi_security.group_pabi_admin"/>
+        					<menuitem name="Fiscal Position Templates" id="account.menu_action_account_fiscal_position_form_template"
+					            action="account.action_account_fiscal_position_template_form"
+					            sequence="3" parent="account.account_template_taxes"
+            					groups="pabi_security.group_pabi_admin"/>
+        			<menuitem name="Account Types" id="account.menu_action_account_type_form"
+        				action="account.action_account_type_form"
+        				sequence="4" parent="account.account_account_menu"
+        				groups="base.group_no_one,pabi_security.group_pabi_admin"/>
+        			<menuitem name="Ext. Account Map" id="menu_pabi_data_map_type"
+        				action="pabi_trial_balance_extension.action_pabi_data_map_type"
+        				sequence="5" parent="account.account_account_menu"
+        				groups="account.group_account_user,pabi_security.group_pabi_admin"/>
+	          	
+	        	# Configurations/Accounting/Taxes
+        		<menuitem name="Taxes" id="account.next_id_27"
+        			sequence="4" parent="account.menu_finance_configuration"
+	          		groups="pabi_security.group_pabi_admin"/>
+			        <menuitem name="Taxes" id="account.menu_action_tax_form"
+			        	action="account.action_tax_form"
+			        	sequence="1" parent="account.next_id_27"
+	          			groups="pabi_security.group_pabi_admin"/>
+        			<menuitem name="Tax codes" id="account.menu_action_tax_code_list"
+        				action="account.action_tax_code_list"
+        				sequence="2" parent="account.next_id_27"
+        				groups="base.group_no_one,pabi_security.group_pabi_admin"/>
+        			<menuitem name="Fiscal Positions" id="account.menu_action_account_fiscal_position_form"
+			            action="account.action_account_fiscal_position_form"
+			            sequence="3" parent="account.next_id_27"
+	          			groups="pabi_security.group_pabi_admin"/>
+	          	
+	        	# Configurations/Accounting/Bank
+        		<menuitem name="Bank" id="menu_bank_main"
+        			sequence="5" parent="account.menu_finance_configuration"
+        			groups="account.group_account_user,pabi_security.group_pabi_admin"/>
+			        <menuitem name="Bank Accounts" id="manu_bank_accounts"
+			        	action="base.action_res_partner_bank_account_form"
+			        	sequence="1" parent="menu_bank_main"
+			        	groups="account.group_account_user,pabi_security.group_pabi_admin"/>
+			        <menuitem name="Bank Branch" id="menu_bank_branch"
+			        	sequence="2" parent="menu_bank_main"
+			        	action="pabi_bank.action_res_bank_master_form"
+			        	groups="account.group_account_user,pabi_security.group_pabi_admin"/>
+			        <menuitem name="Banks" id="menu_banks"
+			        	action="base.action_res_bank_form"
+			        	sequence="3" parent="menu_bank_main" 
+			        	groups="account.group_account_user,pabi_security.group_pabi_admin"/>
+			        <menuitem name="Bank Account Types" id="menu_bank_account_types"
+			        	sequence="4" parent="menu_bank_main"
+			        	action="base.action_res_partner_bank_type_form"
+			        	groups="account.group_account_user,pabi_security.group_pabi_admin"/>
+	          	
+	        	# Configurations/Accounting/Miscellaneous
+				<delete id="account_pettycash.menu_account_pettycash" model="ir.ui.menu"/>
+				
+        		<menuitem name="Miscellaneous" id="account.menu_configuration_misc"
+        			sequence="6" parent="account.menu_finance_configuration"
+			        groups="pabi_security.group_pabi_admin"/>
+        			<menuitem name="Petty Cash" id="menu_account_pettycash"
+        				action="account_pettycash.action_account_pettycash"
+        				sequence="1" parent="account.menu_configuration_misc"
+          				groups="account.group_account_manager,pabi_security.group_pabi_admin"/>
+        			<menuitem name="Payment Terms" id="account.menu_action_payment_term_form"
+        				action="account.action_payment_term_form"
+             			sequence="2" parent="account.menu_configuration_misc"
+			        	groups="pabi_security.group_pabi_admin"/>
+        			<menuitem name="Currency Rate Update" id="currency_rate_update.currency_rate_update_menu"
+        				action="currency_rate_update.currency_rate_update_action"
+            			sequence="3" parent="account.menu_configuration_misc"
+			        	groups="pabi_security.group_pabi_admin"/>
+        			<menuitem name="Statement Operation Templates" id="account.menu_action_account_statement_operation_template"
+			        	action="account.action_account_statement_operation_template"
+			        	sequence="4" parent="account.menu_configuration_misc"
+			        	groups="pabi_security.group_pabi_admin"/>
+        			<menuitem name="Email Templates" id="menu_email_templates"
+        				action="action_email_templates"
+        				sequence="5" parent="menu_configuration_misc"
+        				groups="base.group_no_one,pabi_security.group_pabi_admin"/>
+
+			# Configurations/Assets
 			<delete id="pabi_asset_management.account_asset_management.menu_finance_config_assets" model="ir.ui.menu"/>
 			<delete id="pabi_asset_management.account_asset_management.account_asset_profile_menu" model="ir.ui.menu"/>
 			<delete id="pabi_asset_management.menu_asset_action_import_template" model="ir.ui.menu"/>
@@ -2074,6 +2237,123 @@
 	        		action="pabi_asset_management.action_asset_action_import_template"
 	            	sequence="2" parent="account_asset_management.menu_finance_config_assets"
 	            	groups="base.group_no_one,pabi_security.group_pabi_admin"/>
+
+	        # Configurations/Warehouse
+	        <menuitem name="Warehouse" id="stock.menu_stock_configuration"
+          		sequence="8" parent="menu_nstda_configurations"
+          		groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+        		<menuitem name="Warehouses" id="stock.menu_action_warehouse_form"
+        			action="stock.action_warehouse_form"
+            		sequence="1" parent="stock.menu_stock_configuration"
+            		groups="stock.group_locations,pabi_security.group_pabi_admin"/>
+        		<menuitem name="Locations" id="stock.menu_action_location_form"
+        			action="stock.action_location_form"
+            		sequence="2" parent="stock.menu_stock_configuration"
+            		groups="stock.group_locations,pabi_security.group_pabi_admin"/>
+        		<menuitem name="Types of Operation" id="stock.menu_pickingtype" 
+            		action="stock.action_picking_type_list" 
+            		sequence="3" parent="stock.menu_stock_configuration"
+            		groups="pabi_security.group_pabi_admin"/>
+        		<menuitem name="Reordering Rules" id="stock.menu_stock_order_points"
+        			action="stock.action_orderpoint_form"
+        			sequence="4" parent="stock.menu_stock_configuration"
+            		groups="pabi_security.group_pabi_admin"/>
+        		<menuitem name="Procurement Rules" id="stock.menu_procurement_rules"
+        			action="stock.procrules"
+        			sequence="5" parent="stock.menu_stock_configuration"
+        			groups="base.group_no_one,pabi_security.group_pabi_admin"/>
+        		<menuitem name="Routes" id="stock.menu_stock_routes"
+        			action="stock.action_routes_form"
+            		sequence="6" parent="stock.menu_stock_configuration"
+            		groups="pabi_security.group_pabi_admin"/>
+        		<menuitem name="Unit of Measure Categories" id="stock.menu_stock_uom_categ_form_action"
+            		action="product.product_uom_categ_form_action"
+            		sequence="7" parent="stock.menu_stock_configuration"
+            		groups="product.group_uom,pabi_security.group_pabi_admin"/>
+        		<menuitem name="Unit of Measure" id="stock.menu_stock_uom_form_action"
+            		action="product.product_uom_form_action"
+            		sequence="8" parent="stock.menu_stock_configuration"
+            		groups="product.group_uom,pabi_security.group_pabi_admin"/>
+        		<menuitem name="Incoterms" id="stock.menu_action_incoterm_open"
+        			action="stock.action_incoterms_tree"
+        			sequence="9" parent="stock.menu_stock_configuration"
+            		groups="pabi_security.group_pabi_admin"/>
+        		<menuitem name="Products" id="menu_product_in_config_stock" 
+            		sequence="10" parent="stock.menu_stock_configuration"
+            		groups="base.group_no_one,pabi_security.group_pabi_admin"/>
+        			<menuitem name="Product Variants" id="menu_product_variant_config_stock"
+            			action="product.product_normal_action"
+            			sequence="1" parent="stock.menu_product_in_config_stock"
+            			groups="pabi_security.group_pabi_admin"/>
+          		
+	        # Configurations/Human Resources
+			<delete id="pabi_user_profile.menu_hr_position" model="ir.ui.menu"/>
+			<delete id="pabi_user_profile.menu_hr_status" model="ir.ui.menu"/>
+			<delete id="pabi_hr_expense.menu_hr_expense_rule" model="ir.ui.menu"/>
+			
+	        <menuitem name="Human Resources" id="hr.menu_hr_configuration"
+          		sequence="9" parent="menu_nstda_configurations"
+          		groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+       			<menuitem name="Departments" id="hr.menu_hr_department_tree"
+       				action="hr.open_module_tree_department"
+       				sequence="1" parent="hr.menu_hr_configuration"
+            		groups="pabi_security.group_pabi_admin"/>
+        		<menuitem name="Position" id="menu_hr_position"
+        			action="pabi_user_profile.action_hr_position" 
+        			sequence="2" parent="hr.menu_hr_configuration"
+            		groups="pabi_security.group_pabi_admin"/>
+        		<menuitem name="Status" id="menu_hr_status"
+        			action="pabi_user_profile.action_hr_status" 
+        			sequence="3" parent="hr.menu_hr_configuration"
+            		groups="pabi_security.group_pabi_admin"/>
+				<menuitem name="Expense Regulations" id="menu_hr_expense_rule"
+					action="pabi_hr_expense.hr_expense_rule"
+					sequence="4" parent="hr.menu_hr_configuration"
+            		groups="pabi_security.group_pabi_admin"/>
+        		<menuitem name="Directory" id="hr.menu_hr_main"
+        			sequence="5" parent="hr.menu_hr_configuration"
+            		groups="pabi_security.group_pabi_admin"/>
+        			<menuitem name="Employees" id="hr.menu_open_view_employee_list_my"
+        				action="hr.open_view_employee_list_my"
+        				sequence="1" parent="hr.menu_hr_main"
+            			groups="pabi_security.group_pabi_admin"/>
+          		
+	        # Configurations/Document Management
+	        <menuitem name="Document Management" id="document.menu_document_management_configuration"
+          		sequence="10" parent="menu_nstda_configurations"
+          		groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+    			<menuitem name="Directories Structure" id="document.menu_document_directories_tree"
+        			action="document.action_document_directory_tree"
+        			sequence="1" parent="document.menu_document_management_configuration"
+            		groups="pabi_security.group_pabi_admin"/>
+    			<menuitem name="Directories" id="document.menu_document_directories"
+        			action="document.action_document_directory_form"
+        			sequence="2" parent="document.menu_document_management_configuration"
+            		groups="pabi_security.group_pabi_admin"/>
+
+	        # Configurations/Unused Menu
+	        <menuitem name="Unused Menus" id="menu_pabi2_config_unused_menu"
+          		sequence="11" parent="menu_nstda_configurations"
+          		groups="pabi_apps_config.show_unuse_feature,pabi_security.group_pabi_admin"/>
+        		<menuitem name="Sales" id="base.menu_base_config"
+          			sequence="10" parent="menu_pabi2_config_unused_menu"
+          			groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+        		<menuitem name="Purchase" id="purchase.menu_purchase_config_purchase"
+          			sequence="20" parent="menu_pabi2_config_unused_menu"
+          			groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+        		<menuitem name="Financial Reports" id="account.menu_account_reports"
+        			sequence="30" parent="menu_pabi2_config_unused_menu"
+            		groups="pabi_security.group_pabi_admin"/>
+        		<menuitem name="Analytic Accounting" id="account.menu_analytic_accounting"
+        			sequence="40" parent="menu_pabi2_config_unused_menu"
+        			groups="analytic.group_analytic_accounting,pabi_security.group_pabi_admin"/>
+        		<menuitem name="PIT Rate" id="l10n_th_account_pit.menu_account_pit"
+        			action="l10n_th_account_pit.action_account_pit"
+            		sequence="50" parent="menu_pabi2_config_unused_menu"
+            		groups="account.group_account_invoice,pabi_security.group_pabi_admin"/>
+        		<menuitem name="Knowledge" id="knowledge.menu_document_configuration"
+          			sequence="100" parent="menu_pabi2_config_unused_menu"
+          			groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
 
         # Connector
         <menuitem name="Connectors" id="connector.menu_connector_root"

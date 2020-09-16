@@ -62,14 +62,6 @@
         </record>
         <menuitem action="action_res_bank_master_form" id="menu_action_res_bank_master_form" parent="base.menu_config_address_book" sequence="10" groups="base.group_no_one"/>
 
-        <!-- New Baank Menu in Accounting module -->
-        <menuitem id="menu_bank_main" name="Bank" parent="account.menu_finance_configuration" groups="account.group_account_user" sequence="41"/>
-
-        <menuitem id="manu_bank_accounts" action="base.action_res_partner_bank_account_form" name="Bank Accounts" parent="menu_bank_main" groups="account.group_account_user" sequence="10"/>
-        <menuitem id="menu_bank_branch" action="action_res_bank_master_form" name="Bank Branch" parent="menu_bank_main" groups="account.group_account_user" sequence="10"/>
-        <menuitem id="menu_banks" action="base.action_res_bank_form" name="Banks" parent="menu_bank_main" groups="account.group_account_user" sequence="10"/>
-        <menuitem id="menu_bank_account_types" action="base.action_res_partner_bank_type_form" name="Bank Account Types" parent="menu_bank_main" groups="account.group_account_user" sequence="10"/>
-
 
     </data>
 </openerp>
