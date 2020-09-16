@@ -404,7 +404,7 @@
 		
         <menuitem name="myProjects" id="menu_main_project"
         	sequence="2"
-          	groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget,pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_budget" />
+          	groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget,pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_budget,pabi_security.group_pabi_procurment_manager" />
 			
 			# myProjects/Projects
 			<delete id="pabi_my_project.menu_project" model="ir.ui.menu"/>
@@ -413,11 +413,11 @@
 			
         	<menuitem name="Projects" id="menu_project"
         		sequence="1" parent="menu_main_project"
-		     	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_budget"/>
+		     	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_budget,pabi_security.group_pabi_procurment_manager"/>
         		<menuitem name="myProjects" id="menu_my_project"
         			sequence="1" parent="menu_project"
         			action="pabi_my_project.action_project"
-          			groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget,pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_budget"/>
+          			groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget,pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_budget,pabi_security.group_pabi_procurment_manager"/>
 		        <menuitem name="Release Budget" id="menu_my_project_small"
 		        	sequence="2" parent="menu_project"
 		        	action="pabi_my_project.action_project_small"
