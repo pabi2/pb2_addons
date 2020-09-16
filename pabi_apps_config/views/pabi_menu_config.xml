@@ -2216,9 +2216,9 @@
 			        	action="account.action_account_statement_operation_template"
 			        	sequence="4" parent="account.menu_configuration_misc"
 			        	groups="pabi_security.group_pabi_admin"/>
-        			<menuitem name="Email Templates" id="menu_email_templates"
-        				action="action_email_templates"
-        				sequence="5" parent="menu_configuration_misc"
+        			<menuitem name="Email Templates" id="account.menu_email_templates"
+        				action="account.action_email_templates"
+        				sequence="5" parent="account.menu_configuration_misc"
         				groups="base.group_no_one,pabi_security.group_pabi_admin"/>
 
 			# Configurations/Assets
