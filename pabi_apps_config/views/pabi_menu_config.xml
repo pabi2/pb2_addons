@@ -523,7 +523,7 @@
 		# Expenses
         <menuitem name="Expenses" id="hr.menu_hr_root"
         	sequence="6"
-			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_oia,pabi_security.group_pabi_pos"/>
+			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_oia,pabi_security.group_pabi_pos,pabi_security.group_pabi_hr"/>
         	
         	# Expenses/Expenses
 			<delete id="hr_expense_advance_clearing.menu_expense_advance" model="ir.ui.menu"/>
@@ -561,11 +561,11 @@
 			
     		<menuitem name="Salary &amp; Welfare" id="menu_hr_salary_root"
     			sequence="2" parent="hr.menu_hr_root"
-          		groups="hr_salary.group_hr_salary,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_oia"/>
+          		groups="hr_salary.group_hr_salary,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_oia,pabi_security.group_pabi_hr"/>
         		<menuitem name="Salary Expense" id="menu_hr_salary_expense"
         			action="hr_salary.action_hr_salary_expense"
           			sequence="1" parent="menu_hr_salary_root"
-          			groups="hr_salary.group_hr_salary,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_oia"/>
+          			groups="hr_salary.group_hr_salary,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_oia,pabi_security.group_pabi_hr"/>
           		
 			# Expenses/Reporting
 			<delete id="pabi_hr_expense.hr.menu_hr_report" model="ir.ui.menu"/>
