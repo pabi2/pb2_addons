@@ -52,7 +52,7 @@
 		<delete id="account_budget_activity.menu_budgeting" model="ir.ui.menu"/>
 		<menuitem name="Budgeting" id="menu_budgeting"
 			sequence="1"
-			groups="pabi_base.group_budget_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
+			groups="base.group_user,pabi_base.group_budget_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
 			
 			# Budgeting/Budget Plan
 			<delete id="pabi_budget_plan.menu_action_budget_plan" model="ir.ui.menu"/>
@@ -83,22 +83,22 @@
 		
 			<menuitem name="Budget Plan" id="menu_action_budget_plan"
 				sequence="1" parent="menu_budgeting"
-				groups="pabi_base.group_budget_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
+				groups="base.group_user,pabi_base.group_budget_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
 				<menuitem name="Unit Based" id="menu_action_budget_plan_unit"
 					sequence="1" parent="menu_action_budget_plan"
-					groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
+					groups="base.group_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
 					<menuitem name="Budget Plans" id="menu_budget_plan_unit_view"
 						sequence="1" parent="menu_action_budget_plan_unit"
 						action="pabi_budget_plan.action_budget_plan_unit_view"
-          				groups="pabi_base.group_budget_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
+          				groups="base.group_user,pabi_base.group_budget_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
           			<menuitem name="Budget Plan Lines" id="menu_act_budget_plan_unit_line_view"
           				sequence="2" parent="menu_action_budget_plan_unit"
           				action="pabi_budget_plan.act_budget_plan_unit_line_view"
-          				groups="pabi_base.group_budget_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
+          				groups="base.group_user,pabi_base.group_budget_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
           			<menuitem name="Budget Plan Analysis" id="menu_report_budget_plan_unit_analysis"
 			          	sequence="3" parent="menu_action_budget_plan_unit"
 			          	action="pabi_budget_report.action_report_budget_plan_unit_analysis"
-			          	groups="pabi_base.group_budget_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
+			          	groups="base.group_user,pabi_base.group_budget_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
             	<menuitem name="Project Based" id="menu_action_budget_plan_project"
             		sequence="2" parent="menu_action_budget_plan"
 					groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
@@ -250,11 +250,11 @@
 			
 			<menuitem name="Budget Control" id="menu_action_account_budget_control"
 				sequence="4" parent="menu_budgeting"
-				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
+				groups="base.group_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
 				<menuitem name="Budgets" id="menu_act_account_budget_view"
 					sequence="1" parent="menu_action_account_budget_control"
 					action="account_budget_activity.act_account_budget_view"
-					groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
+					groups="base.group_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
 				<menuitem name="Project Based" id="menu_act_account_budget_view_project_base"
 		            sequence="2" parent="menu_action_account_budget_control"
 		            action="pabi_chartfield.act_account_budget_view_project_base"
@@ -282,11 +282,11 @@
 			
 			<menuitem name="Budget Transfer" id="menu_budget_transfer"
 				sequence="5" parent="menu_budgeting"
-				groups="pabi_base.group_budget_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
+				groups="base.group_user,pabi_base.group_budget_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
 				<menuitem name="Unit Based" id="menu_section_budget_transfer"
 					sequence="20" parent="menu_budget_transfer"
 					action="pabi_budget_transfer.action_section_budget_transfer"
-					groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
+					groups="base.group_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_budget,pabi_security.group_pabi_oia"/>
 			
 			# Budgeting/Budget Monitor
 			<delete id="account_budget_activity.menu_action_budget_report" model="ir.ui.menu"/>
@@ -523,7 +523,7 @@
 		# Expenses
         <menuitem name="Expenses" id="hr.menu_hr_root"
         	sequence="6"
-			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_oia,pabi_security.group_pabi_pos,pabi_security.group_pabi_hr"/>
+			groups="base.group_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_oia,pabi_security.group_pabi_pos,pabi_security.group_pabi_hr"/>
         	
         	# Expenses/Expenses
 			<delete id="hr_expense_advance_clearing.menu_expense_advance" model="ir.ui.menu"/>
@@ -533,7 +533,7 @@
 			
         	<menuitem name="Expenses" id="hr_expense.next_id_49"
         		sequence="1" parent="hr.menu_hr_root"
-				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_oia,pabi_security.group_pabi_pos"/>
+				groups="base.group_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_oia,pabi_security.group_pabi_pos"/>
 		        <menuitem name="Expenses" id="hr_expense.menu_expense_all"
 		        	action="hr_expense.expense_all"
 					sequence="1" parent="hr_expense.next_id_49"
@@ -553,7 +553,7 @@
 		        <menuitem name="Internal Charge" id="menu_internal_charge_line"
 		        	action="pabi_budget_internal_charge.action_internal_charge_line"
 		        	sequence="5" parent="hr_expense.next_id_49"
-		        	groups="pabi_budget_internal_charge.group_approve_ic_activity,pabi_security.group_pabi_admin,pabi_security.group_pabi_oia,pabi_security.group_pabi_pos"/>
+		        	groups="base.group_user,pabi_budget_internal_charge.group_approve_ic_activity,pabi_security.group_pabi_admin,pabi_security.group_pabi_oia,pabi_security.group_pabi_pos"/>
 			
 			# Expenses/Salary and Welfare
 			<delete id="hr_salary.menu_hr_salary_root" model="ir.ui.menu"/>
@@ -1603,7 +1603,7 @@
 		
         <menuitem name="Assets" id="menu_asset_main"
         	sequence="11"
-        	groups="purchase.group_purchase_user,account.group_account_user,pabi_asset_management.group_assets_report,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_budget,pabi_security.group_pabi_procurment,pabi_security.group_pabi_oia"/>
+        	groups="base.group_user,purchase.group_purchase_user,account.group_account_user,pabi_asset_management.group_assets_report,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_budget,pabi_security.group_pabi_procurment,pabi_security.group_pabi_oia"/>
         	
         	# Assets/Assets
 			<delete id="pabi_asset_management.account_asset_management.menu_finance_assets" model="ir.ui.menu"/>
@@ -1646,11 +1646,11 @@
 			
         	<menuitem name="Asset Actions" id="menu_asset_actions"
           		sequence="2" parent="menu_asset_main"
-          		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_budget,pabi_security.group_pabi_procurment,pabi_security.group_pabi_oia"/>
+          		groups="base.group_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_budget,pabi_security.group_pabi_procurment,pabi_security.group_pabi_oia"/>
          		<menuitem name="My Asset Request" id="menu_action_account_asset_request_only"
           			action="pabi_asset_management.action_account_asset_request_only"
          			sequence="1" parent="menu_asset_actions"
-          			groups="pabi_asset_management.group_assets_report,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_budget,pabi_security.group_pabi_procurment,pabi_security.group_pabi_oia"/>
+          			groups="base.group_user,pabi_asset_management.group_assets_report,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_budget,pabi_security.group_pabi_procurment,pabi_security.group_pabi_oia"/>
         		<menuitem name="Request" id="menu_action_account_asset_request"
           			action="pabi_asset_management.action_account_asset_request"
         			sequence="2" parent="menu_asset_actions"
