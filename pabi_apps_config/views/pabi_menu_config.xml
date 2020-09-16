@@ -41,11 +41,6 @@
         
         <menuitem id="hr.menu_hr_main" name="Directory" parent="hr.menu_hr_configuration" sequence="450"/>
 
-        # All configurations moved here.
-        <!-- New Configurations Menu, move configuration of every module here -->
-        <menuitem id="menu_nstda_configurations" name="Configurations"
-          sequence="450" groups="pabi_base.group_nstda_admin_business,pabi_base.group_nstda_account_admin,pabi_security.group_pabi_accountant_gl"/>
-
         # Unused Menu
         <menuitem id="menu_pabi2_config_unused_menu" name="Unused Menus"
           parent="menu_nstda_configurations" sequence="1000"
@@ -56,24 +51,6 @@
         <menuitem id="pabi_base.menu_pabi2_top" name="Organization"
           parent="menu_nstda_configurations" sequence="1"
           groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_accountant_gl"/>
-
-        # Products
-        <menuitem id="menu_pabi2_config_product" name="Products"
-          parent="menu_nstda_configurations" sequence="3"
-          groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_accountant_gl"/>
-        <!-- Categories, Products and Pricelists, UoM-->
-        <menuitem
-          action="product.product_category_action_form" id="stock.menu_product_category_config_stock"
-          parent="menu_pabi2_config_product" sequence="0" groups="pabi_base.group_nstda_admin_business"/>
-        <menuitem
-          action="product.product_template_action" id="stock.menu_product_template_config_stock"
-          parent="menu_pabi2_config_product" sequence="1" groups="pabi_base.group_nstda_admin_business"/>
-        <menuitem id="product.menu_product_pricelist_main" name="Pricelists"
-          parent="menu_pabi2_config_product" sequence="2" groups="pabi_base.group_nstda_admin_business"/>
-        <menuitem action="product.product_uom_categ_form_action" id="product.menu_product_uom_categ_form_action"
-          parent="menu_pabi2_config_product" sequence="3" groups="pabi_base.group_nstda_admin_business"/>
-        <menuitem action="product.product_uom_form_action" id="product.menu_product_uom_form_action"
-          parent="menu_pabi2_config_product" sequence="4" groups="pabi_base.group_nstda_admin_business"/>
 
         # Partners
         <menuitem id="menu_pabi2_config_partner" name="Partners"
@@ -111,9 +88,23 @@
             parent="menu_nstda_configurations" sequence="6" groups="pabi_base.group_nstda_admin_business"/>
 
         # Accounting
-        <menuitem id="account.menu_finance_configuration"
-          name="Accounting" parent="menu_nstda_configurations" sequence="7"
-          groups="pabi_base.group_nstda_admin_business,pabi_base.group_nstda_account_admin,pabi_security.group_pabi_accountant_gl"/>
+        <menuitem name="Accounting" id="account.menu_finance_configuration"
+          	sequence="7" parent="menu_nstda_configurations"
+          	groups="pabi_base.group_nstda_admin_business,pabi_base.group_nstda_account_admin,pabi_security.group_pabi_accountant_gl"/>
+        	<menuitem name="Journals" id="account.menu_journals"
+        		sequence="15" parent="account.menu_finance_configuration"
+        		groups="group_account_manager,pabi_security.group_pabi_accountant_gl"/>
+        	<menuitem name="Accounts" id="account.account_account_menu"
+        		sequence="15" parent="account.menu_finance_configuration"/>
+    			<menuitem name="Setup your Bank Accounts" id="account.menu_action_bank_tree"
+        			sequence="1" parent="account.account_account_menu"
+        			action="account.action_bank_tree"
+          			groups="pabi_security.group_pabi_admin"/>
+        		<menuitem name="Accounts" id="account.menu_action_account_form"
+        			sequence="2" parent="account.account_account_menu"
+        			action="account.action_account_form"
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
+        
         # Budgeting
         <menuitem id="account_budget_activity.menu_action_account_budget_config"
           name="Budgeting" parent="menu_nstda_configurations" sequence="8"
@@ -161,7 +152,7 @@
 		<delete id="account_budget_activity.menu_budgeting" model="ir.ui.menu"/>
 		<menuitem name="Budgeting" id="menu_budgeting"
 			sequence="1"
-			groups="pabi_base.group_budget_user"/>
+			groups="pabi_base.group_budget_user,pabi_security.group_pabi_admin"/>
 			
 			# Budgeting/Budget Plan
 			<delete id="pabi_budget_plan.menu_action_budget_plan" model="ir.ui.menu"/>
@@ -192,98 +183,103 @@
 		
 			<menuitem name="Budget Plan" id="menu_action_budget_plan"
 				sequence="1" parent="menu_budgeting"
-				groups="pabi_base.group_budget_user"/>
+				groups="pabi_base.group_budget_user,pabi_security.group_pabi_admin"/>
 				<menuitem name="Unit Based" id="menu_action_budget_plan_unit"
-					sequence="1" parent="menu_action_budget_plan"/>
+					sequence="1" parent="menu_action_budget_plan"
+					groups="pabi_security.group_pabi_admin"/>
 					<menuitem name="Budget Plans" id="menu_budget_plan_unit_view"
 						sequence="1" parent="menu_action_budget_plan_unit"
 						action="pabi_budget_plan.action_budget_plan_unit_view"
-          				groups="pabi_base.group_budget_user"/>
+          				groups="pabi_base.group_budget_user,pabi_security.group_pabi_admin"/>
           			<menuitem name="Budget Plan Lines" id="menu_act_budget_plan_unit_line_view"
           				sequence="2" parent="menu_action_budget_plan_unit"
           				action="pabi_budget_plan.act_budget_plan_unit_line_view"
-          				groups="pabi_base.group_budget_user"/>
+          				groups="pabi_base.group_budget_user,pabi_security.group_pabi_admin"/>
           			<menuitem name="Budget Plan Analysis" id="menu_report_budget_plan_unit_analysis"
 			          	sequence="3" parent="menu_action_budget_plan_unit"
 			          	action="pabi_budget_report.action_report_budget_plan_unit_analysis"
-			          	groups="pabi_base.group_budget_user"/>
+			          	groups="pabi_base.group_budget_user,pabi_security.group_pabi_admin"/>
             	<menuitem name="Project Based" id="menu_action_budget_plan_project"
-            		sequence="2" parent="menu_action_budget_plan"/>
+            		sequence="2" parent="menu_action_budget_plan"
+					groups="pabi_security.group_pabi_admin"/>
             		<menuitem name="Budget Plans" id="menu_budget_plan_project_view"
             			sequence="1" parent="menu_action_budget_plan_project"
             			action="pabi_budget_plan.action_budget_plan_project_view"
-          				groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget"/>
+          				groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget,pabi_security.group_pabi_admin"/>
           			<menuitem name="Budget Plan Lines" id="menu_budget_plan_project_line_view"
           				sequence="2" parent="menu_action_budget_plan_project"
           				action="pabi_budget_plan.action_budget_plan_project_line_view"
-          				groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget"/>
+          				groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget,pabi_security.group_pabi_admin"/>
           			<menuitem name="Budget Plan Analysis" id="menu_report_budget_plan_project_analysis"
 			          	sequence="3" parent="menu_action_budget_plan_project"
 			          	action="pabi_budget_report.action_report_budget_plan_project_analysis"
-			          	groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget"/>
+			          	groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget,pabi_security.group_pabi_admin"/>
             	<menuitem name="Personnel" id="menu_action_budget_plan_personnel"
-            		sequence="3" parent="menu_action_budget_plan"/>
+            		sequence="3" parent="menu_action_budget_plan"
+					groups="pabi_security.group_pabi_admin"/>
             		<menuitem name="Budget Plans" id="menu_budget_plan_personnel_view"
             			sequence="1" parent="menu_action_budget_plan_personnel"
             			action="pabi_budget_plan.action_budget_plan_personnel_view"
-          				groups="pabi_base.group_cooperate_budget,pabi_base.group_budget_personnel"/>
+          				groups="pabi_base.group_cooperate_budget,pabi_base.group_budget_personnel,pabi_security.group_pabi_admin"/>
           			<menuitem name="Budget Plan Lines" id="menu_act_budget_plan_personnel_line_view"
           				sequence="2" parent="menu_action_budget_plan_personnel"
           				action="pabi_budget_plan.act_budget_plan_personnel_line_view"
-          				groups="pabi_base.group_cooperate_budget,pabi_base.group_budget_personnel"/>
+          				groups="pabi_base.group_cooperate_budget,pabi_base.group_budget_personnel,pabi_security.group_pabi_admin"/>
           			<menuitem name="Budget Plan Analysis" id="menu_report_budget_plan_personnel_analysis"
           				sequence="3" parent="menu_action_budget_plan_personnel"
           				action="pabi_budget_report.action_report_budget_plan_personnel_analysis"
-          				groups="pabi_base.group_cooperate_budget,pabi_base.group_budget_personnel"/>
+          				groups="pabi_base.group_cooperate_budget,pabi_base.group_budget_personnel,pabi_security.group_pabi_admin"/>
           		<menuitem name="Investment Asset" id="menu_action_budget_plan_invest_asset"
-          			sequence="4" parent="menu_action_budget_plan"/>
+          			sequence="4" parent="menu_action_budget_plan"
+					groups="pabi_security.group_pabi_admin"/>
 			        # Additional Invest Asset menu for Cooperate Budget
 			        <menuitem name="Investment Asset" id="menu_res_invest_asset_for_cooperate_budget"
 			        	sequence="1" parent="menu_action_budget_plan_invest_asset"
 			          	action="pabi_base.action_res_invest_asset"
-			          	groups="pabi_base.group_cooperate_budget"/>
+			          	groups="pabi_base.group_cooperate_budget,pabi_security.group_pabi_admin"/>
 			    	<menuitem name="Asset Item Plans" id="menu_invest_asset_plan_view"
 			    		sequence="2" parent="menu_action_budget_plan_invest_asset"
 			    		action="pabi_budget_plan.action_invest_asset_plan_view"
-          				groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
+          				groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget,pabi_security.group_pabi_admin"/>
           			<menuitem name="Asset Item Plan Line" id="menu_act_invest_asset_plan_item_view"
           				sequence="3" parent="menu_action_budget_plan_invest_asset"
           				action="pabi_budget_plan.act_invest_asset_plan_item_view"
-          				groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
+          				groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget,pabi_security.group_pabi_admin"/>
           			<menuitem name="Asset Item Plan Analysis" id="menu_report_asset_item_plan_analysis"
 			          	sequence="4" parent="menu_action_budget_plan_invest_asset"
 			          	action="pabi_budget_report.action_report_asset_item_plan_analysis"
-			          	groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
+			          	groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget,pabi_security.group_pabi_admin"/>
 			    	<menuitem name="Budget Plans" id="menu_budget_plan_invest_asset_view"
 			          	sequence="5" parent="menu_action_budget_plan_invest_asset"
 			          	action="pabi_budget_plan.action_budget_plan_invest_asset_view"
-            			groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
+            			groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget,pabi_security.group_pabi_admin"/>
             		<menuitem name="Budget Plan Lines" id="menu_act_budget_plan_invest_asset_line_view"
             			sequence="6" parent="menu_action_budget_plan_invest_asset"
             			action="pabi_budget_plan.act_budget_plan_invest_asset_line_view"
-            			groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
+            			groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget,pabi_security.group_pabi_admin"/>
             		<menuitem name="Budget Plan Analysis" id="menu_report_budget_plan_asset_analysis"
           				sequence="7" parent="menu_action_budget_plan_invest_asset"
           				action="pabi_budget_report.action_report_budget_plan_asset_analysis"
-          				groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget"/>
+          				groups="pabi_base.group_asset_ou_budget,pabi_base.group_cooperate_budget,pabi_security.group_pabi_admin"/>
           		<menuitem name="Investment Construction" id="menu_action_budget_plan_invest_construction"
-          			sequence="5" parent="menu_action_budget_plan"/>
+          			sequence="5" parent="menu_action_budget_plan"
+					groups="pabi_security.group_pabi_admin"/>
           			<menuitem name="Budget Plans" id="menu_budget_plan_invest_construction_view"
           				sequence="1" parent="menu_action_budget_plan_invest_construction"
           				action="pabi_budget_plan.action_budget_plan_invest_construction_view"
-            			groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget"/>
+            			groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_security.group_pabi_admin"/>
             		<menuitem name="Budget Plan Lines" id="menu_act_budget_plan_invest_construction_line_view"
             			sequence="2" parent="menu_action_budget_plan_invest_construction"
             			action="pabi_budget_plan.act_budget_plan_invest_construction_line_view"
-          				groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget"/>
+          				groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_security.group_pabi_admin"/>
           			<menuitem name="Budget Plan Analysis" id="menu_report_budget_plan_construction_analysis"
           				sequence="3" parent="menu_action_budget_plan_invest_construction"
           				action="pabi_budget_report.action_report_budget_plan_construction_analysis"
-          				groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget"/>
+          				groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_security.group_pabi_admin"/>
           		<menuitem name="Generate Budget Plans" id="menu_generate_budget_plan"
           			sequence="6" parent="menu_action_budget_plan"
           			action="pabi_budget_plan.action_generate_budget_plan"
-         			groups="pabi_base.group_cooperate_budget"/>
+         			groups="pabi_base.group_cooperate_budget,pabi_security.group_pabi_admin"/>
 			
 			# Budgeting/Budget Policy
 			<delete id="pabi_budget_plan.menu_action_budget_policy" model="ir.ui.menu"/>
@@ -296,31 +292,31 @@
 			
 			<menuitem name="Budget Policy" id="menu_action_budget_policy"
 				sequence="2" parent="menu_budgeting"
-          		groups="pabi_base.group_cooperate_budget_policy"/>
+          		groups="pabi_base.group_cooperate_budget_policy,pabi_security.group_pabi_admin"/>
 				<menuitem name="Budget Allocations" id="menu_fiscalyear_budget_allocation"
 					sequence="1" parent="menu_action_budget_policy"
 					action="pabi_budget_plan.action_fiscalyear_budget_allocation"
-					groups="pabi_base.group_cooperate_budget_policy"/>
+					groups="pabi_base.group_cooperate_budget_policy,pabi_security.group_pabi_admin"/>
 				<menuitem name="Unit Based" id="menu_budget_policy_unit_view"
 					sequence="2" parent="menu_action_budget_policy"
 					action="pabi_budget_plan.action_budget_policy_unit_view"
-					groups="pabi_base.group_cooperate_budget_policy"/>
+					groups="pabi_base.group_cooperate_budget_policy,pabi_security.group_pabi_admin"/>
 				<menuitem name="Project Based" id="menu_budget_policy_project_view"
 					sequence="3" parent="menu_action_budget_policy"
 					action="pabi_budget_plan.action_budget_policy_project_view"
-					groups="pabi_base.group_cooperate_budget_policy"/>
+					groups="pabi_base.group_cooperate_budget_policy,pabi_security.group_pabi_admin"/>
 				<menuitem name="Personnel" id="menu_budget_policy_personnel_view"
 					sequence="4" parent="menu_action_budget_policy"
 					action="pabi_budget_plan.action_budget_policy_personnel_view"
-					groups="pabi_base.group_cooperate_budget_policy"/>
+					groups="pabi_base.group_cooperate_budget_policy,pabi_security.group_pabi_admin"/>
 				<menuitem name="Investment Asset" id="menu_budget_policy_invest_asset_view"
 					sequence="5" parent="menu_action_budget_policy"
 					action="pabi_budget_plan.action_budget_policy_invest_asset_view"
-					groups="pabi_base.group_cooperate_budget_policy"/>
+					groups="pabi_base.group_cooperate_budget_policy,pabi_security.group_pabi_admin"/>
 				<menuitem name="Investment Construction" id="menu_budget_policy_invest_construction_view"
 					sequence="6" parent="menu_action_budget_policy"
 					action="pabi_budget_plan.action_budget_policy_invest_construction_view"
-					groups="pabi_base.group_cooperate_budget_policy"/>
+					groups="pabi_base.group_cooperate_budget_policy,pabi_security.group_pabi_admin"/>
 			
 			# Budgeting/Budget Breakdown
 			<delete id="pabi_budget_plan.menu_action_budget_breakdown" model="ir.ui.menu"/>
@@ -330,19 +326,19 @@
 			
 			<menuitem name="Budget Breakdown" id="menu_action_budget_breakdown"
 				sequence="3" parent="menu_budgeting"
-          		groups="pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget"/>
+          		groups="pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget,pabi_security.group_pabi_admin"/>
           		<menuitem name="Unit Based" id="menu_unit_base_breakdown_view"
 	          		sequence="1" parent="menu_action_budget_breakdown"
 	          		action="pabi_budget_plan.action_unit_base_breakdown_view"
-	          		groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget"/>
+	          		groups="pabi_base.group_operating_unit_budget,pabi_base.group_cooperate_budget,pabi_security.group_pabi_admin"/>
 	          	<menuitem name="Personnel" id="menu_personnel_breakdown_view"
 		          	sequence="2" parent="menu_action_budget_breakdown"
 		          	action="pabi_budget_plan.action_personnel_breakdown_view"
-		          	groups="pabi_base.group_cooperate_budget"/>
+		          	groups="pabi_base.group_cooperate_budget,pabi_security.group_pabi_admin"/>
 				<menuitem name="Investment Asset" id="menu_invest_asset_breakdown_view"
 					sequence="3" parent="menu_action_budget_breakdown"
 					action="pabi_budget_plan.action_invest_asset_breakdown_view"
-					groups="pabi_base.group_cooperate_budget"/>
+					groups="pabi_base.group_cooperate_budget,pabi_security.group_pabi_admin"/>
 			
 			# Budgeting/Budget Control
 			<delete id="account_budget_activity.menu_action_account_budget_control" model="ir.ui.menu"/>
@@ -354,29 +350,32 @@
 			<delete id="account_budget_activity.menu_act_account_budget_line_view" model="ir.ui.menu"/>
 			
 			<menuitem name="Budget Control" id="menu_action_account_budget_control"
-				sequence="4" parent="menu_budgeting"/>
+				sequence="4" parent="menu_budgeting"
+				groups="pabi_security.group_pabi_admin"/>
 				<menuitem name="Budgets" id="menu_act_account_budget_view"
 					sequence="1" parent="menu_action_account_budget_control"
-					action="account_budget_activity.act_account_budget_view"/>
+					action="account_budget_activity.act_account_budget_view"
+					groups="pabi_security.group_pabi_admin"/>
 				<menuitem name="Project Based" id="menu_act_account_budget_view_project_base"
 		            sequence="2" parent="menu_action_account_budget_control"
 		            action="pabi_chartfield.act_account_budget_view_project_base"
-		            groups="pabi_base.group_nstda_admin_business"/>
+		            groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
 				<menuitem name="Personnel" id="menu_act_account_budget_view_personnel"
             		sequence="3" parent="menu_action_account_budget_control"
 		            action="pabi_chartfield.act_account_budget_view_personnel"
-		            groups="pabi_base.group_cooperate_budget,pabi_base.group_budget_personnel"/>
+		            groups="pabi_base.group_cooperate_budget,pabi_base.group_budget_personnel,pabi_security.group_pabi_admin"/>
 				<menuitem name="Investment Asset" id="menu_act_account_budget_view_invest_asset"
             		sequence="4" parent="menu_action_account_budget_control"
             		action="pabi_chartfield.act_account_budget_view_invest_asset"
-            		groups="pabi_base.group_cooperate_budget,pabi_base.group_asset_ou_budget"/>
+            		groups="pabi_base.group_cooperate_budget,pabi_base.group_asset_ou_budget,pabi_security.group_pabi_admin"/>
             	<menuitem name="Investment Construction" id="menu_act_account_budget_view_invest_construction"
             		sequence="5" parent="menu_action_account_budget_control"
 		            action="pabi_chartfield.act_account_budget_view_invest_construction"
-		            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget"/>
+		            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_security.group_pabi_admin"/>
 				<menuitem name="Budget Control Analysis" id="menu_act_account_budget_line_view"
 					sequence="6" parent="menu_action_account_budget_control"
-					action="account_budget_activity.act_account_budget_line_view"/>
+					action="account_budget_activity.act_account_budget_line_view"
+					groups="pabi_security.group_pabi_admin"/>
 			
 			# Budgeting/Budget Transfer
 			<delete id="pabi_budget_transfer.menu_budget_transfer" model="ir.ui.menu"/>
@@ -384,10 +383,11 @@
 			
 			<menuitem name="Budget Transfer" id="menu_budget_transfer"
 				sequence="5" parent="menu_budgeting"
-				groups="pabi_base.group_budget_user"/>
+				groups="pabi_base.group_budget_user,pabi_security.group_pabi_admin"/>
 				<menuitem name="Unit Based" id="menu_section_budget_transfer"
 					sequence="20" parent="menu_budget_transfer"
-					action="pabi_budget_transfer.action_section_budget_transfer"/>
+					action="pabi_budget_transfer.action_section_budget_transfer"
+					groups="pabi_security.group_pabi_admin"/>
 			
 			# Budgeting/Budget Monitor
 			<delete id="account_budget_activity.menu_action_budget_report" model="ir.ui.menu"/>
@@ -399,22 +399,28 @@
 			<delete id="pabi_budget_drilldown_report.menu_budget_drilldown_report_report" model="ir.ui.menu"/>
 			
 			<menuitem name="Budget Monitor" id="menu_action_budget_report"
-				sequence="6" parent="menu_budgeting"/>
+				sequence="6" parent="menu_budgeting"
+				groups="pabi_security.group_pabi_admin"/>
 				<menuitem name="Budget Consume" id="menu_action_budget_consume_report"
 					sequence="1" parent="menu_action_budget_report"
-					action="account_budget_activity.action_budget_consume_report"/>
+					action="account_budget_activity.action_budget_consume_report"
+					groups="pabi_security.group_pabi_admin"/>
 				<menuitem name="Budget Plan" id="menu_action_budget_plan_report"
 					sequence="2" parent="menu_action_budget_report"
-					action="account_budget_activity.action_budget_plan_report"/>
+					action="account_budget_activity.action_budget_plan_report"
+					groups="pabi_security.group_pabi_admin"/>
 				<menuitem name="Budget Monitoring" id="menu_action_budget_monitor_report"
 					sequence="3" parent="menu_action_budget_report"
-					action="pabi_budget_monitor.action_budget_monitor_report_wizard"/>
+					action="pabi_budget_monitor.action_budget_monitor_report_wizard"
+					groups="pabi_security.group_pabi_admin"/>
 				<menuitem name="Budget Transition" id="menu_budget_transitionp"
 					sequence="4" parent="menu_action_budget_report"
-					action="account_budget_activity.action_budget_transition"/>
+					action="account_budget_activity.action_budget_transition"
+					groups="pabi_security.group_pabi_admin"/>
 				<menuitem name="Budget Overview Report" id="menu_budget_drilldown_report_report"
           			sequence="5" parent="menu_action_budget_report"
-					action="pabi_budget_drilldown_report.action_budget_drilldown_report_wizard"/>
+					action="pabi_budget_drilldown_report.action_budget_drilldown_report_wizard"
+					groups="pabi_security.group_pabi_admin"/>
 			
 			# Budgeting/Year End Process
 			<delete id="pabi_budget_yearend_process.menu_action_budget_year_end_process" model="ir.ui.menu"/>
@@ -422,25 +428,28 @@
 			<delete id="pabi_budget_yearend_process.menu_project_balance_carry_forward" model="ir.ui.menu"/>
 			
 			<menuitem name="Year End Process" id="menu_action_budget_year_end_process"
-          		sequence="7" parent="menu_budgeting"/>
+          		sequence="7" parent="menu_budgeting"
+				groups="pabi_security.group_pabi_admin"/>
           		<menuitem name="Commitment Carry Over" id="menu_action_budget_carry_over"
           			sequence="1" parent="menu_action_budget_year_end_process"
           			action="pabi_budget_yearend_process.action_budget_carry_over"
-          			groups="pabi_budget_yearend_process.group_budget_carry_over"/>
+          			groups="pabi_budget_yearend_process.group_budget_carry_over,pabi_security.group_pabi_admin"/>
           		<menuitem name="Project Balance C/F" id="menu_project_balance_carry_forward"
           			sequence="2" parent="menu_action_budget_year_end_process"
           			action="pabi_budget_yearend_process.action_project_balance_carry_forward"
-          			groups="pabi_budget_yearend_process.group_project_balance_carry_forward"/>
+          			groups="pabi_budget_yearend_process.group_project_balance_carry_forward,pabi_security.group_pabi_admin"/>
 			
 			# Budgeting/Budget Report
 			<delete id="pabi_budget_report.menu_budget_report" model="ir.ui.menu"/>
 			<delete id="pabi_budget_drilldown_report.menu_my_budget_drilldown_report" model="ir.ui.menu"/>
 			
 			<menuitem name="Budget Report" id="menu_budget_report"
-            	sequence="8" parent="menu_budgeting"/>
+            	sequence="8" parent="menu_budgeting"
+				groups="pabi_security.group_pabi_admin"/>
 				<menuitem name="My Budget Report" id="menu_my_budget_drilldown_report"
 	          		sequence="1" parent="menu_budget_report"
-					action="pabi_budget_drilldown_report.action_my_budget_drilldown_report_wizard"/>
+					action="pabi_budget_drilldown_report.action_my_budget_drilldown_report_wizard"
+					groups="pabi_security.group_pabi_admin"/>
 			
 			# Budgeting/Configuration
 			<delete id="account_budget_activity.menu_action_account_budget_config" model="ir.ui.menu"/>
@@ -451,23 +460,28 @@
 			<delete id="pabi_budget_plan.menu_budget_plan_import_template" model="ir.ui.menu"/>
 			
 			<menuitem name="Configuration" id="menu_action_account_budget_config"
-				sequence="9" parent="menu_budgeting" />
+				sequence="9" parent="menu_budgeting"
+				groups="pabi_security.group_pabi_admin"/>
 				<menuitem name="Activity Group" id="menu_account_activity_group"
 					sequence="1" parent="menu_action_account_budget_config"
-					action="account_budget_activity.action_account_activity_group"/>
+					action="account_budget_activity.action_account_activity_group"
+					groups="pabi_security.group_pabi_admin"/>
 				<menuitem name="Activity" id="menu_account_activity"
 					sequence="2" parent="menu_action_account_budget_config"
-					action="account_budget_activity.action_account_activity"/>
+					action="account_budget_activity.action_account_activity"
+					groups="pabi_security.group_pabi_admin"/>
 				<menuitem name="Activity Tag" id="menu_account_activity_tag"
 					sequence="3" parent="menu_action_account_budget_config"
-					action="account_budget_activity.action_account_activity_tag"/>
+					action="account_budget_activity.action_account_activity_tag"
+					groups="pabi_security.group_pabi_admin"/>
 				<menuitem name="Budgeting Level" id="menu_fiscalyear_budget_level"
 					sequence="4" parent="menu_action_account_budget_config"
-					action="account_budget_activity.action_fiscalyear_budget_level"/>
+					action="account_budget_activity.action_fiscalyear_budget_level"
+					groups="pabi_security.group_pabi_admin"/>
 				<menuitem name="Budget Plan Templates (xls)" id="menu_budget_plan_import_template"
             		sequence="5" parent="menu_action_account_budget_config"
 					action="pabi_budget_plan.action_budget_plan_import_template"
-            		groups="base.group_no_one"/>
+            		groups="base.group_no_one,pabi_security.group_pabi_admin"/>
 			
 			# Budgeting/Account Report
 			<delete id="pabi_budget_report.menu_budgeting_account_report" model="ir.ui.menu"/>
@@ -475,21 +489,23 @@
 			<delete id="pabi_budget_report.menu_xlsx_report_revenue_ledger" model="ir.ui.menu"/>
 			
 			<menuitem name="Account Report" id="menu_budgeting_account_report"
-            	sequence="10" parent="menu_budgeting"
-            	 groups="pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget"/>
+           		sequence="10" parent="menu_budgeting"
+            	groups="pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget,pabi_security.group_pabi_admin"/>
             	<menuitem name="Expense Ledger" id="menu_xlsx_report_expense_ledger_account_report"
 		            sequence="1" parent="menu_budgeting_account_report"
-		            action="pabi_account_report.action_xlsx_report_expense_ledger_form"/>
+		            action="pabi_account_report.action_xlsx_report_expense_ledger_form"
+            		groups="pabi_security.group_pabi_admin"/>
 				<menuitem name="Revenue Ledger" id="menu_xlsx_report_revenue_ledger_account_report"
 		            sequence="2" parent="menu_budgeting_account_report"
-		            action="pabi_account_report.action_xlsx_report_revenue_ledger_form"/>
+		            action="pabi_account_report.action_xlsx_report_revenue_ledger_form"
+            		groups="pabi_security.group_pabi_admin"/>
            
 		# myProjects
 		<delete id="pabi_my_project.menu_main_project" model="ir.ui.menu"/>
 		
         <menuitem name="myProjects" id="menu_main_project"
         	sequence="2"
-          	groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget,pabi_base.group_nstda_admin_business,pabi_security.group_pabi_accountant" />
+          	groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget,pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant" />
 			
 			# myProjects/Projects
 			<delete id="pabi_my_project.menu_project" model="ir.ui.menu"/>
@@ -498,15 +514,15 @@
 			
         	<menuitem name="Projects" id="menu_project"
         		sequence="1" parent="menu_main_project"
-		     	groups="pabi_security.group_pabi_accountant"/>
+		     	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="myProjects" id="menu_my_project"
         			sequence="1" parent="menu_project"
         			action="pabi_my_project.action_project"
-          			groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget,pabi_base.group_nstda_admin_business,pabi_security.group_pabi_accountant"/>
+          			groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget,pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 		        <menuitem name="Release Budget" id="menu_my_project_small"
 		        	sequence="2" parent="menu_project"
 		        	action="pabi_my_project.action_project_small"
-		          	groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_accountant"/>
+		          	groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         	
         	# myProjects/External Fund Rule
 			<delete id="pabi_budget_fund_rule.menu_budget_external_fund_rule" model="ir.ui.menu"/>
@@ -516,26 +532,26 @@
 			
         	<menuitem name="External Fund Rule" id="menu_budget_external_fund_rule"
         		sequence="2" parent="menu_main_project"
-          		groups="pabi_base.group_budget_user,pabi_base.group_nstda_admin_business,pabi_security.group_pabi_accountant_gl,pabi_security.group_pabi_accountant_po_ex"/>
+          		groups="pabi_base.group_budget_user,pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl,pabi_security.group_pabi_accountant_po_ex"/>
         		<menuitem name="Fund Rule" id="menu_budget_fund_rule"
         			action="pabi_budget_fund_rule.action_budget_fund_rule"
         			sequence="1" parent="menu_budget_external_fund_rule"
-          			groups="pabi_base.group_budget_user,pabi_base.group_nstda_admin_business,pabi_security.group_pabi_accountant_gl,pabi_security.group_pabi_accountant_po_ex"/>
+          			groups="pabi_base.group_budget_user,pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl,pabi_security.group_pabi_accountant_po_ex"/>
         		<menuitem name="Fund Template" id="menu_budget_fund_rule_template"
 	        		action="pabi_budget_fund_rule.action_budget_fund_rule_template"
 	        		sequence="2" parent="menu_budget_external_fund_rule"
-	          		groups="pabi_base.group_nstda_admin_business"/>
+	          		groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
         		<menuitem name="Expense Group" id="menu_budget_fund_expense_group"
 	        		action="pabi_budget_fund_rule.action_budget_fund_expense_group"
 	        		sequence="3" parent="menu_budget_external_fund_rule"
-	          		groups="pabi_base.group_nstda_admin_business"/>
+	          		groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
            
 		# Project-C
 		<delete id="pabi_invest_construction.menu_main_construction" model="ir.ui.menu"/>
 		
       	<menuitem name="Project-C" id="menu_main_construction"
       		sequence="3"
-            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget" />
+            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget,pabi_security.group_pabi_admin" />
             
             # Project-C/Construction Projects
 			<delete id="pabi_invest_construction.menu_construction" model="ir.ui.menu"/>
@@ -544,15 +560,15 @@
 		
         	<menuitem name="Construction Projects" id="menu_construction"
         		sequence="1" parent="menu_main_construction"
-            	groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget" />
+            	groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget,pabi_security.group_pabi_admin" />
         		<menuitem name="Projects" id="menu_invest_construction"
         			action="pabi_invest_construction.action_invest_construction"
         			sequence="1" parent="menu_construction"
-            		groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget" />
+            		groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget,pabi_security.group_pabi_admin" />
         		<menuitem name="Phases" id="menu_invest_construction_phase"
         			action="pabi_invest_construction.action_invest_construction_phase"
         			sequence="2" parent="menu_construction"
-            		groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget" />
+            		groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget,pabi_security.group_pabi_admin" />
             
             # Project-C/Reports
 			<delete id="pabi_invest_construction.menu_construction_report" model="ir.ui.menu"/>
@@ -561,22 +577,22 @@
 			
         	<menuitem name="Reports" id="menu_construction_report"
         		sequence="2" parent="menu_main_construction"
-            	groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget" />
+            	groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget,pabi_security.group_pabi_admin" />
 		        <menuitem name="Project Plan Report" id="menu_invest_construction_budget_plan"
 		        	action="pabi_invest_construction.action_invest_construction_project_plan_report"
 		        	sequence="1" parent="menu_construction_report"
-		            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget" />
+		            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget,pabi_security.group_pabi_admin" />
 		        <menuitem name="Project Phase Report" id="menu_invest_construction_phase_plan"
 		        	action="pabi_invest_construction.action_invest_construction_phase_plan_report"
 		        	sequence="2" parent="menu_construction_report"
-		            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget" />
+		            groups="pabi_base.group_cooperate_budget,pabi_base.group_construction_budget,pabi_base.group_operating_unit_budget,pabi_security.group_pabi_admin" />
             
 		# Stock
 		<delete id="stock_request.menu_stock_request" model="ir.ui.menu"/>
 		
         <menuitem name="Stock" id="menu_stock_request"
         	sequence="5"
-        	groups="base.group_user,pabi_security.group_pabi_accountant_gl"/>
+        	groups="base.group_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         	
         	# Stock/Stock Operation
 			<delete id="stock_request.menu_stock_operation" model="ir.ui.menu"/>
@@ -587,28 +603,28 @@
 			
         	<menuitem name="Stock Operation" id="menu_stock_operation"
         		sequence="1" parent="menu_stock_request"
-        		groups="base.group_user,pabi_security.group_pabi_accountant_gl"/>
+        		groups="base.group_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Stock Request" id="menu_action_stock_request"
         			action="stock_request.action_stock_request"
         			sequence="1" parent="menu_stock_operation"
-        			groups="stock.group_stock_user,pabi_security.group_pabi_accountant_gl"/>
+        			groups="stock.group_stock_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="My Stock Request" id="menu_action_my_stock_request"
         			action="stock_request.action_my_stock_request"
         			sequence="2" parent="menu_stock_operation"
-        			groups="base.group_user,pabi_security.group_pabi_accountant_gl"/>
+        			groups="base.group_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Stock Transfer" id="menu_action_stock_transfer"
         			action="stock_request.action_stock_transfer"
         			sequence="3" parent="menu_stock_operation"
-        			groups="stock.group_stock_user,pabi_security.group_pabi_accountant_gl"/>
+        			groups="stock.group_stock_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Stock Borrow" id="menu_action_stock_borrow"
         			action="stock_request.action_stock_borrow"
         			sequence="4" parent="menu_stock_operation"
-        			groups="stock.group_stock_user,pabi_security.group_pabi_accountant_gl"/>
+        			groups="stock.group_stock_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         			
 		# Expenses
         <menuitem name="Expenses" id="hr.menu_hr_root"
         	sequence="6"
-			groups="pabi_security.group_pabi_accountant"/>
+			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         	
         	# Expenses/Expenses
 			<delete id="hr_expense_advance_clearing.menu_expense_advance" model="ir.ui.menu"/>
@@ -618,27 +634,27 @@
 			
         	<menuitem name="Expenses" id="hr_expense.next_id_49"
         		sequence="1" parent="hr.menu_hr_root"
-				groups="pabi_security.group_pabi_accountant"/>
+				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 		        <menuitem name="Expenses" id="hr_expense.menu_expense_all"
 		        	action="hr_expense.expense_all"
 					sequence="1" parent="hr_expense.next_id_49"
-					groups="account.group_account_user,base.group_hr_manager,pabi_security.group_pabi_accountant"/>
+					groups="account.group_account_user,base.group_hr_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 		        <menuitem name="Employee Advance" id="menu_expense_advance"
 		        	action="hr_expense_advance_clearing.action_expense_advance"
 					sequence="2" parent="hr_expense.next_id_49"
-					groups="account.group_account_user,base.group_hr_manager,pabi_security.group_pabi_accountant"/>
+					groups="account.group_account_user,base.group_hr_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 		        <menuitem name="Employee Clearing" id="menu_expense_clearing"
 		        	action="hr_expense_advance_clearing.action_expense_clearing"
 		        	sequence="3" parent="hr_expense.next_id_49"
-		        	groups="account.group_account_user,base.group_hr_manager,pabi_security.group_pabi_accountant"/>
+		        	groups="account.group_account_user,base.group_hr_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 		        <menuitem name="Petty Cash" id="menu_expense_pettycash"
 		        	action="account_pettycash.action_expense_pettycash"
 		        	sequence="4" parent="hr_expense.next_id_49"
-		        	groups="account.group_account_user,base.group_hr_manager,pabi_security.group_pabi_accountant"/>
+		        	groups="account.group_account_user,base.group_hr_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 		        <menuitem name="Internal Charge" id="menu_internal_charge_line"
 		        	action="pabi_budget_internal_charge.action_internal_charge_line"
 		        	sequence="5" parent="hr_expense.next_id_49"
-		        	groups="pabi_budget_internal_charge.group_approve_ic_activity"/>
+		        	groups="pabi_budget_internal_charge.group_approve_ic_activity,pabi_security.group_pabi_admin"/>
 			
 			# Expenses/Salary and Welfare
 			<delete id="hr_salary.menu_hr_salary_root" model="ir.ui.menu"/>
@@ -646,11 +662,11 @@
 			
     		<menuitem name="Salary &amp; Welfare" id="menu_hr_salary_root"
     			sequence="2" parent="hr.menu_hr_root"
-          		groups="hr_salary.group_hr_salary,pabi_security.group_pabi_accountant"/>
+          		groups="hr_salary.group_hr_salary,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Salary Expense" id="menu_hr_salary_expense"
         			action="hr_salary.action_hr_salary_expense"
           			sequence="1" parent="menu_hr_salary_root"
-          			groups="hr_salary.group_hr_salary,pabi_security.group_pabi_accountant"/>
+          			groups="hr_salary.group_hr_salary,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
           		
 			# Expenses/Reporting
 			<delete id="pabi_hr_expense.hr.menu_hr_report" model="ir.ui.menu"/>
@@ -660,39 +676,40 @@
 			
 			<menuitem name="Reporting" id="hr.menu_hr_report"
 				sequence="3" parent="hr.menu_hr_root"
-        		groups="pabi_security.group_pabi_accountant"/>
+        		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Advance Dunning Letter" id="menu_pabi_advance_dunning_letter"
         			action="pabi_advance_dunning_letter.action_pabi_advance_dunning_letter"
-        			sequence="1" parent="hr.menu_hr_report"/>
+        			sequence="1" parent="hr.menu_hr_report"
+        			groups="pabi_security.group_pabi_admin"/>
         		<menuitem name="Advance Clearing Followup" id="menu_expense_clearing_followup_report"
         			action="pabi_hr_advance_clearing_followup_report.action_advance_clearing_followup_wizard"
         			sequence="2" parent="hr.menu_hr_report"
-          			groups="account.group_account_user,pabi_security.group_pabi_accountant"/>
+          			groups="account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Advance Status Report" id="menu_pabi_hr_advance_status_report_wizard"
                   	action="pabi_hr_advance_status_report.action_pabi_hr_advance_status_report_wizard"
                   	sequence="3" parent="hr.menu_hr_report"
-                  	groups="account.group_account_user,pabi_security.group_pabi_accountant"/>
+                  	groups="account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 		# Sales
         <menuitem name="Sales" id="base.menu_base_partner"
         	sequence="7"
-            groups="base.group_sale_salesman,base.group_sale_manager,pabi_security.group_pabi_accountant"/>
+            groups="base.group_sale_salesman,base.group_sale_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
             
 			# Sales/Sales
             <menuitem name="Sales" id="base.menu_sales"
             	sequence="1" parent="base.menu_base_partner"
-            	groups="pabi_security.group_pabi_accountant"/>
+            	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Quotations" id="sale.menu_sale_quotations"
 	                action="sale.action_quotations"
 	                sequence="1" parent="base.menu_sales"
-            		groups="pabi_security.group_pabi_accountant"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Sales Orders" id="sale.menu_sale_order"
         			action="sale.action_orders"
         			sequence="2" parent="base.menu_sales"
-        			groups="base.group_sale_salesman,base.group_sale_manager,pabi_security.group_pabi_accountant"/>
+        			groups="base.group_sale_salesman,base.group_sale_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Customers" id="base.menu_partner_form"
         			action="base.action_partner_form"
         			sequence="3" parent="base.menu_sales"
-        			groups="base.group_sale_salesman,base.group_sale_manager,pabi_security.group_pabi_accountant"/>
+        			groups="base.group_sale_salesman,base.group_sale_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
             
 			# Sales/POS
 			<delete id="pabi_pos.menu_pos_root" model="ir.ui.menu"/>
@@ -702,36 +719,36 @@
 			
         	<menuitem name="POS" id="menu_pos_root"
         		sequence="2" parent="base.menu_base_partner"
-            	groups="pabi_security.group_pabi_accountant"/>
+            	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="POS Orders" id="menu_pos_order"
         			action="pabi_pos.action_pos_orders"
         			sequence="1" parent="menu_pos_root"
-        			groups="base.group_sale_salesman,base.group_sale_manager,pabi_security.group_pabi_accountant"/>
+        			groups="base.group_sale_salesman,base.group_sale_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Supplier Consign Report" id="menu_report_supplier_consignment"
 		            action="pabi_pos.action_report_supplier_consignment"
 		            sequence="2" parent="menu_pos_root"
-            		groups="pabi_security.group_pabi_accountant"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Import Consigned Order" id="menu_xlsx_import_consigned_order"
 		          	action="pabi_pos.action_xlsx_import_consigned_order"
 		          	sequence="3" parent="menu_pos_root"
-            		groups="pabi_security.group_pabi_accountant"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         	
 			# Sales/Product Variants
         	<menuitem name="Product Variants" id="base.menu_product"
         		sequence="3" parent="base.menu_base_partner"
-            	groups="pabi_security.group_pabi_accountant"/>
+            	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Products" id="product.menu_product_template_action"
         			action="product.product_template_action"
             		sequence="1" parent="base.menu_product"
-            		groups="pabi_security.group_pabi_accountant"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Product Variants" id="product.menu_products"
         			action="product.product_normal_action_sell"
         			sequence="2" parent="base.menu_product"
-        			groups="base.group_no_one"/>
+        			groups="base.group_no_one,pabi_security.group_pabi_admin"/>
         		<menuitem name="Products by Category" id="product.menu_products_category"
             		action="product.product_category_action"
             		sequence="3" parent="base.menu_product"
-            		groups="base.group_no_one"/>
+            		groups="base.group_no_one,pabi_security.group_pabi_admin"/>
         	
 			# Sales/Reports
 			<delete id="pabi_procurement_report.product.menu_products_report" model="ir.ui.menu"/>
@@ -739,16 +756,16 @@
 
 			<menuitem name="Reports" id="product.menu_products_report"
             	sequence="4" parent="base.menu_base_partner"
-            	groups="pabi_security.group_pabi_accountant"/>
+            	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Book Stock Balance" id="menu_xlsx_report_pabi_book_stock_balance"
         			action="pabi_procurement_report.action_xlsx_report_pabi_book_stock_balance"
         			sequence="1" parent="product.menu_products_report"
-            		groups="pabi_security.group_pabi_accountant"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			
         # Purchases
         <menuitem name="Purchases" id="base.menu_purchase_root"
         	sequence="8"
-            groups="pabi_security.group_pabi_accountant_po_ex,pabi_security.group_pabi_accountant_gl"/>
+            groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_po_ex,pabi_security.group_pabi_accountant_gl"/>
 
 			# Purchases/Purchase
 			<delete id="pabi_purchase_work_acceptance.menu_purchase_work_acceptance_action" model="ir.ui.menu"/>
@@ -756,73 +773,73 @@
 			
         	<menuitem name="Purchase" id="purchase.menu_procurement_management"
             	sequence="1" parent="base.menu_purchase_root"
-            	groups="pabi_security.group_pabi_accountant_po_ex,pabi_security.group_pabi_accountant_gl"/>
+            	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_po_ex,pabi_security.group_pabi_accountant_gl"/>
 		      	<menuitem name="Purchase Requests" id="purchase_request.menu_purchase_request_pro_mgt"
 		      		sequence="1" parent="purchase.menu_procurement_management"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
 		      	<menuitem name="Purchase Request Lines" id="purchase_request.menu_purchase_request_line"
 		      		sequence="2" parent="purchase.menu_procurement_management"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
 		      	<menuitem name="Calls for Bids" id="purchase_requisition.menu_purchase_requisition_pro_mgt"
 		      		sequence="3" parent="purchase.menu_procurement_management"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
 		      	<menuitem name="Quotation" id="purchase.menu_purchase_rfq"
 		      		sequence="4" parent="purchase.menu_procurement_management"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
 		      	<menuitem name="Purchase Orders" id="purchase.menu_purchase_form_action"
 		      		sequence="5" parent="purchase.menu_procurement_management"
-            		groups="pabi_security.group_pabi_accountant_po_ex,pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_po_ex,pabi_security.group_pabi_accountant_gl"/>
 		       	<menuitem name="Purchase Work Acceptance" id="menu_purchase_work_acceptance_action"
 		       		action="pabi_purchase_work_acceptance.action_purchase_work_acceptance_tree"
 		            sequence="6" parent="purchase.menu_procurement_management"
-            		groups="pabi_security.group_pabi_accountant_po_ex,pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_po_ex,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Purchase Billing" id="menu_action_purchase_billing"
         			action="pabi_purchase_billing.action_purchase_billing"
         			sequence="7" parent="purchase.menu_procurement_management"
-            		groups="pabi_security.group_pabi_accountant_po_ex,pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_po_ex,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Suppliers" id="purchase.menu_purchase_supplier"
         			action="base.action_partner_supplier_form"
             		sequence="8" parent="purchase.menu_procurement_management"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
 
 	      	# Purchases/Incoming Products
       		<menuitem name="Incoming Products" id="purchase.menu_procurement_management_inventory"
             	sequence="2" parent="base.menu_purchase_root"
-            	groups="pabi_security.group_pabi_accountant_gl"/>
+            	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
       			<menuitem name="Incoming Products" id="purchase.menu_action_picking_tree_in_move"
       				action="stock.action_receipt_picking_move"
             		sequence="1" parent="purchase.menu_procurement_management_inventory"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
             	
 	      	# Purchases/Invoice Control
     		<menuitem name="Invoice Control" id="purchase.menu_procurement_management_invoice"
         		sequence="3" parent="base.menu_purchase_root"
-            	groups="pabi_security.group_pabi_accountant_gl"/>
+            	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
 	     		<menuitem name="On Draft Invoices" id="purchase.menu_procurement_management_pending_invoice"
 	          		action="purchase.action_invoice_pending"
 	          		sequence="1" parent="purchase.menu_procurement_management_invoice"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="On Purchase Order Lines" id="purchase.menu_purchase_line_order_draft"
             		action="purchase.purchase_line_form_action2"
             		sequence="2" parent="purchase.menu_procurement_management_invoice"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="On Incoming Shipments" id="purchase.menu_action_picking_tree_picking_to_invoice"
         			action="purchase.action_picking_tree_picking_to_invoice"
             		sequence="3" parent="purchase.menu_procurement_management_invoice"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         
 	      	# Purchases/Products
       		<menuitem name="Products" id="purchase.menu_procurement_management_product"
           		sequence="4" parent="base.menu_purchase_root"
-            	groups="pabi_security.group_pabi_accountant_gl"/>
+            	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
       			<menuitem name="Products by Category" id="purchase.menu_product_by_category_purchase_form"
       				action="product.product_category_action"
            			sequence="1" parent="purchase.menu_procurement_management_product"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
       			<menuitem name="Products" id="purchase.menu_procurement_partner_contact_form"
       				action="purchase.product_normal_action_puchased"
           			sequence="2" parent="purchase.menu_procurement_management_product"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
           
 	      	# Purchases/Purchase Report
 			<delete id="pabi_purchase_report.menu_purchase_report" model="ir.ui.menu"/>
@@ -847,82 +864,82 @@
 			
         	<menuitem name="Purchase Report" id="menu_procurement_report"
             	sequence="5" parent="base.menu_purchase_root"
-            	groups="pabi_security.group_pabi_accountant_gl"/>
+            	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Purchase Tracking" id="menu_xlsx_report_pabi_purchase_tracking"
         			action="pabi_procurement_report.action_xlsx_report_pabi_purchase_tracking"
         			sequence="1" parent="menu_procurement_report"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Purchase Summarize" id="menu_xlsx_report_pabi_purchase_summarize"
         			action="pabi_procurement_report.action_xlsx_report_pabi_purchase_summarize"
         			sequence="2" parent="menu_procurement_report"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Standard Asset" id="menu_xlsx_report_pabi_standard_asset"
         			action="pabi_procurement_report.action_xlsx_report_pabi_standard_asset"
         			sequence="3" parent="menu_procurement_report"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Stock Card for Accounting" id="menu_xlsx_report_pabi_stock_card_for_accounting"
         			action="pabi_procurement_report.action_xlsx_report_pabi_stock_card_for_accounting"
         			sequence="4" parent="menu_procurement_report"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Monthly Work Acceptance" id="menu_xlsx_report_pabi_monthly_work_acceptance"
         			action="pabi_procurement_report.action_xlsx_report_pabi_monthly_work_acceptance"
         			sequence="5" parent="menu_procurement_report"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="SLA Balance" id="menu_xlsx_report_pabi_sla_balance"
         			action="pabi_procurement_report.action_xlsx_report_pabi_sla_balance"
         			sequence="6" parent="menu_procurement_report"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Supplier List" id="menu_xlsx_report_pabi_supplier_list"
         			action="pabi_procurement_report.action_xlsx_report_pabi_supplier_list"
         			sequence="7" parent="menu_procurement_report"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Stock Balance" id="menu_xlsx_report_pabi_stock_balance"
         			action="pabi_procurement_report.action_xlsx_report_pabi_stock_balance"
         			sequence="8" parent="menu_procurement_report"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Procurement Result" id="menu_xlsx_report_pabi_procurement_result"
         			action="pabi_procurement_report.action_xlsx_report_pabi_procurement_result"
         			sequence="9" parent="menu_procurement_report"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
 		        <menuitem name="Hiring Summary" id="menu_xlsx_report_pabi_hiring_summary"
 		        	action="pabi_procurement_report.action_xlsx_report_pabi_hiring_summary"
 		        	sequence="10" parent="menu_procurement_report"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Green Product Summary" id="menu_xlsx_report_pabi_green_product_summary"
         			action="pabi_procurement_report.action_xlsx_report_pabi_green_product_summary"
         			sequence="11" parent="menu_procurement_report"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Purchase Annual Report" id="menu_xlsx_report_pabi_purchase_annual"
         			action="pabi_procurement_report.action_xlsx_report_pabi_purchase_annual"
         			sequence="12" parent="menu_procurement_report"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Supplier Evaluation" id="menu_xlsx_report_pabi_supplier_evaluation"
         			action="pabi_procurement_report.action_xlsx_report_pabi_supplier_evaluation"
         			sequence="13" parent="menu_procurement_report"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="PR and PO Comparison" id="menu_xlsx_report_pabi_comparison_po_no"
         			action="pabi_procurement_report.action_xlsx_report_pabi_comparison_pr_po"
         			sequence="14" parent="menu_procurement_report"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Supplier Evaluation Score" id="menu_xlsx_report_pabi_supplier_evaluation_score"
         			action="pabi_procurement_report.action_xlsx_report_pabi_supplier_evaluation_score"
         			sequence="15" parent="menu_procurement_report"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Purchase Billing" id="menu_purchase_billing_report_wizard"
 		            action="pabi_procurement_report.action_menu_purchase_billing_report_wizard"
 		            sequence="16" parent="menu_procurement_report"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Purchase Invoice Plan" id="menu_purchase_invoice_plan_report_wizard"
             		action="pabi_procurement_report.action_menu_purchase_invoice_plan_report_wizard"
             		sequence="17" parent="menu_procurement_report"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         			
         # PO Contract
 		<delete id="pabi_purchase_contract.main_purchase_contract_menu" model="ir.ui.menu"/>
 
 		<menuitem name="PO Contract" id="main_purchase_contract_menu"
 			sequence="9"
-			groups="pabi_purchase_contract.group_pabi_purchase_contract_user,pabi_purchase_contract.group_pabi_purchase_contract_verify,pabi_purchase_contract.group_pabi_purchase_contract_close,pabi_security.group_pabi_accountant_po_ex,pabi_security.group_pabi_accountant_gl"/>
+			groups="pabi_purchase_contract.group_pabi_purchase_contract_user,pabi_purchase_contract.group_pabi_purchase_contract_verify,pabi_purchase_contract.group_pabi_purchase_contract_close,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_po_ex,pabi_security.group_pabi_accountant_gl"/>
 		
 			# PO Contract/Contract Management
 			<delete id="pabi_purchase_contract.purchase_contract_sub_menu" model="ir.ui.menu"/>
@@ -931,45 +948,45 @@
 			
 			<menuitem name="Contract Management" id="purchase_contract_sub_menu"
 				sequence="1" parent="main_purchase_contract_menu"
-				groups="pabi_purchase_contract.group_pabi_purchase_contract_user,pabi_purchase_contract.group_pabi_purchase_contract_verify,pabi_purchase_contract.group_pabi_purchase_contract_close,pabi_security.group_pabi_accountant_po_ex,pabi_security.group_pabi_accountant_gl"/>
+				groups="pabi_purchase_contract.group_pabi_purchase_contract_user,pabi_purchase_contract.group_pabi_purchase_contract_verify,pabi_purchase_contract.group_pabi_purchase_contract_close,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_po_ex,pabi_security.group_pabi_accountant_gl"/>
 				<menuitem name="PO Contract" id="purchase_contract_menu"
 					action="pabi_purchase_contract.purchase_contract_action"
 					sequence="1" parent="purchase_contract_sub_menu"
-					groups="pabi_security.group_pabi_accountant_po_ex,pabi_security.group_pabi_accountant_gl"/>
+					groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_po_ex,pabi_security.group_pabi_accountant_gl"/>
 				<menuitem name="Waiting for Accept" id="purchase_contract_accept_menu"
 					action="pabi_purchase_contract.purchase_contract_accept_action"
 					sequence="2" parent="purchase_contract_sub_menu"
-					groups="pabi_security.group_pabi_accountant_po_ex,pabi_security.group_pabi_accountant_gl"/>
+					groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_po_ex,pabi_security.group_pabi_accountant_gl"/>
         
         # Accounting
         <menuitem name="Accounting" id="account.menu_finance"
         	sequence="10"
-            groups="account.group_account_manager,account.group_account_user,group_cd_report,pabi_security.group_pabi_accountant"/>
+            groups="account.group_account_manager,account.group_account_user,group_cd_report,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
             
             # Accounting/Customers
         	<menuitem name="Customers" id="account.menu_finance_receivables"
           		sequence="1" parent="account.menu_finance"
-          		groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_accountant"/>
+          		groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Customers" id="account.menu_account_customer"
             		action="base.action_partner_customer_form"
             		sequence="1" parent="account.menu_finance_receivables"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Customer Invoices" id="account.menu_action_invoice_tree1"
         			action="account.action_invoice_tree1"
         			sequence="2" parent="account.menu_finance_receivables"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Customer Refunds" id="account.menu_action_invoice_tree3"
         			action="account.action_invoice_tree3"
         			sequence="3" parent="account.menu_finance_receivables"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
        	 		<menuitem name="Customer Payments" id="account_voucher.menu_action_vendor_receipt"
         			action="account_voucher.action_vendor_receipt"
         			sequence="4" parent="account.menu_finance_receivables"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Bank Receipts" id="account_bank_receipt.menu_bank_receipt_tree"
         			action="account_bank_receipt.action_bank_receipt_tree"
           			sequence="5" parent="account.menu_finance_receivables"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			
             # Accounting/Suppliers
 			<delete id="pabi_purchase_billing.menu_action_account_purchase_billing" model="ir.ui.menu"/>
@@ -978,46 +995,46 @@
             
         	<menuitem name="Suppliers" id="account.menu_finance_payables"
           		sequence="2" parent="account.menu_finance"
-          		groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_accountant"/>
+          		groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Suppliers" id="account.menu_account_supplier"
             		action="base.action_partner_supplier_form"
             		sequence="1" parent="account.menu_finance_payables"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Supplier Invoices" id="account.menu_action_invoice_tree2"
         			action="account.action_invoice_tree2"
         			sequence="2" parent="account.menu_finance_payables"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Supplier Refunds" id="account.menu_action_invoice_tree4"
         			action="account.action_invoice_tree4"
         			sequence="3" parent="account.menu_finance_payables"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Purchase Billing" id="menu_action_account_purchase_billing"
         			action="pabi_purchase_billing.action_purchase_billing"
             		sequence="4" parent="account.menu_finance_payables"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Supplier Payments" id="account_voucher.menu_action_vendor_payment"
         			action="account_voucher.action_vendor_payment"
         			sequence="5" parent="account.menu_finance_payables"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Withholding Certs" id="menu_print_wht_cert"
         			action="l10n_th_account.action_print_wht_cert_menu"
         			sequence="6" parent="account.menu_finance_payables"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Supplier Payments (net AR)" id="menu_action_vendor_paymen_net_payment"
         			action="account_voucher_net_payment.action_vendor_payment_net_payment"
         			sequence="7" parent="account.menu_finance_payables"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
             
             # Accounting/Bank and Cash
 			<delete id="bank_account_transfer.menu_bank_account_transfer" model="ir.ui.menu"/>
 			
         	<menuitem name="Bank and Cash" id="account.menu_finance_bank_and_cash"
         		sequence="3" parent="account.menu_finance"
-            	groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_accountant"/>
+            	groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
       			<menuitem name="Bank Account Transfer" id="menu_bank_account_transfer"
       				action="bank_account_transfer.action_bank_account_transfer"
       				sequence="1" parent="account.menu_finance_bank_and_cash"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<!-- <menuitem name="Bank Payments" id="menu_bank_payment_tree"
         			action="account_bank_payment.action_bank_payment_tree"
         			sequence="2" parent="account.menu_finance_bank_and_cash"/>
@@ -1032,15 +1049,15 @@
 
         	<menuitem name="Loan Receivables" id="menu_loan_receivable"
         		sequence="4" parent="account.menu_finance"
-       	 		groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_accountant"/>
+       	 		groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Bank Loan MOU" id="menu_action_loan_bank_mou"
         			action="pabi_loan_receivable.action_loan_bank_mou"
         			sequence="1" parent="menu_loan_receivable"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Loan Agreement" id="menu_action_loan_customer_agreement"
         			action="pabi_loan_receivable.action_loan_customer_agreement"
         			sequence="2" parent="menu_loan_receivable"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
             		
             # Accounting/Payment Exports
 			<delete id="payment_export.menu_payment_export" model="ir.ui.menu"/>
@@ -1052,27 +1069,27 @@
 			
         	<menuitem name="Payment Exports" id="menu_payment_export"
           		sequence="5" parent="account.menu_finance"
-          		groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_accountant"/>
+          		groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Payment Export" id="menu_action_payment_export"
         			action="payment_export.action_payment_export"
         			sequence="1" parent="menu_payment_export"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Cheque Lot" id="menu_action_cheque_lot"
         			action="payment_export.action_cheque_lot"
         			sequence="2" parent="menu_payment_export"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Cheque Register" id="menu_action_cheque_register"
         			action="payment_export.action_cheque_register"
         			sequence="3" parent="menu_payment_export"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 		        <menuitem name="Pre register iCash" id="menu_action_pre_register_icash"
 		        	action="payment_export.action_pre_register_icash"
 		        	sequence="4" parent="menu_payment_export"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 		        <menuitem name="Pre register Config" id="menu_action_pre_register_icash_config"
 		        	action="payment_export.action_pre_register_icash_config"
 		        	sequence="5" parent="menu_payment_export"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			
             # Accounting/Loan Installments
 			<delete id="pabi_loan_installment.menu_loan_installment_menu" model="ir.ui.menu"/>
@@ -1080,11 +1097,11 @@
 
         	<menuitem name="Loan Installments" id="menu_loan_installment_menu"
         		sequence="6" parent="account.menu_finance"
-        		groups="account.group_account_user,pabi_security.group_pabi_accountant"/>
+        		groups="account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Loan Installment" id="menu_loan_installment"
         			action="pabi_loan_installment.action_loan_installment"
         			sequence="1" parent="menu_loan_installment_menu"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
             		
             # Accounting/Journal Entries
 			<delete id="pabi_account_move_adjustment.menu_journal_adjust_budget" model="ir.ui.menu"/>
@@ -1094,79 +1111,80 @@
 			
         	<menuitem name="Journal Entries" id="account.menu_finance_entries"
         		sequence="7" parent="account.menu_finance"
-        		groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_accountant"/>
+        		groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Journal Items" id="account.menu_action_account_moves_all"
             		action="account.action_account_moves_all_a"
             		sequence="1" parent="account.menu_finance_entries"
-            		groups="account.group_account_user,pabi_security.group_pabi_accountant"/>
+            		groups="account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 	    		<menuitem name="Journal Items Search All" id="account_move_line_search_extension.menu_account_move_line_search_extension"
 	        		action="account_move_line_search_extension.action_account_move_line_search_extension"
 	        		sequence="2" parent="account.menu_finance_entries"
-	        		groups="account.group_account_user,pabi_security.group_pabi_accountant"/>
+	        		groups="account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Journal Entries" id="account.menu_action_move_journal_line_form"
             		action="account.action_move_journal_line"
             		sequence="3" parent="account.menu_finance_entries"
-            		groups="account.group_account_user,pabi_security.group_pabi_accountant"/>
+            		groups="account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Journal Vouchers" id="account_voucher.menu_encode_entries_by_voucher"
         			action="account_voucher.action_voucher_list"
         			sequence="4" parent="account.menu_finance_entries"
-        			groups="base.group_no_one"/>
+        			groups="base.group_no_one,pabi_security.group_pabi_admin"/>
 		        <menuitem name="Analytic Journal Items" id="account.account_analytic_journal_entries"
 		            action="account.action_account_analytic_journal_open_form"
 		            sequence="5" parent="account.menu_finance_entries"
-		            groups="analytic.group_analytic_accounting"/>
+		            groups="analytic.group_analytic_accounting,pabi_security.group_pabi_admin"/>
 		        <menuitem name="Journal Adj.Budget" id="menu_journal_adjust_budget"
 		        	action="pabi_account_move_adjustment.action_journal_adjust_budget"
 		        	sequence="6" parent="account.menu_finance_entries"
-		        	groups="account.group_account_user,pabi_security.group_pabi_accountant"/>
+		        	groups="account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 		        <menuitem name="Journal Adj.No.Budget" id="menu_journal_adjust_no_budget"
 		        	action="pabi_account_move_adjustment.action_journal_adjust_no_budget"
 		        	sequence="7" parent="account.menu_finance_entries"
-		        	groups="account.group_account_user,pabi_security.group_pabi_accountant"/>
+		        	groups="account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 		        <menuitem name="Asset Adjustment" id="menu_action_account_asset_adjust2"
 		        	action="pabi_asset_management.action_account_asset_adjust2"
 		        	sequence="8" parent="account.menu_finance_entries"
-		        	groups="account.group_account_user,pabi_security.group_pabi_accountant"/>
+		        	groups="account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 		        <menuitem name="Import Journal Entries" id="menu_pabi_import_journal_entries"
 		        	action="pabi_import_journal_entries.action_pabi_import_journal_entries"
 		        	sequence="9" parent="account.menu_finance_entries"
-		        	groups="account.group_account_user,pabi_security.group_pabi_accountant"/>
+		        	groups="account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
             		
             # Accounting/Charts
 	        <menuitem name="Charts" id="account.menu_finance_charts"
 	        	sequence="8" parent="account.menu_finance"
-	        	groups="account.group_account_user,pabi_security.group_pabi_accountant"/>
+	        	groups="account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 		        <menuitem name="Chart of Accounts" id="account.menu_action_account_tree2"
 		        	action="account.action_account_chart"
-		            sequence="1" parent="account.menu_finance_charts"/>
+		            sequence="1" parent="account.menu_finance_charts"
+	        		groups="pabi_security.group_pabi_admin"/>
 		        <menuitem name="Chart of Analytic Accounts" id="account.menu_action_analytic_account_tree2"
 		            action="account.action_account_analytic_chart"
 		            sequence="2" parent="account.menu_finance_charts"
-		            groups="analytic.group_analytic_accounting"/>
+		            groups="analytic.group_analytic_accounting,pabi_security.group_pabi_admin"/>
 		        <menuitem name="Chart of Taxes" id="account.menu_action_tax_code_tree"
 		            action="account.action_account_tax_chart"
 		            sequence="3" parent="account.menu_finance_charts"
-		            groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_accountant"/>
+		            groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
             		
             # Accounting/Periodic Processing
 	        <menuitem name="Periodic Processing" id="account.menu_finance_periodical_processing"
 	        	sequence="9" parent="account.menu_finance"
-	        	groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_accountant"/>
+	        	groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         
 				# Draft Entries
 				<delete id="pabi_ar_late_payment_penalty.menu_pabi_ar_late_payment_penalty" model="ir.ui.menu"/>
 				
 		        <menuitem name="Draft Entries" id="account.periodical_processing_journal_entries_validation"
 		        	sequence="1" parent="account.menu_finance_periodical_processing"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Penalty AR Late Payment" id="menu_pabi_ar_late_payment_penalty"
 			        	action="pabi_ar_late_payment_penalty.action_pabi_ar_late_payment_penalty"
 			        	sequence="1" parent="account.periodical_processing_journal_entries_validation"
-          				groups="pabi_security.group_pabi_accountant"/>
+          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Post Journal Entries" id="account.menu_validate_account_moves"
 			            action="account.action_validate_account_move"
 			            sequence="2" parent="account.periodical_processing_journal_entries_validation"
-          				groups="pabi_security.group_pabi_accountant"/>
+          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 				
 				# Reconciliation
 				<delete id="account_unreconciled_filter.menu_account_unreconciled_filter" model="ir.ui.menu"/>
@@ -1174,23 +1192,23 @@
 				
         		<menuitem name="Reconciliation" id="account.periodical_processing_reconciliation"
         			sequence="2" parent="account.menu_finance_periodical_processing"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Manual Reconciliation" id="account.menu_manual_reconcile"
 			        	action="account.action_account_manual_reconcile"
 			            sequence="1" parent="account.periodical_processing_reconciliation"
-          				groups="pabi_security.group_pabi_accountant"/>
+          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Automatic Reconciliation" id="account.menu_automatic_reconcile"
 			      		action="account.action_account_automatic_reconcile"
 			            sequence="2" parent="account.periodical_processing_reconciliation"
-          				groups="pabi_security.group_pabi_accountant"/>
+          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Unreconciled Filters" id="menu_account_unreconciled_filter"
 			        	action="account_unreconciled_filter.action_account_unreconciled_filter"          
 			          	sequence="3" parent="account.periodical_processing_reconciliation"
-          				groups="pabi_security.group_pabi_accountant"/>
+          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			<menuitem name="Reconcile ID" id="menu_account_move_reconcile"
         				action="pabi_account.action_account_move_reconcile"
           				sequence="4" parent="account.periodical_processing_reconciliation"
-          				groups="account.group_account_manager,pabi_security.group_pabi_accountant"/>
+          				groups="account.group_account_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         
 				# Recurring Entries
 				<delete id="pabi_async_process.account.menu_generate_subscription" model="ir.ui.menu"/>
@@ -1201,57 +1219,57 @@
 			
         		<menuitem name="Recurring Entries" id="account.menu_finance_recurrent_entries"
             		sequence="3" parent="account.menu_finance_periodical_processing"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			<menuitem name="Generate Entries" id="account.menu_generate_subscription"
           				action="pabi_async_process.action_pabi_action_generate_entries"
           				sequence="1" parent="account.menu_finance_recurrent_entries"
-          				groups="pabi_security.group_pabi_accountant"/>
+          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			<menuitem name="Define Recurring" id="account.menu_action_subscription_form"
         				action="account.action_subscription_form"
             			sequence="2" parent="account.menu_finance_recurrent_entries"
-          				groups="pabi_security.group_pabi_accountant"/>
+          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			<menuitem name="Models" id="account.menu_action_model_form"
             			action="account.action_model_form"
             			sequence="3" parent="account.menu_finance_recurrent_entries"
-          				groups="pabi_security.group_pabi_accountant"/>
+          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			<menuitem name="Model Type" id="menu_account_model_type"
         				action="account_subscription_enhanced.action_account_model_type"
         				sequence="4" parent="account.menu_finance_recurrent_entries"
-          				groups="pabi_security.group_pabi_accountant"/>
+          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			<menuitem name="Compute Assets" id="account_asset_management.account_asset_compute_menu"
           				action="pabi_async_process.action_pabi_action_asset_compute"
           				sequence="5" parent="account.menu_finance_recurrent_entries"
-          				groups="pabi_security.group_pabi_accountant"/>
+          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			<menuitem name="Asset Depre. Batch" id="menu_pabi_asset_depre_batch"
         				action="pabi_async_process.action_pabi_asset_depre_batch"
         				sequence="6" parent="account.menu_finance_recurrent_entries"
-          				groups="pabi_security.group_pabi_accountant"/>
+          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
             
 				# End of Period
         		<menuitem name="End of Period" id="account.menu_account_end_year_treatments"
             		sequence="4" parent="account.menu_finance_periodical_processing"
-          			groups="pabi_security.group_pabi_accountant_gl"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         			<menuitem name="Close a Period" id="account.menu_action_account_period_close_tree"
             			action="account.action_account_period_tree"
             			sequence="1" parent="account.menu_account_end_year_treatments"
-          				groups="pabi_security.group_pabi_accountant_gl"/>
+          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         			<menuitem name="Generate Opening Entries" id="account.menu_wizard_fy_close"
         				action="account.action_account_fiscalyear_close"
             			sequence="2" parent="account.menu_account_end_year_treatments"
-          				groups="pabi_security.group_pabi_accountant_gl"/>
+          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
     				<menuitem name="Journal Entries to be Reversed" id="account_reversal.menu_move_to_be_reversed"
          				action="account_reversal.action_move_to_be_reversed"
          				sequence="3" parent="account.menu_account_end_year_treatments"
-          				groups="pabi_security.group_pabi_accountant_gl"/>
+          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         			<menuitem name="Cancel Closing Entries" id="account.menu_wizard_account_open_closed_fiscalyear"
         				action="account.action_account_open_closed_fiscalyear"
             			sequence="4" parent="account.menu_account_end_year_treatments"
-          				groups="pabi_security.group_pabi_accountant_gl"/>
+          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
             		
             # Accounting/Reporting
         	<menuitem name="Reporting" id="account.menu_finance_reports"
         		sequence="10" parent="account.menu_finance"
-        		groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_accountant"/>
+        		groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
             
 				# Legal Reports
 				<delete id="account_general_ledger_report.menu_account_general_ledger_report" model="ir.ui.menu"/>
@@ -1259,7 +1277,7 @@
 				
         		<menuitem name="Legal Reports" id="account.menu_finance_legal_statement"
         			sequence="1" parent="account.menu_finance_reports"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		
 					# Accounting Reports
 					<delete id="pabi_account_financial_report_webkit.account.menu_general_ledger" model="ir.ui.menu"/>
@@ -1267,76 +1285,76 @@
 			
         			<menuitem name="Accounting Reports" id="account.final_accounting_reports"
         				sequence="1" parent="account.menu_finance_legal_statement"
-          				groups="pabi_security.group_pabi_accountant"/>
+          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         				<menuitem name="General Ledger" id="account.menu_general_ledger"
         					action="pabi_account_financial_report_webkit.action_account_general_ledger_menu_webkit"
             				sequence="1" parent="account.final_accounting_reports"
-            				groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_accountant"/>
+            				groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         				<menuitem name="Trial Balance" id="account.menu_general_Balance_report"
         					action="pabi_account_financial_report_webkit.action_account_trial_balance_menu_webkit"
             				sequence="2" parent="account.final_accounting_reports"
-            				groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_accountant"/>
+            				groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         				<menuitem name="Balance Sheet" id="account.menu_account_report_bs"
 				        	action="account.action_account_report_bs"
 				        	sequence="3" parent="account.final_accounting_reports"
-            				groups="pabi_security.group_pabi_accountant"/>
+            				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         				<menuitem name="Profit And Loss" id="account.menu_account_report_pl"
 				        	action="account.action_account_report_pl"
 				        	sequence="4" parent="account.final_accounting_reports"
-            				groups="pabi_security.group_pabi_accountant"/>
+            				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         				<menuitem name="Account Financial Report (Multireports)" id="account_financial_report.menu_wizard_report"
 				            action="account_financial_report.action_wizard_report"
 				            sequence="5" parent="account.final_accounting_reports"
-				            groups="account_financial_report.group_afreport,pabi_security.group_pabi_accountant"/>
+				            groups="account_financial_report.group_afreport,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         				<menuitem name="Account Financial Report (Templates)" id="account_financial_report.account_financial_report_menu"
             				action="account_financial_report.account_financial_report_action"
 				            sequence="6" parent="account.final_accounting_reports"
-				            groups="account_financial_report.group_afreport,pabi_security.group_pabi_accountant"/>
+				            groups="account_financial_report.group_afreport,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			
 					# Journals
 					<delete id="pabi_account_financial_report_webkit.account.menu_account_print_journal" model="ir.ui.menu"/>
 					
         			<menuitem name="Journals" id="account.menu_journals_report"
             			sequence="2" parent="account.menu_finance_legal_statement"
-            			groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_accountant"/>
+            			groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
       					<menuitem name="Journal by Period" id="account_journal_report_xls.menu_print_journal_by_period_xls"
         					action="account_journal_report_xls.action_print_journal_by_period_xls"
         					sequence="1" parent="account.menu_journals_report"
-				            groups="pabi_security.group_pabi_accountant"/>
+				            groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
       					<menuitem name="Journal by Fiscal Year" id="account_journal_report_xls.menu_print_journal_by_fiscalyear_xls"
 					        action="account_journal_report_xls.action_print_journal_by_fiscalyear_xls"
 					        sequence="2" parent="account.menu_journals_report"
-				            groups="pabi_security.group_pabi_accountant"/>
+				            groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         				<menuitem name="Sale/Purchase Journals" id="account.menu_account_print_sale_purchase_journal"
 				            action="account.action_account_print_sale_purchase_journal"
 				            sequence="3" parent="account.menu_journals_report"
-				            groups="pabi_security.group_pabi_accountant"/>
+				            groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         				<menuitem name="Journals" id="account.menu_account_print_journal"
 				        	action="pabi_account_financial_report_webkit.action_account_print_journal_menu_webkit"
 				            sequence="4" parent="account.menu_journals_report"
-				            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_accountant"/>
+				            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 				        <menuitem name="General Journals" id="account.menu_account_general_journal"
 				            action="account.action_account_general_journal"
 				            sequence="5" parent="account.menu_journals_report"
-				            groups="pabi_security.group_pabi_accountant"/>
+				            groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         				<menuitem name="Centralizing Journal" id="account.menu_account_central_journal"
             				action="account.action_account_central_journal"
             				sequence="6" parent="account.menu_journals_report"
-				            groups="pabi_security.group_pabi_accountant"/>
+				            groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
             		
         			<menuitem name="General Ledger (web)" id="menu_account_general_ledger_report"
         				action="account_general_ledger_report.action_account_general_ledger_wizard"
         				sequence="3" parent="account.menu_finance_legal_statement"
-				      	groups="pabi_security.group_pabi_accountant"/>
+				      	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			<menuitem name="Trial Balance (web)" id="menu_account_trial_balance_report"
 			        	action="account_trial_balance_report.action_account_trial_balance_wizard"
 			        	sequence="4" parent="account.menu_finance_legal_statement"
-				      	groups="pabi_security.group_pabi_accountant"/>
+				      	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 					
 				# Generic Reporting
         		<menuitem name="Generic Reporting" id="account.menu_finance_generic_reporting"
         			sequence="2" parent="account.menu_finance_reports"
-					groups="pabi_security.group_pabi_accountant"/>
+					groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			
         			# Partners
 					<delete id="pabi_account_financial_report_webkit.account.menu_account_partner_balance_report" model="ir.ui.menu"/>
@@ -1346,50 +1364,50 @@
 					
         			<menuitem name="Partners" id="account.next_id_22"
         				sequence="1" parent="account.menu_finance_generic_reporting"
-						groups="pabi_security.group_pabi_accountant"/>
+						groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         				<menuitem name="Partner Balance" id="account.menu_account_partner_balance_report"
         					action="pabi_account_financial_report_webkit.action_account_partner_balance_menu_webkit"
             				sequence="1" parent="account.next_id_22"
-            				groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_accountant"/>
+            				groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 				        <menuitem name="Aged Partner Balance" id="account.menu_aged_trial_balance"
 				        	action="pabi_account_financial_report_webkit.action_account_aged_trial_balance_menu_webkit"
 				            sequence="2" parent="account.next_id_22"
-				            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_accountant"/>
+				            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         				<menuitem name="Partner Ledger" id="account.menu_account_partner_ledger"
 				        	action="pabi_account_financial_report_webkit.action_account_partners_ledger_menu_webkit"
 				            sequence="3" parent="account.next_id_22"
-				            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_accountant"/>
+				            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 				        <menuitem name="Open Invoices" id="menu_account_open_invoices"
 				        	action="pabi_account_financial_report_webkit.action_account_open_invoices_menu_webkit"
 				            sequence="4" parent="account.next_id_22"
-				            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_accountant"/>
+				            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			
         			# Taxes
         			<menuitem name="Taxes" id="account.menu_tax_report"
             			sequence="2" parent="account.menu_finance_generic_reporting"
-            			groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_accountant"/>
+            			groups="account.group_account_user,account.group_account_manager,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 				        <menuitem name="Taxes Report" id="account.menu_account_vat_declaration"
 				            action="account.action_account_vat_declaration"
 				            sequence="1" parent="account.menu_tax_report"
-				            groups="pabi_security.group_pabi_accountant"/>
+				            groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
             
         			# Analytic
         			<menuitem name="Analytic" id="account.next_id_40"
             			sequence="3" parent="account.menu_finance_generic_reporting"
-            			groups="analytic.group_analytic_accounting,pabi_security.group_pabi_accountant"/>
+            			groups="analytic.group_analytic_accounting,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 				        <menuitem name="Analytic Journal" id="account.account_analytic_journal_print"
 				            action="account.action_account_analytic_journal"
 				            sequence="1" parent="account.next_id_40"
-				        	groups="analytic.group_analytic_accounting,pabi_security.group_pabi_accountant"/>
+				        	groups="analytic.group_analytic_accounting,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
             
         			# Multi-Currencies
         			<menuitem name="Multi-Currencies" id="account.menu_multi_currency"
         				sequence="4" parent="account.menu_finance_generic_reporting"
-        				groups="base.group_multi_currency,pabi_security.group_pabi_accountant"/>
+        				groups="base.group_multi_currency,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 				        <menuitem name="Unrealized Gain or Loss" id="account.menu_unrealized_gains_losses"
 				            action="account.action_account_gain_loss"
 				            sequence="1" parent="account.menu_multi_currency"
-				            groups="account.group_account_user,pabi_security.group_pabi_accountant"/>
+				            groups="account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         
         			# Investment
 					<delete id="pabi_long_term_investment_report.menu_pabi_investment_report" model="ir.ui.menu"/>
@@ -1397,11 +1415,11 @@
 
         			<menuitem name="Investment" id="menu_pabi_investment_report"
             			sequence="5" parent="account.menu_finance_generic_reporting"
-				   		groups="pabi_security.group_pabi_accountant"/>
+				   		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         				<menuitem name="Long Term Investment" id="menu_pabi_long_term_investment_report_wizard"
 				            action="pabi_long_term_investment_report.action_pabi_long_term_investment_report_wizard"
 				            sequence="1" parent="menu_pabi_investment_report"
-				            groups="pabi_security.group_pabi_accountant"/>
+				            groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		
 				# Thai Tax Reports
 				<delete id="l10n_th_account.menu_thai_tax_report" model="ir.ui.menu"/>
@@ -1409,16 +1427,16 @@
 				
         		<menuitem name="Thai Tax Reports" id="menu_thai_tax_report"
         			sequence="3" parent="account.menu_finance_reports"
-				   	groups="pabi_security.group_pabi_accountant"/>
+				   	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			<menuitem name="Print PND Form" id="menu_print_pnd_form"
         				action="l10n_th_account_pnd_form.action_print_pnd_form"
               			sequence="1" parent="menu_thai_tax_report"
-				   		groups="pabi_security.group_pabi_accountant"/>
+				   		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
               	
         		<menuitem name="MIS Reports" id="mis_builder.mis_report_instance_view_menu"
         			action="mis_builder.mis_report_instance_view_action"
         			sequence="4" parent="account.menu_finance_reports"
-				   	groups="pabi_security.group_pabi_accountant"/>
+				   	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         
 				# Customer Dunning
 				<delete id="pabi_partner_dunning_report.menu_pabi_customer_dunning" model="ir.ui.menu"/>
@@ -1428,19 +1446,19 @@
 				
 				<menuitem name="Customer Dunning" id="menu_pabi_customer_dunning"
 					sequence="5" parent="account.menu_finance_reports"
-				   	groups="pabi_security.group_pabi_accountant"/>
+				   	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 					<menuitem name="Dunning Report" id="menu_pabi_partner_dunning_report"
 						action="pabi_partner_dunning_report.action_pabi_partner_dunning_wizard"
 						sequence="1" parent="menu_pabi_customer_dunning"
-				   		groups="pabi_security.group_pabi_accountant"/>
+				   		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 					<menuitem name="Dunning Letters" id="menu_pabi_partner_dunning_letter"
 						action="pabi_partner_dunning_report.action_pabi_partner_dunning_letter"
 						sequence="2" parent="menu_pabi_customer_dunning"
-				   		groups="pabi_security.group_pabi_accountant"/>
+				   		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Dunning Config" id="menu_pabi_dunning_config"
 			        	action="pabi_partner_dunning_report.action_pabi_dunning_config"
 			        	sequence="3" parent="menu_pabi_customer_dunning"
-				   		groups="pabi_security.group_pabi_accountant"/>
+				   		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			
 				# Bank Reconcile
 				<delete id="pabi_bank_statement_reconcile.menu_pabi_bank_statement_main" model="ir.ui.menu"/>
@@ -1449,22 +1467,22 @@
 			
         		<menuitem name="Bank Reconcile" id="menu_pabi_bank_statement_main"
         			sequence="6" parent="account.menu_finance_reports"
-				   	groups="pabi_security.group_pabi_accountant"/>
+				   	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Bank Statement" id="menu_pabi_bank_statement"
 			        	action="pabi_bank_statement_reconcile.action_pabi_bank_statement"
 			        	sequence="1" parent="menu_pabi_bank_statement_main"
-				   		groups="pabi_security.group_pabi_accountant"/>
+				   		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			<menuitem name="Import Bank Statement(s)" id="menu_xlsx_import_bank_statement_reconcile"
           				action="pabi_bank_statement_reconcile.action_xlsx_import_bank_statement_reconcile"
           				sequence="2" parent="menu_pabi_bank_statement_main"
-				   		groups="pabi_security.group_pabi_accountant"/>
+				   		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 
             # Accounting/Reports
 			<delete id="pabi_account_report.menu_pabi_account_report" model="ir.ui.menu"/>
 			
         	<menuitem name="Reports" id="menu_pabi_account_report"
             	sequence="11" parent="account.menu_finance"
-            	groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report,pabi_security.group_pabi_accountant"/>
+            	groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
             	
             	# Payable
 				<delete id="pabi_account_report.menu_pabi_payable_report" model="ir.ui.menu"/>
@@ -1491,87 +1509,87 @@
 				
         		<menuitem name="Payable" id="menu_pabi_payable_report"
             		sequence="1" parent="menu_pabi_account_report"
-            		groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_accountant"/>
+            		groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			<menuitem name="Employee Advance Report" id="menu_xlsx_report_pabi_employee_advance_report"
         				action="pabi_account_report.action_xlsx_report_pabi_employee_advance_report"
         				sequence="1" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			<menuitem name="Input Tax" id="menu_xlsx_report_input_tax"
             			action="pabi_account_report.action_xlsx_report_input_tax_form"
             			sequence="2" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="PND1" id="menu_xlsx_report_pnd1"
 			            action="pabi_account_report.action_xlsx_report_pnd1_form"
 			            sequence="3" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Partner Detail" id="menu_xlsx_report_partner_detail"
 			            action="pabi_account_report.action_xlsx_report_partner_detail_form"
 			            sequence="4" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			<menuitem name="Advance Status" id="menu_xlsx_report_advance_status"
 			            action="pabi_account_report.action_xlsx_report_advance_status_form"
 			            sequence="5" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="PIT Detail" id="menu_xlsx_report_pit_detail"
 			            action="pabi_account_report.action_xlsx_report_pit_detail_form"
 			            sequence="6" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Cheque Register" id="menu_xlsx_report_cheque_register"
 			            action="pabi_account_report.action_xlsx_report_cheque_register_form"
 			            sequence="7" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Contract Collateral" id="menu_xlsx_report_contract_collateral"
 			            action="pabi_account_report.action_xlsx_report_contract_collateral_form"
 			            sequence="8" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Advance Payment" id="menu_xlsx_report_advance_payment"
 			            action="pabi_account_report.action_xlsx_report_advance_payment_form"
 			            sequence="9" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Payable Detail" id="menu_xlsx_report_payable_detail"
 			            action="pabi_account_report.action_xlsx_report_payable_detail_form"
 			            sequence="10" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Payable Balance" id="menu_xlsx_report_payable_balance"
 			            action="pabi_account_report.action_xlsx_report_payable_balance_form"
 			            sequence="11" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Purchase Billing" id="menu_xlsx_report_purchase_billing"
 			            action="pabi_account_report.action_xlsx_report_purchase_billing_form"
 			            sequence="12" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			<menuitem name="SLA Expense/Advance Report" id="menu_xlsx_report_sla_employee"
 			            action="pabi_account_report.action_xlsx_report_sla_employee_form"
 			            sequence="13" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="SLA Procurement" id="menu_xlsx_report_sla_procurement"
 			            action="pabi_account_report.action_xlsx_report_sla_procurement_form"
 			            sequence="14" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="SLA Supplier" id="menu_xlsx_report_sla_supplier"
 			            action="pabi_account_report.action_xlsx_report_sla_supplier_form"
 			            sequence="15" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Supplier Receipt Follow Up" id="menu_xlsx_report_supplier_receipt_follow_up"
 			            action="pabi_account_report.action_xlsx_report_supplier_receipt_follow_up_form"
 			            sequence="16" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Payable Confirmation Letter" id="menu_qweb_report_payable_confirmation_letter"
 			            action="pabi_account_report.action_qweb_report_payable_confirmation_letter_form"
 			            sequence="17" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Purchase Invoice Plan" id="menu_xlsx_report_purchase_invoice_plan"
 			            action="pabi_account_report.action_xlsx_report_purchase_invoice_plan_form"
 			            sequence="18" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="PV PE Reports" id="menu_xlsx_report_pv_pe"
 			        	action="pabi_account_report.action_xlsx_report_pv_pe"
 			        	sequence="19" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="CGD Reports" id="menu_xlsx_report_cgd"
 			        	action="pabi_account_report.action_xlsx_report_cgd"
 			        	sequence="20" parent="menu_pabi_payable_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
             
 				# Receivable
 				<delete id="pabi_account_report.menu_pabi_receivable_report" model="ir.ui.menu"/>
@@ -1592,63 +1610,63 @@
 				
         		<menuitem name="Receivable" id="menu_pabi_receivable_report"
             		sequence="2" parent="menu_pabi_account_report"
-            		groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report,pabi_security.group_pabi_accountant"/>
+            		groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         			<menuitem name="Output Tax Exemption Report" id="menu_xlsx_report_tax_exemption_receipt"
 			            action="pabi_account_report.action_xlsx_report_tax_exemption_receipt_form"
 			            sequence="1" parent="menu_pabi_receivable_report"
-			            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_accountant"/>
+			            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Output Tax" id="menu_xlsx_report_output_tax"
 			            action="pabi_account_report.action_xlsx_report_output_tax_form"
 			            sequence="2" parent="menu_pabi_receivable_report"
-			            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_accountant"/>
+			            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="CD Receivable Payment History" id="menu_jasper_report_cd_receivable_payment_history"
 			            action="pabi_account_report.action_jasper_report_cd_receivable_payment_history_form"
 			            sequence="3" parent="menu_pabi_receivable_report"
-			            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report,pabi_security.group_pabi_accountant"/>
+			            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="CD Receivable Follow Up" id="menu_jasper_report_cd_receivable_follow_up"
 			            action="pabi_account_report.action_jasper_report_cd_receivable_follow_up_form"
 			            sequence="4" parent="menu_pabi_receivable_report"
-			            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report,pabi_security.group_pabi_accountant"/>
+			            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="CD Receivable Confirmation" id="menu_xlsx_report_cd_receivable_confirmation"
 			            action="pabi_account_report.action_xlsx_report_cd_receivable_confirmation_form"
 			            sequence="5" parent="menu_pabi_receivable_report"
-			            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report,pabi_security.group_pabi_accountant"/>
+			            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="CD Receivable Planning" id="menu_xlsx_report_cd_receivable_planning"
 			            action="pabi_account_report.action_xlsx_report_cd_receivable_planning_form"
 			            sequence="6" parent="menu_pabi_receivable_report"
-			            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report,pabi_security.group_pabi_accountant"/>
+			            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="CD Receivable Balance Sheet Summary" id="menu_xlsx_report_cd_receivable_balance_sheet_summary"
 			            action="pabi_account_report.action_xlsx_report_cd_receivable_balance_sheet_summary_form"
 			            sequence="7" parent="menu_pabi_receivable_report"
-			            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report,pabi_security.group_pabi_accountant"/>
+			            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="CD Receivable Balance Sheet Detail" id="menu_xlsx_report_cd_receivable_balance_sheet_detail"
 			            action="pabi_account_report.action_xlsx_report_cd_receivable_balance_sheet_detail_form"
 			            sequence="8" parent="menu_pabi_receivable_report"
-			            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report,pabi_security.group_pabi_accountant"/>
+			            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Receivable Detail" id="menu_report_receivable_detail"
 			            action="pabi_account_report.action_report_receivable_detail"
 			            sequence="9" parent="menu_pabi_receivable_report"
-			            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_accountant"/>
+			            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="SLA Receipt" id="menu_xlsx_report_sla_receipt"
 			            action="pabi_account_report.action_xlsx_report_sla_receipt_form"
 			            sequence="10" parent="menu_pabi_receivable_report"
-			            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_accountant"/>
+			            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Registrar of Guarantee" id="menu_xlsx_report_registrar_of_guarantee"
 			            action="pabi_account_report.action_xlsx_report_registrar_of_guarantee_form"
 			            sequence="11" parent="menu_pabi_receivable_report"
-			            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_accountant"/>
+			            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Receivable Before Due" id="menu_xlsx_report_receivable_before_due"
 			            action="pabi_account_report.action_xlsx_report_receivable_before_due_form"
 			            sequence="12" parent="menu_pabi_receivable_report"
-			            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_accountant"/>
+			            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Receivable Confirmation Letter" id="menu_qweb_report_receivable_confirmation_letter"
 			            action="pabi_account_report.action_qweb_report_receivable_confirmation_letter_form"
 			            sequence="13" parent="menu_pabi_receivable_report"
-			            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_accountant"/>
+			            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Preprint Receipt" id="menu_xlsx_report_preprint_receipt"
 			            action="pabi_account_report.action_xlsx_report_preprint_receipt_form"
 			            sequence="14" parent="menu_pabi_receivable_report"
-			            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_accountant"/>
+			            groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
             
 				# General Ledger
 				<delete id="pabi_account_report.menu_pabi_general_ledger_report" model="ir.ui.menu"/>
@@ -1660,34 +1678,34 @@
 				
         		<menuitem name="General Ledger" id="menu_pabi_general_ledger_report"
             		sequence="3" parent="menu_pabi_account_report"
-            		groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_accountant"/>
+            		groups="account.group_account_manager,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Expense Ledger" id="menu_xlsx_report_expense_ledger"
 			            action="pabi_account_report.action_xlsx_report_expense_ledger_form"
 			            sequence="1" parent="menu_pabi_general_ledger_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="GL Project" id="menu_xlsx_report_gl_project"
 			            action="pabi_account_report.action_xlsx_report_gl_project_form"
 			            sequence="2" parent="menu_pabi_general_ledger_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Revenue Ledger" id="menu_xlsx_report_revenue_ledger"
 			            action="pabi_account_report.action_xlsx_report_revenue_ledger_form"
 			            sequence="3" parent="menu_pabi_general_ledger_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Allowance for Doubtful Accounts" id="menu_report_gl_allowance_doubtful_accounts"
 			            action="pabi_account_report.action_report_gl_allowance_doubtful_accounts"
 			            sequence="4" parent="menu_pabi_general_ledger_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 			        <menuitem name="Journal document Entry" id="menu_jasper_report_journal_document_entry"
 			            action="pabi_account_gl_jasper.action_jasper_report_journal_document_entry_form"
 			            sequence="5" parent="menu_pabi_general_ledger_report"
-            			groups="pabi_security.group_pabi_accountant"/>
+            			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 
         # Assets
 		<delete id="pabi_asset_management.menu_asset_main" model="ir.ui.menu"/>
 		
         <menuitem name="Assets" id="menu_asset_main"
         	sequence="11"
-        	groups="purchase.group_purchase_user,account.group_account_user,pabi_asset_management.group_assets_report,pabi_security.group_pabi_accountant"/>
+        	groups="purchase.group_purchase_user,account.group_account_user,pabi_asset_management.group_assets_report,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         	
         	# Assets/Assets
 			<delete id="pabi_asset_management.account_asset_management.menu_finance_assets" model="ir.ui.menu"/>
@@ -1698,23 +1716,23 @@
 		
         	<menuitem name="Assets" id="menu_finance_assets"
         		sequence="1" parent="menu_asset_main"
-        		groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_accountant"/>
+        		groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Assets" id="account_asset_management.account_asset_menu"
               		action="account_asset_management.account_asset_action"
         			sequence="1" parent="menu_finance_assets"
-        			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_accountant"/>
+        			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Asset's Depreciation Lines" id="menu_action_account_asset_line"
           			action="pabi_asset_management.action_account_asset_line"
         			sequence="2" parent="menu_finance_assets"
-          			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_accountant"/>
+          			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Parent Assets" id="menu_action_account_asset_parent_form"
           			action="pabi_asset_management.action_account_asset_parent_form"
        				sequence="3" parent="menu_finance_assets"
-          			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_accountant"/>
+          			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
     			<menuitem name="Asset Hierarchy" id="account_asset_management.account_asset_menu_hierarchy"
               		action="account_asset_management.account_asset_action_hierarchy"
               		sequence="4" parent="menu_finance_assets"
-          			groups="pabi_security.group_pabi_accountant"/>
+          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         	
         	# Assets/Asset Actions
 			<delete id="pabi_asset_management.menu_asset_actions" model="ir.ui.menu"/>
@@ -1730,43 +1748,43 @@
 			
         	<menuitem name="Asset Actions" id="menu_asset_actions"
           		sequence="2" parent="menu_asset_main"
-          		groups="pabi_security.group_pabi_accountant"/>
+          		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
          		<menuitem name="My Asset Request" id="menu_action_account_asset_request_only"
           			action="pabi_asset_management.action_account_asset_request_only"
          			sequence="1" parent="menu_asset_actions"
-          			groups="pabi_asset_management.group_assets_report,pabi_security.group_pabi_accountant"/>
+          			groups="pabi_asset_management.group_assets_report,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Request" id="menu_action_account_asset_request"
           			action="pabi_asset_management.action_account_asset_request"
         			sequence="2" parent="menu_asset_actions"
-          			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_accountant"/>
+          			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Change Owner" id="menu_action_account_asset_changeowner"
           			action="pabi_asset_management.action_account_asset_changeowner"
         			sequence="3" parent="menu_asset_actions"
-          			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_accountant"/>
+          			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Transfer" id="menu_action_account_asset_transfer"
           			action="pabi_asset_management.action_account_asset_transfer"
         			sequence="4" parent="menu_asset_actions"
-          			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_accountant"/>
+          			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
 		        <menuitem name="Adjustment" id="menu_action_account_asset_adjust"
 			        action="pabi_asset_management.action_account_asset_adjust"
 			        sequence="5" parent="menu_asset_actions"
-			        groups="account.group_account_user,pabi_security.group_pabi_accountant"/>
+			        groups="account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Removal" id="menu_action_account_asset_removal"
           			action="pabi_asset_management.action_account_asset_removal"
         			sequence="6" parent="menu_asset_actions"
-          			groups="account.group_account_user,pabi_security.group_pabi_accountant"/>
+          			groups="account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Direct Receive" id="menu_asset_direct_receive"
           			action="pabi_asset_management.action_asset_direct_receive"
         			sequence="7" parent="menu_asset_actions"
-          			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_accountant"/>
+          			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Asset Import Batch" id="menu_asset_import_batch_view"
           			action="pabi_asset_import_batch.action_asset_import_batch_view"
         			sequence="8" parent="menu_asset_actions"
-          			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_accountant"/>
+          			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         		<menuitem name="Change Master" id="menu_action_account_asset_changemaster"
           			action="pabi_asset_management.action_account_asset_changemaster"
         			sequence="9" parent="menu_asset_actions"
-          			groups="purchase.group_purchase_user,account.group_account_user"/>
+          			groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_admin"/>
         	
         	# Assets/Reports
 			<delete id="pabi_account_report.menu_account_asset_report" model="ir.ui.menu"/>
@@ -1776,191 +1794,209 @@
 		
         	<menuitem name="Reports" id="menu_account_asset_report"
             	sequence="3" parent="menu_asset_main"
-            	groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_accountant"/>
+            	groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
       			<menuitem name="Asset Repair Report" id="menu_asset_repair_report"
           			action="pabi_account_report.action_xlsx_report_asset_repair_form"
           			sequence="1" parent="menu_account_asset_report"
-            		groups="pabi_security.group_pabi_accountant"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
       			<menuitem name="Asset Register Report" id="menu_asset_register_report"
           			action="pabi_account_report.action_asset_register_report_form"
           			sequence="2" parent="menu_account_asset_report"
-            		groups="pabi_security.group_pabi_accountant"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
       			<menuitem name="Asset Estimate Report" id="menu_asset_estimate_report"
           			action="pabi_account_report.action_asset_estimate_report_form"
           			sequence="3" parent="menu_account_asset_report"
-            		groups="pabi_security.group_pabi_accountant"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant"/>
         
         # Warehouse
         <menuitem name="Warehouse" id="stock.menu_stock_root"
         	sequence="12"
-            groups="stock.group_stock_manager,stock.group_stock_user,pabi_security.group_pabi_accountant_gl"/>
+            groups="stock.group_stock_manager,stock.group_stock_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
             
             # Warehouse/Operations
 			<delete id="pabi_stock_easy_internal_transfer.menu_picking_easy_internal_transfer" model="ir.ui.menu"/>
 		
         	<menuitem name="Operations" id="stock.menu_stock_warehouse_mgmt"
         		sequence="1" parent="stock.menu_stock_root"
-            	groups="pabi_security.group_pabi_accountant_gl"/>
+            	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
 		        <menuitem name="All Operations" id="stock.menu_action_picking_type_form"
 		            action="stock.action_picking_type_form"
 		            sequence="1" parent="stock.menu_stock_warehouse_mgmt"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
 		        <menuitem name="Internal Transfers" id="menu_picking_easy_internal_transfer"
 		        	action="pabi_stock_easy_internal_transfer.action_picking_easy_internal_transfer"
 		            sequence="2" parent="stock.menu_stock_warehouse_mgmt"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
             
             # Warehouse/Inventory Control
         	<menuitem name="Inventory Control" id="stock.menu_stock_inventory_control"
         		sequence="2" parent="stock.menu_stock_root"
-            	groups="pabi_security.group_pabi_accountant_gl"/>
+            	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
     			<menuitem name="Current Inventory Valuation" id="stock_account.menu_action_history_tree"
     				action="stock_account.action_history_tree"
             		sequence="1" parent="stock.menu_stock_inventory_control"
-            		groups="stock.group_locations,pabi_security.group_pabi_accountant_gl"/>
+            		groups="stock.group_locations,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         		<menuitem name="Inventory Adjustments" id="stock.menu_action_inventory_form"
         			action="stock.action_inventory_form"
         			sequence="2" parent="stock.menu_stock_inventory_control"
-            		groups="pabi_security.group_pabi_accountant_gl"/>
+            		groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
             
             # Warehouse/Traceability
         	<menuitem name="Traceability" id="stock.menu_traceability"
         		sequence="3" parent="stock.menu_stock_root"
-            	groups="pabi_security.group_pabi_accountant_gl"/>
+            	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
 		        <menuitem name="Stock Moves" id="stock.menu_action_move_form2"
 		        	action="stock.action_move_form2"
 		        	sequence="1" parent="stock.menu_traceability"
-		        	groups="stock.group_locations,pabi_security.group_pabi_accountant_gl"/>
+		        	groups="stock.group_locations,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
 		        <menuitem name="Quants" id="stock.menu_quants"
 		        	action="stock.quantsact"
 		        	sequence="2" parent="stock.menu_traceability"
-		        	groups="base.group_no_one,pabi_security.group_pabi_accountant_gl"/>
+		        	groups="base.group_no_one,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
             
             # Warehouse/Schedulers
 	        <menuitem name="Schedulers" id="stock.menu_stock_sched"
 	        	sequence="4" parent="stock.menu_stock_root"
-	        	groups="stock.group_stock_manager"/>
+	        	groups="stock.group_stock_manager,pabi_security.group_pabi_admin"/>
         		<menuitem name="Compute Stock Minimum Rules Only" id="stock.menu_procurement_compute"
         			action="stock.action_procurement_compute"
         			sequence="1" parent="stock.menu_stock_sched"
-        			groups="base.group_no_one"/>
+        			groups="base.group_no_one,pabi_security.group_pabi_admin"/>
             
             # Warehouse/Products
         	<menuitem name="Products" id="stock.menu_stock_product"
         		sequence="5" parent="stock.menu_stock_root"
-		        groups="pabi_security.group_pabi_accountant_gl"/>
+		        groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
 		        <menuitem name="Products by Category" id="stock.menu_product_by_category_stock_form"
 		        	action="product.product_category_action"
 		            sequence="1" parent="stock.menu_stock_product"
-		            groups="base.group_no_one,pabi_security.group_pabi_accountant_gl"/>
+		            groups="base.group_no_one,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
 		        <menuitem name="Products" id="stock.menu_stock_products_menu"
 		        	action="product.product_template_action"
 		        	sequence="1" parent="stock.menu_stock_product"
-		        	groups="pabi_security.group_pabi_accountant_gl"/>
+		        	groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
         
         # Reporting
         <menuitem name="Reporting" id="base.menu_reporting"
-            sequence="13" groups="base.group_user"/>
+            sequence="13"
+            groups="base.group_user,pabi_security.group_pabi_admin"/>
             
             # Reporting/Dashboards
             <menuitem name="Dashboards" id="base.menu_reporting_dashboard"
-            	sequence="1" parent="base.menu_reporting"/>
+            	sequence="1" parent="base.menu_reporting"
+            	groups="pabi_security.group_pabi_admin"/>
 		        <menuitem name="My Dashboard" id="board.menu_board_my_dash"
 		            action="board.open_board_my_dash_action"
-		            sequence="1" parent="base.menu_reporting_dashboard"/>
+		            sequence="1" parent="base.menu_reporting_dashboard"
+            		groups="pabi_security.group_pabi_admin"/>
             	
             # Reporting/Sales
         	<menuitem name="Sales" id="base.next_id_64"
         		sequence="2" parent="base.menu_reporting"
-        		groups="base.group_sale_manager"/>
+        		groups="base.group_sale_manager,pabi_security.group_pabi_admin"/>
     			<menuitem name="Sales Analysis" id="sale.menu_report_product_all"
     				action="sale.action_order_report_all"
-    				sequence="1" parent="base.next_id_64"/>
+    				sequence="1" parent="base.next_id_64"
+            		groups="pabi_security.group_pabi_admin"/>
             
             # Reporting/Purchase
     		<menuitem name="Purchase" id="base.next_id_73"
     			sequence="3" parent="base.menu_reporting"
-        		groups="purchase.group_purchase_manager"/>
+        		groups="purchase.group_purchase_manager,pabi_security.group_pabi_admin"/>
 			    <menuitem name="Purchase Analysis" id="purchase.menu_action_purchase_order_report_all"
 			    	action="purchase.action_purchase_order_report_all"
-			    	sequence="1" parent="base.next_id_73"/>
+			    	sequence="1" parent="base.next_id_73"
+            		groups="pabi_security.group_pabi_admin"/>
             
             # Reporting/Warehouse
         	<menuitem name="Warehouse" id="stock.next_id_61"
         		sequence="4" parent="base.menu_reporting"
-        		groups="stock.group_stock_manager"/>
+        		groups="stock.group_stock_manager,pabi_security.group_pabi_admin"/>
         		<menuitem name="Stock Valuation" id="stock_account.menu_action_wizard_valuation_history"
         			action="stock_account.action_wizard_stock_valuation_history"
-        			sequence="1" parent="stock.next_id_61"/>
+        			sequence="1" parent="stock.next_id_61"
+            		groups="pabi_security.group_pabi_admin"/>
 		        <menuitem name="Latest Inventories &amp; Moves" id="stock.menu_report_stock_line_date"
 		        	action="stock.action_stock_line_date"
-		        	sequence="2" parent="stock.next_id_61"/>
+		        	sequence="2" parent="stock.next_id_61"
+            		groups="pabi_security.group_pabi_admin"/>
             
             # Reporting/Accounting
 	        <menuitem name="Accounting" id="account.menu_finance_reporting"
-	        	sequence="5" parent="base.menu_reporting"/>
+	        	sequence="5" parent="base.menu_reporting"
+            	groups="pabi_security.group_pabi_admin"/>
     			<menuitem name="Invoices Analysis" id="account.menu_action_account_invoice_report_all"
     				action="account.action_account_invoice_report_all"
-    				sequence="1" parent="account.menu_finance_reporting"/>
+    				sequence="1" parent="account.menu_finance_reporting"
+            		groups="pabi_security.group_pabi_admin"/>
 			    <menuitem name="Entries Analysis" id="account.menu_action_account_entries_report_all"
 			    	action="account.action_account_entries_report_all"
 			        sequence="2" parent="account.menu_finance_reporting"
-			        groups="account.group_account_manager"/>
+			        groups="account.group_account_manager,pabi_security.group_pabi_admin"/>
 			    <menuitem name="Treasury Analysis" id="account.menu_action_account_treasury_report_all"
 			    	action="account.action_account_treasury_report_all"
 			        sequence="3" parent="account.menu_finance_reporting"
-			        groups="account.group_account_manager"/>
+			        groups="account.group_account_manager,pabi_security.group_pabi_admin"/>
 			    <menuitem name="Sales Receipts Analysis" id="account_voucher.menu_action_sale_receipt_report_all"
 			    	action="account_voucher.action_sale_receipt_report_all"
-			    	sequence="4" parent="account.menu_finance_reporting"/>
+			    	sequence="4" parent="account.menu_finance_reporting"
+            		groups="pabi_security.group_pabi_admin"/>
 			    <menuitem name="Analytic Entries Analysis" id="account.menu_action_analytic_entries_report"
 			    	action="account.action_analytic_entries_report"
 			        sequence="5" parent="account.menu_finance_reporting"
-			        groups="analytic.group_analytic_accounting"/>
+			        groups="analytic.group_analytic_accounting,pabi_security.group_pabi_admin"/>
 			        
             # Reporting/Human Resources
 	        <menuitem name="Human Resources" id="hr.menu_hr_reporting"
-	        	sequence="6" parent="base.menu_reporting"/>
+	        	sequence="6" parent="base.menu_reporting"
+            	groups="pabi_security.group_pabi_admin"/>
 			    <menuitem name="Expenses Analysis" id="hr_expense.menu_hr_expense_report_all"
 			    	action="hr_expense.action_hr_expense_report_all"
-			    	sequence="1" parent="hr.menu_hr_reporting"/>
+			    	sequence="1" parent="hr.menu_hr_reporting"
+            		groups="pabi_security.group_pabi_admin"/>
             
             # Reporting/Audit
 	        <menuitem name="Audit" id="auditlog.menu_audit"
 	            sequence="7" parent="base.menu_reporting"
-	            groups="base.group_system"/>
+	            groups="base.group_system,pabi_security.group_pabi_admin"/>
 		        <menuitem name="Rules" id="auditlog.menu_action_auditlog_rule_tree"
 		        	action="auditlog.action_auditlog_rule_tree"
-		        	sequence="1" parent="auditlog.menu_audit"/>
+		        	sequence="1" parent="auditlog.menu_audit"
+            		groups="pabi_security.group_pabi_admin"/>
 		        <menuitem name="Logs" id="auditlog.menu_audit_logs"
 		            action="auditlog.action_auditlog_log_tree"
-		            sequence="2" parent="auditlog.menu_audit"/>
+		            sequence="2" parent="auditlog.menu_audit"
+            		groups="pabi_security.group_pabi_admin"/>
 		        <menuitem name="User sessions" id="auditlog.menu_action_auditlog_http_session_tree"
 		            action="auditlog.action_auditlog_http_session_tree"
-		            sequence="3" parent="auditlog.menu_audit"/>
+		            sequence="3" parent="auditlog.menu_audit"
+            		groups="pabi_security.group_pabi_admin"/>
 		        <menuitem name="HTTP Requests" id="auditlog.menu_action_auditlog_http_request_tree"
 		            action="auditlog.action_auditlog_http_request_tree"
-		            sequence="4" parent="auditlog.menu_audit"/>
+		            sequence="4" parent="auditlog.menu_audit"
+            		groups="pabi_security.group_pabi_admin"/>
 
             # Reporting/Sql Export
     		<menuitem name="Sql Export" id="sql_export.sql_export_menu"
-    			sequence="8" parent="base.menu_reporting"/>
+    			sequence="8" parent="base.menu_reporting"
+            	groups="pabi_security.group_pabi_admin"/>
 			    <menuitem name="Sql Export" id="sql_export.sql_export_menu_view"
 			    	action="sql_export.sql_export_tree_action"
-			    	sequence="1" parent="sql_export.sql_export_menu"/>
+			    	sequence="1" parent="sql_export.sql_export_menu"
+            		groups="pabi_security.group_pabi_admin"/>
 			    <menuitem name="Sql Export Variables" id="sql_export.sql_parameter_menu_view"
 			    	action="sql_export.sql_parameter_tree_action"
 			    	sequence="2" parent="sql_export.sql_export_menu"
-			    	groups="sql_request_abstract.group_sql_request_manager"/>
+			    	groups="sql_request_abstract.group_sql_request_manager,pabi_security.group_pabi_admin"/>
             
             # Reporting/Configuration
             <menuitem name="Configuration" id="base.menu_reporting_config"
             	sequence="9" parent="base.menu_reporting"
-            	groups="base.group_system"/>
+            	groups="base.group_system,pabi_security.group_pabi_admin"/>
 			    <menuitem name="Create Board" id="board.menu_board_create"
 			    	action="board.action_board_create"
 			        sequence="1" parent="base.menu_reporting_config"
-			        groups="base.group_no_one"/>
+			        groups="base.group_no_one,pabi_security.group_pabi_admin"/>
         
         # My Jobs
 		<delete id="pabi_utils.my_jobs_root" model="ir.ui.menu"/>
@@ -1994,33 +2030,62 @@
           			groups="pabi_utils.group_see_all_spool_report,base.group_user"/>
         
         # Configurations
-		<delete id="pabi_asset_management.account_asset_management.menu_finance_config_assets" model="ir.ui.menu"/>
-		<delete id="pabi_asset_management.account_asset_management.account_asset_profile_menu" model="ir.ui.menu"/>
-		<delete id="pabi_asset_management.menu_asset_action_import_template" model="ir.ui.menu"/>
-		
-		<menuitem name="Assets" id="account_asset_management.menu_finance_config_assets"
-          	sequence="7" parent="menu_nstda_configurations" 
-          	groups="pabi_base.group_nstda_admin_business"/>
-			<menuitem name="Asset Profiles" id="account_asset_management.account_asset_profile_menu"
-				action="account_asset_management.account_asset_profile_action"
-		        sequence="1" parent="account_asset_management.menu_finance_config_assets"
-		        groups="purchase.group_purchase_user,account.group_account_user"/>
-        	<menuitem name="Actions Templates (xls)" id="menu_asset_action_import_template"
-        		action="pabi_asset_management.action_asset_action_import_template"
-            	sequence="2" parent="account_asset_management.menu_finance_config_assets"
-            	groups="base.group_no_one"/>
+        <menuitem name="Configurations" id="menu_nstda_configurations"
+          	sequence="450"
+          	groups="pabi_base.group_nstda_admin_business,pabi_base.group_nstda_account_admin,pabi_security.group_pabi_accountant_gl"/>
+
+	        # Products
+	        <menuitem name="Products" id="menu_pabi2_config_product"
+	          	sequence="2" parent="menu_nstda_configurations"
+	          	groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl"/>
+		        <menuitem name="Product Categories" id="stock.menu_product_category_config_stock"
+		          	sequence="1" parent="menu_pabi2_config_product"
+		          	action="product.product_category_action_form"
+		          	groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+		        <menuitem name="Products" id="stock.menu_product_template_config_stock"
+		          	sequence="2" parent="menu_pabi2_config_product"
+		          	action="product.product_template_action"
+		          	groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+		        <menuitem name="Pricelists" id="product.menu_product_pricelist_main"
+		          	sequence="3" parent="menu_pabi2_config_product"
+		          	groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+		        <menuitem name="Unit of Measure Categories" id="product.menu_product_uom_categ_form_action"
+		          	sequence="4" parent="menu_pabi2_config_product"
+		          	action="product.product_uom_categ_form_action"
+		          	groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+		        <menuitem name="Unit of Measure" id="product.menu_product_uom_form_action"
+		        	action="product.product_uom_form_action"
+		          	sequence="5" parent="menu_pabi2_config_product"
+		          	groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+          
+			# Assets
+			<delete id="pabi_asset_management.account_asset_management.menu_finance_config_assets" model="ir.ui.menu"/>
+			<delete id="pabi_asset_management.account_asset_management.account_asset_profile_menu" model="ir.ui.menu"/>
+			<delete id="pabi_asset_management.menu_asset_action_import_template" model="ir.ui.menu"/>
+			
+			<menuitem name="Assets" id="account_asset_management.menu_finance_config_assets"
+	          	sequence="7" parent="menu_nstda_configurations" 
+	          	groups="pabi_base.group_nstda_admin_business,pabi_security.group_pabi_admin"/>
+				<menuitem name="Asset Profiles" id="account_asset_management.account_asset_profile_menu"
+					action="account_asset_management.account_asset_profile_action"
+			        sequence="1" parent="account_asset_management.menu_finance_config_assets"
+			        groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_admin"/>
+	        	<menuitem name="Actions Templates (xls)" id="menu_asset_action_import_template"
+	        		action="pabi_asset_management.action_asset_action_import_template"
+	            	sequence="2" parent="account_asset_management.menu_finance_config_assets"
+	            	groups="base.group_no_one,pabi_security.group_pabi_admin"/>
 
         # Connector
         <menuitem name="Connectors" id="connector.menu_connector_root"
           	sequence="451"
-          	groups="connector.group_connector_manager"/>
+          	groups="connector.group_connector_manager,pabi_security.group_pabi_admin"/>
 
         # System Interface
 		<delete id="pabi_interface.menu_system_interface" model="ir.ui.menu"/>
 		
         <menuitem name="System Interface" id="menu_system_interface"
           	sequence="452"
-          	groups="pabi_interface.group_interface_user,pabi_security.group_pabi_accountant_ar" />
+          	groups="pabi_interface.group_interface_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_ar" />
           	
           	# System Interface/Entries
 			<delete id="pabi_interface.menu_system_interface_entries" model="ir.ui.menu"/>
@@ -2031,23 +2096,23 @@
 			
 	        <menuitem name="Entries" id="menu_system_interface_entries"
 	        	sequence="1" parent="menu_system_interface"
-	          	groups="pabi_interface.group_interface_user,pabi_security.group_pabi_accountant_ar"/>
+	          	groups="pabi_interface.group_interface_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_ar"/>
         		<menuitem name="All Entries" id="menu_interface_account_entry"
         			action="pabi_interface.action_interface_account_entry"
           			sequence="1" parent="menu_system_interface_entries"
-          			groups="pabi_interface.group_interface_user,pabi_security.group_pabi_accountant_ar"/>
+          			groups="pabi_interface.group_interface_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_ar"/>
         		<menuitem name="Invoice Entries" id="menu_interface_account_entry_invoice"
         			action="pabi_interface.action_interface_account_entry_invoice"
           			sequence="2" parent="menu_system_interface_entries"
-          			groups="pabi_interface.group_interface_user,pabi_security.group_pabi_accountant_ar"/>
+          			groups="pabi_interface.group_interface_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_ar"/>
         		<menuitem name="Payment Entries" id="menu_interface_account_entry_payment"
         			action="pabi_interface.action_interface_account_entry_payment"
           			sequence="3" parent="menu_system_interface_entries"
-          			groups="pabi_interface.group_interface_user,pabi_security.group_pabi_accountant_ar"/>
+          			groups="pabi_interface.group_interface_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_ar"/>
         		<menuitem name="Reverse Entries" id="menu_interface_account_entry_reverse"
         			action="pabi_interface.action_interface_account_entry_reverse"
           			sequence="4" parent="menu_system_interface_entries"
-          			groups="pabi_interface.group_interface_user,pabi_security.group_pabi_accountant_ar"/>
+          			groups="pabi_interface.group_interface_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_ar"/>
 	          	
 	   		# System Interface/Configurations
 			<delete id="pabi_interface.menu_interface_system_configuration" model="ir.ui.menu"/>
@@ -2055,11 +2120,11 @@
 			
 	        <menuitem name="Configurations" id="menu_interface_system_configuration"
 	        	sequence="2" parent="menu_system_interface"
-	          	groups="pabi_interface.group_interface_user"/>
+	          	groups="pabi_interface.group_interface_user,pabi_security.group_pabi_admin"/>
         		<menuitem name="Systems" id="menu_interface_system"
         			action="pabi_interface.action_interface_system"
           			sequence="1" parent="menu_interface_system_configuration"
-          			groups="pabi_interface.group_interface_user" />
+          			groups="pabi_interface.group_interface_user,pabi_security.group_pabi_admin" />
 
     </data>
 </openerp>
