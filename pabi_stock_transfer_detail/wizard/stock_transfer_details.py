@@ -20,7 +20,8 @@ class StockTransferDetails(models.TransientModel):
             acceptance_line = acceptance_id and \
                 acceptance_id.acceptance_line_ids.filtered(
                     lambda l: l.product_id.id == product)
-            item_id['price_unit'] = acceptance_line.price_unit or 0.0
+            item_id['price_unit'] = \
+                sum(acceptance_line.mapped('price_unit')) or 0.0
         return res
 
 
