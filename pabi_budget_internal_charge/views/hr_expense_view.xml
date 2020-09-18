@@ -141,22 +141,24 @@
             <!-- <field name="domain">[('user_ic_allowed', '=', False)]</field> -->
             <field name="domain">[('expense_id.pay_to', '=', 'internal')]</field>
         </record>
-		<!--Print Internal Charge-->       
+	<!--Print Internal Charge-->       
         <record id="view_print_internal_charge_tree" model="ir.ui.view">
             <field name="name">view.print.internal.charge.tree</field>
             <field name="model">hr.expense.expense</field>
-            <field name="inherit_id" ref="hr_expense.view_expenses_tree"/>
             <field name="arch" type="xml">
+            	<tree string="Print Internal Charge" create="0" edit="0">
+            	    <field name="number" string="Expense" readonly="1"/>
                     <field name="employee_id"/>
-                    <field name="department_id" invisible="1"/>
                     <field name="date"/>
-                    <field name="user_id" invisible="1"/>
                     <field name="name"/>
-                    <field name="currency_id" groups="base.group_multi_currency"/>
+                    <field name="project_id" string="Budget Project(User)"/>
+                    <field name="section_id" string="Budget Section(User)"/>
+                    <field name="internal_section_id" readonly="1"/>
+                    <field name="internal_project_id" readonly="1"/>
                     <field name="amount" sum="Total Amount"/>
-                    <field name="state"/>
-        	</field>
-        </record>
+                    <field name="state" string="Expense State"/>
+               </tree>
+            </field>
         <record id="action_print_internal_charge" model="ir.actions.act_window">
             <field name="name">Print Internal Charge Receipt</field>
             <field name="res_model">hr.expense.expense</field>
