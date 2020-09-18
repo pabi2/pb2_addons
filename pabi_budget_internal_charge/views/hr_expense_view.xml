@@ -163,8 +163,7 @@
             <field name="name">Print Internal Charge Receipt</field>
             <field name="res_model">hr.expense.expense</field>
             <field name="view_id" ref="view_print_internal_charge_tree"/>
-            <field name="domain">[('pay_to', '=', 'internal')]</field>
+            <field name="domain">['&amp;', ('pay_to', '=', 'internal'), ('state', '=', 'paid')]</field>
         </record>
-
     </data>
 </openerp>
