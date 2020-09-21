@@ -159,15 +159,16 @@
                     <field name="state" string="Expense State"/>
                </tree>
             </field>
+        </record>
         <record id="action_print_internal_charge" model="ir.actions.act_window">
             <field name="name">Print Internal Charge Receipt</field>
             <field name="res_model">hr.expense.expense</field>
             <field name="view_id" ref="view_print_internal_charge_tree"/>
             <field name="domain">['&amp;', ('pay_to', '=', 'internal'), ('state', '=', 'paid')]</field>
         </record>
-        <delete model="ir.values" id="pabi_hr_advance_status_report.pabi_hr_advance_status_report_values"/>
-  	<delete model="ir.values" id="pabi_hr_advance_status_report.pabi_hr_advance_status_summary_report_values"/>
-  	<delete model="ir.values" id="pabi_hr_advance_status_report.pabi_hr_advance_status_detail_report_values"/>
-  	<delete model="ir.actions.report.xml" id="hr_expense.action_report_hr_expense"/>
+	    <delete model="ir.values" id="pabi_hr_advance_status_report.pabi_hr_advance_status_report_values"/>
+	  	<delete model="ir.values" id="pabi_hr_advance_status_report.pabi_hr_advance_status_summary_report_values"/>
+	  	<delete model="ir.values" id="pabi_hr_advance_status_report.pabi_hr_advance_status_detail_report_values"/>
+	  	<delete model="ir.actions.report.xml" id="hr_expense.action_report_hr_expense"/>
     </data>
 </openerp>
