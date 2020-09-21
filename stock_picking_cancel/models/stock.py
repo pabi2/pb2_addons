@@ -39,4 +39,10 @@ class StockPicking(models.Model):
         self._cr.execute("""
             update stock_picking set state = 'cancel' where id in %s
         """, (tuple(self.ids), ))
+
+        # Trigger back to PO
+        transition = self.env['budget.transition'].search([
+            ('picking_id', 'in', self.ids)])
+        transition.with_context(
+            {'trigger': 'stock.move'}).write({'backward': True})
         return True
