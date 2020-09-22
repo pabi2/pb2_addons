@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="account_budget_activity.account_budget_view_form"/>
             <field name="arch" type="xml">
                 <button name="budget_done" position="after">
-                    <button string="Init Version" name="action_init" states="draft" type="object"/>
+                    <button string="Init Version" name="action_init" states="draft" type="object" confirm="Confirm Init Version Plan?"/>
                 </button>
                 <xpath expr="//div[@name='buttons']" position="inside">
                     <button class="oe_inline oe_stat_button" type="object"

@@ -154,7 +154,7 @@ class AccountBudget(models.Model):
         store=True,
     )
     past_consumed = fields.Float(
-        string='Past Actuals',
+        string='Past Actual & Commit',
         compute='_compute_past_future_rolling',
         help="Actual for the past months",
     )
@@ -580,41 +580,42 @@ class AccountBudget(models.Model):
 
     @api.multi
     def budget_draft(self):
-        """ Concept : group by budget lines by AG and Charge Type
-            and create new lines by group
-        """
-        for rec in self:
-            if not rec.budget_expense_line_ids:
-                rec.write({'state': 'draft'})
-                continue
-
-            # reset amount period < today in budget expense lines only
-            period = self.env['account.period'].find()
-            budget_period = rec.budget_expense_line_ids.mapped(
-                'period_split_line_ids').filtered(
-                lambda l: l.period_id.date_stop <= period.date_stop)
-
-            # query summary group by charge_type and activity_group_id
-            groups = 'charge_type, activity_group_id'
-            description = _('ข้อมูลจริงจาก PABI2')
-            group_by_res = rec._query_budget_line(group_by=groups)
-            sum_data = rec._prepare_budget_real_data_line(
-                group_by_res, name=description)
-
-            groups = 'charge_type'
-            description = _('ผูกพันคงค้างรอเบิกจ่าย')
-            activity = self.env['account.activity.group'].search([
-                ('code', '=', 'AG0017')
-            ])
-            group_by_res = rec._query_budget_line(group_by=groups)
-            sum2 = rec._prepare_budget_real_data_line(
-                group_by_res, name=description, activity=activity.id)
-            sum_data += sum2
-            rec._clear_amount_period(budget_period)
-            rec.write({
-                'budget_line_ids': sum_data,
-                'state': 'draft'
-            })
+        self.write({'state': 'draft'})
+        # """ Concept : group by budget lines by AG and Charge Type
+        #     and create new lines by group
+        # """
+        # for rec in self:
+        #     if not rec.budget_expense_line_ids:
+        #         rec.write({'state': 'draft'})
+        #         continue
+        #
+        #     # reset amount period < today in budget expense lines only
+        #     period = self.env['account.period'].find()
+        #     budget_period = rec.budget_expense_line_ids.mapped(
+        #         'period_split_line_ids').filtered(
+        #         lambda l: l.period_id.date_stop <= period.date_stop)
+        #
+        #     # query summary group by charge_type and activity_group_id
+        #     groups = 'charge_type, activity_group_id'
+        #     description = _('ข้อมูลจริงจาก PABI2')
+        #     group_by_res = rec._query_budget_line(group_by=groups)
+        #     sum_data = rec._prepare_budget_real_data_line(
+        #         group_by_res, name=description)
+        #
+        #     groups = 'charge_type'
+        #     description = _('ผูกพันคงค้างรอเบิกจ่าย')
+        #     activity = self.env['account.activity.group'].search([
+        #         ('code', '=', 'AG0017')
+        #     ])
+        #     group_by_res = rec._query_budget_line(group_by=groups)
+        #     sum2 = rec._prepare_budget_real_data_line(
+        #         group_by_res, name=description, activity=activity.id)
+        #     sum_data += sum2
+        #     rec._clear_amount_period(budget_period)
+        #     rec.write({
+        #         'budget_line_ids': sum_data,
+        #         'state': 'draft'
+        #     })
 
     # @api.multi
     # def budget_cancel(self):
