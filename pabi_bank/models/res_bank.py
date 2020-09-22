@@ -23,29 +23,36 @@ class ResBank(models.Model):
 class ResPartnerBank(models.Model):
     _inherit = 'res.partner.bank'
 
-    @api.model
     def _get_domain_bank_branch(self):
+        domain = "[('bank_id', '=', bank)]"
+        return domain
+    
+    def _domain_bank_branch(self):
         domain = []
         if self.bank:
             domain = [('bank_id', '=', self.bank.id)]
+        return domain
 
-        return {'domain': {'bank_branch': domain}}
     
     bank_branch = fields.Many2one(
         'res.bank.branch',
-        domain="[('bank_id', '=', bank)]",
+        #domain="[('bank_id', '=', bank)]",
+        #domain=_get_domain_bank_branch,
+        domain=lambda self: self._domain_bank_branch(),
         string='Bank Branch',
-        required=True,  # for PABI2, this is required
+        required=True,
     )
     
+    @api.multi
     @api.onchange('bank')
     def _onchange_bank(self):
-        if self.bank:
-            self.bank_name = self.bank.name
-            self.bank_bic = self.bank.bic
-            self.bank_branch = False
-            
-            return {'domain': {'bank_branch': [('bank_id', '=', self.bank.id)]}}
+        for rec in self:
+            if rec.bank:
+                rec.bank_name = rec.bank.name
+                rec.bank_bic = rec.bank.bic
+                rec.bank_branch = False
+                
+                #return {'domain': {'bank_branch': [('bank_id', '=', rec.bank.id)]}}
     
 
     @api.multi
