@@ -40,6 +40,15 @@ class IrTestAction(models.TransientModel):
         string='Message',
         size=500,
     )
+    extra_loop = fields.Boolean(
+        'Extra Loop',
+        default=False
+    )
+    extra_args = fields.Text(
+        string='Arguments',
+        size=1000,
+        help="Arguments to be passed to the method, e.g. [(uid,),].",
+    )
 
     def _check_args(self, cr, uid, ids, context=None):
         try:
@@ -112,13 +121,39 @@ class IrTestAction(models.TransientModel):
 
     @api.multi
     def execute(self):
-        res = self._callback(self.model, self.function, self.args)
+        if self.extra_loop:
+            extra_args = str2tuple(self.extra_args)
+            
+            for arg in extra_args:
+                res = self._callback(self.model, self.function, arg)
+                message = self._get_message(res)
+                if message['success'] is not True:
+                    break
+        else:
+            res = self._callback(self.model, self.function, self.args)
+    
+            message = self._get_message(res)
 
-        message = self._get_message(res)
-
-        if message:
+        if message['success'] is True:
             self.write({'state': 'ok',
-                        'message': message})
+                        'message': message['message']})
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'ir.test.action',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'res_id': self.id,
+            'views': [(False, 'form')],
+            'target': 'new',
+        }
+    
+    @api.multi
+    def execute_advance(self):
+        message = True
+        
+        if message['success'] is True:
+            self.write({'state': 'ok',
+                        'message': message['message']})
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'ir.test.action',
@@ -131,17 +166,19 @@ class IrTestAction(models.TransientModel):
 
     @api.model
     def _get_message(self, res):
-        message = False
+        message = {'success': False}
         # Boolean
         if isinstance(res, types.BooleanType):
             if res is True:
-                message = _('Last execution was successful!')
+                message = {'success': True,
+                           'message':  _('Last execution was successful!')}
 
         if isinstance(res, types.DictType):
             # Generic
             if 'is_success' in res:
                 if res.get('is_success', False):
-                    message = _('Last execution was successful!')
+                    message = {'success': True,
+                               'message':  _('Last execution was successful!')}
                 # Failure, show message
                 else:
                     message = False
@@ -158,5 +195,6 @@ class IrTestAction(models.TransientModel):
                                          _(res.get('exception', False)))
             # Budget Check
             if 'budget_ok' in res:
-                message = res
+                message = {'success': True,
+                           'message': res}
         return message

@@ -14,11 +14,5 @@
                                    'order_type': 'sale_order', }</field>
         </record>
 
-        <menuitem id="menu_xlsx_import_consigned_order"
-          name="Import Consigned Order"
-          parent="menu_pos_root"
-          action="action_xlsx_import_consigned_order"
-          sequence="500"/>
-
     </data>
 </openerp>

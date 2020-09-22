@@ -47,10 +47,5 @@
             <field name="context">{'lang': 'th_TH'}</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_payable_detail"
-            name="Payable Detail"
-            parent="menu_pabi_payable_report"
-            action="action_xlsx_report_payable_detail_form"
-            sequence="60"/>
     </data>
 </openerp>

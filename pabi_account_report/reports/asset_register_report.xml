@@ -41,7 +41,7 @@
                               <field name="asset_filter" placeholder="Paste list of asset codes" nolabel="1"/>
                           </group>
                           <group string="Assets">
-                              <field name="asset_ids" nolabel="1">
+                              <field name="asset_ids" nolabel="1" context="{'active_test': False}">
                                   <tree editable="bottom">
                                       <field name="code" readonly="1"/>
                                       <field name="name" readonly="1"/>
@@ -102,11 +102,6 @@
           <field name="context">{'lang': 'th_TH'}</field>
       </record>
 
-      <menuitem id="menu_asset_register_report"
-          name="Asset Register Report"
-          parent="menu_account_asset_report"
-          action="action_asset_register_report_form"
-          sequence="20"/>
 
     </data>
 </openerp>

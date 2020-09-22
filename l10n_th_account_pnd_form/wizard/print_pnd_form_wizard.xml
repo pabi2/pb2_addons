@@ -39,9 +39,6 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_print_pnd_form" action="action_print_pnd_form"
-              groups="" parent="l10n_th_account.menu_thai_tax_report" sequence="10"/>
-
 
     </data>
 </openerp>

@@ -102,7 +102,6 @@
 			<field name="context">{'search_default_today': 1}</field>
 		</record>
 
-		<menuitem action="action_pabi_partner_dunning_letter" id="menu_pabi_partner_dunning_letter" sequence="20" name="Dunning Letters" parent="menu_pabi_customer_dunning"/>
 
 	</data>
 </openerp>

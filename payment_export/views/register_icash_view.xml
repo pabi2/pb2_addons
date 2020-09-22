@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_pabi_register_icash_tree">
+            <field name="name">view.pabi.register.icash.tree</field>
+            <field name="model">pabi.register.icash</field>
+            <field name="arch" type="xml">
+                <tree string="Pre Register iCash" >
+                    <field name="name"/>
+                    <field name="export_date"/>
+                    <field name="service_type"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_pabi_register_icash_form">
+            <field name="name">view.pabi.register.icash.form</field>
+            <field name="model">pabi.register.icash</field>
+            <field name="arch" type="xml">
+                <form string="Payment Export">
+                    <header>
+                    	<!-- <button name="generate_record" string="Generate" type="object" states="draft" class="oe_highlight"
+                    			confirm="confirm generate record?"/> -->
+                    	<button name="register" string="Register" type="object" states="draft" class="oe_highlight"
+                    			confirm="confirm Register?"/>
+                    	<button name="reload" string="Reload" type="object" states="draft" class="oe_highlight"
+                    			confirm="confirm Reload?"/>
+                    	<button name="register_cancel" string="Cancel" type="object" states="draft" class="oe_highlight"
+                    			confirm="confirm Cancel?"/>
+                    	<field name="state" widget="statusbar" statusbar_visible="draft,registered"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_right oe_button_box" name="buttons">
+                            <button name="%(action_register_icash_direct_report)d" string="Export" type="action"
+                            		attrs="{'invisible': [('service_type','!=','direct')]}"/>
+                            <button name="%(action_register_icash_smart_report)d" string="Export" type="action"
+                            		attrs="{'invisible': [('service_type','!=','smart')]}"/>
+                        </div>
+                    	<h1><label string="Pre register iCash"/></h1>
+                    	<group>
+                    		<group>
+                    			<field name="service_type" required="1"
+                    					attrs="{'readonly': [('state', 'in', ('registered','cancel'))]}"/>
+                    		</group>
+                    		<group>
+                    			<field name="name" readonly="1"/>
+                    			<field name="export_date" readonly="1"/>
+                    			<field name="nume_lines" readonly="1"/>
+                    		</group>
+                    	</group>
+                    	<notebook>
+                            <page string="Supplier Account">
+                            	<field name="line_filter" placeholder="Extend search with comma and between. e.g., 111111111,222222222"
+                            			attrs="{'readonly': [('state', 'in', ('registered','cancel'))]}"/>
+                                <field name="line_ids">
+                                    <tree editable="bottom" create="0" edit="1" default_order="create_date DESC">
+                                        <field name="partner_bank_id" invisible="1"/>
+                                        <field name="beneficiary_code" readonly="1"/>
+                                        <field name="owner_name_en" readonly="1"/>
+                                        <field name="bank_branch_code" readonly="1"/>
+                                        <field name="account_number" readonly="1"/>
+                                        <field name="partner_email_accountant" readonly="1"/>
+                                        <field name="partner_searchkey" readonly="1"/>
+                                        <field name="partner_name" readonly="1"/>
+                                        <field name="create_uid" string="Create By" readonly="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        
+        <record model="ir.ui.view" id="view_pabi_register_config_tree">
+            <field name="name">view.pabi.register.icash.config.tree</field>
+            <field name="model">pabi.register.icash.config</field>
+            <field name="arch" type="xml">
+                <tree string="Pre Register Config" editable="bottom">
+                    <field name="user_id" required="1"/>
+                    <field name="perm_create"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_pre_register_icash" model="ir.actions.act_window">
+            <field name="name">Pre register iCash</field>
+            <field name="res_model">pabi.register.icash</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_pabi_register_icash_tree"/>
+        </record>
+
+        <record id="action_pre_register_icash_config" model="ir.actions.act_window">
+            <field name="name">Pre register Config</field>
+            <field name="res_model">pabi.register.icash.config</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_pabi_register_config_tree"/>
+        </record>
+    </data>
+</openerp>

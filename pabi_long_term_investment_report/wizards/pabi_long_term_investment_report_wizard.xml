@@ -30,20 +30,5 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem
-            id="menu_pabi_investment_report"
-            name="Investment"
-            parent="account.menu_finance_generic_reporting"
-            sequence="20"
-            />
-
-        <menuitem
-            id="menu_pabi_long_term_investment_report_wizard"
-            name="Long Term Investment"
-            parent="menu_pabi_investment_report"
-            action="action_pabi_long_term_investment_report_wizard"
-            sequence="1"
-            icon="STOCK_PRINT"
-            />
     </data>
 </openerp>

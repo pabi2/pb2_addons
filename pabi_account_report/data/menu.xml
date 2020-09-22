@@ -1,34 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <menuitem id="menu_pabi_account_report"
-            name="Reports"
-            parent="account.menu_finance"
-            sequence="20"
-            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report"/>
 
-        <menuitem id="menu_pabi_payable_report"
-            name="Payable"
-            parent="menu_pabi_account_report"
-            groups="account.group_account_manager,account.group_account_user"
-            sequence="10"/>
 
-        <menuitem id="menu_pabi_receivable_report"
-            name="Receivable"
-            parent="menu_pabi_account_report"
-            groups="account.group_account_manager,account.group_account_user,pabi_apps_config.group_cd_report"
-            sequence="20"/>
-
-        <menuitem id="menu_pabi_general_ledger_report"
-            name="General Ledger"
-            parent="menu_pabi_account_report"
-            groups="account.group_account_manager,account.group_account_user"
-            sequence="30"/>
-
-        <menuitem id="menu_account_asset_report"
-            name="Reports"
-            parent="pabi_asset_management.menu_asset_main"
-            groups="purchase.group_purchase_user,account.group_account_user"
-            sequence="80"/>
     </data>
 </openerp>

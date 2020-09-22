@@ -85,10 +85,5 @@
             <field name="context">{'lang': 'th_TH'}</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_gl_project"
-            name="GL Project"
-            parent="menu_pabi_general_ledger_report"
-            action="action_xlsx_report_gl_project_form"
-            sequence="10"/>
     </data>
 </openerp>

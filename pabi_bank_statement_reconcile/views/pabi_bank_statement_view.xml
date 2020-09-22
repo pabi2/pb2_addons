@@ -2,7 +2,6 @@
 <openerp>
     <data>
 
-        <menuitem id="menu_pabi_bank_statement_main" sequence="300" name="Bank Reconcile" parent="account.menu_finance_reports"/>
 
         <record id="view_pabi_bank_statement_form" model="ir.ui.view">
             <field name="name">view.pabi.bank.statement.form</field>
@@ -130,18 +129,6 @@
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_pabi_bank_statement_tree"/>
         </record>
-
-        <menuitem action="action_pabi_bank_statement" id="menu_pabi_bank_statement" sequence="10" name="Bank Statement" parent="menu_pabi_bank_statement_main"/>
-
-        # For testing only
-        <!-- <record id="action_pabi_bank_statement_import" model="ir.actions.act_window">
-            <field name="name">Import</field>
-            <field name="res_model">pabi.bank.statement.import</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-        </record>
-
-        <menuitem action="action_pabi_bank_statement_import" id="menu_pabi_bank_statement_import" sequence="20" name="Bank Import" parent="menu_pabi_bank_statement_main"/> -->
 
     </data>
 </openerp>

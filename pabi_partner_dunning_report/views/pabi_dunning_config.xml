@@ -78,6 +78,5 @@
             <field name="res_id" ref="pabi_dunning_config_data"/>
         </record>
 
-        <menuitem action="action_pabi_dunning_config" id="menu_pabi_dunning_config" sequence="30" name="Dunning Config" parent="menu_pabi_customer_dunning"/>
     </data>
 </openerp>

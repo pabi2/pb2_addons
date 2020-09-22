@@ -65,11 +65,6 @@
         </record>
         <menuitem name="Program Target" id="menu_program_target" action="action_program_target" parent="pabi_base.menu_res_project" sequence="120"/>
 
-        <!-- Top menu item -->
-        <menuitem name="myProjects" id="menu_main_project" sequence="4"
-          groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget,pabi_base.group_nstda_admin_business" />
-        <!-- Projects -->
-        <menuitem name="Projects" id="menu_project" parent="menu_main_project" sequence="1" />
         <!-- Interface -->
         <!-- Asked by ISSI to remove this menu -->
         <!-- <menuitem name="Interfaces" id="menu_project_interface" parent="menu_main_project" sequence="2" /> -->
@@ -430,9 +425,6 @@
             <field name="act_window_id" ref="action_project"/>
         </record>
 
-        <menuitem action="action_project" id="menu_my_project" name="myProjects" parent="menu_project" sequence="1"
-          groups="pabi_base.group_program_secretary_budget,pabi_base.group_cooperate_budget,pabi_base.group_operating_unit_budget,pabi_base.group_nstda_admin_business"/>
-
         <!-- Release Budget by Fiscal -->
         <record id="view_project_budget_release_tree" model="ir.ui.view">
             <field name="name">view.project.budget.release.tree</field>
@@ -498,11 +490,6 @@
             <field name="target">new</field>
             <field name="context">{}</field>
         </record>
-
-        <!-- Asked by ISSI to remove this menu -->
-        <!-- <menuitem action="action_release_project_budget_by_fiscal" id="menu_release_project_budget_by_fiscal"
-          name="Release Budget" parent="menu_project_interface" sequence="1"
-          groups="pabi_base.group_program_secretary_budget,pabi_base.group_nstda_admin_business"/> -->
 
         <!-- Mini Project form for release budget -->
         <record id="view_project_small_form" model="ir.ui.view">
@@ -629,9 +616,6 @@
             <field name="view_id" ref="view_project_small_tree"/>
             <field name="act_window_id" ref="action_project_small"/>
         </record>
-
-        <menuitem action="action_project_small" id="menu_my_project_small" name="Release Budget" parent="menu_project" sequence="2"
-          groups="pabi_base.group_nstda_admin_business"/>
 
         <!-- Called form web controller -->
         <record id="action_myproject_to_project" model="ir.actions.act_window">

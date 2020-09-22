@@ -70,10 +70,6 @@
             <field name="target">new</field>
         </record>
 	
-        <menuitem id="menu_xlsx_report_pv_pe" 
-        	name="PV PE Reports" 
-        	parent="menu_pabi_payable_report" 
-        	action="action_xlsx_report_pv_pe" sequence="140"/>
 
     </data>
 </openerp>

@@ -53,13 +53,12 @@ class SectionBudgetTransfer(models.Model):
         default=lambda self:
         self.env.user.partner_id.employee_id.section_id.division_id,
     )
-    org_id = fields.Many2one(
+    org_ids = fields.Many2many(
         'res.org',
         string='Org',
         required=True,
         readonly=True,
-        default=lambda self:
-        self.env.user.partner_id.employee_id.section_id.org_id,
+        default=lambda self: self._default_org_ids(),
     )
     currency_id = fields.Many2one(
         'res.currency',
@@ -123,8 +122,14 @@ class SectionBudgetTransfer(models.Model):
         compute='_compute_total_transfer_amt',
     )
 
+    @api.model
+    def _default_org_ids(self):
+        org_origin = self.env.user.partner_id.employee_id.section_id.org_id
+        org_addition = self.env.user.partner_id.employee_id.org_ids
+        return org_origin + org_addition
+
     @api.multi
-    @api.constrains('fiscalyear_id', 'org_id', 'transfer_line_ids')
+    @api.constrains('fiscalyear_id', 'transfer_line_ids')
     def _check_transfer_line(self):
         """ Check that, all budget selected must be
         * chart_view = 'unit_base'
@@ -257,7 +262,7 @@ class SectionBudgetTransferLine(models.Model):
         'account.budget',
         string='From Section',
         required=True,
-        domain=[('chart_view', '=', 'unit_base')],
+        domain=lambda self: self._domain_budget_id()
     )
     from_budget = fields.Char(
         string='From Budget',
@@ -278,7 +283,7 @@ class SectionBudgetTransferLine(models.Model):
         'account.budget',
         string='To Section',
         required=True,
-        domain=[('chart_view', '=', 'unit_base')],
+        domain=lambda self: self._domain_budget_id()
     )
     to_budget = fields.Char(
         string='To Budget',
@@ -299,6 +304,16 @@ class SectionBudgetTransferLine(models.Model):
         ('no_negative_transfer_amount', 'CHECK(amount_transfer >= 0)',
          'Transfer amount must be positive'),
     ]
+
+    def _domain_budget_id(self):
+        org_origin = self.env.user.partner_id.employee_id.section_id.org_id
+        org_addition = self.env.user.partner_id.employee_id.org_ids
+        org_ids = org_origin + org_addition
+        fiscalyear_id = self.env['account.fiscalyear'].find()
+        dom = [('state', '=', 'draft'), ('chart_view', '=', 'unit_base'),
+               ('section_id', '!=', False), ('org_id', 'in', org_ids.ids),
+               ('fiscalyear_id', '=', fiscalyear_id)]
+        return dom
 
     @api.multi
     def action_transfer(self):
@@ -323,6 +338,14 @@ class SectionBudgetTransferLine(models.Model):
                                       line.amount_transfer)})
             to_budget._validate_plan_vs_release()
         return True
+
+    @api.onchange('from_budget_id', 'to_budget_id')
+    def _onchange_from_to_budget_id(self):
+        self.ensure_one()
+        if self.from_budget_id and self.to_budget_id:
+            if self.from_budget_id.org_id != self.to_budget_id.org_id:
+                raise ValidationError(_(
+                    "Can not transfer budget different org."))
 
     @api.onchange('from_budget_id')
     def _onchange_from_budget_id(self):

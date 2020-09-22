@@ -25,6 +25,8 @@
                 			<field name="date_contract_action_end"/>
                 			<field name="invoice_plan"/>
                 			<field name="po_not_closed"/>
+                			<field name="no_finlease"/>
+                			<field name="no_po_draft"/>
                 		</group>
                 	</group>
                 </group>
@@ -106,10 +108,5 @@
             <field name="context">{'lang': 'th_TH'}</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_purchase_invoice_plan"
-            name="Purchase Invoice Plan"
-            parent="menu_pabi_payable_report"
-            action="action_xlsx_report_purchase_invoice_plan_form"
-            sequence="130"/>
     </data>
 </openerp>

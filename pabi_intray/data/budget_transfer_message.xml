@@ -66,7 +66,7 @@ if employee_id:
   supervisor_id = pool['wkf.cmd.boss.level.approval'].get_supervisor(cr, uid, employee_id, context=context)
   owner = pool['hr.employee'].browse(cr, uid, supervisor_id, context=context).employee_code
   ou_group = pool['res.groups'].search(cr, uid, [('name', '=', 'Operating Unit Budget')], context=context)
-  org_employee = pool['hr.employee'].search(cr, uid, [('org_id', '=', object.org_id.id)], context=context)
+  org_employee = pool['hr.employee'].search(cr, uid, [('org_id', 'in', object.org_ids.ids)], context=context)
   ou_user_group = pool['res.groups'].browse(cr, uid, ou_group, context=context).users
   boss = pool['hr.employee'].browse(cr, uid, org_employee, context=context).filtered(lambda l: l.user_id.id in ou_user_group.ids).mapped('user_id').mapped('login')
   action='A'

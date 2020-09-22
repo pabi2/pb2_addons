@@ -55,7 +55,6 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem action="action_account_trial_balance_wizard" sequence="201" id="menu_account_trial_balance_report" parent="account.menu_finance_legal_statement"/>
 
     </data>
 </openerp>

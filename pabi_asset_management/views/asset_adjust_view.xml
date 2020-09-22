@@ -185,7 +185,6 @@
             <field name="search_view_id" ref="view_account_asset_adjust_search"/>
         </record>
 
-        <menuitem parent="menu_asset_actions" id="menu_action_account_asset_adjust" action="action_account_asset_adjust" groups="account.group_account_user"/>
 
         <!-- Adjustment Menu in Accounting Module -->
         <record model="ir.actions.act_window" id="action_account_asset_adjust2">
@@ -196,7 +195,6 @@
             <field name="search_view_id" ref="view_account_asset_adjust_search"/>
         </record>
 
-        <menuitem parent="account.menu_finance_entries" id="menu_action_account_asset_adjust2" action="action_account_asset_adjust2" groups="account.group_account_user" sequence="25"/>
 
     </data>
 </openerp>

@@ -465,6 +465,15 @@ class AccountAssetAdjust(models.Model):
         depre_lines.filtered(
             lambda l: not (l.move_check or l.init_entry)).unlink()
 
+    @api.multi
+    def _create_document_analytic_line(self, analytic, move):
+        AnalyticLine = self.env['account.analytic.line']
+        move_credit = move.line_id.filtered(lambda l: l.credit)
+        # analytic.line_ids.write({'document': move.name})
+        analytic_cr = AnalyticLine.search([('move_id', 'in', move_credit.ids)])
+        analytic_line = analytic_cr | analytic.line_ids
+        analytic_line.write({'document': move.name})
+
     @api.model
     def _set_asset_as_restored(self, asset, origin_status):
         self.ensure_one()
@@ -638,7 +647,6 @@ class AccountAssetAdjust(models.Model):
                 # Create a collective journal entry
                 move = line.create_account_move_asset_type()
                 line.move_id = move
-
         for line in new_asset.depreciation_line_ids:
             line.move_id = move
         # new_asset.depreciation_line_ids[-1].move_id = move
@@ -708,6 +716,10 @@ class AccountAssetAdjust(models.Model):
             # Set move_check equal to amount depreciated
             new_asset.compute_depreciation_board()
             new_asset.validate()
+            analytic_line = self.env['account.analytic.line'].search([
+                ('move_id', 'in', line.move_id.line_id.ids),
+                ('document', '=', False)])
+            analytic_line.write({'document': line.move_id.name})
 
     @api.multi
     def adjust_asset_to_expense(self):
@@ -734,6 +746,7 @@ class AccountAssetAdjust(models.Model):
             self._set_asset_as_removed(asset, line.target_status)
             # Adjustment's journal entry
             move = line.create_account_move_asset_to_expense()
+            self._create_document_analytic_line(line.account_analytic_id, move)
             line.move_id = move
 
     @api.multi
@@ -761,9 +774,6 @@ class AccountAssetAdjust(models.Model):
             self.invoice_id.source_document_id.write({
                 'ship_expense': True,
                 'ship_purchase_id': self.ship_purchase_id.id, })
-
-        values = self._context.get('expense_to_asset_dict', {})
-        i = 0
 
         # --
         for line in self.adjust_expense_to_asset_ids:
@@ -1364,27 +1374,72 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                                                      period, adjust_date,
                                                      amount_depre)
         move.write({'line_id': line_dict})
-        analytic = self._update_move_line_expense(move)
+        analytic = self._update_move_line_expense(move, adjust)
         if adjust.journal_id.entry_posted:
             del ctx['novalidate']
             move.with_context(ctx).post()
         # update analytic line for expense
         ml_credit = move.line_id.filtered(lambda l: l.credit)
+        self._create_document_analytic_line(analytic, move)
         self._create_expense_analytic_line(analytic.line_ids, ml_credit)
         self.write({'move_id': move.id})
         return move
 
     @api.multi
-    def _update_move_line_expense(self, move):
+    def _update_move_line_expense(self, move, adjust):
         # update activity_id = activity_rpt_id
         analytic = None
+        ivl = False
+        if len(adjust.invoice_id.invoice_line) == 1:
+            ivl = adjust.invoice_id.invoice_line
+        invoice_line = self.invoice_line_id or ivl
         for movl in move.line_id:
             if movl.debit:
                 movl.write({'activity_id': movl.activity_rpt_id.id})
                 analytic = movl.analytic_account_id
-        # assign invoice_line's data to move_line's credit line
-        self._assign_move_line_with_invoice_line(move)
+            # assign invoice_line's data to move_line's credit line
+            elif movl.credit:
+                movl.write({
+                    'taxbranch_id': invoice_line.taxbranch_id.id,
+                    'operating_unit_id': invoice_line.operating_unit_id.id,
+                    'analytic_account_id': invoice_line.account_analytic_id.id,
+                    'activity_id': invoice_line.activity_id.id,
+                    'activity_rpt_id': invoice_line.activity_rpt_id.id,
+                    'activity_group_id': invoice_line.activity_group_id.id,
+                    'project_id': invoice_line.project_id.id,
+                    'org_id': invoice_line.org_id.id,
+                    'fund_id': invoice_line.fund_id.id,
+                    'invest_construction_phase_id':
+                        invoice_line.invest_construction_phase_id.id,
+                    'division_id': invoice_line.division_id.id,
+                    'section_id': invoice_line.section_id.id,
+                    'program_id': invoice_line.program_id.id,
+                    'mission_id': invoice_line.mission_id.id,
+                    'personnel_costcenter_id':
+                        invoice_line.personnel_costcenter_id.id,
+                    'section_program_id': invoice_line.section_program_id.id,
+                    'program_group_id': invoice_line.program_group_id.id,
+                    'subsector_id': invoice_line.subsector_id.id,
+                    'invest_asset_id': invoice_line.invest_asset_id.id,
+                    'sector_id': invoice_line.sector_id.id,
+                    'costcenter_id': invoice_line.costcenter_id.id,
+                    'spa_id': invoice_line.spa_id.id,
+                    'cost_control_id': invoice_line.cost_control_id.id,
+                    'cost_control_type_id':
+                        invoice_line.cost_control_type_id.id,
+                    'project_group_id': invoice_line.project_group_id.id,
+                    'functional_area_id': invoice_line.functional_area_id.id,
+                })
         return analytic
+
+    @api.multi
+    def _create_document_analytic_line(self, analytic, move):
+        AnalyticLine = self.env['account.analytic.line']
+        move_credit = move.line_id.filtered(lambda l: l.credit)
+        # analytic.line_ids.write({'document': move.name})
+        analytic_cr = AnalyticLine.search([('move_id', 'in', move_credit.ids)])
+        analytic_line = analytic_cr | analytic.line_ids
+        analytic_line.write({'document': move.name})
 
     @api.multi
     def _create_expense_analytic_line(self, analytic_line_ids, ml_credit):
@@ -1398,7 +1453,6 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
                     (inv_movl.account_id == self.account_id):
                 inv_movl_id = inv_movl.id
                 break
-
         invl_analytic_lines = self.invoice_line_id.account_analytic_id.line_ids
         invl_analytic_line = invl_analytic_lines.search([
             ('move_id', '=', inv_movl_id)])
@@ -1418,12 +1472,13 @@ class AccountAssetAdjustExpenseToAsset(MergedChartField, ActivityCommon,
         # follow by invl_analytic_line
         analytic_line_credit = analytic_line.search([
             ('move_id', '=', ml_credit.id)])
-        analytic_line_credit.update({
-            'name': invl_analytic_line.name,
-            'general_account_id': invl_analytic_line.general_account_id.id,
-            'journal_id': invl_analytic_line.journal_id.id,
-            'document_line': invl_analytic_line.document_line,
-        })
+        if analytic_line_credit:
+            analytic_line_credit.update({
+                'name': invl_analytic_line.name,
+                'general_account_id': invl_analytic_line.general_account_id.id,
+                'journal_id': invl_analytic_line.journal_id.id,
+                'document_line': invl_analytic_line.document_line,
+            })
         # values = {
         #     'name': invl_analytic_line.name,
         #     'journal_id': invl_analytic_line.journal_id.id,

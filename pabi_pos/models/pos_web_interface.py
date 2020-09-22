@@ -7,6 +7,49 @@ _logger = logging.getLogger(__name__)
 
 class SalesOrder(models.Model):
     _inherit = 'sale.order'
+    
+    @api.model
+    def _check_current_stock(self, data_dict):
+        WorkFlow = self.env['sale.workflow.process']
+        try:
+            res = {'is_success': True}
+            product_dict = {}
+            stock_err = {}
+            product_err = []
+            products = [x['product_id'] for x in data_dict['order_line']]
+            for rec in data_dict['order_line']:
+                product_dict[rec['product_id']] = rec['product_uom_qty']
+            
+            workflow = WorkFlow.search([('name', '=', data_dict['workflow_process_id'])])
+            if not workflow:
+                res = {
+                    'is_success': False,
+                    'result': False,
+                    'messages': _('Not found workflow %s' % data_dict['workflow_process_id']),
+                }
+            else:
+                curr_stock = workflow.location_id.get_current_stock(products)
+                for prod in products:
+                    if prod not in curr_stock.keys():
+                        product_err.append(prod)
+                    elif curr_stock[prod] < product_dict[prod]:
+                        stock_err[prod] = curr_stock[prod]
+
+            if len(stock_err) > 0 or len(product_err) > 0:
+                res = {
+                    'is_success': False,
+                    'result': {'location': workflow.location_id.name,
+                               'stock_line': stock_err,
+                               'product_name': product_err},
+                    'messages': _('Stock Error!!'),
+                }
+        except Exception, e:
+            res = {
+                'is_success': False,
+                'result': False,
+                'messages': _(str(e)),
+            }
+        return res
 
     @api.model
     def test_generate_pos_order(self):
@@ -45,16 +88,20 @@ class SalesOrder(models.Model):
         try:
             # data_dict = self._pre_process_pos_order(data_dict)
             data_dict['order_type'] = 'sale_order'
-            res = self.env['pabi.utils.ws'].friendly_create_data(self._name,
-                                                                 data_dict)
-            pos = self.browse(res['result']['id'])
-            pos._get_pos_receipt()
-            pos.post_process_pos_order()
-            # auto confirm oder, with async process
-            pos.with_context(pos_async_process=False).action_button_confirm()
-            # return more data
-            res['result']['name'] = pos.name
-            res['result']['origin'] = pos.origin
+            check_stock = self._check_current_stock(data_dict)
+            if check_stock['is_success'] == False:
+                res = check_stock
+            else:
+                res = self.env['pabi.utils.ws'].friendly_create_data(self._name,
+                                                                     data_dict)
+                pos = self.browse(res['result']['id'])
+                pos._get_pos_receipt()
+                pos.post_process_pos_order()
+                # auto confirm oder, with async process
+                pos.with_context(pos_async_process=False).action_button_confirm()
+                # return more data
+                res['result']['name'] = pos.name
+                res['result']['origin'] = pos.origin
         except Exception, e:
             res = {
                 'is_success': False,

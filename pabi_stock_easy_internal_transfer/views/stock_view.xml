@@ -174,9 +174,6 @@
             <field name="act_window_id" ref="action_picking_easy_internal_transfer"/>
         </record>
 
-        <menuitem action="action_picking_easy_internal_transfer"
-            id="menu_picking_easy_internal_transfer"
-            parent="stock.menu_stock_warehouse_mgmt" sequence="1"/>
 
     </data>
 </openerp>

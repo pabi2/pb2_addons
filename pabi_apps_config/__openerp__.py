@@ -46,6 +46,7 @@ This module sits on top of other modules whose configuration is moved here.
         'pabi_loan_receivable',
         'pabi_advance_dunning_letter',
         'pabi_long_term_investment_report',
+        
     ],
     "data": [
         'security/security_group.xml',

@@ -64,6 +64,8 @@
                                         <field name="name"/>
                                         <field name="date_start"/>
                                         <field name="profile_id"/>
+                                     	<field name="purchase_value"/>
+                                        <field name="salvage_value"/>
                                         <field name="purchase_id"/>
                                         <field name="partner_id"/>
                                         <field name="product_id"/>
@@ -125,9 +127,6 @@
             <field name="act_window_id" ref="action_asset_import_batch_view"/>
         </record>
 
-        <menuitem id="menu_asset_import_batch_view" parent="pabi_asset_management.menu_asset_actions"
-          action="action_asset_import_batch_view"
-          groups="purchase.group_purchase_user,account.group_account_user"/>
 
     </data>
 </openerp>

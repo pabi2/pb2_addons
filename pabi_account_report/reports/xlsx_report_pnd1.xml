@@ -34,10 +34,5 @@
             <field name="context">{'lang': 'th_TH'}</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_pnd1"
-            name="PND1"
-            parent="menu_pabi_payable_report"
-            action="action_xlsx_report_pnd1_form"
-            sequence="10"/>
     </data>
 </openerp>

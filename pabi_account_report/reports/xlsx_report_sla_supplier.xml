@@ -30,10 +30,5 @@
             <field name="context">{'lang': 'th_TH'}</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_sla_supplier"
-            name="SLA Supplier"
-            parent="menu_pabi_payable_report"
-            action="action_xlsx_report_sla_supplier_form"
-            sequence="100"/>
     </data>
 </openerp>

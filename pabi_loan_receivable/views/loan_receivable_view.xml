@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
-
-        <menuitem id="menu_loan_receivable" name="Loan Receivables" parent="account.menu_finance" sequence="4" groups="account.group_account_user,account.group_account_manager"/>
-
         # Bank Loan MOU
         <record id="view_loan_bank_mou_filter" model="ir.ui.view">
             <field name="name">view.loan.bank.mou.filter</field>
@@ -98,8 +95,6 @@
             <field name="view_id" ref="view_loan_bank_mou_form"/>
             <field name="act_window_id" ref="action_loan_bank_mou"/>
         </record>
-
-        <menuitem action="action_loan_bank_mou" sequence="1" id="menu_action_loan_bank_mou" parent="menu_loan_receivable"/>
 
         # Customer Loan Agreement
         <record id="view_loan_customer_agreement_filter" model="ir.ui.view">
@@ -271,7 +266,5 @@
             <field name="view_id" ref="view_loan_customer_agreement_form"/>
             <field name="act_window_id" ref="action_loan_customer_agreement"/>
         </record>
-
-        <menuitem action="action_loan_customer_agreement" sequence="1" id="menu_action_loan_customer_agreement" parent="menu_loan_receivable"/>
     </data>
 </openerp>

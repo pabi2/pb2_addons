@@ -81,9 +81,5 @@
             <field name="help">Process to carry forward unused project balance amount from previous year to specified year</field>
         </record>
 
-        <menuitem action="action_project_balance_carry_forward" id="menu_project_balance_carry_forward"
-          parent="menu_action_budget_year_end_process" sequence="20"
-          groups="group_project_balance_carry_forward"/>
-
     </data>
 </openerp>

@@ -37,8 +37,6 @@
             <field name="target">new</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_pabi_standard_asset" name="Standard Asset" parent="menu_procurement_report" action="action_xlsx_report_pabi_standard_asset" sequence="100"/>
-
 
     </data>
 </openerp>

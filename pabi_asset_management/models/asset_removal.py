@@ -548,7 +548,8 @@ class AccountAssetRemovalLines(models.Model):
         if to_depreciate_amount:
             update_vals = {
                 'amount': to_depreciate_amount,
-                'line_date': new_line_date
+                'line_date': new_line_date,
+                'line_days': to_depreciate_days,
             }
             first_to_depreciate_dl.write(update_vals)
             dlines[0].create_move()

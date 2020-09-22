@@ -150,11 +150,14 @@ class BudgetTransition(models.Model):
                      rec.invoice_line_id.display_name)
             # PO -> Invoice
             if rec.purchase_line_id and rec.invoice_line_id:
+                cv = ''
+                if rec.invoice_id.state == 'cancel':
+                    cv = ', %s' % rec.invoice_id.cancel_move_id.name
                 rec[source] = '%s, %s' % \
                     (rec.purchase_id.name,
                      rec.purchase_line_id.display_name)
-                rec[target] = '%s, %s' % \
-                    (rec.invoice_id.number,
+                rec[target] = '%s%s, %s' % \
+                    (rec.invoice_id.number, cv,
                      rec.invoice_line_id.display_name)
             # SO -> Picking
             if rec.sale_line_id and rec.stock_move_id:

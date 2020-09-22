@@ -38,11 +38,5 @@
             <field name="context">{'lang': 'th_TH'}</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_output_tax"
-            name="Output Tax"
-            parent="menu_pabi_receivable_report"
-            action="action_xlsx_report_output_tax_form"
-            groups="account.group_account_manager,account.group_account_user"
-            sequence="10"/>
     </data>
 </openerp>

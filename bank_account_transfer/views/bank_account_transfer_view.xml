@@ -115,7 +115,6 @@
           <field name="view_mode">tree,form</field>
       </record>
 
-      <menuitem id="menu_bank_account_transfer" name="Bank Account Transfer" parent="account.menu_finance_bank_and_cash" action="action_bank_account_transfer" sequence="30"/>
 
   </data>
 </openerp>

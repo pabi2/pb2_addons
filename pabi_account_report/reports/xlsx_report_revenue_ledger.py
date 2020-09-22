@@ -79,8 +79,15 @@ class XLSXReportRevenueLedger(models.TransientModel):
         if self.account_ids:
             dom += [('account_id', 'in', self.account_ids.ids)]
         if self.operating_unit_ids:
-            dom += [('account_id.operating_unit_id', 'in', self.operating_unit_ids.ids)]
-            dom += [('partner_id.user_id.default_operating_unit_id', 'in', self.operating_unit_ids.ids)]
+#             dom += [('account_id.operating_unit_id', 'in', self.operating_unit_ids.ids)]
+#             dom += [('partner_id.user_id.default_operating_unit_id', 'in', self.operating_unit_ids.ids)]
+            dom += [('org_id', 'in', self.operating_unit_ids.ids)]
+        else :
+            accountant_id = 33
+            if not(accountant_id in self.env.user.groups_id.ids): #group_user != Accountant                                                  
+                if ('Operating Unit Budget' in [g.name for g in self.env.user.groups_id]): 
+                    if not('Cooperate Budget' in [g.name for g in self.env.user.groups_id]):       
+                        dom += [('org_id.operating_unit_id', 'in', self.env.user.operating_unit_ids.ids)]
         if self.chartfield_ids:
             # map beetween chartfield_id with chartfield type
             chartfields = [('section_id', 'sc:'),

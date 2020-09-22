@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class AccountAssetImportBatch(models.Model):
@@ -71,6 +72,11 @@ class AccountAssetImportBatch(models.Model):
         self.ensure_one()
         asset_obj = self.env['account.asset']
         asset_line_obj = self.env['account.asset.line']
+        asset_normal = self.asset_batch_ids.filtered(
+            lambda l: l.profile_id.profile_type == 'normal')
+        if asset_normal and not all(asset_normal.mapped('purchase_value')):
+            raise ValidationError(_(
+                'Can not import Asset type normal that purchase value is 0.0'))
         for line in self.asset_batch_ids:
             asset_dict = {
                 'code': line.code or '/',
@@ -109,6 +115,7 @@ class AccountAssetImportBatch(models.Model):
                 'method_period': line.method_period,
                 'days_calc': line.days_calc,
                 'prorata': line.prorata,
+                'is_import': True,  # True only if import asset               
             }
             new_asset = asset_obj.create(asset_dict)
             # purchase_id is field related can't create

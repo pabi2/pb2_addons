@@ -52,10 +52,6 @@
             </field>
         </record>
 
-        <menuitem
-            name="Define Recurring" action="account.action_subscription_form"
-            id="account.menu_action_subscription_form" sequence="4"
-            parent="account.menu_finance_recurrent_entries"/>
 
         <record model="ir.ui.view" id="view_account_journal_form">
             <field name="name">view.account.journal.form</field>
@@ -209,10 +205,6 @@
             <field name="view_mode">tree,form</field>
         </record>
 
-        <menuitem action="action_account_move_reconcile"
-          id="menu_account_move_reconcile"
-          parent="account.periodical_processing_reconciliation" sequence="30"
-          groups="account.group_account_manager"/>
 
         <record id="view_account_form" model="ir.ui.view">
             <field name="name">account.account.form</field>

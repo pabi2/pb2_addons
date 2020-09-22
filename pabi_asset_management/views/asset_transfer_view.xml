@@ -56,20 +56,24 @@
                 <form string="Asset">
                     <header>
                         <button name="action_draft" states="draft2"
-                          string="Set Source Assets" type="object"
-                          groups="purchase.group_purchase_user"/>
+                            string="Set Source Assets" type="object"
+                            groups="purchase.group_purchase_user"/>
                         <button name="action_draft2" states="draft,ready"
-                          string="Set Target Assets" type="object"
-                          groups="purchase.group_purchase_user,account.group_account_user"/>
+                            string="Set Target Assets" type="object"
+                            groups="purchase.group_purchase_user,account.group_account_user"/>
                         <button name="action_ready" states="draft2"
-                          string="Submit to Finance" type="object" class="oe_highlight"
-                          groups="purchase.group_purchase_user"/>
+                            string="Submit to Finance" type="object" class="oe_highlight"
+                            groups="purchase.group_purchase_user"/>
                         <button name="action_done" states="ready"
-                          string="Transfer" type="object" class="oe_highlight"
-                          groups="account.group_account_user"/>  <!-- Only Accountant can Transfer -->
+                            string="Transfer" type="object" class="oe_highlight"
+                            groups="account.group_account_user"/>  <!-- Only Accountant can Transfer -->
+                        <button name="action_done_backgruond" states="ready" string="Transfer(Background)"
+                            type="object" class="oe_highlight"
+                            groups="account.group_account_user"
+                            context="{'transfer_async_process': 1}"/>
                         <button name="action_cancel" states="draft" string="Cancel" type="object"
-                          groups="purchase.group_purchase_user"/>
-                          <field name="state" widget="statusbar" statusbar_visible="draft,draft2,ready,done"/>
+                            groups="purchase.group_purchase_user"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,draft2,ready,done"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box oe_right">
@@ -97,6 +101,7 @@
                                 <field name="target_asset_value"/>
                             </group>
                             <group>
+                                <field name="commit_every" invisible="True"/>
                                 <field name="journal_id"/>
                                 <field name="user_id"/>
                                 <field name="date_accept"/>
@@ -134,6 +139,7 @@
                                         <field name="asset_profile_id"/>
                                         <field name="asset_name"/>
                                         <field name="depreciation_base" sum="Total"/>
+                                        <field name="check_commit" invisible="True"/>
                                         <!-- <field name="move_id"/>
                                         <field name="ref_asset_id"/> -->
                                     </tree>
@@ -141,6 +147,10 @@
                             </page>
                         </notebook>
                         <field name="note" placeholder="Add an internal note here..."/>
+                        <group>
+                        	<field name="transfer_job_id"/>
+                        	<field name="transfer_uuid"/>
+                        </group>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
@@ -195,9 +205,6 @@
             <field name="context" eval="{'default_journal_id': ref('journal_asset_no_budget')}"/>
         </record>
 
-        <menuitem parent="menu_asset_actions" id="menu_action_account_asset_transfer"
-          action="action_account_asset_transfer"
-          groups="purchase.group_purchase_user,account.group_account_user"/>
 
     </data>
 </openerp>

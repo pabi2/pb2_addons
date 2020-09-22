@@ -40,10 +40,5 @@
             <field name="context">{'lang': 'th_TH'}</field>
         </record>
 
-        <menuitem id="menu_xlsx_report_contract_collateral"
-            name="Contract Collateral"
-            parent="menu_pabi_payable_report"
-            action="action_xlsx_report_contract_collateral_form"
-            sequence="40"/>
     </data>
 </openerp>

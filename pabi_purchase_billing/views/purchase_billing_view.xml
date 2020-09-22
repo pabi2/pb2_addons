@@ -141,11 +141,6 @@
             <field name="act_window_id" ref="action_purchase_billing"/>
         </record>
 
-        <menuitem action="action_purchase_billing" sequence="13"
-            id="menu_action_purchase_billing"  parent="purchase.menu_procurement_management"/>
-
-        <menuitem action="action_purchase_billing" sequence="11"
-            id="menu_action_account_purchase_billing"  parent="account.menu_finance_payables"/>
 
     </data>
 </openerp>
