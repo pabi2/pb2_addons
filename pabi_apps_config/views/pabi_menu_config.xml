@@ -1437,6 +1437,9 @@
 			        <menuitem name="CGD Reports" id="menu_xlsx_report_cgd"
 			        	action="pabi_account_report.action_xlsx_report_cgd"
 			        	sequence="20" parent="menu_pabi_payable_report"/>
+			        <menuitem name="Extra Regulation Report"  id="menu_xlsx_report_extra_regulation" 
+        				action="pabi_account_report.action_xlxs_report_extra_regulation" parent="menu_pabi_payable_report"
+        				sequence="21"/>
             
 				# Receivable
 				<delete id="pabi_account_report.menu_pabi_receivable_report" model="ir.ui.menu"/>

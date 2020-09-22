@@ -22,10 +22,6 @@
             <field name="target">new</field>
         </record>
         
-        <menuitem id="menu_xlsx_report_extra_regulation" 
-        	name="Extra Regulation Report" 
-        	parent="menu_pabi_payable_report" 
-        	action="action_xlxs_report_extra_regulation" sequence="150"/>
     
     </data>
 </openerp>
