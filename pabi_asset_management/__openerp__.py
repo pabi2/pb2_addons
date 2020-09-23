@@ -63,6 +63,8 @@ This module allow creating asset during incoming shipment.
         "views/ir_sequence_view.xml",
         # "wizard/asset_action_excel_import.xml",
         "views/asset_changemaster_view.xml",
+        "views/asset_user_changemaster_view.xml",
+        "views/asset_changeresponsible_view.xml",
     ],
     'installable': True,
     'active': True,

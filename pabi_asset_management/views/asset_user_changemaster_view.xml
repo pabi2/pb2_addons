@@ -1,0 +1,87 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+        <!-- Asset Changemaster By User-->
+        <record model="ir.ui.view" id="view_account_asset_user_changemaster_form">
+            <field name="name">account.asset.user.changemaster.form</field>
+            <field name="model">account.asset.user.changemaster</field>
+            <field name="arch" type="xml">
+                <form string="Asset">
+                    <header>
+                        <button name="action_draft" states="cancel" string="Set to Draft" type="object" invisible="1"/>
+                        <button name="action_wait" states="draft" string="Request" type="object"/>
+                        <button name="action_done" states="wait" string="Approve" type="object"/>
+                        <button name="action_cancel" states="wait" string="Reject" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,wait,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="user_id" readonly="1"/>
+                            </group>
+                            <group>
+                            	<field name="operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>
+                                <field name="date"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Change Asset Master">
+                                <field name="changemaster_ids">
+                                    <tree editable="bottom">
+                                        <field name="asset_id" domain="[('responsible_user_id','=',uid)]"/>
+                                        <field name="name"/>
+                                        <field name="asset_brand"/>
+                                        <field name="asset_model"/>
+                                        <field name="building_id"/>
+                                        <field name="floor_id" context="{'building_id': building_id}"/>
+                                        <field name="room_id" context="{'building_id': building_id, 'floor_id': floor_id}"/>
+                                        <field name="serial_number"/>
+                                        <field name="warranty_start_date"/>
+                                        <field name="warranty_expire_date"/>
+                                        <field name="note"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                        <field name="note" placeholder="Add an internal note here..."/>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_account_user_asset_changemaster_tree">
+            <field name="name">account.asset.user.changemaster.tree</field>
+            <field name="model">account.asset.user.changemaster</field>
+            <field name="arch" type="xml">
+                <tree string="Change Master (By User)">
+                	<field name="operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>
+                    <field name="name"/>
+                    <field name="user_id"/>
+                    <field name="date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+       <record id="account_asset_user_changemaster_action" model="ir.actions.act_window">
+	      <field name="name">Change Master (By User)</field>
+	      <field name="res_model">account.asset.user.changemaster</field>
+	      <field name="view_type">form</field>
+	      <field name="view_id" ref="view_account_user_asset_changemaster_tree"/>
+	      
+    </record>
+
+
+    </data>
+</openerp>

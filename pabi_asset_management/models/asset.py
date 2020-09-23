@@ -413,8 +413,31 @@ class AccountAsset(ChartFieldAction, models.Model):
         'account.analytic.account',
         index=True,
     )
+    search_ids = fields.Char(
+        compute='_compute_search_ids',
+        search='search_ids_search'
+    )
     _sql_constraints = [('code_uniq', 'unique(code)',
                          'Asset Code must be unique!')]
+    
+    @api.one
+    @api.depends('owner_project_id','owner_section_id','owner_invest_asset_id','owner_invest_construction_phase_id')
+    def _compute_search_ids(self):
+        print('View My Owner Depreciation On')
+
+    def search_ids_search(self, operator, operand):
+        section_user_id = self.env.user.partner_id.employee_id.section_id.id
+        section_dom = ('owner_section_id','=',section_user_id)
+        project_dom = ('owner_project_id.costcenter_id.section_ids','in',section_user_id)
+        invest_asset_dom = ('owner_invest_asset_id.owner_section_id','=',section_user_id)
+        invest_construction_dom = ('owner_invest_construction_phase_id.costcenter_id.section_ids','=',section_user_id)
+        section = self.env['account.asset'].search([section_dom]).ids
+        project = self.env['account.asset'].search([project_dom]).ids
+        invest_asset = self.env['account.asset'].search([invest_asset_dom]).ids
+        invest_construction = self.env['account.asset'].search([invest_construction_dom]).ids
+        my_responsible = self.env['account.asset'].search([('responsible_user_id','=',self.env.user.id)]).ids
+        obj = list(set().union(section, project, invest_asset, invest_construction, my_responsible))
+        return [('id','in',obj)]
 
     @api.multi
     @api.constrains('purchase_value')

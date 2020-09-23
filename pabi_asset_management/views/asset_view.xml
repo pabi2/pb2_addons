@@ -29,6 +29,7 @@
                     <filter string="หมดอายุการใช้งาน" name="expire" domain="[('status_code','=','expire')]"/>
                     <filter string="ยกเลิก" name="cancel" domain="[('status_code','=','cancel')]"/>
                     <filter string="ยกเลิกเลขครุภันฑ์" name="reverse" domain="[('status_code','=','reverse')]"/>
+                    <filter string="My Responsible" name="responsible" domain="[('responsible_user_id','=',uid)]"/>
                 </search>
                 <field name="partner_id" position="after">
                     <field name="purchase_id"/>
@@ -501,6 +502,40 @@
             <field name="domain" eval="[('parent_id', '=', ref('pabi_asset_management.dir_asset_action_template'))]" />
         </record>
 
-
+		<!-- My Asset -->
+		<record id="account_my_asset_view_tree" model="ir.ui.view">
+            <field name="name">account.asset.tree</field>
+            <field name="model">account.asset</field>
+            <field name="type">tree</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <tree string="Assets" create="0" colors="blue:(type == 'view')">
+                    <field name="type" invisible="1"/>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="purchase_id"/>
+                    <field name="installment_str"/>
+                    <field name="purchase_value" sum="Amount"/>
+                    <field name="date_start"/>
+                    <field name="partner_id"/>
+                    <field name="building_id"/>
+                    <field name="floor_id" context="{'building_id': building_id}"/>
+                    <field name="room_id" context="{'building_id': building_id, 'floor_id': floor_id}"/>
+                    <field name="status"/>
+                    <field name="date_remove" string="Remove Date"/>
+                    <field name="state" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+	
+	<record id="account_my_asset_action" model="ir.actions.act_window">
+	      <field name="name">Assets</field>
+	      <field name="res_model">account.asset</field>
+	      <field name="view_type">form</field>
+	      <field name="view_id" ref="account_my_asset_view_tree"/>
+	      <field name="context">{'search_default_responsible': uid}</field>
+	      <field name="domain">[('search_ids','=',1)]</field> 
+    </record>
+    
     </data>
 </openerp>
