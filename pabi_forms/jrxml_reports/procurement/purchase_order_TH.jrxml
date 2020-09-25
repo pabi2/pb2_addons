@@ -644,7 +644,7 @@ WHERE $X{IN, po.id, PIDS}  and pol.active = True
 ($F{taxbranch_code} != null ? "สาขาที่ " + $F{taxbranch_code} : "")]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="407" y="4" width="74" height="43"/>
+				<reportElement x="378" y="1" width="103" height="43"/>
 				<imageExpression class="java.lang.String"><![CDATA[$F{logo_path}]]></imageExpression>
 			</image>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
