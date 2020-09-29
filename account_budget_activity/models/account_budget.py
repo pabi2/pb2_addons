@@ -154,7 +154,7 @@ class AccountBudget(models.Model):
         store=True,
     )
     past_consumed = fields.Float(
-        string='Past Actual & Commit',
+        string='Past Actual',
         compute='_compute_past_future_rolling',
         help="Actual for the past months",
     )
@@ -268,12 +268,16 @@ class AccountBudget(models.Model):
         # consumes = Consume.search(dom)
         # amount = sum(consumes.mapped('amount_actual'))
         # Change domain: [('x', '=', 'y')] to where str: x = 'y'
+        # sql = """
+        #     select coalesce(sum(amount_actual), 0.0) +
+        #         coalesce(sum(amount_so_commit), 0.0) +
+        #         coalesce(sum(amount_pr_commit), 0.0) +
+        #         coalesce(sum(amount_po_commit), 0.0) +
+        #         coalesce(sum(amount_exp_commit), 0.0) as amount_total_commit
+        #     from budget_consume_report where %s
+        # """ % self._domain_to_where_str(dom)
         sql = """
-            select coalesce(sum(amount_actual), 0.0) +
-                coalesce(sum(amount_so_commit), 0.0) +
-                coalesce(sum(amount_pr_commit), 0.0) +
-                coalesce(sum(amount_po_commit), 0.0) +
-                coalesce(sum(amount_exp_commit), 0.0) as amount_total_commit
+            select coalesce(sum(amount_actual), 0.0) amount_actual
             from budget_consume_report where %s
         """ % self._domain_to_where_str(dom)
         self._cr.execute(sql)
