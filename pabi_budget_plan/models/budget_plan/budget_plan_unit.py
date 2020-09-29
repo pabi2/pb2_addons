@@ -49,7 +49,7 @@ class BudgetPlanUnit(BPCommon, models.Model):
         'plan_id',
         string='Expense Plan Lines',
         copy=True,
-        readonly=True,
+        # readonly=True,
         states={'1_draft': [('readonly', False)],
                 '2_submit': [('readonly', False)],
                 '3_approve': [('readonly', False)]},
