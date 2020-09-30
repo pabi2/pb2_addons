@@ -58,7 +58,10 @@ class JasperAssetRegisterReport(models.TransientModel):
                 state_name = self.env['xlsx.report.status'].\
                 search([('id', '=', state.id)])
                 res += [str(state_name.status)]
-            dom += [('asset.state in {}'.format(tuple(res)))]
+            if len(self.asset_state) == 1 : 
+                dom += [('asset.state in (\'{}\')'.format(str(state_name.status)))]
+            else : 
+                dom += [('asset.state in {}'.format(tuple(res)))]
 
         if self.building_ids:
             dom += [(' asset.building_id in ({})'.\
