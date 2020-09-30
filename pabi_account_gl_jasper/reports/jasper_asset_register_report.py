@@ -113,8 +113,8 @@ class JasperAssetRegisterReport(models.TransientModel):
         params = {}
         params['date_start'] = date_start
         params['date_end'] = date_end
-        params['accum_depre_account_ids'] = accum_depre_account_ids
-        params['depre_account_ids'] = depre_account_ids
+        params['accum_depre_account_ids'] = str(accum_depre_account_ids)
+        params['depre_account_ids'] = str(depre_account_ids)
         params['fiscalyear_start'] = fiscalyear_start
         params['condition'] = ' where ' +  (' and '.join(map(str, dom)))
         return { 
