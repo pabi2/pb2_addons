@@ -145,6 +145,7 @@
         <record id="view_print_internal_charge_tree" model="ir.ui.view">
             <field name="name">view.print.internal.charge.tree</field>
             <field name="model">hr.expense.expense</field>
+            <field name="mode">primary</field>
             <field name="arch" type="xml">
             	<tree string="Print Internal Charge" create="0" edit="0">
             	    <field name="number" string="Expense" readonly="1"/>
