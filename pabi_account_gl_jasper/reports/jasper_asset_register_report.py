@@ -78,8 +78,8 @@ class JasperAssetRegisterReport(models.TransientModel):
             elif self.asset_active == 'inactive':
                 dom += [('asset.active = {}'.format(False))]
         # date_start <= date_end
-        if self.date_end:
-            dom += [('asset.date_start <= \'{}\''.format(self.date_end))]
+#         if self.date_end:
+#             dom += [('asset.date_start <= \'{}\''.format(self.date_end))]
 
         # Prepare fixed params
         date_start = False
