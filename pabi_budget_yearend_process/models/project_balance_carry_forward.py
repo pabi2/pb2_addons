@@ -213,7 +213,6 @@ class ProjectBalanceCarryForward(models.Model):
                             balance_amount = 0.0
                             budget.write({'released_amount': released_amount})
                             break
-
                     line.write({'state': 'success'})
         # update project released amount
         fiscalyear = self.to_fiscalyear_id
@@ -306,7 +305,8 @@ class ProjectBalanceCarryForward(models.Model):
                 # ext_consumed_amount = project.monitor_expense_ids.filtered(
                 #     lambda l: l.fiscalyear_id == self.from_fiscalyear_id and
                 #     l.charge_type == 'external').amount_consumed
-                project._release_fiscal_budget(
+                project.with_context(
+                    ignore_current_fy_lock=True)._release_fiscal_budget(
                     self.from_fiscalyear_id, ext_consumed_amount)
                 # create history when adjust released amount
                 project.budget_release_ids.create({
