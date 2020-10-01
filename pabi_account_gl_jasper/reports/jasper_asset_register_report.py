@@ -5,6 +5,38 @@ class JasperAssetRegisterReport(models.TransientModel):
     _name = 'jasper.asset.register.report'
     _inherit = 'asset.register.report'
     
+    # Note: report setting
+    accum_depre_account_type = fields.Many2one(
+        'account.account.type',
+        string='Account Type for Accum.Depre.',
+        required=True,
+        help="Define account type for accumulated depreciation account, "
+        "to be used in report query SQL.",
+        default=lambda self: self.env['account.account.type'].search([('name','=','Accumulated Depreciation')]),
+    )
+    depre_account_type = fields.Many2one(
+        'account.account.type',
+        string='Account Type for Depre.',
+        required=True,
+        help="Define account type for depreciation account, "
+        "to be used in report query SQL.",
+        default=lambda self: self.env['account.account.type'].search([('name','=','Depreciation')]),
+    )
+    budget = fields.Many2many(
+        'chartfield.view',
+        'jasper_asset_register_chartfield_rel',
+        'wizard_id', 'chartfield_id',
+        string='Source Budget',
+        domain=[('model', '!=', 'res.personnel.costcenter')],
+    )
+    owner_budget = fields.Many2many(
+        'chartfield.view',
+        'jasper_asset_register_owner_chartfield_rel',
+        'wizard_id', 'chartfield_id',
+        string='Owner Budget',
+        domain=[('model', '!=', 'res.personnel.costcenter')],
+    )
+    
     @api.multi
     def _compute_results(self):
         self.ensure_one()
@@ -58,7 +90,7 @@ class JasperAssetRegisterReport(models.TransientModel):
                 state_name = self.env['xlsx.report.status'].\
                 search([('id', '=', state.id)])
                 res += [str(state_name.status)]
-            if len(self.asset_state) == 1 : 
+            if len(self.asset_state) == 1 :
                 dom += [('asset.state in (\'{}\')'.format(str(state_name.status)))]
             else : 
                 dom += [('asset.state in {}'.format(tuple(res)))]
