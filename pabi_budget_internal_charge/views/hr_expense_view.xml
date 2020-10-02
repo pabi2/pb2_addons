@@ -147,6 +147,14 @@
             <field name="model">hr.expense.expense</field>
             <field name="inherit_id" ref="hr_expense.view_hr_expense_filter"/>
             <field name="arch" type="xml">
+				<filter name="draft" domain="[('state','=','draft')]" string="Draft" position="replace"/>
+				<filter name="confirm" domain="[('state','=','confirm')]" string="Wait for Accept" position="replace"/>
+				<filter name="confirm_current" domain="[('state','=','confirm'),('date','&gt;=',(context_today()+relativedelta(months=3)-relativedelta(years=1)).strftime('%%Y-10-01')),('date','&lt;=',(context_today()+relativedelta(months=3)).strftime('%%Y-09-30'))]" string="Wait for Accept (Current FY)" position="replace"/>
+				<filter name="confirm_Past" domain="[('state','=','confirm'),('date','&lt;',(context_today()+relativedelta(months=3)-relativedelta(years=1)).strftime('%%Y-10-01'))]" string="Wait for Accept (Past FY)" position="replace"/>	
+				<filter name="accepted" domain="[('state','=','accepted')]" string="Accepted" position="replace"/>
+				<filter name="done" domain="[('state','=','done')]" string="Waiting Payment" position="replace"/>
+				<filter name="paid" domain="[('state','=','paid')]" string="Paid" position="replace"/>
+				<filter name="cancelled" domain="[('state','=','cancelled')]" string="Rejected" position="replace"/>
 				<xpath expr="/search/group" position="replace">
 					<group expand="0" string="Group By">
 		                <filter string="Internal Section" domain="[]" context="{'group_by':'internal_section_id'}"/>
