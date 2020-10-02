@@ -141,7 +141,26 @@
             <!-- <field name="domain">[('user_ic_allowed', '=', False)]</field> -->
             <field name="domain">[('expense_id.pay_to', '=', 'internal')]</field>
         </record>
-	<!--Print Internal Charge-->       
+	<!--Print Internal Charge-->  
+        <record id="view_hr_expense_filter" model="ir.ui.view">
+            <field name="name">hr.expense.filter</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense.view_hr_expense_filter"/>
+            <field name="arch" type="xml">
+				<xpath expr="/search/group" position="replace">
+					<group expand="0" string="Group By">
+		                <filter string="Internal Section" domain="[]" context="{'group_by':'internal_section_id'}"/>
+		                <filter string="Internal Project" domain="[]" context="{'group_by':'internal_project_id'}"/>
+		                <filter string="Budget Section (User)" domain="[]" context="{'group_by':'section_id'}"/>
+		                <filter string="Budget Section(project)" domain="[]" context="{'group_by':'project_id'}"/>
+		                <filter string="Approve Date" domain="[]" context="{'group_by':'date'}"/>
+		                <filter string="Employee" domain="[]" context="{'group_by':'employee_id'}"/>
+		                <filter string="Expense State" domain="[]" context="{'group_by':'state'}"/>
+		            </group>
+				</xpath>
+            </field>
+        </record>
+             
         <record id="view_print_internal_charge_tree" model="ir.ui.view">
             <field name="name">view.print.internal.charge.tree</field>
             <field name="model">hr.expense.expense</field>
@@ -161,6 +180,7 @@
                </tree>
             </field>
         </record>
+        
         <record id="action_print_internal_charge" model="ir.actions.act_window">
             <field name="name">Print Internal Charge Receipt</field>
             <field name="res_model">hr.expense.expense</field>
