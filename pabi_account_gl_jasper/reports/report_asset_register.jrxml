@@ -191,7 +191,10 @@ aas.name as asset_status,
 (case
  when asset.state = 'open' then 'running'
  else asset.state
-end) as asset_state
+end) as asset_state,
+asset.asset_brand asasset_brand,
+asset.asset_model as asset_model,
+asset.note as note
             from (
         select a.*, a.id asset_id, aap.account_asset_id,
 	aa.code as account_code, aa.name as account_name,
@@ -502,7 +505,7 @@ left join account_account aa on aap.account_asset_id = aa.id
 		<property name="com.jaspersoft.studio.field.label" value="warranty_expire_date"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="account_asset"/>
 	</field>
-	<field name="fiscal_year" class="java.lang.Double">
+	<field name="fiscal_year" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="fiscal_year"/>
 	</field>
 	<field name="purchase_before_current" class="java.lang.Double">
@@ -545,6 +548,15 @@ left join account_account aa on aap.account_asset_id = aa.id
 	</field>
 	<field name="asset_state" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="asset_state"/>
+	</field>
+	<field name="asasset_brand" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="asasset_brand"/>
+	</field>
+	<field name="asset_model" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="asset_model"/>
+	</field>
+	<field name="note" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="note"/>
 	</field>
 	<pageHeader>
 		<band height="28"/>
@@ -637,7 +649,7 @@ left join account_account aa on aap.account_asset_id = aa.id
 				<text><![CDATA[Asset Profile Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="504" y="0" width="87" height="43" backcolor="#BDD7EE" uuid="0c859c15-ad67-4d02-95f7-361f1b7342d1">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="504" y="0" width="66" height="43" backcolor="#BDD7EE" uuid="0c859c15-ad67-4d02-95f7-361f1b7342d1">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -651,7 +663,7 @@ left join account_account aa on aap.account_asset_id = aa.id
 				<text><![CDATA[Asset Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="591" y="0" width="105" height="43" backcolor="#BDD7EE" uuid="b146ef88-c70f-40c7-91c1-410ae9e4a6c3">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="570" y="0" width="78" height="43" backcolor="#BDD7EE" uuid="b146ef88-c70f-40c7-91c1-410ae9e4a6c3">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -665,7 +677,7 @@ left join account_account aa on aap.account_asset_id = aa.id
 				<text><![CDATA[Asset Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="696" y="0" width="87" height="43" backcolor="#BDD7EE" uuid="4fdc2049-336b-49f7-8e88-20c9123a7afe">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="648" y="0" width="82" height="43" backcolor="#BDD7EE" uuid="4fdc2049-336b-49f7-8e88-20c9123a7afe">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -679,7 +691,7 @@ left join account_account aa on aap.account_asset_id = aa.id
 				<text><![CDATA[Asset Parent]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="783" y="0" width="87" height="43" backcolor="#BDD7EE" uuid="8b0b170a-4f47-49a1-aefd-718ba66c91a1">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="730" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="8b0b170a-4f47-49a1-aefd-718ba66c91a1">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -693,7 +705,7 @@ left join account_account aa on aap.account_asset_id = aa.id
 				<text><![CDATA[Asset Type]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="870" y="0" width="100" height="43" backcolor="#BDD7EE" uuid="9df470a9-f0bf-4b39-9c9a-39d56b7f3757">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="800" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="9df470a9-f0bf-4b39-9c9a-39d56b7f3757">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1269,7 +1281,7 @@ Current FY]]></text>
 				<text><![CDATA[Net Book Value]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4520" y="0" width="87" height="43" backcolor="#BDD7EE" uuid="a4a0e9fb-7717-41d5-bb6e-93737cbad9c9">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4520" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="a4a0e9fb-7717-41d5-bb6e-93737cbad9c9">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1283,7 +1295,7 @@ Current FY]]></text>
 				<text><![CDATA[Number of Years]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4607" y="0" width="89" height="43" backcolor="#BDD7EE" uuid="46b93761-f5e1-4cfc-a22f-d9fe85cdfca5">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4590" y="0" width="73" height="43" backcolor="#BDD7EE" uuid="46b93761-f5e1-4cfc-a22f-d9fe85cdfca5">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1297,7 +1309,7 @@ Current FY]]></text>
 				<text><![CDATA[Adjustment]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4696" y="0" width="87" height="43" backcolor="#BDD7EE" uuid="42f2b102-d9a2-4913-ae05-0ad274ed24b0">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4663" y="0" width="74" height="43" backcolor="#BDD7EE" uuid="42f2b102-d9a2-4913-ae05-0ad274ed24b0">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1311,7 +1323,7 @@ Current FY]]></text>
 				<text><![CDATA[Asset Status]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4783" y="0" width="87" height="43" backcolor="#BDD7EE" uuid="e92ad430-e3a9-4839-b61c-3bcac29e4d60">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4737" y="0" width="73" height="43" backcolor="#BDD7EE" uuid="e92ad430-e3a9-4839-b61c-3bcac29e4d60">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1325,7 +1337,7 @@ Current FY]]></text>
 				<text><![CDATA[Asset Removal Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4870" y="0" width="87" height="43" backcolor="#BDD7EE" uuid="025b00cc-189d-46a6-bde7-5ead657f4cd7">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4810" y="0" width="60" height="43" backcolor="#BDD7EE" uuid="025b00cc-189d-46a6-bde7-5ead657f4cd7">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1352,6 +1364,48 @@ Current FY]]></text>
 				</textElement>
 				<text><![CDATA[Responsible Person Name]]></text>
 			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="880" y="0" width="40" height="43" backcolor="#BDD7EE" uuid="7a8798e0-3785-4336-8e3a-0da36dc3d0cb">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Brand]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="920" y="0" width="50" height="43" backcolor="#BDD7EE" uuid="69dba0a2-6855-48a2-8ff5-eb3b706c1f66">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Model]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4870" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="3a53b3a4-4663-421e-94e2-62e5cece6da4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Note]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
@@ -1362,7 +1416,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{owner_org_name}]]></textFieldExpression>
 			</textField>
@@ -1371,7 +1425,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{product_category}]]></textFieldExpression>
 			</textField>
@@ -1380,7 +1434,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{account_code}]]></textFieldExpression>
 			</textField>
@@ -1389,7 +1443,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{account_name}]]></textFieldExpression>
 			</textField>
@@ -1398,7 +1452,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{asset_profile_code}]]></textFieldExpression>
 			</textField>
@@ -1407,52 +1461,52 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{asset_profile_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="504" y="0" width="87" height="20" uuid="d98b5117-8adf-4e78-bba1-be04a536fcb4">
+				<reportElement x="504" y="0" width="66" height="20" uuid="d98b5117-8adf-4e78-bba1-be04a536fcb4">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{asset_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="591" y="0" width="105" height="20" uuid="b8df15d5-44ff-4845-9647-1d06ace0cc71">
+				<reportElement x="570" y="0" width="78" height="20" uuid="b8df15d5-44ff-4845-9647-1d06ace0cc71">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{asset_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="696" y="0" width="87" height="20" uuid="a215e225-6f5b-4e29-b566-522df0c378e8">
+				<reportElement x="648" y="0" width="82" height="20" uuid="a215e225-6f5b-4e29-b566-522df0c378e8">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{asset_parent}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="783" y="0" width="87" height="20" uuid="9a35e13a-5ae7-4285-83d8-3fe75deb12f7">
+				<reportElement x="730" y="0" width="70" height="20" uuid="9a35e13a-5ae7-4285-83d8-3fe75deb12f7">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{asset_type}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="870" y="0" width="100" height="20" uuid="19e84351-6630-4fe6-ab45-8305bbdc4b34">
+				<reportElement x="800" y="0" width="80" height="20" uuid="19e84351-6630-4fe6-ab45-8305bbdc4b34">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{code2}]]></textFieldExpression>
 			</textField>
@@ -1461,7 +1515,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{accptance_date}]]></textFieldExpression>
 			</textField>
@@ -1470,7 +1524,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{asset_start_date}]]></textFieldExpression>
 			</textField>
@@ -1479,7 +1533,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{picking_date}]]></textFieldExpression>
 			</textField>
@@ -1488,7 +1542,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{picking_number}]]></textFieldExpression>
 			</textField>
@@ -1497,7 +1551,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{budget_type}]]></textFieldExpression>
 			</textField>
@@ -1506,7 +1560,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{source_budget_code}]]></textFieldExpression>
 			</textField>
@@ -1515,7 +1569,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{source_budget_name}]]></textFieldExpression>
 			</textField>
@@ -1524,7 +1578,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{owner_budget_code}]]></textFieldExpression>
 			</textField>
@@ -1533,7 +1587,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{owner_budget_name}]]></textFieldExpression>
 			</textField>
@@ -1542,7 +1596,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cost_center_code}]]></textFieldExpression>
 			</textField>
@@ -1551,7 +1605,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cost_center_name}]]></textFieldExpression>
 			</textField>
@@ -1560,7 +1614,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{source_of_fund}]]></textFieldExpression>
 			</textField>
@@ -1569,7 +1623,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{division_name}]]></textFieldExpression>
 			</textField>
@@ -1578,7 +1632,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sub_sector_name}]]></textFieldExpression>
 			</textField>
@@ -1587,7 +1641,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sector_name}]]></textFieldExpression>
 			</textField>
@@ -1596,7 +1650,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{building_name}]]></textFieldExpression>
 			</textField>
@@ -1605,7 +1659,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{floor_name}]]></textFieldExpression>
 			</textField>
@@ -1614,7 +1668,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{room_name}]]></textFieldExpression>
 			</textField>
@@ -1623,7 +1677,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{responsible_id}]]></textFieldExpression>
 			</textField>
@@ -1632,7 +1686,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{partner_id}]]></textFieldExpression>
 			</textField>
@@ -1641,7 +1695,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{partner_name}]]></textFieldExpression>
 			</textField>
@@ -1650,7 +1704,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{po_number}]]></textFieldExpression>
 			</textField>
@@ -1659,7 +1713,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pr_number}]]></textFieldExpression>
 			</textField>
@@ -1668,7 +1722,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{purchase_method}]]></textFieldExpression>
 			</textField>
@@ -1677,7 +1731,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{asset_request_code}]]></textFieldExpression>
 			</textField>
@@ -1686,7 +1740,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{asset_request_name}]]></textFieldExpression>
 			</textField>
@@ -1695,7 +1749,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pr_requester_code}]]></textFieldExpression>
 			</textField>
@@ -1704,7 +1758,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pr_requester_name}]]></textFieldExpression>
 			</textField>
@@ -1713,7 +1767,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pr_approve_date}]]></textFieldExpression>
 			</textField>
@@ -1722,7 +1776,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{serial_number}]]></textFieldExpression>
 			</textField>
@@ -1731,7 +1785,7 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{warranty_start_date}]]></textFieldExpression>
 			</textField>
@@ -1740,16 +1794,16 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{warranty_expire_date}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0.###;(###0.###-)" isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="3815" y="0" width="87" height="20" uuid="1b4ca197-2e1b-4cb3-9aed-d72cd32d382a">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fiscal_year}]]></textFieldExpression>
 			</textField>
@@ -1757,8 +1811,8 @@ Current FY]]></text>
 				<reportElement x="3902" y="0" width="96" height="20" uuid="b79854c8-fe8b-4bcc-b0ee-5288090b143b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{purchase_before_current}]]></textFieldExpression>
 			</textField>
@@ -1766,8 +1820,8 @@ Current FY]]></text>
 				<reportElement x="3998" y="0" width="87" height="20" uuid="4b96b76e-86a9-4e21-8125-25b1140573db">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{purchase_current}]]></textFieldExpression>
 			</textField>
@@ -1775,8 +1829,8 @@ Current FY]]></text>
 				<reportElement x="4085" y="0" width="87" height="20" uuid="e7eb4e15-fb04-49b5-b15a-4d67da549547">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{purchase_value}]]></textFieldExpression>
 			</textField>
@@ -1784,8 +1838,8 @@ Current FY]]></text>
 				<reportElement x="4172" y="0" width="87" height="20" uuid="a6ddf4b5-c861-4616-92e1-7326ebf087d9">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{accumulated_bf}]]></textFieldExpression>
 			</textField>
@@ -1793,8 +1847,8 @@ Current FY]]></text>
 				<reportElement x="4259" y="0" width="87" height="20" uuid="880fd734-61d4-4c45-b3f1-05675ebca9be">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{depreciation}]]></textFieldExpression>
 			</textField>
@@ -1802,8 +1856,8 @@ Current FY]]></text>
 				<reportElement x="4346" y="0" width="87" height="20" uuid="3cf742c9-4f1d-4492-b6be-ff3ae5bf1bd9">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{accumulated_depre_bf}]]></textFieldExpression>
 			</textField>
@@ -1811,53 +1865,53 @@ Current FY]]></text>
 				<reportElement x="4433" y="0" width="87" height="20" uuid="ac521e51-8c78-4a55-bbd4-959354fae2ef">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{net_book_value}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4520" y="0" width="87" height="20" uuid="f43e3a71-d9db-459b-b94c-cc2275e57162">
+				<reportElement x="4520" y="0" width="70" height="20" uuid="f43e3a71-d9db-459b-b94c-cc2275e57162">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{method_number}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4607" y="0" width="89" height="20" uuid="f3f68987-1936-4888-8a2a-d3157f6e6cde">
+				<reportElement x="4590" y="0" width="73" height="20" uuid="f3f68987-1936-4888-8a2a-d3157f6e6cde">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{adjustment}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4696" y="0" width="87" height="20" uuid="ccd02a06-2080-47c1-af82-6a0bece3187a">
+				<reportElement x="4663" y="0" width="74" height="20" uuid="ccd02a06-2080-47c1-af82-6a0bece3187a">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{asset_status}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement x="4783" y="0" width="87" height="20" uuid="5cee2aa8-0fc6-4156-b712-6906106a222e">
+				<reportElement x="4737" y="0" width="73" height="20" uuid="5cee2aa8-0fc6-4156-b712-6906106a222e">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{asset_removal_date}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="4870" y="0" width="87" height="20" uuid="7291be6b-58b4-475d-81b1-e6aa03bbe772">
+				<reportElement x="4810" y="0" width="60" height="20" uuid="7291be6b-58b4-475d-81b1-e6aa03bbe772">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{asset_state}]]></textFieldExpression>
 			</textField>
@@ -1866,9 +1920,36 @@ Current FY]]></text>
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
-					<font size="14"/>
+					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{responsible_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="880" y="0" width="40" height="20" uuid="68944ae6-b4af-4979-b302-26be228007cb">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{asasset_brand}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="920" y="0" width="50" height="20" uuid="885c8298-68dd-40f5-a9ea-15062f916272">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{asset_model}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="4870" y="0" width="90" height="20" uuid="2691566a-8505-4166-9920-9c9828847b66">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{note}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -1946,7 +2027,7 @@ Current FY]]></text>
 				<text><![CDATA[Net Book Value]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4520" y="0" width="87" height="43" backcolor="#BDD7EE" uuid="dcfb8a6f-2d26-4143-beb5-048b1bf04196">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4520" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="dcfb8a6f-2d26-4143-beb5-048b1bf04196">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1960,7 +2041,7 @@ Current FY]]></text>
 				<text><![CDATA[Number of Years]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4607" y="0" width="89" height="43" backcolor="#BDD7EE" uuid="55ab262a-dc73-4473-a02e-f53e62a6831d">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4590" y="0" width="73" height="43" backcolor="#BDD7EE" uuid="55ab262a-dc73-4473-a02e-f53e62a6831d">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1974,7 +2055,7 @@ Current FY]]></text>
 				<text><![CDATA[Adjustment]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4696" y="0" width="87" height="43" backcolor="#BDD7EE" uuid="a605d308-8a4f-49df-9859-1cfe4977a266">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4663" y="0" width="74" height="43" backcolor="#BDD7EE" uuid="a605d308-8a4f-49df-9859-1cfe4977a266">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1988,7 +2069,7 @@ Current FY]]></text>
 				<text><![CDATA[Asset Status]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4783" y="0" width="87" height="43" backcolor="#BDD7EE" uuid="6afa8a33-ca9d-49a8-af5a-27cfb5c78ae2">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4737" y="0" width="73" height="43" backcolor="#BDD7EE" uuid="6afa8a33-ca9d-49a8-af5a-27cfb5c78ae2">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -2002,7 +2083,7 @@ Current FY]]></text>
 				<text><![CDATA[Asset Removal Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4870" y="0" width="87" height="43" backcolor="#BDD7EE" uuid="1f7b0e12-c80c-461d-8136-061c121d2f60">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4810" y="0" width="60" height="43" backcolor="#BDD7EE" uuid="1f7b0e12-c80c-461d-8136-061c121d2f60">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -2396,7 +2477,7 @@ Current FY]]></text>
 				<text><![CDATA[Responsible Person ID]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="870" y="0" width="100" height="43" backcolor="#BDD7EE" uuid="9c327b7a-ac91-4f4e-a41e-451ee3104a8b">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="800" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="9c327b7a-ac91-4f4e-a41e-451ee3104a8b">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -2536,7 +2617,7 @@ Current FY]]></text>
 				<text><![CDATA[Owner Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="504" y="0" width="87" height="43" backcolor="#BDD7EE" uuid="8076f521-9828-4a96-9673-b0f740d149bb">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="504" y="0" width="66" height="43" backcolor="#BDD7EE" uuid="8076f521-9828-4a96-9673-b0f740d149bb">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -2550,7 +2631,7 @@ Current FY]]></text>
 				<text><![CDATA[Asset Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="591" y="0" width="105" height="43" backcolor="#BDD7EE" uuid="96fe8265-59b1-40c4-9a5f-9de8e6f4ec40">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="570" y="0" width="78" height="43" backcolor="#BDD7EE" uuid="96fe8265-59b1-40c4-9a5f-9de8e6f4ec40">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -2564,7 +2645,7 @@ Current FY]]></text>
 				<text><![CDATA[Asset Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="696" y="0" width="87" height="43" backcolor="#BDD7EE" uuid="00b005cb-bd4d-47b9-9ae4-b56c285250ae">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="648" y="0" width="82" height="43" backcolor="#BDD7EE" uuid="00b005cb-bd4d-47b9-9ae4-b56c285250ae">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -2578,7 +2659,7 @@ Current FY]]></text>
 				<text><![CDATA[Asset Parent]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="783" y="0" width="87" height="43" backcolor="#BDD7EE" uuid="d46b9b95-051d-4296-abc1-6ff6b81e3b4a">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="730" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="d46b9b95-051d-4296-abc1-6ff6b81e3b4a">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -2674,6 +2755,48 @@ Current FY]]></text>
 					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
 				</textElement>
 				<text><![CDATA[Asset Profile Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="880" y="0" width="40" height="43" backcolor="#BDD7EE" uuid="ec23c050-75d5-4804-bfbf-f8644258277c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Brand]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="920" y="0" width="50" height="43" backcolor="#BDD7EE" uuid="60eb9726-ac08-40d4-a69f-939a3bbc2d08">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Model]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="4870" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="2d7ca7b6-6638-4b8f-bdcb-a9cc16642f01">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Note]]></text>
 			</staticText>
 		</band>
 	</noData>
