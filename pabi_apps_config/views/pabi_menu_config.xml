@@ -1645,9 +1645,12 @@
       			<menuitem name="Asset Register Report" id="menu_asset_register_report"
           			action="pabi_account_report.action_asset_register_report_form"
           			sequence="2" parent="menu_account_asset_report"/>
+          		<menuitem name="Asset Register Report (New)" id="menu_asset_register_report_new"
+          			action="pabi_account_gl_jasper.action_jasper_asset_register_report_form"
+          			sequence="3" parent="menu_account_asset_report"/>
       			<menuitem name="Asset Estimate Report" id="menu_asset_estimate_report"
           			action="pabi_account_report.action_asset_estimate_report_form"
-          			sequence="3" parent="menu_account_asset_report"/>
+          			sequence="4" parent="menu_account_asset_report"/>
         
         # Warehouse
         <menuitem name="Warehouse" id="stock.menu_stock_root"
