@@ -72,6 +72,50 @@
             <field eval="1" name="perm_read"/>
             <field eval="0" name="perm_create"/>
         </record>
+<!-- กำหนดสิทธิ์ User การเงิน -->
 
+        <record id="rule_expense_allow_project_internal_charge_for_accountant" model="ir.rule">
+              <field name="name">Expense allowed project internal charge for Accountant</field>
+            <field name="model_id" ref="model_hr_expense_expense"/>
+            <field name="domain_force">[('pay_to', '=', 'internal')]</field>
+            <field name="groups" eval="[(4,ref('account.group_account_user'))]"/>
+            <field eval="0" name="perm_unlink"/>
+            <field eval="0" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="0" name="perm_create"/>
+        </record>
+
+        <record id="rule_expense_line_allow_project_internal_charge_for_accountant" model="ir.rule">
+              <field name="name">Expense Lines allowed project internal charge for Accountant</field>
+            <field name="model_id" ref="model_hr_expense_line"/>
+            <field name="domain_force">[('pay_to', '=', 'internal')]</field>
+            <field name="groups" eval="[(4,ref('account.group_account_user'))]"/>
+            <field eval="0" name="perm_unlink"/>
+            <field eval="0" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="0" name="perm_create"/>
+        </record>
+
+        <record id="rule_expense_allow_section_internal_charge_for_accountant" model="ir.rule">
+              <field name="name">Expense allowed section internal charge for Accountant</field>
+            <field name="model_id" ref="model_hr_expense_expense"/>
+             <field name="domain_force">[('pay_to', '=', 'internal')]</field>
+            <field name="groups" eval="[(4,ref('account.group_account_user'))]"/>
+            <field eval="0" name="perm_unlink"/>
+            <field eval="0" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="0" name="perm_create"/>
+        </record>
+
+        <record id="rule_expense_line_allow_section_internal_charge_for_accountant" model="ir.rule">
+              <field name="name">Expense Lines allowed section internal charge for Accountant</field>
+            <field name="model_id" ref="model_hr_expense_line"/>
+            <field name="domain_force">[('pay_to', '=', 'internal')]</field>
+            <field name="groups" eval="[(4,ref('account.group_account_user'))]"/>
+            <field eval="0" name="perm_unlink"/>
+            <field eval="0" name="perm_write"/>
+            <field eval="1" name="perm_read"/>
+            <field eval="0" name="perm_create"/>
+        </record>
     </data>
 </openerp>

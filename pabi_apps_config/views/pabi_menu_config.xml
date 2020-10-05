@@ -636,6 +636,10 @@
 		        	action="pabi_budget_internal_charge.action_internal_charge_line"
 		        	sequence="5" parent="hr_expense.next_id_49"
 		        	groups="pabi_budget_internal_charge.group_approve_ic_activity"/>
+		        <menuitem name="Print Internal Charge Receipt" id="menu_print_internal_charge"
+		        	action="pabi_budget_internal_charge.action_print_internal_charge"	
+          			sequence="6" parent="hr_expense.next_id_49"
+          			groups="pabi_budget_internal_charge.group_approve_ic_activity,account.group_account_user"/>
 			
 			# Expenses/Salary and Welfare
 			<delete id="hr_salary.menu_hr_salary_root" model="ir.ui.menu"/>
