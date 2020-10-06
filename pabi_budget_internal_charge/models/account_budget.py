@@ -30,7 +30,7 @@ class AccountBudget(models.Model):
         related='fiscalyear_id.control_ext_charge_only',
     )
     past_consumed_internal = fields.Float(
-        string='Past Actuals',
+        string='Past Actual',
         compute='_compute_past_future_rolling_internal',
         help="Actual for the past months (internal)",
     )

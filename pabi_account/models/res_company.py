@@ -35,3 +35,13 @@ class ResCompany(models.Model):
     bank_ids = fields.One2many(
         domain=['|', ('active', '=', False), ('active', '=', True)],
     )
+    #AR email
+    group_email_ar = fields.Char(
+        string='AR E-mail',
+        default='acf-adv@nstda.or.th',
+        size=500,
+    )
+    ar_send_to_groupmail_only = fields.Boolean(
+        string='Send to groupmail only',
+        default=False,
+    ) 

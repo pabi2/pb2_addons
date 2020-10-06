@@ -495,7 +495,7 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_LOCALE}.toString().equals("th_TH") ? "หากมีการแก้ไขขอให้แจ้งภายใน 7 วัน มิฉะนั้นสำนักงานฯ จะถือว่าถูกต้อง" :
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_LOCALE}.toString().equals("th_TH") ? "หากมีการแก้ไขขอให้แจ้งภายใน 7 วัน มิฉะนั้นสำนักงานฯ จะถือว่าถูกต้อง." :
 "Any change must be notified within 7 days. Otherwise, all will be considered as correct."]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">

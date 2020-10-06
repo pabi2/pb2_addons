@@ -14,3 +14,11 @@ class AccountConfigSettings(models.TransientModel):
         string="Taxbranch for Withholding Tax",
         related='company_id.wht_taxbranch_id',
     )
+    group_email_ar = fields.Char(
+        string='AR E-mail',
+        related='company_id.group_email_ar',
+    )
+    ar_send_to_groupmail_only = fields.Boolean(
+        string='Send to groupmail only',
+        related="company_id.ar_send_to_groupmail_only",
+    )
