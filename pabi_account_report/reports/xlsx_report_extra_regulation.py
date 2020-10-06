@@ -12,10 +12,10 @@ class XLSXReportExtraRegulation(models.TransientModel):
         string='Expense ID',
     )    
     date_start = fields.Date(
-        string="Date Start"
+        string="KV Posting Date Start"
     )
     date_end = fields.Date(
-        string="Date End"
+        string="KV Posting Date End"
     )
     results = fields.Many2many(
         'extra.reguation.line',
