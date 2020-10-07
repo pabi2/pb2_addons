@@ -5,12 +5,6 @@
             <field name="name">Asset Inactive Owner Report</field>
             <field name="model">jasper.report.asset.inactive.owner</field>
             <field name="arch" type="xml">
-				<script>
-		            $(document).ready(function(){
-		                $('.modal-dialog').css({'width': '30%', 'height': '50%'});
-		                $('.modal-body').css({'height': '100%'});
-		            });
-		        </script>
                 <form string="Asset Inactive Owner Report">
                 	<group>
 	                	<field name="calendar_period_id" string="Period"/>
