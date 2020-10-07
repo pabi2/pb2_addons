@@ -15,6 +15,25 @@
                 </field>
             </field>
         </record>
+        
+        <delete id="l10n_th_fields.view_partner_bank_form_inherit" model="ir.ui.view"/>
+
+	    <record id="view_partner_bank_form_inherit" model="ir.ui.view">
+	        <field name="name">Partner Bank Accounts - Journal</field>
+	        <field name="model">res.partner.bank</field>
+	        <field name="inherit_id" ref="account.view_partner_bank_form_inherit"/>
+	        <field name="arch" type="xml">
+	            <group name="accounting" position="attributes">
+	            	<attribute name="attrs" >{}</attribute>
+	            </group>
+	            <field name="bank" position="attributes">
+	            	<attribute name="on_change">1</attribute>
+	            </field>
+	            <xpath expr="//field[@name='bank_bic']" position="after">
+                    <field name="bank_branch"/>
+                </xpath>
+	        </field>
+	    </record>
 
         <!-- res.bank.branch.branch -->
         <record id="view_res_bank_master_form" model="ir.ui.view">
