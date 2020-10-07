@@ -9,7 +9,6 @@ class JasperReportAssetInactiveOwner(models.TransientModel):
     calendar_period_id = fields.Many2one(
         'account.period.calendar',
         string='Calendar Period',
-        domain=[('state', '=', 'draft')],
         required=True,
         default=lambda self: self.env['account.period.calendar'].find()
     )
