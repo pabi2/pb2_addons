@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.9.0.final using JasperReports Library version 6.9.0-cb8f9004be492ccc537180b49c026951f4220bf3  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="asset_inactive_owner_report" pageWidth="1662" pageHeight="842" columnWidth="1622" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5ec21290-d9b8-4d82-a505-b57588474c14">
-	<property name="com.jaspersoft.studio.unit." value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
-	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="asset_inactive_owner_report" pageWidth="2000" pageHeight="842" columnWidth="1960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5ec21290-d9b8-4d82-a505-b57588474c14">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="JasperReport Test#28043"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<parameter name="date_start" class="java.lang.String"/>
@@ -188,10 +179,12 @@ ORDER BY XX.asset_code;]]>
 		<property name="com.jaspersoft.studio.field.tree.path" value="account_asset_line"/>
 	</field>
 	<columnHeader>
-		<band height="25" splitType="Stretch">
+		<band height="43" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="100" height="25" backcolor="#D1E0EF" uuid="5b21b934-0768-46b0-84d5-80fc8ad872fe"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="100" height="43" backcolor="#D1E0EF" uuid="5b21b934-0768-46b0-84d5-80fc8ad872fe">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -204,7 +197,9 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Asset Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="100" y="0" width="150" height="25" backcolor="#D1E0EF" uuid="4e993fef-8164-42d8-9b2b-2d2f5c33eee4"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="100" y="0" width="250" height="43" backcolor="#D1E0EF" uuid="4e993fef-8164-42d8-9b2b-2d2f5c33eee4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -217,7 +212,9 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Asset Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="250" y="0" width="80" height="25" backcolor="#D1E0EF" uuid="6848d7f5-60f0-4195-8f7a-eed2e7e23fc4"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="350" y="0" width="100" height="43" backcolor="#D1E0EF" uuid="6848d7f5-60f0-4195-8f7a-eed2e7e23fc4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -230,7 +227,9 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Budget Type]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="330" y="0" width="80" height="25" backcolor="#D1E0EF" uuid="d6ab8136-f9db-44c0-99b3-d3bf854bbded"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="450" y="0" width="80" height="43" backcolor="#D1E0EF" uuid="d6ab8136-f9db-44c0-99b3-d3bf854bbded">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -243,7 +242,9 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Source Budget Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="410" y="0" width="160" height="25" backcolor="#D1E0EF" uuid="e23ea31f-d649-4437-b822-10810fe2d220"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="530" y="0" width="249" height="43" backcolor="#D1E0EF" uuid="e23ea31f-d649-4437-b822-10810fe2d220">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -256,7 +257,9 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Source Budget Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="570" y="0" width="50" height="25" backcolor="#D1E0EF" uuid="dfe09ca9-818e-4200-a231-d9aa48a97c7e"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="780" y="0" width="60" height="43" backcolor="#D1E0EF" uuid="dfe09ca9-818e-4200-a231-d9aa48a97c7e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -269,7 +272,9 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Owner Org]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="620" y="0" width="70" height="25" backcolor="#D1E0EF" uuid="b8e369a9-fbec-4e25-aa25-5821dc802d32"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="840" y="0" width="80" height="43" backcolor="#D1E0EF" uuid="b8e369a9-fbec-4e25-aa25-5821dc802d32">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -282,7 +287,9 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Owner Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="690" y="0" width="170" height="25" backcolor="#D1E0EF" uuid="156935fe-84af-4f6c-8737-408d5b644027"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="920" y="0" width="240" height="43" backcolor="#D1E0EF" uuid="156935fe-84af-4f6c-8737-408d5b644027">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -295,7 +302,9 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Owner Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="860" y="0" width="60" height="25" backcolor="#D1E0EF" uuid="43d12f09-6e8d-4e2d-be1a-2e4658e8b26f"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1160" y="0" width="60" height="43" backcolor="#D1E0EF" uuid="43d12f09-6e8d-4e2d-be1a-2e4658e8b26f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -308,7 +317,9 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Owner Active]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="920" y="0" width="100" height="25" backcolor="#D1E0EF" uuid="ce910050-1c80-405d-832b-7fce0349ee03"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1220" y="0" width="100" height="43" backcolor="#D1E0EF" uuid="ce910050-1c80-405d-832b-7fce0349ee03">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -321,7 +332,9 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Purchase Value]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1020" y="0" width="80" height="25" backcolor="#D1E0EF" uuid="82efd1de-3399-49f1-8e07-679819f22939"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1320" y="0" width="80" height="43" backcolor="#D1E0EF" uuid="82efd1de-3399-49f1-8e07-679819f22939">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -334,7 +347,9 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Responsible Person]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1100" y="0" width="100" height="25" backcolor="#D1E0EF" uuid="23873d4c-6703-4bd7-8b53-7533e572c3bb"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1400" y="0" width="100" height="43" backcolor="#D1E0EF" uuid="23873d4c-6703-4bd7-8b53-7533e572c3bb">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -347,7 +362,9 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Responsible Person Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1200" y="0" width="60" height="25" backcolor="#D1E0EF" uuid="0ac8dd84-7f8a-43d1-8b1d-166be2e419c8"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1500" y="0" width="60" height="43" backcolor="#D1E0EF" uuid="0ac8dd84-7f8a-43d1-8b1d-166be2e419c8">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -360,7 +377,9 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Building]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1260" y="0" width="40" height="25" backcolor="#D1E0EF" uuid="c37d6fb2-d066-4eaf-b0f8-d6c25aa98958"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1560" y="0" width="40" height="43" backcolor="#D1E0EF" uuid="c37d6fb2-d066-4eaf-b0f8-d6c25aa98958">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -373,7 +392,9 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Floor]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1300" y="0" width="60" height="25" backcolor="#D1E0EF" uuid="c46cd34e-a6a3-45e9-9f48-c3aff8887cd9"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1600" y="0" width="60" height="43" backcolor="#D1E0EF" uuid="c46cd34e-a6a3-45e9-9f48-c3aff8887cd9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -386,7 +407,9 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Room]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1360" y="0" width="60" height="25" backcolor="#D1E0EF" uuid="f49726ae-aacb-4374-89f1-243fd0c3ac33"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1660" y="0" width="60" height="43" backcolor="#D1E0EF" uuid="f49726ae-aacb-4374-89f1-243fd0c3ac33">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -399,7 +422,9 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Asset State]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1420" y="0" width="80" height="25" backcolor="#D1E0EF" uuid="063917ea-6724-4edb-b96f-53535c171eaf"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1720" y="0" width="120" height="43" backcolor="#D1E0EF" uuid="063917ea-6724-4edb-b96f-53535c171eaf">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -412,7 +437,9 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Asset Note]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1500" y="0" width="50" height="25" backcolor="#D1E0EF" uuid="2b0d72cc-5e9a-4bef-9195-8c1212c81c30"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1840" y="0" width="50" height="43" backcolor="#D1E0EF" uuid="2b0d72cc-5e9a-4bef-9195-8c1212c81c30">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -425,7 +452,9 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Asset Active]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1550" y="0" width="70" height="25" backcolor="#D1E0EF" uuid="921d4311-dd71-4808-905c-697cb3456612"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1890" y="0" width="70" height="43" backcolor="#D1E0EF" uuid="921d4311-dd71-4808-905c-697cb3456612">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -453,7 +482,7 @@ ORDER BY XX.asset_code;]]>
 				<textFieldExpression><![CDATA[$F{asset_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="100" y="0" width="150" height="20" uuid="ff2fa253-cd91-4290-9d85-5783a4ec9553">
+				<reportElement x="100" y="0" width="250" height="20" uuid="ff2fa253-cd91-4290-9d85-5783a4ec9553">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
@@ -462,7 +491,7 @@ ORDER BY XX.asset_code;]]>
 				<textFieldExpression><![CDATA[$F{asset_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="250" y="0" width="80" height="20" uuid="a07f73b5-4c2f-479d-a395-163d22f3de96">
+				<reportElement x="350" y="0" width="100" height="20" uuid="a07f73b5-4c2f-479d-a395-163d22f3de96">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
@@ -471,7 +500,7 @@ ORDER BY XX.asset_code;]]>
 				<textFieldExpression><![CDATA[$F{budget_type}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="330" y="0" width="80" height="20" uuid="7468e813-8cde-4054-8f8f-438cb30cd4f9">
+				<reportElement x="450" y="0" width="80" height="20" uuid="7468e813-8cde-4054-8f8f-438cb30cd4f9">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
@@ -480,7 +509,7 @@ ORDER BY XX.asset_code;]]>
 				<textFieldExpression><![CDATA[$F{source_budget_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="410" y="0" width="160" height="20" uuid="34d251a6-92c5-4f47-b076-9be6ae26e448">
+				<reportElement x="530" y="0" width="249" height="20" uuid="34d251a6-92c5-4f47-b076-9be6ae26e448">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
@@ -489,7 +518,7 @@ ORDER BY XX.asset_code;]]>
 				<textFieldExpression><![CDATA[$F{source_budget_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="570" y="0" width="50" height="20" uuid="acfe5a7f-37c4-4c64-aa18-c4bf7afda509">
+				<reportElement x="780" y="0" width="60" height="20" uuid="acfe5a7f-37c4-4c64-aa18-c4bf7afda509">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
@@ -498,7 +527,7 @@ ORDER BY XX.asset_code;]]>
 				<textFieldExpression><![CDATA[$F{owner_org}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="620" y="0" width="70" height="20" uuid="962a7d84-d9d5-455e-b18c-2bcab0c55e90">
+				<reportElement x="840" y="0" width="80" height="20" uuid="962a7d84-d9d5-455e-b18c-2bcab0c55e90">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
@@ -507,7 +536,7 @@ ORDER BY XX.asset_code;]]>
 				<textFieldExpression><![CDATA[$F{owner_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="690" y="0" width="170" height="20" uuid="51874ffb-d2dd-4bb9-b543-4eb97098deec">
+				<reportElement x="920" y="-1" width="239" height="20" uuid="51874ffb-d2dd-4bb9-b543-4eb97098deec">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
@@ -516,7 +545,7 @@ ORDER BY XX.asset_code;]]>
 				<textFieldExpression><![CDATA[$F{owner_code_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="860" y="0" width="60" height="20" uuid="91379b4d-d312-4ab1-b3c1-fa96513dc50b">
+				<reportElement x="1160" y="0" width="60" height="20" uuid="91379b4d-d312-4ab1-b3c1-fa96513dc50b">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -525,7 +554,7 @@ ORDER BY XX.asset_code;]]>
 				<textFieldExpression><![CDATA[$F{owner_code_active}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="920" y="0" width="100" height="20" uuid="517afd95-3ad4-4273-8d18-857dec5b65df">
+				<reportElement x="1220" y="0" width="100" height="20" uuid="517afd95-3ad4-4273-8d18-857dec5b65df">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -534,7 +563,7 @@ ORDER BY XX.asset_code;]]>
 				<textFieldExpression><![CDATA[$F{purchase_value}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1020" y="0" width="80" height="20" uuid="7769a4c4-4091-4b80-85df-d2391fa66f30">
+				<reportElement x="1320" y="0" width="80" height="20" uuid="7769a4c4-4091-4b80-85df-d2391fa66f30">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
@@ -543,7 +572,7 @@ ORDER BY XX.asset_code;]]>
 				<textFieldExpression><![CDATA[$F{responsible_person}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1100" y="0" width="100" height="20" uuid="cb3ad2fc-18eb-4f07-8e16-9e86a2efbd39">
+				<reportElement x="1400" y="0" width="100" height="20" uuid="cb3ad2fc-18eb-4f07-8e16-9e86a2efbd39">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
@@ -552,7 +581,7 @@ ORDER BY XX.asset_code;]]>
 				<textFieldExpression><![CDATA[$F{responsible_person_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1200" y="0" width="60" height="20" uuid="326a9bd3-b5d6-492c-b664-28227e0999b1">
+				<reportElement x="1500" y="0" width="60" height="20" uuid="326a9bd3-b5d6-492c-b664-28227e0999b1">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
@@ -561,7 +590,7 @@ ORDER BY XX.asset_code;]]>
 				<textFieldExpression><![CDATA[$F{building}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1260" y="0" width="40" height="20" uuid="31e1f21a-3157-4192-946b-04cf7e4e2b7f">
+				<reportElement x="1560" y="0" width="40" height="20" uuid="31e1f21a-3157-4192-946b-04cf7e4e2b7f">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
@@ -570,7 +599,7 @@ ORDER BY XX.asset_code;]]>
 				<textFieldExpression><![CDATA[$F{floor}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1300" y="0" width="60" height="20" uuid="1694a598-5739-41b6-a732-9238791a8296">
+				<reportElement x="1600" y="0" width="60" height="20" uuid="1694a598-5739-41b6-a732-9238791a8296">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
@@ -579,16 +608,16 @@ ORDER BY XX.asset_code;]]>
 				<textFieldExpression><![CDATA[$F{room}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1360" y="0" width="60" height="20" uuid="a6a44982-64f9-43d9-81af-544fe9006250">
+				<reportElement x="1660" y="0" width="60" height="20" uuid="a6a44982-64f9-43d9-81af-544fe9006250">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<textElement verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{asset_state}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1550" y="0" width="70" height="20" uuid="8ca283f8-b636-405f-8e2a-8b73a0470ccb">
+				<reportElement x="1890" y="0" width="70" height="20" uuid="8ca283f8-b636-405f-8e2a-8b73a0470ccb">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -597,7 +626,7 @@ ORDER BY XX.asset_code;]]>
 				<textFieldExpression><![CDATA[$F{check_depreciate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1500" y="0" width="50" height="20" uuid="970c8428-7bdb-474f-9454-d9792cb4af6d">
+				<reportElement x="1840" y="0" width="50" height="20" uuid="970c8428-7bdb-474f-9454-d9792cb4af6d">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -606,7 +635,7 @@ ORDER BY XX.asset_code;]]>
 				<textFieldExpression><![CDATA[$F{asset_active}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1420" y="0" width="80" height="20" uuid="6f21c30f-f24a-41c0-981a-b379d31eb015">
+				<reportElement x="1720" y="0" width="120" height="20" uuid="6f21c30f-f24a-41c0-981a-b379d31eb015">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
@@ -617,12 +646,10 @@ ORDER BY XX.asset_code;]]>
 		</band>
 	</detail>
 	<noData>
-		<band height="25">
+		<band height="43">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="100" height="25" backcolor="#D1E0EF" uuid="7ec411e1-72a2-4ee0-8c5a-5d9232defc31">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="100" height="43" backcolor="#D1E0EF" uuid="7ec411e1-72a2-4ee0-8c5a-5d9232defc31"/>
 				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -635,9 +662,7 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Asset Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="100" y="0" width="150" height="25" backcolor="#D1E0EF" uuid="aed7fadc-3d31-4ca1-86e9-c3b87c1aac51">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="100" y="0" width="250" height="43" backcolor="#D1E0EF" uuid="aed7fadc-3d31-4ca1-86e9-c3b87c1aac51"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -650,9 +675,7 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Asset Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="250" y="0" width="80" height="25" backcolor="#D1E0EF" uuid="0316f6bb-52e5-4c9f-afee-63b6fb484830">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="350" y="0" width="100" height="43" backcolor="#D1E0EF" uuid="0316f6bb-52e5-4c9f-afee-63b6fb484830"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -665,9 +688,7 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Budget Type]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="330" y="0" width="80" height="25" backcolor="#D1E0EF" uuid="1653cbb8-7286-460e-8784-66f6675d5411">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="450" y="0" width="80" height="43" backcolor="#D1E0EF" uuid="1653cbb8-7286-460e-8784-66f6675d5411"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -680,9 +701,7 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Source Budget Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="410" y="0" width="160" height="25" backcolor="#D1E0EF" uuid="d8468c05-576b-4548-bea8-d8af3e0f8125">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="530" y="0" width="249" height="43" backcolor="#D1E0EF" uuid="d8468c05-576b-4548-bea8-d8af3e0f8125"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -695,9 +714,7 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Source Budget Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="570" y="0" width="50" height="25" backcolor="#D1E0EF" uuid="c2fe3447-367a-4ed5-b548-40309e250f9c">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="780" y="0" width="60" height="43" backcolor="#D1E0EF" uuid="c2fe3447-367a-4ed5-b548-40309e250f9c"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -710,9 +727,7 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Owner Org]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="620" y="0" width="70" height="25" backcolor="#D1E0EF" uuid="acb118c6-9ac3-4793-a9de-e3516b5bb3bd">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="840" y="0" width="80" height="43" backcolor="#D1E0EF" uuid="acb118c6-9ac3-4793-a9de-e3516b5bb3bd"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -725,8 +740,8 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Owner Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="690" y="0" width="170" height="25" backcolor="#D1E0EF" uuid="63d587f1-09d7-47fd-9a41-66c7ed2401f2">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="920" y="0" width="240" height="43" backcolor="#D1E0EF" uuid="63d587f1-09d7-47fd-9a41-66c7ed2401f2">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -740,9 +755,7 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Owner Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="860" y="0" width="60" height="25" backcolor="#D1E0EF" uuid="5d332c8d-3f3b-44be-ab7a-cc4ed24d357f">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1160" y="0" width="60" height="43" backcolor="#D1E0EF" uuid="5d332c8d-3f3b-44be-ab7a-cc4ed24d357f"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -755,9 +768,7 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Owner Active]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="920" y="0" width="100" height="25" backcolor="#D1E0EF" uuid="69fe9e58-d4f4-4362-8024-2a4465fdd868">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1220" y="0" width="100" height="43" backcolor="#D1E0EF" uuid="69fe9e58-d4f4-4362-8024-2a4465fdd868"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -770,9 +781,7 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Purchase Value]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1020" y="0" width="80" height="25" backcolor="#D1E0EF" uuid="a8bf61b7-75a7-4f80-80f7-cd7d42038a67">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1320" y="0" width="80" height="43" backcolor="#D1E0EF" uuid="a8bf61b7-75a7-4f80-80f7-cd7d42038a67"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -785,9 +794,7 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Responsible Person]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1100" y="0" width="100" height="25" backcolor="#D1E0EF" uuid="9348415d-9b0f-4763-a6fe-32f013ad4b82">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1400" y="0" width="100" height="43" backcolor="#D1E0EF" uuid="9348415d-9b0f-4763-a6fe-32f013ad4b82"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -800,9 +807,7 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Responsible Person Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1200" y="0" width="60" height="25" backcolor="#D1E0EF" uuid="bcbabc94-0bda-40b0-8d0d-01ebf9efaf79">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1500" y="0" width="60" height="43" backcolor="#D1E0EF" uuid="bcbabc94-0bda-40b0-8d0d-01ebf9efaf79"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -815,9 +820,7 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Building]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1260" y="0" width="40" height="25" backcolor="#D1E0EF" uuid="93a3c676-af2e-4fdc-9918-d932857717c0">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1560" y="0" width="40" height="43" backcolor="#D1E0EF" uuid="93a3c676-af2e-4fdc-9918-d932857717c0"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -830,9 +833,7 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Floor]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1300" y="0" width="60" height="25" backcolor="#D1E0EF" uuid="e5a874f1-d352-421a-a22a-f0b33df632c7">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1600" y="0" width="60" height="43" backcolor="#D1E0EF" uuid="e5a874f1-d352-421a-a22a-f0b33df632c7"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -845,9 +846,7 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Room]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1360" y="0" width="60" height="25" backcolor="#D1E0EF" uuid="b7e5496b-280a-4093-8c42-39278b34b26d">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1660" y="0" width="60" height="43" backcolor="#D1E0EF" uuid="b7e5496b-280a-4093-8c42-39278b34b26d"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -860,9 +859,7 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Asset State]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1420" y="0" width="80" height="25" backcolor="#D1E0EF" uuid="43ab9375-04a1-4a1d-be17-8fc970257d13">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1720" y="0" width="120" height="43" backcolor="#D1E0EF" uuid="43ab9375-04a1-4a1d-be17-8fc970257d13"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -875,7 +872,7 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Asset Note]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1500" y="0" width="50" height="25" backcolor="#D1E0EF" uuid="56eb27ce-6d13-41af-aa0a-6c9d9cb9d8ce">
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1840" y="0" width="50" height="43" backcolor="#D1E0EF" uuid="56eb27ce-6d13-41af-aa0a-6c9d9cb9d8ce">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -890,9 +887,7 @@ ORDER BY XX.asset_code;]]>
 				<text><![CDATA[Asset Active]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1550" y="0" width="70" height="25" backcolor="#D1E0EF" uuid="88c4337f-5dc0-454f-bfef-a38b87720d92">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1890" y="0" width="70" height="43" backcolor="#D1E0EF" uuid="88c4337f-5dc0-454f-bfef-a38b87720d92"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
