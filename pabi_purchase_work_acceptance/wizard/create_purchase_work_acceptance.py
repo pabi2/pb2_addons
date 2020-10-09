@@ -19,10 +19,11 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             plans = Plan.search(
                 [
                     ('order_id', '=', self._context['active_id']),
-                    ('ref_invoice_id.state', '=', 'draft'),
+                    ('ref_invoice_id.state', '=', 'draft')
                 ],
                 order='installment'
             )
+            plans = plans.filtered(lambda l: not l.ref_invoice_id.wa_id)
             installments = list(set(plans.mapped('installment')))
             if 0 in installments:
                 installments.pop(0)
@@ -70,6 +71,13 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         select=True,
     )
 
+    def _related_wa_invoice(self, select_plan, acceptance):
+        select_plan.ref_invoice_id.write({
+            'wa_origin_id': acceptance.id,
+            'wa_id': acceptance.id
+        })
+        return True
+
     @api.multi
     def _prepare_acceptance_plan_line(self, plan_installment):
         self.ensure_one()
@@ -80,8 +88,9 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
                 ('order_id', '=', self._context['active_id']),
                 ('ref_invoice_id.state', '=', 'draft'),
             ],
-            order='installment', limit=1
+            order='installment'
         )
+        plan = plan.filtered(lambda l: not l.ref_invoice_id.wa_id)[0]
         select_plan = Plan.search(
             [
                 ('order_id', '=', self._context['active_id']),
@@ -131,7 +140,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         #         }
         #         items.append([0, 0, vals])
         #     break
-        return items
+        return items, select_plan
 
     @api.model
     def _prepare_item(self, line):
@@ -231,9 +240,10 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
     @api.model
     def _prepare_acceptance(self):
         lines = []
+        select_plan = False
         PWAcceptance = self.env['purchase.work.acceptance']
         if self.is_invoice_plan:
-            items = \
+            items, select_plan = \
                 self._prepare_acceptance_plan_line(self.select_invoice_plan)
             lines = items
         else:
@@ -264,6 +274,8 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             'acceptance_line_ids': lines,
         }
         acceptance = PWAcceptance.create(vals)
+        if select_plan:
+            self._related_wa_invoice(select_plan, acceptance)
         # acceptance.write({'acceptance_line_ids': lines})
         acceptance._compute_total_fine()
         return acceptance

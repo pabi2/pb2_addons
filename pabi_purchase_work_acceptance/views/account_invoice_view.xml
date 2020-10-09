@@ -20,6 +20,7 @@
 	        <field name="arch" type="xml">
 	            <xpath expr="//field[@name='fiscal_position']" position="after">
 	                <field name="late_delivery_work_acceptance_id" />
+                    <field name="wa_id" />
 	            </xpath>
 	        </field>
 	    </record>
