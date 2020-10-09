@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="view_xlsx_report_extend_the_repayment" model="ir.ui.view">
+            <field name="name">view.xlsx.report.extend.the.repayment</field>
+            <field name="model">xlsx.report.extend.the.repayment</field>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+            	<group>
+					<field name="partner_id" />
+					<field name="calendar_period_id"/>   
+				</group>
+				<footer>
+					<button name="start_report" string="Execute"  type="object" class="oe_highlight"/>
+					or
+              		<button string="Cancel" class="oe_link" special="cancel"/>
+         		</footer>         
+            </field>
+        </record>
+        
+        <record id="action_xlsx_report_extend_the_repayment" model="ir.actions.act_window">
+            <field name="name">Extend the repayment</field>
+            <field name="res_model">xlsx.report.extend.the.repayment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</openerp>
