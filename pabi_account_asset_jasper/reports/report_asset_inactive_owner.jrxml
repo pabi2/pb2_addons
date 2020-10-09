@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.9.0.final using JasperReports Library version 6.9.0-cb8f9004be492ccc537180b49c026951f4220bf3  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="asset_inactive_owner_report" pageWidth="2110" pageHeight="842" columnWidth="2070" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5ec21290-d9b8-4d82-a505-b57588474c14">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="asset_inactive_owner_report" pageWidth="2110" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="2070" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="5ec21290-d9b8-4d82-a505-b57588474c14">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="JasperReport Test#28043"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="ireport.jasperserver.url" value="https://r-test.intra.nstda.or.th/jasperserver/"/>
 	<property name="ireport.jasperserver.user" value="api_pabi2"/>
 	<property name="ireport.jasperserver.reportUnit" value="/Reports/API/PABI2/pabi2o_test_28046_intra_nstda_or_th/pb2/report_asset_inactive_owner"/>
-	<property name="ireport.jasperserver.report.resource" value="/Reports/API/PABI2/pabi2o_test_28046_intra_nstda_or_th/pb2/report_asset_inactive_owner_files/main_jrxml"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
@@ -16,6 +15,7 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="ireport.jasperserver.report.resource" value="/Reports/API/PABI2/pabi2o_test_28046_intra_nstda_or_th/pb2/report_asset_inactive_owner_files/main_jrxml"/>
 	<parameter name="date_start" class="java.lang.String"/>
 	<parameter name="date_end" class="java.lang.String"/>
 	<queryString>
@@ -659,7 +659,7 @@ ORDER BY XX.asset_code;]]>
 		</band>
 	</detail>
 	<noData>
-		<band height="43">
+		<band height="65">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="120" height="43" backcolor="#D1E0EF" uuid="7ec411e1-72a2-4ee0-8c5a-5d9232defc31"/>
@@ -911,6 +911,15 @@ ORDER BY XX.asset_code;]]>
 					<font fontName="TH SarabunPSK" size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Check Depreciate]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="43" width="100" height="20" uuid="243bf29b-2bf8-4f34-bcb2-96ebe3d08987">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<text><![CDATA[- ไม่มีข้อมูล -]]></text>
 			</staticText>
 		</band>
 	</noData>
