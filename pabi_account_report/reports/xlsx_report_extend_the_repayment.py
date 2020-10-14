@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
-from openerp import tools
-from openerp import models, fields, api
-from openerp.exceptions import ValidationError
+from openerp import models, fields, api, tools
 
-
+  
 class XLSXReportExtendTheRepayment(models.TransientModel):
     _name = 'xlsx.report.extend.the.repayment'
     _inherit = 'xlsx.report'
     
-    partner_id = fields.Many2one(
+    partner_id = fields.Many2many(
         'res.partner',
         string='Partner',
     )    
@@ -66,3 +64,74 @@ class XLSXReportExtendTheRepayment(models.TransientModel):
          
 #         for line in sla_receipt:
 #             self.results += Result.new(line)
+    def _get_sql_view(self):
+        sql_view = """
+            
+        """
+        return sql_view
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
+                   % (self._table, self._get_sql_view()))
+        
+        
+class ExtendTheRepayment(models.Model):
+    _name = 'tax.exemption.view'
+        
+    org_code = fields.Char(
+        string='',
+        readonly=True,
+    )
+    month_old_due = fields.Date(
+        string='',
+        readonly=True,
+    )    
+    pabi_doc = fields.Char(
+        string='',
+        readonly=True,    
+    )
+    mysale_doc = fields.Char(
+        string='',
+        readonly=True,    
+    )
+    partner = fields.Char(
+        string='',
+        readonly=True,        
+    )
+    display_name2 = fields.Char(
+        string='',
+        readonly=True,
+    )
+    category_name = fields.Char(
+        string='',
+        readonly=True,
+    )
+    activity_list = fields.Char(
+        string='',
+        readonly=True,
+    )
+    date_document = fields.Date(
+        string='',
+        readonly=True,
+    )
+    date_old_due = fields.Date(
+        string='',
+        readonly=True,
+    )
+    date_due = fields.Date(
+        string='',
+        readonly=True,
+    )
+    daydiff1 = fields.Integer(
+        string='',
+        readonly=True,
+    )
+    daydiff2 = fields.Integer(
+        string='',
+        readonly=True,
+    )
+    reason = fields.Char(
+        string='',
+        readonly=True,
+    ) 
