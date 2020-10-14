@@ -39,12 +39,18 @@ class StockTransferDetails(models.TransientModel):
 
     @api.multi
     def _validate_asset_line(self):
+        Acceptance = self.env['purchase.work.acceptance']
+        acceptance = self._context.get('acceptance', False)
+        if acceptance:
+            acceptance_id = Acceptance.browse(acceptance)
         for rec in self:
+            acceptance_line = acceptance_id and \
+                acceptance_id.acceptance_line_ids.mapped('price_unit')
+            if 0.0 in acceptance_line:
+                raise ValidationError(_('For asset, Price Unit '
+                                        'must be whole number.'))
             for line in rec.item_ids:
                 if line.product_id.asset and line.quantity:
-                    if not line.price_unit:
-                        raise ValidationError(_('For asset, Price Unit '
-                                                'must be whole number.'))
                     if not line.quantity.is_integer():
                         raise ValidationError(_('For asset, quantity '
                                                 'must be whole number.'))

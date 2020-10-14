@@ -154,7 +154,7 @@ class AccountBudget(models.Model):
         store=True,
     )
     past_consumed = fields.Float(
-        string='Past Actuals',
+        string='Past Actual',
         compute='_compute_past_future_rolling',
         help="Actual for the past months",
     )
@@ -268,6 +268,14 @@ class AccountBudget(models.Model):
         # consumes = Consume.search(dom)
         # amount = sum(consumes.mapped('amount_actual'))
         # Change domain: [('x', '=', 'y')] to where str: x = 'y'
+        # sql = """
+        #     select coalesce(sum(amount_actual), 0.0) +
+        #         coalesce(sum(amount_so_commit), 0.0) +
+        #         coalesce(sum(amount_pr_commit), 0.0) +
+        #         coalesce(sum(amount_po_commit), 0.0) +
+        #         coalesce(sum(amount_exp_commit), 0.0) as amount_total_commit
+        #     from budget_consume_report where %s
+        # """ % self._domain_to_where_str(dom)
         sql = """
             select coalesce(sum(amount_actual), 0.0) amount_actual
             from budget_consume_report where %s
@@ -507,8 +515,111 @@ class AccountBudget(models.Model):
     #     self.write({'state': 'confirm'})
 
     @api.multi
+    def _prepare_budget_real_data_line(self, groups, name, activity=False):
+        self.ensure_one()
+        dict = [(0, 0, {
+            'charge_type': group['charge_type'],
+            'activity_group_id':
+                group.get('activity_group_id', False) or activity,
+            'description': name,
+            'budget_id': self.id,
+            'm1': group['m1'],
+            'm2': group['m2'],
+            'm3': group['m3'],
+            'm4': group['m4'],
+            'm5': group['m5'],
+            'm6': group['m6'],
+            'm7': group['m7'],
+            'm8': group['m8'],
+            'm9': group['m9'],
+            'm10': group['m10'],
+            'm11': group['m11'],
+            'm12': group['m12'],
+        }) for group in groups
+        ]
+        return dict
+
+    @api.multi
+    def _clear_amount_period(self, budget_period):
+        for line in budget_period:
+            if line.sequence == 1:
+                line.budget_line_id.m1 = 0.0
+            elif line.sequence == 2:
+                line.budget_line_id.m2 = 0.0
+            elif line.sequence == 3:
+                line.budget_line_id.m3 = 0.0
+            elif line.sequence == 4:
+                line.budget_line_id.m4 = 0.0
+            elif line.sequence == 5:
+                line.budget_line_id.m5 = 0.0
+            elif line.sequence == 6:
+                line.budget_line_id.m6 = 0.0
+            elif line.sequence == 7:
+                line.budget_line_id.m7 = 0.0
+            elif line.sequence == 8:
+                line.budget_line_id.m8 = 0.0
+            elif line.sequence == 9:
+                line.budget_line_id.m9 = 0.0
+            elif line.sequence == 10:
+                line.budget_line_id.m10 = 0.0
+            elif line.sequence == 11:
+                line.budget_line_id.m11 = 0.0
+            elif line.sequence == 12:
+                line.budget_line_id.m12 = 0.0
+
+    @api.multi
+    def _query_budget_line(self, group_by):
+        self.ensure_one()
+        self._cr.execute("""
+            select %s,
+            sum(m1) as m1, sum(m2) as m2, sum(m3) as m3, sum(m4) as m4,
+            sum(m5) as m5, sum(m6) as m6, sum(m7) as m7, sum(m8) as m8,
+            sum(m9) as m9, sum(m10) as m10, sum(m11) as m11,
+            sum(m12) as m12
+            from account_budget_line
+            where budget_id='%s' and budget_method = 'expense'
+            group by %s
+        """ % (group_by, self.id, group_by))
+        return self._cr.dictfetchall()
+
+    @api.multi
     def budget_draft(self):
         self.write({'state': 'draft'})
+        # """ Concept : group by budget lines by AG and Charge Type
+        #     and create new lines by group
+        # """
+        # for rec in self:
+        #     if not rec.budget_expense_line_ids:
+        #         rec.write({'state': 'draft'})
+        #         continue
+        #
+        #     # reset amount period < today in budget expense lines only
+        #     period = self.env['account.period'].find()
+        #     budget_period = rec.budget_expense_line_ids.mapped(
+        #         'period_split_line_ids').filtered(
+        #         lambda l: l.period_id.date_stop <= period.date_stop)
+        #
+        #     # query summary group by charge_type and activity_group_id
+        #     groups = 'charge_type, activity_group_id'
+        #     description = _('ข้อมูลจริงจาก PABI2')
+        #     group_by_res = rec._query_budget_line(group_by=groups)
+        #     sum_data = rec._prepare_budget_real_data_line(
+        #         group_by_res, name=description)
+        #
+        #     groups = 'charge_type'
+        #     description = _('ผูกพันคงค้างรอเบิกจ่าย')
+        #     activity = self.env['account.activity.group'].search([
+        #         ('code', '=', 'AG0017')
+        #     ])
+        #     group_by_res = rec._query_budget_line(group_by=groups)
+        #     sum2 = rec._prepare_budget_real_data_line(
+        #         group_by_res, name=description, activity=activity.id)
+        #     sum_data += sum2
+        #     rec._clear_amount_period(budget_period)
+        #     rec.write({
+        #         'budget_line_ids': sum_data,
+        #         'state': 'draft'
+        #     })
 
     # @api.multi
     # def budget_cancel(self):

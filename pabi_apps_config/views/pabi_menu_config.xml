@@ -636,6 +636,10 @@
 		        	action="pabi_budget_internal_charge.action_internal_charge_line"
 		        	sequence="5" parent="hr_expense.next_id_49"
 		        	groups="pabi_budget_internal_charge.group_approve_ic_activity"/>
+		        <menuitem name="Print Internal Charge Receipt" id="menu_print_internal_charge"
+		        	action="pabi_budget_internal_charge.action_print_internal_charge"	
+          			sequence="6" parent="hr_expense.next_id_49"
+          			groups="pabi_budget_internal_charge.group_approve_ic_activity,account.group_account_user"/>
 			
 			# Expenses/Salary and Welfare
 			<delete id="hr_salary.menu_hr_salary_root" model="ir.ui.menu"/>
@@ -1653,9 +1657,12 @@
       			<menuitem name="Asset Register Report" id="menu_asset_register_report"
           			action="pabi_account_report.action_asset_register_report_form"
           			sequence="2" parent="menu_account_asset_report"/>
+          		<menuitem name="Asset Register Report (New)" id="menu_asset_register_report_new"
+          			action="pabi_account_gl_jasper.action_jasper_asset_register_report_form"
+          			sequence="3" parent="menu_account_asset_report"/>
       			<menuitem name="Asset Estimate Report" id="menu_asset_estimate_report"
           			action="pabi_account_report.action_asset_estimate_report_form"
-          			sequence="3" parent="menu_account_asset_report"/>
+          			sequence="4" parent="menu_account_asset_report"/>
         
         # Warehouse
         <menuitem name="Warehouse" id="stock.menu_stock_root"

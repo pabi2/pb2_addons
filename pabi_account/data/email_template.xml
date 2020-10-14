@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data noupdate="1">
+
+        <!--Email template -->
+        <record id="email_template_receipt_voucher" model="email.template">
+            <field name="name">ReceiptVoucher employee - Send by Email</field>
+			<field name="model">account.voucher</field>
+			<field name="model_id" ref="account_bank_receipt.model_account_voucher" />
+			<field name="email_from">${(object.env.user.company_id.group_email_ar or 'noreply@localhost')|safe}</field>
+			<field name="partner_to"></field>
+            <field name="email_to"></field>
+            <field name="reply_to">${(object.env.user.company_id.group_email_ar or 'noreply@localhost')|safe}</field>
+            <field name="report_template" ref="pabi_forms.customer_receipt_voucher_form_th"/>
+            <field name="report_name">${object.number}</field>
+            <field name="lang">th_TH</field>
+			<field name="subject">หลักฐานประกอบการรับเงิน</field>
+            <field name="body_html"><![CDATA[
+             <div style="font-family: 'Lucica Grande', Ubuntu, Arial, Verdana, sans-serif; font-size: 20px; color: rgb(34, 34, 34); background-color: #FFF; ">
+             <p> <span>เรื่อง การจัดส่งใบรับเงิน ${object.number}</span></p>
+			 <p> <span>เรียน ${object.partner_id.name}</span></p><br>
+			 <p> <span>ฝ่ายการเงินและบัญชี ขอจัดส่งใบรับเงิน ทาง e-mail  เพื่อเป็นหลักฐานประกอบการรับเงิน </span></p><br>
+			 <p> <span>หากมีข้อสงสัยโปรดแจ้งกลับทาง e-mail : ${object.env.user.company_id.group_email_ar} </span></p><br>
+			 <p> <span>ฝ่ายการเงินและบัญชี</span></p>
+			 <p> <span>สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ</span></p>
+            <p> <img src="/l10n_th_account/static/src/img/logo_nstda.png" style="width: 250px;"/> </p>
+            ]]></field>
+        </record>
+    </data>
+</openerp>

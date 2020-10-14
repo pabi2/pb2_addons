@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <openerp>
 	<data noupdate="0">
+	    <!-- Journal document Entry -->
 		<record id="report_journal_document_entry" model="ir.actions.report.xml">
 			<field name="string">Journal document Entry VIEW</field>
 			<field name="auto">True</field>
@@ -21,6 +22,29 @@
 			<field name="model">jasper.report.journal.document.entry</field>
 			<field name="value_unpickle"
 				eval="'ir.actions.report.xml, ' +str(report_journal_document_entry)" />
+		</record>
+		
+		<!-- Jasper Asset Register -->
+		<record id="report_asset_register" model="ir.actions.report.xml">
+			<field name="string">Jasper Asset Register Report View</field>
+			<field name="auto">True</field>
+			<field name="model">jasper.asset.register.report</field>
+			<field name="jasper_model_id" ref="pabi_account_gl_jasper.model_jasper_asset_register_report" />
+			<field name="name">report_asset_register</field>
+			<field name="report_name">report_asset_register</field>
+			<field name="menu">False</field>
+			<field name="header">False</field>
+			<field name="report_type">jasperserver_rest_v2</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="jasper_report_path">/Reports/#SERVER_URL#/pb2</field>
+			<field name="criteria_field">id</field>
+		</record>
+		<record id="jasper_asset_register_report_values" model="ir.values">
+			<field name="name">asset_register_report_values</field>
+			<field name="model">jasper.asset.register.report</field>
+			<field name="value_unpickle"
+				eval="'ir.actions.report.xml, ' +str(report_asset_register)" />
 		</record>	
 		
 	</data>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="account_budget_view_form" model="ir.ui.view">
+            <field name="name">account.budget.view.form</field>
+            <field name="model">account.budget</field>
+            <field name="inherit_id" ref="account_budget_activity.account_budget_view_form"/>
+            <field name="arch" type="xml">
+                <button name="budget_done" position="after">
+                    <button string="Init Version" name="action_init" states="draft" type="object" confirm="Confirm Init Version Plan?"/>
+                </button>
+                <xpath expr="//div[@name='buttons']" position="inside">
+                    <button class="oe_inline oe_stat_button" type="object"
+                        name="action_open_budget_init" icon="fa-files-o"
+                        string="Version 0"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

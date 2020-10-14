@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
+from PIL import Image
+import glob, os
 from openerp import fields, models, api
 from openerp.addons.pabi_base.models.res_common import ResCommon
 from openerp import tools
-
+import tempfile
+try:
+    import cStringIO as StringIO
+except ImportError:
+    import StringIO
 # ORG Structure:
 #                                           (mission)
 #                                           costcenter
@@ -41,12 +47,32 @@ class ResOrg(ResCommon, models.Model):
         translate=True,
         size=1000,
     )
+    logo_path = fields.Char(
+        string='Logo Path File',
+    )
 
     @api.model
     def _add_name_search_domain(self):
         """ Additiona domain for context's name serach """
         domain = []
         return domain
+    
+    @api.multi
+    def write(self, vals):
+        if vals.get('logo', False) and self.name_short:
+            path = tempfile.gettempdir() + '/logo'
+            if not os.path.exists(path):
+                os.makedirs(path)
+            image_stream = StringIO.StringIO((vals.get('logo', False)).decode('base64'))
+            image = Image.open(image_stream)
+            filetype = image.format
+            logo_path = '{}/logo_{}.{}'.format(path,
+                                               self.name_short,
+                                               filetype)
+            image.save(logo_path)
+
+            vals['logo_path'] = logo_path
+        return super(ResOrg, self).write(vals)
 
 
 class ResSector(ResCommon, models.Model):

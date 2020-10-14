@@ -70,6 +70,9 @@
             <field name="model">account.voucher</field>
             <field name="inherit_id" ref="account_voucher.view_vendor_receipt_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//button[@string='Unreconcile']" position="after">
+                    <button name="send_mail" string="Send Mail - Receipt" type="object" states="posted" class="oe_highlight" groups="account.group_account_user"/>
+                </xpath>
                 <xpath expr="//sheet/h1" position="before">
                     <div class="oe_right oe_button_box" style="width: 300px;" name="buttons">
                         <button class="oe_inline oe_stat_button" name="action_open_invoices" type="object" icon="fa-file-text">
@@ -90,6 +93,7 @@
                 </field>
                 <field name="name" position="after" >
                     <field name="research_type"/>
+                    <field name="date_sent_mail" readonly="1" />
                     <field name="contract_number" attrs="{'invisible': [('research_type', '=', False)]}"/>
                 </field>
                 <xpath expr="/form/sheet/notebook/page[@string='Journal Items']/field[@name='move_ids']/tree/field[@name='ref']" position="attributes">

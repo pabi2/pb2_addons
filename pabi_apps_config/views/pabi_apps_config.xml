@@ -187,6 +187,19 @@
                         	<field name="send_to_groupmail_only" class="oe_inline"/>
                         </div>
                     </group>
+                    <!-- AR E-Mail -->
+                    <separator string="AR E-Mail"/>
+                    <group>
+                    	<label for="id" string="AR e-mail NSTDA"/>
+                        <div>
+                        	<label string="Group Email"/>
+                            <field name="group_email_ar" class="oe_inline"/>
+                        </div>
+                        <label string="Send to groupmail only"/>
+                        <div>
+                        	<field name="ar_send_to_groupmail_only" class="oe_inline"/>
+                        </div>
+                    </group>
                     <!-- Loan Installment -->
                     <separator string="Loan Installment"/>
                     <group>
