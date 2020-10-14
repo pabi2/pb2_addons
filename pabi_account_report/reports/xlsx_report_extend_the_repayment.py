@@ -10,15 +10,14 @@ class XLSXReportExtendTheRepayment(models.TransientModel):
     
     partner_id = fields.Many2one(
         'res.partner',
-        string='Partner ID',
-        )    
+        string='Partner',
+    )    
 
     calendar_period_id = fields.Many2one(
         'account.period.calendar',
-        string='For Period',
+        string='Calendar Period',
         required=True,
-        readonly=True,
-        states={'draft': [('readonly', False)]},
+        default=lambda self: self.env['account.period.calendar'].find(),
     )
           
 #     results = fields.Many2many(
