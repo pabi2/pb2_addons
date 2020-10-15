@@ -509,7 +509,7 @@
             <field name="type">tree</field>
             <field name="priority">1</field>
             <field name="arch" type="xml">
-                <tree string="Assets" create="0" colors="blue:(type == 'view')">
+                <tree string="Assets" delete="0" create="0" colors="blue:(type == 'view')">
                     <field name="type" invisible="1"/>
                     <field name="code"/>
                     <field name="name"/>

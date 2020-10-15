@@ -35,7 +35,7 @@
                             <page string="Change Asset Master">
                                 <field name="changemaster_ids">
                                     <tree editable="bottom">
-                                        <field name="asset_id" domain="[('responsible_user_id','=',uid)]"/>
+                                        <field name="asset_id" domain="[('search_ids','=',1)]"/>
                                         <field name="name"/>
                                         <field name="asset_brand"/>
                                         <field name="asset_model"/>
@@ -79,7 +79,7 @@
 	      <field name="res_model">account.asset.user.changemaster</field>
 	      <field name="view_type">form</field>
 	      <field name="view_id" ref="view_account_user_asset_changemaster_tree"/>
-	      
+	      <field name="domain">[('search_ids','=',1)]</field> 
     </record>
 
 

@@ -13,7 +13,7 @@
                         <button name="action_wait_confirm" states="draft" string="Request" type="object"/>
                         <button name="action_confirmed" states="wait_confirm" string="Confirm" type="object"/>
                         <button name="action_approved" states="confirmed" string="Approval" type="object"/>
-                        <button name="action_ready_transfer" states="approved" string="Request" type="object"/>                                                
+                        <button name="action_ready_transfer" states="approved" string="Receive" type="object"/>                                                
                         <button name="action_done" states="ready_transfer" string="Transfer" type="object"/>
                         <button name="action_cancel" states="wait_confirm,approved,requested,ready_transfer" string="Reject" type="object"/>
                         <field name="state" widget="statusbar" 
@@ -42,7 +42,7 @@
                             <page string="Change Responsible">
                                 <field name="changeresponsible_ids">
                                     <tree editable="bottom">
-                                        <field name="asset_id" domain="[('responsible_user_id','=',uid)]"/>
+                                        <field name="asset_id" domain="[('search_ids','=',1)]"/>
                                         <field name="name"/>
                                         <field name="asset_brand"/>
                                         <field name="asset_model"/>
@@ -89,7 +89,7 @@
 	      <field name="res_model">account.asset.changeresponsible</field>
 	      <field name="view_type">form</field>
 	      <field name="view_id" ref="view_account_asset_changeresponsible_tree"/>
-	      
+	      <field name="domain">[('search_ids','=',1)]</field> 
     </record>
 
 

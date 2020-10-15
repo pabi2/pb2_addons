@@ -67,6 +67,30 @@ class AccountAssetUserChangemaster(models.Model):
         required=True,
     )
     
+    search_ids = fields.Char(
+        compute='_compute_search_ids',
+        search='search_ids_search'
+    )
+    
+    @api.one
+    @api.depends('user_id')
+    def _compute_search_ids(self):
+        print('View My Owner Change Master')
+
+    def search_ids_search(self, operator, operand):
+        procurement_user = self.env['pabi.security.line'].sudo().\
+        search([('user_id','=',self.env.user.id),'|',('mg2','=',True),('mg3','=',True)])
+        my_change = self.search([('user_id','=',self.env.user.id)]).ids
+        if procurement_user:
+            org_id = self.env.user.partner_id.employee_id.org_id.id
+            additional_org_id = self.env.user.partner_id.employee_id.org_ids.ids
+            procurement_change = self.search(['|',('operating_unit_id.org_id','=',org_id)\
+                                ,('operating_unit_id.org_id','in',additional_org_id)]).ids
+            obj = list(set().union(my_change,procurement_change))
+            return [('id','in',obj)]
+        else :
+            return [('id','in',my_change)]
+    
     @api.multi
     def action_draft(self):
         self.state = 'draft'
@@ -97,7 +121,7 @@ class AccountAssetUserChangemaster(models.Model):
     def _validate_procurement_user(self):
         user_id = self.env.user.id
         procurement_user = self.env['pabi.security.line'].sudo().\
-        search([('mg2','=',True),('user_id','=',user_id)])
+        search([('user_id','=',user_id),'|',('mg2','=',True),('mg3','=',True)])
         if procurement_user:
             return True
         else:
