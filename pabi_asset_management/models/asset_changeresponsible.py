@@ -161,7 +161,7 @@ class AccountAssetChangeresponsible(models.Model):
         for rec in self:
             if self.env.user != rec.responsible_user_id:
                 raise ValidationError(
-                    _('Only %s can Receive this document!') %
+                    _('Only %s can receive this document!') %
                     (rec.responsible_user_id.name))
         self.write({'state': 'ready_transfer'})
     
