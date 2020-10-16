@@ -2396,7 +2396,7 @@ result = pd.pivot_table(df, index=groupby,
             </field>
         </record>
         #Extend The Repayment Report
-        <record id="xlsx_report_extend_repayment" model="ir.attachment">
+        <record id="xlsx_report_extend_the_repayment" model="ir.attachment">
             <field name="res_model">xlsx.report.extend.the.repayment</field>
             <field name="datas"></field>
             <field name="datas_fname">xlsx_report_extend_the_repayment.xlsx</field>
@@ -2407,7 +2407,7 @@ result = pd.pivot_table(df, index=groupby,
                     '__EXPORT__': {
                         'Extend The Repayment Report': {
                             '_HEAD_': {
-                                'H1': "${""}#{align=left;number_format=text}",
+                                'A1': "${""}#{align=left;number_format=text}",
                             },
                             'results': {
                                 'A3': '=ROW()-2',

@@ -4,16 +4,21 @@
     	<record id="view_xlsx_report_extend_the_repayment" model="ir.ui.view">
             <field name="name">view.xlsx.report.extend.the.repayment</field>
             <field name="model">xlsx.report.extend.the.repayment</field>
-            <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
             <field name="mode">primary</field>
             <field name="arch" type="xml">
-                <xpath expr="//group[@name='criteria']" position="inside">
-					<field name="partner_id" />
-	                <field name="calendar_period_id"/>
-                </xpath>               
-            </field>
+            	<form string = "Extend The Repayment Reports" >
+	               	<group>
+		                	<field name="calendar_period_id" string="Period"/>
+		                	<field name="partner_id" string="Customer" domain="[('customer','=',True)]"/>
+						</group>
+						<footer>
+							<button name="action_get_report" string="Execute"  type="object" class="oe_highlight"/>
+							or
+		               		<button string="Cancel" class="oe_link" special="cancel"/>
+		          		</footer>
+		          	</form>
+			</field>
         </record>
-        
         <record id="action_xlsx_report_extend_the_repayment" model="ir.actions.act_window">
             <field name="name">Extend the repayment</field>
             <field name="res_model">xlsx.report.extend.the.repayment</field>
