@@ -74,13 +74,13 @@ class AccountBudget(models.Model):
             fiscal_id = self.env['account.fiscalyear'].search([('date_start', '<=', doc_date),
                                                                ('date_stop', '>=', doc_date)])
             
-            check_budget = Budget.check_budget(fiscal_id.id,
-                                               budget_type,
-                                               budget_level,
-                                               budget_level_res_id.id,
-                                               amount)
+            res = Budget.check_budget(fiscal_id.id,
+                                      budget_type,
+                                      budget_level,
+                                      budget_level_res_id.id,
+                                      amount)
             
-            raise ValidationError(_(check_budget))
+            return res
 
         if budget_type == 'project_base' and not res_id:
             if not doc_type or not doc_date or not budget_type or not doc_lines:
@@ -94,13 +94,12 @@ class AccountBudget(models.Model):
             fiscal_id = self.env['account.fiscalyear'].search([('date_start', '<=', doc_date),
                                                                ('date_stop', '>=', doc_date)])
             
-            check_budget = Budget.check_budget(fiscal_id.id,
-                                               budget_type,
-                                               budget_level,
-                                               budget_level_res_id.id,
-                                               amount)
-            
-            raise ValidationError(_(check_budget))
+            res = Budget.check_budget(fiscal_id.id,
+                                      budget_type,
+                                      budget_level,
+                                      budget_level_res_id.id,
+                                      amount)
+            return res
 
         if not doc_lines or not res_id or not budget_type:
             return res
