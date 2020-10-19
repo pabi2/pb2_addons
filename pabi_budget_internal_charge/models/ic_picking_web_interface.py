@@ -61,6 +61,18 @@ class StockPicking(models.Model):
             res['result']['name'] = picking.name
             # Do Transfer
             picking.validate_picking()
+
+            default_section_id = picking.picking_type_id.default_location_src_id.section_id
+            # update credit from section
+            if default_section_id:
+                move = self.env['account.move'].search([
+                    ('document', '=', picking.name)])
+                for line in move.mapped('line_id').filtered('debit'):
+                    line.write({
+                        'costcenter_id': default_section_id.costcenter_id.id,
+                        'section_id': default_section_id.id,
+                        'org_id': default_section_id.org_id.id})
+
         except Exception, e:
             res = {
                 'is_success': False,
