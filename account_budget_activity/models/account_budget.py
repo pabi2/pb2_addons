@@ -838,6 +838,7 @@ class AccountBudget(models.Model):
                     (fiscal.name, resource.display_name,
                      '{:,.2f}'.format(balance),
                      '{:,.2f}'.format(amount))
+            return res
 
         if self._context.get('force_no_budget_check', False) or \
                 not blevel.is_budget_control:
