@@ -15,26 +15,28 @@ BUDGET_STATE = [('draft', 'Draft'),
                 # ('confirm', 'Confirmed'),
                 # ('validate', 'Validated'),
                 ('done', 'Controlled')]
+BUDGET_LEVEL = {
+    'activity_group_id': 'Activity Group',
+    # 'activity_id': 'Activity'  # No Activity Level
+    'section_id': 'Section',
+    'project_id': 'Project',
+}
 
+BUDGET_LEVEL_MODEL = {
+    'activity_group_id': 'account.activity.group',
+    # 'activity_id': 'Activity'  # No Activity Level
+    'section_id': 'res.section',
+    'project_id': 'res.project',
+}
+
+BUDGET_LEVEL_TYPE = {
+    'check_budget': 'Check Budget',
+}
 
 class AccountBudget(models.Model):
     _name = "account.budget"
     _inherit = ['mail.thread']
     _description = "Budget"
-
-    BUDGET_LEVEL = {
-        'activity_group_id': 'Activity Group',
-        # 'activity_id': 'Activity'  # No Activity Level
-    }
-
-    BUDGET_LEVEL_MODEL = {
-        'activity_group_id': 'account.activity.group',
-        # 'activity_id': 'Activity'  # No Activity Level
-    }
-
-    BUDGET_LEVEL_TYPE = {
-        'check_budget': 'Check Budget',
-    }
 
     name = fields.Char(
         string='Name',
@@ -435,7 +437,6 @@ class AccountBudget(models.Model):
 
     @api.multi
     def _validate_budget_level(self, budget_type='check_budget'):
-        LEVEL_DICT = self.env['account.budget'].BUDGET_LEVEL
         for budget in self:
             fiscal = budget.fiscalyear_id
             if not fiscal.budget_level_ids:
@@ -452,7 +453,7 @@ class AccountBudget(models.Model):
                 raise except_orm(
                     _('Budgeting Level Warning'),
                     _('Required budgeting level is %s') %
-                    (LEVEL_DICT[budget_level]))
+                    (BUDGET_LEVEL[budget_level]))
 
     # @api.multi
     # def budget_validate(self):
@@ -660,11 +661,9 @@ class AccountBudget(models.Model):
     @api.model
     def _get_budget_resource(self, fiscal, budget_type,
                              budget_level, budget_level_res_id):
-        LEVEL_DICT = self.env['account.budget'].BUDGET_LEVEL
-        MODEL_DICT = self.env['account.budget'].BUDGET_LEVEL_MODEL
-        model = MODEL_DICT.get(budget_level, False)
+        model = BUDGET_LEVEL_MODEL.get(budget_level, False)
         if not budget_level_res_id:
-            field_name = LEVEL_DICT[budget_level]
+            field_name = BUDGET_LEVEL.get(budget_level, False)
             raise Warning(_("Field %s is not entered, "
                             "can not check for budget") % (field_name,))
         resource = self.env[model].browse(budget_level_res_id)
