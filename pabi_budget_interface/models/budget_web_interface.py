@@ -57,44 +57,6 @@ class AccountBudget(models.Model):
         res = {'budget_ok': True,
                'message': False}
 
-        if budget_type == 'unit_base':
-            if not doc_type or not doc_date or not budget_type or not doc_lines:
-                return res
-
-            Budget = self.env['account.budget']
-
-            budget_level = 'section_id'
-            amount = doc_lines['amount_total']
-            budget_level_res_id = self.env['res.section'].search([('code', '=', doc_lines['budget_code'])])
-            fiscal_id = self.env['account.fiscalyear'].search([('date_start', '<=', doc_date),
-                                                               ('date_stop', '>=', doc_date)])
-
-            res = Budget.check_budget(fiscal_id.id,
-                                      budget_type,
-                                      budget_level,
-                                      budget_level_res_id.id,
-                                      amount)
-            return res
-
-        if budget_type == 'project_base' and not res_id:
-            if not doc_type or not doc_date or not budget_type or not doc_lines:
-                return res
-
-            Budget = self.env['account.budget']
-
-            budget_level = 'project_id'
-            amount = doc_lines['amount_total']
-            budget_level_res_id = self.env['res.project'].search([('code', '=', doc_lines['budget_code'])])
-            fiscal_id = self.env['account.fiscalyear'].search([('date_start', '<=', doc_date),
-                                                               ('date_stop', '>=', doc_date)])
-
-            res = Budget.check_budget(fiscal_id.id,
-                                      budget_type,
-                                      budget_level,
-                                      budget_level_res_id.id,
-                                      amount)
-            return res
-
         if not doc_lines or not res_id or not budget_type:
             return res
         ctx = {'currency_id': currency_id}
