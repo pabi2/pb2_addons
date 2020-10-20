@@ -27,13 +27,13 @@ class XLSXReportExtendTheRepayment(models.TransientModel):
     def _compute_results(self):
         self.ensure_one()
         Result = self.env['extend.the.repayment.view']
-        dom = []
-        if self.calendar_period_id.date_start:
-            dom += [('date_document','>=',self.calendar_period_id.date_start)]
-        if self.calendar_period_id.date_stop:
-            dom += [('date_document','<=',self.calendar_period_id.date_stop)]
-        if self.partner_id:
-            dom += [('partner_id','=',self.partner_id)]
+#         dom = []
+#         if self.calendar_period_id.date_start:
+#             dom += [('date_document','>=',self.calendar_period_id.date_start)]
+#         if self.calendar_period_id.date_stop:
+#             dom += [('date_document','<=',self.calendar_period_id.date_stop)]
+#         if self.partner_id:
+#             dom += [('partner_id','in',self.partner_id.ids)]
         self._cr.execute("""
             Select cast(org.id || '000' as varchar) as org_code ,
             DATE_PART('month', due.date_old_due) as month_old_due, am.document as pabi_doc,am.ref as mySale_Doc,
@@ -59,7 +59,7 @@ class XLSXReportExtendTheRepayment(models.TransientModel):
             where
             ml.activity_id is not null and due.id = (select max(id) from account_move_due_history where move_id = am.id)
             and am.date_document between '%s' and '%s'
-            and am.partner_id = %s
+            and am.partner_id in %s
             group by org.id, cus.search_key,
             cus.display_name2, cat.name,am.document,
             am.ref,ml.move_id,am.date_document,
@@ -67,7 +67,7 @@ class XLSXReportExtendTheRepayment(models.TransientModel):
             due.reason, sub1.move_id,sub1.atv_list
         """ % (self.calendar_period_id.date_start,
                self.calendar_period_id.date_stop,
-               self.partner_id))
+               tuple(self.partner_id.ids)))
         results = self._cr.dictfetchall()
         self.results = [Result.new(line).id for line in results]
     
@@ -90,7 +90,7 @@ class ExtendTheRepayment(models.Model):
         string='Mysale Doc',
         readonly=True,    
     )
-    partner = fields.Many2one(
+    partner = fields.Many2many(
         'res.partner',
         string='Partner',
         readonly=True,        
