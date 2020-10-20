@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api, tools
-
+import datetime
   
 class XLSXReportExtendTheRepayment(models.TransientModel):
     _name = 'xlsx.report.extend.the.repayment'
@@ -10,7 +10,6 @@ class XLSXReportExtendTheRepayment(models.TransientModel):
         'res.partner',
         string='Partner',
     )    
-
     calendar_period_id = fields.Many2one(
         'account.period.calendar',
         string='Calendar Period',
@@ -24,26 +23,17 @@ class XLSXReportExtendTheRepayment(models.TransientModel):
         help="Use compute fields, so there is nothing store in database",
     )
 
-    @api.model
-    def _domain_to_where_str(self, domain):
-        """ Helper Function for better performance """
-        where_dom = [" %s %s %s " % (x[0], x[1], isinstance(x[2], basestring)
-                     and "'%s'" % x[2] or x[2]) for x in domain]
-
-        where_str = 'and'.join(where_dom)
-        where_str = where_str.replace(',)', ')')
-        return where_str
-    
     @api.multi
     def _compute_results(self):
         self.ensure_one()
-        where_str = ''
+        Result = self.env['extend.the.repayment.view']
         dom = []
         if self.calendar_period_id.date_start:
-            dom += [('date_document','>=',self.self.calendar_period_id.date_start)]
-        if self.calendar_period_id.date_end:
-            dom += [('date_document','<=',self.calendar_period_id.date_end)]
-
+            dom += [('date_document','>=',self.calendar_period_id.date_start)]
+        if self.calendar_period_id.date_stop:
+            dom += [('date_document','<=',self.calendar_period_id.date_stop)]
+        if self.partner_id:
+            dom += [('partner_id','=',self.partner_id)]
         self._cr.execute("""
             Select cast(org.id || '000' as varchar) as org_code ,
             DATE_PART('month', due.date_old_due) as month_old_due, am.document as pabi_doc,am.ref as mySale_Doc,
@@ -67,16 +57,20 @@ class XLSXReportExtendTheRepayment(models.TransientModel):
             ) AS sub1
             ON sub1.move_id = am.id
             where
-            --am.document = 'IA20034742' and
-            --DATE_PART('month', due.date_old_due) = ?เดือน and
             ml.activity_id is not null and due.id = (select max(id) from account_move_due_history where move_id = am.id)
-            group by org.id, cus.search_key,cus.display_name2,cat.name,am.document,am.ref,ml.move_id,am.date_document,due.date_old_due,due.date_due,due.reason, sub1.move_id,sub1.atv_list
-        """  % (where_str))
-
-        extend_the_repayment = self._cr.dictfetchall()
-        self.results = [Reports.new(line).id for line in extend_the_repayment]
-  
-        
+            and am.date_document between '%s' and '%s'
+            and am.partner_id = %s
+            group by org.id, cus.search_key,
+            cus.display_name2, cat.name,am.document,
+            am.ref,ml.move_id,am.date_document,
+            due.date_old_due,due.date_due,
+            due.reason, sub1.move_id,sub1.atv_list
+        """ % (self.calendar_period_id.date_start,
+               self.calendar_period_id.date_stop,
+               self.partner_id))
+        results = self._cr.dictfetchall()
+        self.results = [Result.new(line).id for line in results]
+    
 class ExtendTheRepayment(models.Model):
     _name = 'extend.the.repayment.view'
         
@@ -84,7 +78,7 @@ class ExtendTheRepayment(models.Model):
         string='Org Code',
         readonly=True,
     )
-    month_old_due = fields.Date(
+    month_old_due = fields.Float(
         string='Month Old Due',
         readonly=True,
     )    
@@ -96,7 +90,8 @@ class ExtendTheRepayment(models.Model):
         string='Mysale Doc',
         readonly=True,    
     )
-    partner = fields.Char(
+    partner = fields.Many2one(
+        'res.partner',
         string='Partner',
         readonly=True,        
     )
