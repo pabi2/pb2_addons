@@ -1195,9 +1195,14 @@ class ETLISSIBudgetProjectQuery(models.Model):
                 prj.proposal_overall_budget AS plan_proposal_overall_expense,
                 prj.overall_expense_budget AS plan_overall_expense,
                 prj.overall_expense_budget_internal AS plan_overall_expense_internal,
-                COALESCE(( SELECT bb.release
-                       FROM issi_budget_project_monitor_view bb
-                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::double precision) AS release,
+		CASE
+		    WHEN (prj.active = false) THEN COALESCE(( SELECT b.released_amount
+		       FROM issi_res_project_budget_summary_view b
+		      WHERE (((b.budget_method)::text = 'expense'::text) AND (b.project_id = yy.project_id) AND (b.fiscalyear_id = yy.fiscalyear_id))), (0)::double precision)
+		    ELSE COALESCE(( SELECT bb.release
+		       FROM issi_budget_project_monitor_view bb
+		      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::double precision)
+		END AS release,
                 COALESCE(( SELECT bb.sum_pr
                        FROM issi_budget_project_monitor_view bb
                       WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::numeric) AS sum_pr,
