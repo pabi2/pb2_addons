@@ -67,7 +67,8 @@ class StockPicking(models.Model):
             if default_section_id:
                 move = self.env['account.move'].search([
                     ('document', '=', picking.name)])
-                for line in move.mapped('line_id').filtered('credit'):
+                for line in move.mapped('line_id').filtered(
+                    lambda l: l.account_id.user_type.code == 'Current Assets'):
                     line.write({
                         'section_id': default_section_id.id,
                         'costcenter_id': default_section_id.costcenter_id.id,
