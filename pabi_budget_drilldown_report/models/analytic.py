@@ -302,8 +302,9 @@ class AccountAnalyticLineView(models.Model):
             else:  # back to normal
                 account = rec.general_account_id
             if account:
-                rec.docline_account_code = account.code
-                rec.docline_account_name = account.name
+                uid = account._context.get('uid')
+                rec.sudo(user=uid).docline_account_code = account.code
+                rec.sudo(user=uid).docline_account_name = account.name
         return True
 
     @api.multi
