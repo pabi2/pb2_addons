@@ -109,7 +109,7 @@ class AccountBudget(models.Model):
         return res
 
     @api.model
-    def _check_budget_over(self, doc_date, budget_type, doc_lines):
+    def pabi_check_budget_over(self, doc_date, budget_type, doc_lines):
         _logger.info(
             '_check_budget_over(), input: [%s, %s, %s]' %
             (doc_date, budget_type, doc_lines))
