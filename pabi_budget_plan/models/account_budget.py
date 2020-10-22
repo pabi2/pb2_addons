@@ -193,6 +193,17 @@ class AccountBudgetLine(models.Model):
         'res.invest.construction.phase',
         domain="[('invest_construction_id', '=', invest_construction_id)]",
     )
+    org_id = fields.Many2one(
+        comodel_name='res.org',
+        default=lambda self: self._default_org_id_budget_line(),
+    )
+
+    @api.model
+    def _default_org_id_budget_line(self):
+        section = self._context.get('default_section_id', False)
+        if section:
+            section_id = self.env['res.section'].browse(section)
+            return section_id.org_id
 
     @api.onchange('invest_construction_id')
     def _onchange_invest_construction_id(self):

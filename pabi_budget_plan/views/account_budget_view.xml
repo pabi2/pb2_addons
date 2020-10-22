@@ -76,6 +76,9 @@
                 <xpath expr="//button" position="attributes">
                     <attribute name="groups">pabi_base.group_budget_manager</attribute>
                 </xpath>
+                <xpath expr="//tree" position="inside">
+                    <field name="org_id" invisible="1"/>
+                </xpath>
             </field>
         </record>
 
