@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
-from openerp import models, api
+from openerp import models, api, _
+from openerp.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -55,6 +56,7 @@ class AccountBudget(models.Model):
         """
         res = {'budget_ok': True,
                'message': False}
+
         if not doc_lines or not res_id or not budget_type:
             return res
         ctx = {'currency_id': currency_id}

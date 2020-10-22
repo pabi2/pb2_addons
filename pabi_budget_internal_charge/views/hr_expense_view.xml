@@ -142,22 +142,13 @@
             <field name="domain">[('expense_id.pay_to', '=', 'internal')]</field>
         </record>
 	<!--Print Internal Charge-->  
-        <record id="view_hr_expense_filter" model="ir.ui.view">
-            <field name="name">hr.expense.filter</field>
+	    <record id="view_print_internal_charge_filter" model="ir.ui.view">
+            <field name="name">view.print.internal.charge.filter</field>
             <field name="model">hr.expense.expense</field>
-            <field name="inherit_id" ref="hr_expense.view_hr_expense_filter"/>
             <field name="arch" type="xml">
-				<filter name="draft" domain="[('state','=','draft')]" string="Draft" position="replace"/>
-				<filter name="confirm" domain="[('state','=','confirm')]" string="Wait for Accept" position="replace"/>
-				<filter name="confirm_current" domain="[('state','=','confirm'),('date','&gt;=',(context_today()+relativedelta(months=3)-relativedelta(years=1)).strftime('%%Y-10-01')),('date','&lt;=',(context_today()+relativedelta(months=3)).strftime('%%Y-09-30'))]" string="Wait for Accept (Current FY)" position="replace"/>
-				<filter name="confirm_Past" domain="[('state','=','confirm'),('date','&lt;',(context_today()+relativedelta(months=3)-relativedelta(years=1)).strftime('%%Y-10-01'))]" string="Wait for Accept (Past FY)" position="replace"/>	
-				<filter name="accepted" domain="[('state','=','accepted')]" string="Accepted" position="replace"/>
-				<filter name="done" domain="[('state','=','done')]" string="Waiting Payment" position="replace"/>
-				<filter name="paid" domain="[('state','=','paid')]" string="Paid" position="replace"/>
-				<filter name="cancelled" domain="[('state','=','cancelled')]" string="Rejected" position="replace"/>
-				<xpath expr="/search/group" position="replace">
-					<group expand="0" string="Group By">
-		                <filter string="Internal Section" domain="[]" context="{'group_by':'internal_section_id'}"/>
+            	<search string="Search Internal Charge">
+		           	<group expand="0" string="Group By">
+		            	<filter string="Internal Section" domain="[]" context="{'group_by':'internal_section_id'}"/>
 		                <filter string="Internal Project" domain="[]" context="{'group_by':'internal_project_id'}"/>
 		                <filter string="Budget Section (User)" domain="[]" context="{'group_by':'section_id'}"/>
 		                <filter string="Budget Section(project)" domain="[]" context="{'group_by':'project_id'}"/>
@@ -165,10 +156,10 @@
 		                <filter string="Employee" domain="[]" context="{'group_by':'employee_id'}"/>
 		                <filter string="Expense State" domain="[]" context="{'group_by':'state'}"/>
 		            </group>
-				</xpath>
-            </field>
-        </record>
-             
+		        </search>
+        	</field>
+       </record>
+            
         <record id="view_print_internal_charge_tree" model="ir.ui.view">
             <field name="name">view.print.internal.charge.tree</field>
             <field name="model">hr.expense.expense</field>
@@ -192,6 +183,7 @@
         <record id="action_print_internal_charge" model="ir.actions.act_window">
             <field name="name">Print Internal Charge Receipt</field>
             <field name="res_model">hr.expense.expense</field>
+            <field name="search_view_id" ref="view_print_internal_charge_filter"/>
             <field name="view_id" ref="view_print_internal_charge_tree"/>
             <field name="domain">['&amp;', ('pay_to', '=', 'internal'), ('state', '=', 'paid')]</field>
         </record>

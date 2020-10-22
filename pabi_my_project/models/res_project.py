@@ -519,17 +519,14 @@ class ResProject(LogCommon, models.Model):
                 raise ValidationError(
                     _('Not allow to release budget for fiscalyear %s!\nOnly '
                       'current year budget is allowed.' % fiscalyear.name))
-            budget_plans = project.budget_plan_ids.filtered(lambda l: l.fiscalyear_id == fiscalyear)
+            budget_plans = project.budget_plan_ids.filtered(lambda l: l.fiscalyear_id == fiscalyear and l.budget_method=='expense')
             budget_plans.write({'released_amount': 0.0})  # Set zero
             if release_external_budget:  # Only for external charge
-                # All expense
-                expense_budget_plans = budget_plans.filtered(
-                    lambda l: l.budget_method == 'expense')
                 # Filter only internal
-                int_budget_plans = expense_budget_plans.filtered(
+                int_budget_plans = budget_plans.filtered(
                     lambda l: l.charge_type == 'internal')
                 # Filter only extenral
-                budget_plans = expense_budget_plans.filtered(
+                budget_plans = budget_plans.filtered(
                     lambda l: l.charge_type == 'external')
                 # Check case internal but not external, just return, no error
                 if int_budget_plans and not budget_plans:

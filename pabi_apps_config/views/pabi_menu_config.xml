@@ -1663,6 +1663,9 @@
       			<menuitem name="Asset Estimate Report" id="menu_asset_estimate_report"
           			action="pabi_account_report.action_asset_estimate_report_form"
           			sequence="4" parent="menu_account_asset_report"/>
+      			<menuitem name="Asset Inactive Owner Report" id="menu_asset_inactive_owner_report"
+          			action="pabi_account_asset_jasper.action_print_asset_inactive_owner_form"
+          			sequence="5" parent="menu_account_asset_report"/>
         
         # Warehouse
         <menuitem name="Warehouse" id="stock.menu_stock_root"
