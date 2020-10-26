@@ -101,16 +101,20 @@ class AccountAssetChangeresponsible(models.Model):
     def search_ids_search(self, operator, operand):
         procurement_user = self.env['pabi.security.line'].sudo().\
         search([('user_id','=',self.env.user.id),'|',('mg2','=',True),('mg3','=',True)])
-        my_change = self.search([('requester_user_id','=',self.env.user.id)]).ids
+        requester = self.search([('requester_user_id','=',self.env.user.id)]).ids
+        requester_supervisor = self.search([('supervisor_req_id','=',self.env.user.id)]).ids
+        responsible_person = self.search([('responsible_user_id','=',self.env.user.id)]).ids
+        responsible_supervisor = self.search([('supervisor_res_id','=',self.env.user.id)]).ids
+        asset_id = list(set().union(requester,requester_supervisor,responsible_person,responsible_supervisor))
         if procurement_user:
             org_id = self.env.user.partner_id.employee_id.org_id.id
             additional_org_id = self.env.user.partner_id.employee_id.org_ids.ids
             procurement_change = self.search(['|',('operating_unit_id.org_id','=',org_id)\
                                 ,('operating_unit_id.org_id','in',additional_org_id)]).ids
-            obj = list(set().union(my_change,procurement_change))
+            obj = list(set().union(asset_id,procurement_change))
             return [('id','in',obj)]
         else :
-            return [('id','in',my_change)]
+            return [('id','in',asset_id)]
     
     @api.multi
     @api.constrains('requester_user_id')

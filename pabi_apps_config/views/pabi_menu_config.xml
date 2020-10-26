@@ -1547,11 +1547,10 @@
 			            sequence="5" parent="menu_pabi_general_ledger_report"/>
 
         # Assets
-		<delete id="pabi_asset_management.menu_asset_main" model="ir.ui.menu"/>
+		<delete id="menu_asset_main" model="ir.ui.menu"/>
 		
         <menuitem name="Assets" id="menu_asset_main"
-        	sequence="11"
-        	groups="purchase.group_purchase_user,account.group_account_user,pabi_asset_management.group_assets_report"/>
+        	sequence="11"/>
         	
         	# Assets
 			<delete id="pabi_asset_management.account_asset_management.menu_finance_assets" model="ir.ui.menu"/>
