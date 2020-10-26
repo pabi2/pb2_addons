@@ -56,3 +56,4 @@ access_account_asset_history_user,access_account_asset_history_user,account_asse
 access_account_asset_depreciation_summary_user,access_account_asset_depreciation_summary_user,model_account_asset_depreciation_summary,,1,0,0,0
 access_account_asset_status_user,access_account_asset_status_user,model_account_asset_status,,1,0,0,0
 access_queue_job_user,access_queue_job_user,connector.model_queue_job,,1,0,0,0
+access_account_move_line,access_account_move_line,account.model_account_move_line,,1,0,0,0
