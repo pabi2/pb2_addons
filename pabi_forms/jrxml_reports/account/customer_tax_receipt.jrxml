@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;tax_line_normal&quot;]"/>
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="480"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -58,9 +58,6 @@
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
 	</queryString>
-	<field name="amount_total" class="java.lang.Number">
-		<fieldDescription><![CDATA[amount_total]]></fieldDescription>
-	</field>
 	<field name="currency" class="java.lang.String">
 		<fieldDescription><![CDATA[journal_id/currency/name]]></fieldDescription>
 	</field>
@@ -154,12 +151,14 @@
 	<field name="origin_invoice" class="java.lang.String">
 		<fieldDescription><![CDATA[tax_line_normal/invoice_id/origin_invoice_id/number]]></fieldDescription>
 	</field>
-	<field name="title" class="java.lang.String"/>
+	<field name="title" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="amount_total_text_th" class="java.lang.String">
-		<fieldDescription><![CDATA[amount_total_text_th]]></fieldDescription>
+		<fieldDescription><![CDATA[amount_customer_tax_total_text_th]]></fieldDescription>
 	</field>
 	<field name="amount_total_text_en" class="java.lang.String">
-		<fieldDescription><![CDATA[amount_total_text_en]]></fieldDescription>
+		<fieldDescription><![CDATA[amount_customer_tax_total_text_en]]></fieldDescription>
 	</field>
 	<field name="invoice_type" class="java.lang.String">
 		<fieldDescription><![CDATA[line_ids/invoice_id/type]]></fieldDescription>
