@@ -35,6 +35,7 @@ Note: This module provide only framework. There will be no budget check here.
         'wizard/budget_release_wizard_view.xml',
         'wizard/change_release_amount_view.xml',
         'wizard/budget_technical_close.xml',
+        'wizard/edit_po_line_fy.xml',
         'views/purchase_view.xml',
         'views/purchase_requisition_view.xml',
         'views/purchase_request_view.xml',
