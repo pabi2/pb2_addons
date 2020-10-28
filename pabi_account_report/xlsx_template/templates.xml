@@ -786,7 +786,8 @@
                                 'K10': 'move_id.document_id${value and value._name == "account.invoice" and value.source_document_id and value.source_document_id._name == "sale.order" and value.source_document_id.workflow_process_id and value.source_document_id.name or ""}',
                                 'L10': 'move_number${value or ""}',
                                 'M10': 'move_id.document_id${value and value._name == "interface.account.entry" and value.name or ""}',
-                                'N10': 'validate_user_id.display_name${value or ""}',
+                                'N10': 'tax_id.description${value or ""}',
+                                'O10': 'validate_user_id.display_name${value or ""}',
                             },
                             '_TAIL_0': {
                                 'A10': '${"Total"}#{font=bold}',
