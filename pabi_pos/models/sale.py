@@ -147,6 +147,7 @@ class SaleOrder(models.Model):
         for pos in self:
             # As per WF configuration
             pos.onchange_workflow_process_id()
+            pos.origin = pos._get_pos_receipt()
             # Partner
             wf = pos.workflow_process_id
             if not pos.partner_id:
@@ -168,27 +169,16 @@ class SaleOrder(models.Model):
                 line.activity_group_id = product.categ_id.activity_group_id
                 line.activity_rpt_id = product.categ_id.activity_id
 
+    @api.one
     def _get_pos_receipt(self):
-        SEQUENCE = self.env['ir.sequence']
-        date_fis = datetime.now() + relativedelta(months=3)
-        fisyear = str(date_fis.strftime('%y'))
-        if self.amount_tax == 0.00:
-            prefix = 'RC'
+        if self.amount_tax > 0.00:
+            seq_code = 'receipt.tax.preprint'
         else:
-            prefix = 'RT'
+            seq_code = 'receipt.preprint'
 
-        sequence_id = SEQUENCE.search([('name','=','POS Receipt %s - %s'%(prefix,fisyear)),('prefix','=',prefix+'-PS'+fisyear)])
-        if not sequence_id:
-            sequence_id = SEQUENCE.create({'name': 'POS Receipt %s - %s'%(prefix,fisyear),
-                                           'number_next': 1,
-                                           'implementation': 'standard',
-                                           'padding': 4,
-                                           'number_increment': 1,
-                                           'prefix': prefix+'-PS'+fisyear,
-                                        })
-        receipt_no = SEQUENCE.get_id(sequence_id.id)
-        self.origin = receipt_no
-        
+        return self.env['ir.sequence'].next_by_code(seq_code)
+
+
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
