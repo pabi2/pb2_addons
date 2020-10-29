@@ -86,7 +86,20 @@ class SalesOrder(models.Model):
     def generate_pos_order(self, data_dict):
         _logger.info('generate_pos_order() - input: %s' % data_dict)
         try:
-            # data_dict = self._pre_process_pos_order(data_dict)
+            chk_doc = self.env['sale.order'].search(
+                [('client_order_ref', '=', data_dict['client_order_ref']),
+                 ('state', 'not in', ('cancel','shipping_except',
+                                      'invoice_except'))])
+            if chk_doc:
+                message = ('ValidateError',
+                           _('Reference/Description %s is not unique!') %
+                                data_dict['client_order_ref'])
+                return {
+                    'is_success': False,
+                    'result': False,
+                    'messages': _(str(message))
+                }
+            
             data_dict['order_type'] = 'sale_order'
             check_stock = self._check_current_stock(data_dict)
             if check_stock['is_success'] == False:

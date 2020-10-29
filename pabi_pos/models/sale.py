@@ -147,7 +147,13 @@ class SaleOrder(models.Model):
         for pos in self:
             # As per WF configuration
             pos.onchange_workflow_process_id()
-            pos.origin = pos._get_pos_receipt()
+
+            if pos.amount_tax > 0.00:
+                seq_code = 'receipt.tax.preprint'
+            else:
+                seq_code = 'receipt.preprint'
+            pos.origin = self.env['ir.sequence.preprint'].next_by_code(seq_code)
+
             # Partner
             wf = pos.workflow_process_id
             if not pos.partner_id:
@@ -168,15 +174,6 @@ class SaleOrder(models.Model):
                 product = line.product_id
                 line.activity_group_id = product.categ_id.activity_group_id
                 line.activity_rpt_id = product.categ_id.activity_id
-
-    @api.one
-    def _get_pos_receipt(self):
-        if self.amount_tax > 0.00:
-            seq_code = 'receipt.tax.preprint'
-        else:
-            seq_code = 'receipt.preprint'
-
-        return self.env['ir.sequence'].next_by_code(seq_code)
 
 
 class SaleOrderLine(models.Model):
