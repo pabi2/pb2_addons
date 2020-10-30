@@ -47,9 +47,11 @@ class XLSXReportExtendTheRepayment(models.TransientModel):
             DATE_PART('month', due.date_old_due) as month_old_due, am.document as pabi_doc,am.ref as mySale_Doc,
             cus.search_key as partner, cus.display_name2, cat.name as category_name, sub1.atv_list as activity_list,am.date_document,
             due.date_old_due,due.date_due,(due.date_due - due.date_old_due) as dayDiff1,
-            (due.date_due - am.date_document) as dayDiff2, due.reason
+            (due.date_due - am.date_document) as dayDiff2, due.reason,
+            sum(ml2.debit) as sum_total
             from account_move am
             
+            left join account_move_line ml2 on (ml2.move_id = am.id)
             left join account_move_line ml on (ml.move_id = am.id)
             left join res_org org on (org.id = ml.org_id)
             left join res_partner cus on (cus.id = am.partner_id)
@@ -105,6 +107,10 @@ class ExtendTheRepayment(models.Model):
     )
     category_name = fields.Char(
         string='Category Name',
+        readonly=True,
+    )
+    sum_total = fields.Float(
+        string='Sum Total',
         readonly=True,
     )
     activity_list = fields.Char(
