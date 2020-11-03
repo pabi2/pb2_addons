@@ -2395,6 +2395,47 @@ result = pd.pivot_table(df, index=groupby,
                     }
                 }
             </field>
+        </record>
+        #Extend The Repayment Report
+        <record id="xlsx_report_extend_the_repayment" model="ir.attachment">
+            <field name="res_model">xlsx.report.extend.the.repayment</field>
+            <field name="datas"></field>
+            <field name="datas_fname">xlsx_report_extend_the_repayment.xlsx</field>
+            <field name="name">Extend The Repayment Report</field>
+            <field name="parent_id" eval="ref('dir_account_reports')"/>
+            <field name="description">
+                {
+                    '__EXPORT__': {
+                        'Extend The Repayment Report': {
+                            '_HEAD_': {
+                            	'H1':'calendar_period_id${value and value.calendar_name}#{align=left;number_format=text}',
+                            },
+                            'results': {
+                            	'A3': '${"=ROW()-2"}',
+                                'B3': 'org_code${value or ""}#{align=right;number_format=text}',
+                                'C3': 'date_document${value and value.strftime("%Y") or ""}#{align=right}',
+                                'D3': 'date_document${value and value.strftime("%m") or ""}#{align=right}',
+                                'E3': 'pabi_doc${value or ""}#{align=left;number_format=text}',
+                                'F3': 'mysale_doc${value or ""}#{align=left;number_format=text}',
+                                'G3': 'partner${value or ""}#{align=left;number_format=text}',
+                                'H3': 'display_name2${value or ""}#{align=left;number_format=text}',    
+                                'I3': 'category_name${value or ""}#{align=left;number_format=text}',
+                                'J3': "${'=IF(ISNUMBER(SEARCH(\"ภาครัฐ\",?(I3))), \"X\", \" \")'}#{align=center;number_format=text}",
+                                'K3': "${'=IF(ISNUMBER(SEARCH(\"ภาคเอกชน\",?(I3))), \"X\", \" \")'}#{align=center;number_format=text}",
+                                'L3': "${'=IF(ISNUMBER(SEARCH(\"ต่างประเทศ\",?(I3))), \"X\", \" \")'}#{align=center;number_format=text}",
+                                'M3': 'sum_total${value or "0.00"}#{align=right;number_format=number}',
+                                'N3': 'activity_list${value or ""}#{align=left;number_format=text}',
+                                'O3': 'date_document${value and value.strftime("%d-%m-%Y") or ""}#{align=right}',
+								'P3': 'date_old_due${value and value.strftime("%d-%m-%Y") or ""}#{align=right}',
+                                'Q3': 'date_due${value and value.strftime("%d-%m-%Y") or ""}#{align=right}',
+                                'R3': 'daydiff1${value or "0"}#{align=right;number_format=text}',
+                                'S3': 'daydiff2${value or "0"}#{align=right;number_format=text}',
+                                'V3': 'reason${value or ""}#{align=left;number_format=text}',
+                            },
+                        }
+                    }
+                }
+            </field>
         </record>        
     </data>
 </openerp>

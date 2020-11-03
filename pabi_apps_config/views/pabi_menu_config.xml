@@ -1518,7 +1518,11 @@
 			            action="pabi_account_report.action_xlsx_report_preprint_receipt_form"
 			            sequence="14" parent="menu_pabi_receivable_report"
 			            groups="account.group_account_manager,account.group_account_user"/>
-            
+			        <menuitem name="Extend The Repayment" id="menu_xlsx_report_extend_the_repayment"
+			            action="pabi_account_report.action_xlsx_report_extend_the_repayment"
+			            sequence="15" parent="menu_pabi_receivable_report"
+			            groups="account.group_account_manager,account.group_account_user"/>
+			            
 				# General Ledger
 				<delete id="pabi_account_report.menu_pabi_general_ledger_report" model="ir.ui.menu"/>
 				<delete id="pabi_account_report.menu_xlsx_report_expense_ledger" model="ir.ui.menu"/>
