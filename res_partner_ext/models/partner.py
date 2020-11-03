@@ -81,6 +81,10 @@ class ResPartner(models.Model):
         string='Email Accountant',
         store=True,
     )
+    email_etax = fields.Char(
+        string='Email e-Tax',
+        store=True,
+    )
 
     @api.onchange('title')
     def _onchange_title(self):
