@@ -98,12 +98,12 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
                 ('installment', '=', plan_installment),
             ],
         )
-        if plan.id != select_plan.id:
+        if plan.id not in select_plan.mapped('id'):
             name = '#%s - %s' % (plan.installment, plan.description)
             raise ValidationError(_("You have to select %s." % name))
-        if len(select_plan.ref_invoice_id) == 0:
+        if len(plan.ref_invoice_id) == 0:
             raise ValidationError(_("You have to create invoices first."))
-        for inv_line in select_plan.ref_invoice_id.invoice_line:
+        for inv_line in plan.ref_invoice_id.invoice_line:
             if not inv_line.product_id.id:
                 continue
             taxes = [(4, tax.id) for tax in inv_line.invoice_line_tax_id]
@@ -140,7 +140,7 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         #         }
         #         items.append([0, 0, vals])
         #     break
-        return items, select_plan
+        return items, plan
 
     @api.model
     def _prepare_item(self, line):
