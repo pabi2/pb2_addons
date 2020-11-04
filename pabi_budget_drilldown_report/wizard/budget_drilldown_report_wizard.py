@@ -42,7 +42,8 @@ class BudgetDrilldownReportWizard(SearchCommon, models.TransientModel):
                   'invest_asset_id', 'group_by_invest_asset_id',
                   'invest_construction_id', 'group_by_invest_construction_id',
                   'group_by_invest_construction_phase_id', 'chartfield_id',
-                  'group_by_chartfield_id', 'section_ids', 'project_ids')
+                  'group_by_chartfield_id', 'section_ids', 'project_ids',
+                  'cost_control_id', 'group_by_cost_control_id')
     def _onchange_helper(self):
         """ Ensure sure that, if some field is selected, so do some groupby """
         # For budget overview report
@@ -65,6 +66,8 @@ class BudgetDrilldownReportWizard(SearchCommon, models.TransientModel):
             self.group_by_invest_construction_id = True
         if self.chartfield_id:
             self.group_by_chartfield_id = True
+        if self.cost_control_id:
+            self.group_by_cost_control_id = True
         # For my budget report
         if self.section_ids:
             self.group_by_section_id = True

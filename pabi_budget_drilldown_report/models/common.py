@@ -11,14 +11,16 @@ REPORT_TYPES = [('all', 'All'),
                 ('personnel', 'Personnel')]
 
 REPORT_GROUPBY = {
-    'all': [],
-    'unit_base': ['section_id', 'activity_group_id',
-                  'charge_type', 'activity_id', 'budget_method'],
-    'project_base': ['project_id', 'activity_group_id',
-                     'charge_type', 'activity_id', 'budget_method'],
-    'invest_asset': ['org_id', 'invest_asset_id', 'budget_method'],
+    'all': ['cost_control_id'],
+    'unit_base': ['section_id', 'activity_group_id', 'charge_type',
+                  'activity_id', 'budget_method', 'cost_control_id'],
+    'project_base': ['project_id', 'activity_group_id', 'charge_type',
+                     'activity_id', 'budget_method', 'cost_control_id'],
+    'invest_asset': ['org_id', 'invest_asset_id', 'budget_method',
+                     'cost_control_id'],
     'invest_construction': ['org_id', 'invest_construction_id',
-                            'invest_construction_phase_id', 'budget_method'],
+                            'invest_construction_phase_id', 'budget_method',
+                            'cost_control_id'],
     'personnel': ['org_id', 'personnel_costcenter_id',
                   'activity_group_id', 'activity_id', 'budget_method']
 }
@@ -75,6 +77,14 @@ class SearchCommon(ChartField, object):
     org_id = fields.Many2one(
         'res.org',
         string='Orgs',
+    )
+    cost_control_type_id = fields.Many2one(
+        comodel_name='cost.control.type',
+        string='Job Order Type',
+    )
+    cost_control_id = fields.Many2one(
+        comodel_name='cost.control',
+        string='Job Order',
     )
     # For unit_base
     sector_id = fields.Many2one(
@@ -182,6 +192,10 @@ class SearchCommon(ChartField, object):
     )
     group_by_budget_method = fields.Boolean(
         string='Group By - Budget Method',
+        default=False,
+    )
+    group_by_cost_control_id = fields.Boolean(
+        string='Group By - Job Order',
         default=False,
     )
     # group_by_personnel_budget_id = fields.Boolean(

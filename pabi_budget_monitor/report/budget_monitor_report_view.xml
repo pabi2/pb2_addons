@@ -57,6 +57,8 @@
 						<filter string="Phase" name="groupby_invest_construction_phase" context="{'group_by':'invest_construction_phase_id'}"/>
 						<filter string="Investment Asset" name="groupby_invest_asset" context="{'group_by':'invest_asset_id'}"/>
 						<filter string="Charge Type" name="groupby_charge_type" context="{'group_by':'charge_type'}"/>
+						<filter string="Job" name="groupby_cost_control" context="{'group_by':'cost_control_id'}"/>
+						<filter string="Job Type" name="groupby_cost_control_type" context="{'group_by':'cost_control_type_id'}"/>					
 						<!-- <filter string="Report Progam" name="groupby_rpt_program" context="{'group_by':'program_rpt_id'}"/> -->
 	                </group>
                 </search>

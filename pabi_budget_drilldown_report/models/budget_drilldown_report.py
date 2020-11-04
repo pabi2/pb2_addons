@@ -802,6 +802,10 @@ class BudgetDrilldownReportLine(ChartField, models.Model):
         compute='_compute_chartfield',
         store=True,
     )
+    cost_control_id = fields.Many2one(
+        comodel_name='cost.control',
+        string='Job Order',
+    )
 
     @api.multi
     @api.depends('section_id', 'project_id', 'invest_asset_id',
