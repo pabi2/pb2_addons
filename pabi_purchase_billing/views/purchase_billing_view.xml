@@ -83,7 +83,8 @@
                     <notebook>
                         <page string="Supplier Invoices" >
                             <field name="supplier_invoice_ids"
-                                domain="[('is_prepaid', '=', False), ('state', '=', 'draft'), ('partner_id', '=', partner_id), ('currency_id', '=', currency_id), ('type', 'in', ('in_invoice', 'in_refund')), ('purchase_billing_id', '=', False)]" >
+                                domain="[('is_prepaid', '=', False), ('state', '=', 'draft'), ('partner_id', '=', partner_id), ('currency_id', '=', currency_id), ('type', 'in', ('in_invoice', 'in_refund')), ('purchase_billing_id', '=', False)]"
+                                context="{'tree_view_ref':'pabi_purchase_billing.billing_invoice_tree_view'}" >
                                 <tree>
                                     <field name="purchase_ids"/>
                                     <field name="supplier_invoice_number"/>

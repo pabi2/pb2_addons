@@ -25,8 +25,16 @@
 	        </field>
 	    </record>
 
-
-
+        <record id="invoice_tree" model="ir.ui.view">
+            <field name="name">invoice.tree</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='number']" position="after">
+                    <field name="wa_id" />
+                </xpath>
+            </field>
+        </record>
 
     </data>
 </openerp>

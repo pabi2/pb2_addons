@@ -28,6 +28,28 @@
             </field>
         </record>
 
+        <record id="billing_invoice_tree_view" model="ir.ui.view">
+            <field name="name">billing.invoice.tree.view</field>
+            <field name="model">account.invoice</field>
+            <field name="arch" type="xml">
+                <tree colors="blue:state == 'draft';grey:state == 'done'">
+                    <field name="operating_unit_id" groups="operating_unit.group_multi_operating_unit"/>
+                    <field name="source_document"/>
+                    <field name="wa_id"/>
+                    <field name="installment"/>
+                    <field name="date_invoice"/>
+                    <field name="date_document"/>
+                    <field name="date_due"/>
+                    <field name="supplier_invoice_number"/>
+                    <field name="user_id" string="Responsible"/>
+                    <field name="currency_id" groups="base.group_multi_currency"/>
+                    <field name="amount_untaxed" sum="Subtotal"/>
+                    <field name="amount_total" sum="Total Amount"/>
+                    <field name="state" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
         <record id="view_account_invoice_filter" model="ir.ui.view">
             <field name="name">account.invoice.select</field>
             <field name="model">account.invoice</field>
