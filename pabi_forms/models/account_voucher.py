@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from num2words import num2words
 from openerp import models, fields, api
 from openerp.tools.amount_to_text_en import amount_to_text
 from openerp.addons.l10n_th_amount_text.amount_to_text_th \
@@ -49,7 +50,39 @@ class AccountVoucher(models.Model):
         string='Amount WA total Text (TH)',
         compute='_amount_wa_total_to_word_th',
     )
+    amount_customer_tax_total_text_en = fields.Char(
+        compute='_amount_customer_tax_total_text_en'
+    )
+    amount_customer_tax_total_text_th = fields.Char(
+        string='Amount Tax',
+        compute='_amount_customer_tax_total_text_th'
+    )
 
+    @api.multi
+    def _amount_customer_tax_total_text_en(self):
+        amount_text = self.with_context(
+            {'lang_print': 'en'})._amount_customer_tax_total_text()
+        self.amount_customer_tax_total_text_en = amount_text
+
+    @api.multi
+    def _amount_customer_tax_total_text_th(self):
+        amount_text = self.with_context(
+            {'lang_print': 'th'})._amount_customer_tax_total_text()
+        self.amount_customer_tax_total_text_th = amount_text
+
+    @api.multi
+    def _amount_customer_tax_total_text(self):
+        lang = self._context.get('lang_print', False)
+        # base_amount is untax
+        amount = (
+            sum(self.tax_line_normal.mapped('base_amount')) +
+            sum(self.tax_line_normal.mapped('tax_amount'))
+        )
+        try:
+            amount_text = num2words(amount, to="currency", lang=lang)
+        except NotImplementedError:
+            amount_text = num2words(amount, to="currency", lang="en")
+        return amount_text
 
     @api.multi
     def _compute_sale_installment(self):
@@ -153,18 +186,17 @@ class AccountVoucher(models.Model):
             comment_from_diff = ', '.join(diff_lines.mapped('note'))
             rec.retention_diff_comment = comment_from_diff
         return True
-    
+
     @api.multi
     def _compute_wa_amount(self):
         for rec in self:
             wa_total_fine = rec.wa_total_fine or 0.0
             retention_amount = rec.retention_amount or 0.0
-            rec.amount_wa_total = wa_total_fine + retention_amount 
+            rec.amount_wa_total = wa_total_fine + retention_amount
         return True
-    
+
     @api.multi
     def _amount_wa_total_to_word_en(self):
-        res = {}
         minus = False
         amount_text = ''
         for obj in self:
@@ -200,18 +232,20 @@ class AccountVoucher(models.Model):
                         'Cent', b).replace('Cents', b)
             final_amount_text = (minus and 'Minus ' +
                                  amount_text or amount_text).lower()
-            obj.amount_wa_total_text_en = final_amount_text[:1].upper() + final_amount_text[1:]
-        
-    
+            obj.amount_wa_total_text_en = \
+                final_amount_text[:1].upper() + final_amount_text[1:]
+
     @api.multi
     def _amount_wa_total_to_word_th(self):
         minus = False
-        amount_text = ''
         for rec in self:
             amount_wa_total = rec.amount_wa_total
-            amount_wa_total_text = amount_to_text_th(amount_wa_total, rec.currency_id.name)
-        rec.amount_wa_total_text_th  = minus and 'ลบ' + amount_wa_total_text or amount_wa_total_text
-    
+            amount_wa_total_text = amount_to_text_th(
+                amount_wa_total, rec.currency_id.name)
+            rec.amount_wa_total_text_th = \
+                minus and 'ลบ' + amount_wa_total_text or amount_wa_total_text
+
+
 class AccountVoucherLine_Des(models.Model):
     _inherit = 'account.voucher.line'
 
@@ -221,13 +255,10 @@ class AccountVoucherLine_Des(models.Model):
         readonly=True,
         size=1000,
     )
-    
+
     @api.multi
     def _compute_journal_description(self):
         for rec in self:
             move_line = self.env['account.move.line'].search([('move_id','=',rec.voucher_id.move_id.id),
                                                          ('account_id','=',rec.account_id.id),('credit','=',rec.amount)])
             rec.journal_description = move_line.name
-        
-       
-        
