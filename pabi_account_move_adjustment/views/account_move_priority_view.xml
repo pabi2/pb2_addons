@@ -90,7 +90,7 @@
                                         <field name="invest_construction_phase_id" invisible="1"/>
                                         <field name="personnel_costcenter_id" invisible="1"/>
                                         <field name="fund_id" required="0"/>
-                                        <field name="cost_control_id" invisible="1"/>
+                                        <field name="cost_control_id"/>
                                         <field name="state"/>
                                         <field name="reconcile_id"/>
                                         <field name="reconcile_partial_id"/>
