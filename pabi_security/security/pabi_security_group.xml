@@ -167,6 +167,78 @@
 	        			(4, ref('hr_salary.group_hr_salary')),
 	        		  ]"/>
 	    </record>
+
+<!--PABI2 Cooperate Budget-->
+        <record id="group_pabi_cooperate_budget" model="res.groups">
+            <field name="name">PABI2 Cooperate Budget</field>
+            <field name="category_id" ref="pabi_security"/>
+	        <field name="implied_ids"
+					eval="[(4, ref('pabi_base.group_cooperate_budget')),]"/>
+	    </record>
+
+<!--PABI2 Budget Policy-->
+        <record id="group_pabi_budget_policy" model="res.groups">
+            <field name="name">PABI2 Budget Policy</field>
+            <field name="category_id" ref="pabi_security"/>
+	        <field name="implied_ids"
+					eval="[(4, ref('pabi_base.group_cooperate_budget_policy')),]"/>
+	    </record>
+
+<!--PABI2 Program Secretary-->
+        <record id="group_pabi_program_secretary" model="res.groups">
+            <field name="name">PABI2 Program Secretary</field>
+            <field name="category_id" ref="pabi_security"/>
+	        <field name="implied_ids"
+					eval="[(4, ref('pabi_base.group_program_secretary_budget')),]"/>
+	    </record>
+
+<!--PABI2 Budget Manager-->
+        <record id="group_pabi_budget_manager" model="res.groups">
+            <field name="name">PABI2 Budget Manager</field>
+            <field name="category_id" ref="pabi_security"/>
+	        <field name="implied_ids"
+					eval="[(4, ref('pabi_base.group_budget_manager')),]"/>
+	    </record>
+
+<!--PABI2 Budget Personnel-->
+        <record id="group_pabi_budget_personnel" model="res.groups">
+            <field name="name">PABI2 Budget Personnel</field>
+            <field name="category_id" ref="pabi_security"/>
+	        <field name="implied_ids"
+					eval="[(4, ref('pabi_base.group_budget_personnel')),]"/>
+	    </record>
+
+<!--PABI2 Construction Budget-->
+        <record id="group_pabi_construction_budget" model="res.groups">
+            <field name="name">PABI2 Construction Budget</field>
+            <field name="category_id" ref="pabi_security"/>
+	        <field name="implied_ids"
+					eval="[(4, ref('pabi_base.group_construction_budget')),]"/>
+	    </record>
+
+<!--PABI2 Asset OU Budget-->
+        <record id="group_pabi_asset_ou_budget" model="res.groups">
+            <field name="name">PABI2 Asset OU Budget</field>
+            <field name="category_id" ref="pabi_security"/>
+	        <field name="implied_ids"
+					eval="[(4, ref('pabi_base.group_asset_ou_budget')),]"/>
+	    </record>
+
+<!--PABI2 Perform Budget Carryover-->
+        <record id="group_pabi_perform_budget_carryover" model="res.groups">
+            <field name="name">PABI2 Perform Budget Carryover</field>
+            <field name="category_id" ref="pabi_security"/>
+	        <field name="implied_ids"
+					eval="[(4, ref('pabi_budget_yearend_process.group_budget_carry_over')),]"/>
+	    </record>
+
+<!--PABI2 Perform Project Balance Carry Forward-->
+        <record id="group_pabi_perform_project_balance_carry_forward" model="res.groups">
+            <field name="name">PABI2 Perform Project Balance Carry Forward</field>
+            <field name="category_id" ref="pabi_security"/>
+	        <field name="implied_ids"
+					eval="[(4, ref('pabi_budget_yearend_process.group_project_balance_carry_forward')),]"/>
+	    </record>
 	    
     </data>
 </openerp>
