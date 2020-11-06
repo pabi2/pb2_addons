@@ -47,8 +47,8 @@ class XLSXReportTaxExemptionReceipt(models.TransientModel):
             where_str += " AND am.period_id = %s" % str(self.calendar_period_id.id)
         if self.taxbranch_id:
             where_str += " AND rtb.id = %s" % str(self.taxbranch_id.id)
-        #if self.tax:
-        #    where_str += " AND at.description = '%s'" % self.tax
+        if self.tax:
+            where_str += " AND at.description = '%s'" % self.tax
 
         self._cr.execute("""
             ((SELECT inv.move_id, inv.taxbranch_id, inv.date_invoice, inv.number_preprint,
