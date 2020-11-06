@@ -2,7 +2,7 @@
 <!-- Created with Jaspersoft Studio version 6.9.0.final using JasperReports Library version 6.9.0-cb8f9004be492ccc537180b49c026951f4220bf3  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_journal_document_entry" pageWidth="5000" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="4960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" isIgnorePagination="true" uuid="153d681f-b073-4636-b1e5-0f2f36f6c1fd">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="myDataAdapterTest#29048"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="myDataAdapterTest#28048"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
@@ -578,7 +578,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Credit]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2600" y="0" width="240" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="45eaea1e-010d-4daf-897a-5882de4cd3a2">
+				<reportElement mode="Opaque" x="2680" y="0" width="160" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="45eaea1e-010d-4daf-897a-5882de4cd3a2">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d757b639-b148-4db1-8bc0-40734e91371a"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -790,6 +790,17 @@ aml.docline_seq]]>
 					<font size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Source of Budget]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2600" y="0" width="80" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="158317f9-83fd-449b-86aa-7cbc63671a79">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9f1c0ce4-14af-4e0a-814c-b6bf5f93c8de"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Balance]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -1050,7 +1061,7 @@ aml.docline_seq]]>
 				<textFieldExpression><![CDATA[$F{credit}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="2600" y="0" width="240" height="20" uuid="b6ad3386-9181-48e3-a9cd-e85fb7a6ada9">
+				<reportElement x="2680" y="0" width="160" height="20" uuid="b6ad3386-9181-48e3-a9cd-e85fb7a6ada9">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d757b639-b148-4db1-8bc0-40734e91371a"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -1249,6 +1260,16 @@ aml.docline_seq]]>
 					<font size="14"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{source_budget}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00#" isBlankWhenNull="true">
+				<reportElement x="2600" y="0" width="80" height="20" uuid="3ccf0bd4-3782-4b3c-8daf-36c26a7162f3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9f1c0ce4-14af-4e0a-814c-b6bf5f93c8de"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{debit}.floatValue() - $F{credit}.floatValue()]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -1534,7 +1555,7 @@ aml.docline_seq]]>
 				<text><![CDATA[Credit]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2600" y="0" width="240" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="22a4c110-012d-448d-8f24-d45f0884350a">
+				<reportElement mode="Opaque" x="2680" y="0" width="160" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="22a4c110-012d-448d-8f24-d45f0884350a">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d757b639-b148-4db1-8bc0-40734e91371a"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -1746,6 +1767,17 @@ aml.docline_seq]]>
 					<font size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Source of Budget]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2600" y="0" width="80" height="43" forecolor="#000000" backcolor="#BDD7EE" uuid="a7c19686-095f-4544-8f60-3071400721d0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="9f1c0ce4-14af-4e0a-814c-b6bf5f93c8de"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Balance]]></text>
 			</staticText>
 		</band>
 	</noData>
