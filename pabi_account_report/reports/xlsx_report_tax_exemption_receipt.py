@@ -63,8 +63,6 @@ class XLSXReportTaxExemptionReceipt(models.TransientModel):
                   LEFT JOIN res_taxbranch rtb on rtb.id = inv.taxbranch_id
               WHERE inv.type IN ('out_invoice', 'out_refund')
                 AND inv.state NOT IN ('draft', 'cancel')
-                AND inv.id NOT IN
-                    (SELECT DISTINCT invoice_id FROM account_invoice_tax)
                 %s
               GROUP BY inv.move_id, inv.taxbranch_id, inv.date_invoice, inv.number_preprint,
                      inv.partner_id, inv.amount_untaxed, inv.amount_tax,
@@ -90,10 +88,6 @@ class XLSXReportTaxExemptionReceipt(models.TransientModel):
               LEFT JOIN account_tax at on at.id = iael.tax_id
               LEFT JOIN res_taxbranch rtb on rtb.id = iael.taxbranch_id
               WHERE iae.type = 'invoice' AND iae.state = 'done'
-                    AND iae.id NOT IN
-                        (SELECT DISTINCT interface_id
-                         FROM interface_account_entry_line
-                         WHERE tax_id IS NOT NULL)
                     %s
               GROUP BY iae.id, iael.taxbranch_id, iael.date, iael.tax_id,
                        iael.partner_id))
