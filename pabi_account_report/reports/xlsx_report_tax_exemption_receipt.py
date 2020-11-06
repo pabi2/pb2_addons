@@ -51,46 +51,47 @@ class XLSXReportTaxExemptionReceipt(models.TransientModel):
             where_str += " AND at.description = '%s'" % self.tax
 
         self._cr.execute("""
-            ((SELECT inv.move_id, inv.taxbranch_id, inv.date_invoice, inv.number_preprint,
-                     inv.partner_id, inv.amount_untaxed, inv.amount_tax,
-                     inv.source_document_id, inv.number, NULL AS document_origin,
-                     inv.validate_user_id--, ailt.tax_id
-              FROM account_invoice inv
-                  LEFT JOIN account_invoice_line invl on invl.invoice_id = inv.id
-                  LEFT JOIN account_invoice_line_tax ailt on ailt.invoice_line_id = invl.id
-                  LEFT JOIN account_tax at on at.id = ailt.tax_id
-                  LEFT JOIN account_move am on am.id = inv.move_id
-                  LEFT JOIN res_taxbranch rtb on rtb.id = inv.taxbranch_id
-              WHERE inv.type IN ('out_invoice', 'out_refund')
+            ((SELECT inv.move_id, inv.taxbranch_id, inv.date_invoice,
+                STRING_AGG(DISTINCT atd.invoice_number, ', ') as number_preprint,
+                inv.partner_id, inv.amount_untaxed, inv.amount_tax,
+                inv.source_document_id, inv.number, NULL AS document_origin,
+                inv.validate_user_id
+            FROM account_invoice inv
+                LEFT JOIN account_invoice_line invl on invl.invoice_id = inv.id
+                LEFT JOIN account_invoice_line_tax ailt on ailt.invoice_line_id = invl.id
+                LEFT JOIN account_tax at on at.id = ailt.tax_id
+                LEFT JOIN account_move am on am.id = inv.move_id
+                LEFT JOIN res_taxbranch rtb on rtb.id = inv.taxbranch_id
+                LEFT JOIN account_tax_detail atd on atd.ref_move_id = am.id
+            WHERE inv.type IN ('out_invoice', 'out_refund')
                 AND inv.state NOT IN ('draft', 'cancel')
                 %s
-              GROUP BY inv.move_id, inv.taxbranch_id, inv.date_invoice, inv.number_preprint,
-                     inv.partner_id, inv.amount_untaxed, inv.amount_tax,
-                     inv.source_document_id, inv.number,
-                     inv.validate_user_id
-             )
-             UNION ALL
-             (SELECT iae.move_id, iael.taxbranch_id,
-                     iael.date AS date_invoice,
-                     iae.preprint_number AS number_preprint,
-                     iael.partner_id, SUM(iael.debit) AS amount_untaxed,
-                     (SELECT ABS(SUM(credit) - SUM(debit))
-                      FROM interface_account_entry_line
-                      WHERE tax_id IS NOT NULL AND interface_id = iae.id
-                      GROUP BY interface_id) AS amount_tax,
-                     NULL AS source_document_id, iae.number,
-                     iae.name AS document_origin, iae.validate_user_id
-                     --, iael.tax_id
-              FROM interface_account_entry iae
-              LEFT JOIN interface_account_entry_line iael
-                ON iae.id = iael.interface_id
-              LEFT JOIN account_move am on am.id = iae.move_id
-              LEFT JOIN account_tax at on at.id = iael.tax_id
-              LEFT JOIN res_taxbranch rtb on rtb.id = iael.taxbranch_id
-              WHERE iae.type = 'invoice' AND iae.state = 'done'
-                    %s
-              GROUP BY iae.id, iael.taxbranch_id, iael.date, iael.tax_id,
-                       iael.partner_id))
+            GROUP BY inv.move_id, inv.taxbranch_id, inv.date_invoice, inv.number_preprint,
+                inv.partner_id, inv.amount_untaxed, inv.amount_tax, inv.source_document_id,
+                inv.number, inv.validate_user_id
+            )
+            UNION ALL
+            (SELECT iae.move_id, iael.taxbranch_id,
+                iael.date AS date_invoice,
+                STRING_AGG(DISTINCT atd.invoice_number, ', ') AS number_preprint,
+                iael.partner_id, SUM(iael.debit) AS amount_untaxed,
+                (SELECT ABS(SUM(credit) - SUM(debit))
+                FROM interface_account_entry_line
+                WHERE tax_id IS NOT NULL AND interface_id = iae.id
+                GROUP BY interface_id) AS amount_tax,
+                NULL AS source_document_id, iae.number,
+                iae.name AS document_origin, iae.validate_user_id
+            FROM interface_account_entry iae
+            LEFT JOIN interface_account_entry_line iael
+            ON iae.id = iael.interface_id
+            LEFT JOIN account_move am on am.id = iae.move_id
+            LEFT JOIN account_tax at on at.id = iael.tax_id
+            LEFT JOIN res_taxbranch rtb on rtb.id = iael.taxbranch_id
+            LEFT JOIN account_tax_detail atd on atd.ref_move_id = am.id
+            WHERE iae.type = 'invoice' AND iae.state = 'done'
+                %s
+            GROUP BY iae.id, iael.taxbranch_id, iael.date, iael.tax_id,
+                iael.partner_id))
         """  % (where_str, where_str))
 
         line_ids = self._cr.dictfetchall()
@@ -151,8 +152,4 @@ class TaxExemptionlView(models.AbstractModel):
         'res.users',
         string='Validated By',
         readonly=True,
-    )
-    tax_id = fields.Many2one(
-        'account.tax',
-        string='Tax'
     )
