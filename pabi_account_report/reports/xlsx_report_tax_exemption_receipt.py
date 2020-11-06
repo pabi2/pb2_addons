@@ -2,14 +2,111 @@
 from openerp import models, fields, api, tools
 
 
-class TaxExemptionlView(models.Model):
-    _name = 'tax.exemption.view'
-    _auto = False
+class XLSXReportTaxExemptionReceipt(models.TransientModel):
+    _name = 'xlsx.report.tax.exemption.receipt'
+    _inherit = 'report.account.common'
 
-    id = fields.Integer(
-        string='ID',
+    filter = fields.Selection(
         readonly=True,
+        default='filter_period',
     )
+    calendar_period_id = fields.Many2one(
+        'account.period.calendar',
+        string='Calendar Period',
+        required=True,
+        default=lambda self: self.env['account.period.calendar'].find(),
+    )
+    taxbranch_id = fields.Many2one(
+        'res.taxbranch',
+        string='Taxbranch',
+        required=True,
+    )
+    tax = fields.Selection(
+        [('OX', 'OX')],
+        string='Tax',
+        default='OX',
+    )
+    results = fields.Many2many(
+        'tax.exemption.view',
+        string='Results',
+        compute='_compute_results',
+        help='Use compute fields, so there is nothing store in database',
+    )
+
+    @api.multi
+    def _compute_results(self):
+        """
+        Solution
+        1. Get from customer invoice, cutomer refund, invoice entries
+           (exclude tax)
+        """
+        self.ensure_one()
+        Result = self.env['tax.exemption.view']
+        where_str = ""
+        if self.calendar_period_id:
+            where_str += " AND am.period_id = %s" % str(self.calendar_period_id.id)
+        if self.taxbranch_id:
+            where_str += " AND rtb.id = %s" % str(self.taxbranch_id.id)
+        #if self.tax:
+        #    where_str += " AND at.description = '%s'" % self.tax
+
+        self._cr.execute("""
+            ((SELECT inv.move_id, inv.taxbranch_id, inv.date_invoice, inv.number_preprint,
+                     inv.partner_id, inv.amount_untaxed, inv.amount_tax,
+                     inv.source_document_id, inv.number, NULL AS document_origin,
+                     inv.validate_user_id--, ailt.tax_id
+              FROM account_invoice inv
+                  LEFT JOIN account_invoice_line invl on invl.invoice_id = inv.id
+                  LEFT JOIN account_invoice_line_tax ailt on ailt.invoice_line_id = invl.id
+                  LEFT JOIN account_tax at on at.id = ailt.tax_id
+                  LEFT JOIN account_move am on am.id = inv.move_id
+                  LEFT JOIN res_taxbranch rtb on rtb.id = inv.taxbranch_id
+              WHERE inv.type IN ('out_invoice', 'out_refund')
+                AND inv.state NOT IN ('draft', 'cancel')
+                AND inv.id NOT IN
+                    (SELECT DISTINCT invoice_id FROM account_invoice_tax)
+                %s
+              GROUP BY inv.move_id, inv.taxbranch_id, inv.date_invoice, inv.number_preprint,
+                     inv.partner_id, inv.amount_untaxed, inv.amount_tax,
+                     inv.source_document_id, inv.number,
+                     inv.validate_user_id
+             )
+             UNION ALL
+             (SELECT iae.move_id, iael.taxbranch_id,
+                     iael.date AS date_invoice,
+                     iae.preprint_number AS number_preprint,
+                     iael.partner_id, SUM(iael.debit) AS amount_untaxed,
+                     (SELECT ABS(SUM(credit) - SUM(debit))
+                      FROM interface_account_entry_line
+                      WHERE tax_id IS NOT NULL AND interface_id = iae.id
+                      GROUP BY interface_id) AS amount_tax,
+                     NULL AS source_document_id, iae.number,
+                     iae.name AS document_origin, iae.validate_user_id
+                     --, iael.tax_id
+              FROM interface_account_entry iae
+              LEFT JOIN interface_account_entry_line iael
+                ON iae.id = iael.interface_id
+              LEFT JOIN account_move am on am.id = iae.move_id
+              LEFT JOIN account_tax at on at.id = iael.tax_id
+              LEFT JOIN res_taxbranch rtb on rtb.id = iael.taxbranch_id
+              WHERE iae.type = 'invoice' AND iae.state = 'done'
+                    AND iae.id NOT IN
+                        (SELECT DISTINCT interface_id
+                         FROM interface_account_entry_line
+                         WHERE tax_id IS NOT NULL)
+                    %s
+              GROUP BY iae.id, iael.taxbranch_id, iael.date, iael.tax_id,
+                       iael.partner_id))
+        """  % (where_str, where_str))
+
+        line_ids = self._cr.dictfetchall()
+        self.results = [Result.new(line).id for line in line_ids]
+
+
+class TaxExemptionlView(models.AbstractModel):
+    _name = 'tax.exemption.view'
+    #_auto = False
+
     move_id = fields.Many2one(
         'account.move',
         string='Move',
@@ -61,88 +158,7 @@ class TaxExemptionlView(models.Model):
         string='Validated By',
         readonly=True,
     )
-
-    def _get_sql_view(self):
-        sql_view = """
-            SELECT ROW_NUMBER() OVER(ORDER BY invoice.move_id) AS id, *
-            FROM
-                ((SELECT move_id, taxbranch_id, date_invoice, number_preprint,
-                         partner_id, amount_untaxed, amount_tax,
-                         source_document_id, number, NULL AS document_origin,
-                         validate_user_id
-                  FROM account_invoice
-                  WHERE type IN ('out_invoice', 'out_refund')
-                    AND state NOT IN ('draft', 'cancel')
-                    AND id NOT IN
-                        (SELECT DISTINCT invoice_id FROM account_invoice_tax))
-                 UNION ALL
-                 (SELECT iae.move_id, iael.taxbranch_id,
-                         iael.date AS date_invoice,
-                         iae.preprint_number AS number_preprint,
-                         iael.partner_id, SUM(iael.debit) AS amount_untaxed,
-                         (SELECT ABS(SUM(credit) - SUM(debit))
-                          FROM interface_account_entry_line
-                          WHERE tax_id IS NOT NULL AND interface_id = iae.id
-                          GROUP BY interface_id) AS amount_tax,
-                         NULL AS source_document_id, iae.number,
-                         iae.name AS document_origin, iae.validate_user_id
-                  FROM interface_account_entry iae
-                  LEFT JOIN interface_account_entry_line iael
-                    ON iae.id = iael.interface_id
-                  WHERE iae.type = 'invoice' AND iae.state = 'done' AND
-                        iae.id NOT IN
-                        (SELECT DISTINCT interface_id
-                         FROM interface_account_entry_line
-                         WHERE tax_id IS NOT NULL)
-                  GROUP BY iae.id, iael.taxbranch_id, iael.date,
-                           iael.partner_id)) invoice
-        """
-        return sql_view
-
-    def init(self, cr):
-        tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE OR REPLACE VIEW %s AS (%s)"""
-                   % (self._table, self._get_sql_view()))
-
-
-class XLSXReportTaxExemptionReceipt(models.TransientModel):
-    _name = 'xlsx.report.tax.exemption.receipt'
-    _inherit = 'report.account.common'
-
-    filter = fields.Selection(
-        readonly=True,
-        default='filter_period',
+    tax_id = fields.Many2one(
+        'account.tax',
+        string='Tax'
     )
-    calendar_period_id = fields.Many2one(
-        'account.period.calendar',
-        string='Calendar Period',
-        required=True,
-        default=lambda self: self.env['account.period.calendar'].find(),
-    )
-    taxbranch_id = fields.Many2one(
-        'res.taxbranch',
-        string='Taxbranch',
-        required=True,
-    )
-    results = fields.Many2many(
-        'tax.exemption.view',
-        string='Results',
-        compute='_compute_results',
-        help='Use compute fields, so there is nothing store in database',
-    )
-
-    @api.multi
-    def _compute_results(self):
-        """
-        Solution
-        1. Get from customer invoice, cutomer refund, invoice entries
-           (exclude tax)
-        """
-        self.ensure_one()
-        Result = self.env['tax.exemption.view']
-        dom = []
-        if self.calendar_period_id:
-            dom += [('move_id.period_id', '=', self.calendar_period_id.id)]
-        if self.taxbranch_id:
-            dom += [('taxbranch_id', '=', self.taxbranch_id.id)]
-        self.results = Result.search(dom)
