@@ -9,6 +9,7 @@
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
 			<![CDATA[SELECT
+MIN(pol.docline_seq) as item,
 pol.name,
 pol.price_unit,
 CONCAT(sum(pol.product_qty)::integer,' ',pu.name) product_unit,
@@ -23,7 +24,8 @@ FROM purchase_order_line pol
 LEFT JOIN product_uom pu
 ON pu.id = pol.product_uom
 WHERE pol.order_id = $P{ids} and pol.active = True
-group by pol.product_id, pol.name, pu.name, pol.price_unit, pol.order_id, percentvat]]>
+group by pol.product_id, pol.name, pu.name, pol.price_unit, pol.order_id, percentvat
+order by item]]>
 		</queryString>
 		<field name="name" class="java.lang.String"/>
 		<field name="price_unit" class="java.lang.Number">
