@@ -11,6 +11,7 @@ from openerp.tools.float_utils import float_compare
 class PurchaseWorkAcceptance(models.Model):
     _name = 'purchase.work.acceptance'
     _description = 'Purchase Work Acceptance'
+    _order = 'create_date desc'
 
     _STATES = [
         ('draft', 'Draft'),
