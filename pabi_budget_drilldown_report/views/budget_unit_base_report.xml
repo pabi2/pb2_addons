@@ -12,6 +12,7 @@
                         <field name="line_ids" nolabel="1">
                             <tree editable="bottom">
                                 <field name="section_id"/>
+                                <field name="cost_control_id"/>
                                 <field name="budget_method"/>
                                 <field name="charge_type"/>
                                 <field name="activity_group_id"/>
