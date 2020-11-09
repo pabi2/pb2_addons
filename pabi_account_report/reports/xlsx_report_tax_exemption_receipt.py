@@ -53,7 +53,7 @@ class XLSXReportTaxExemptionReceipt(models.TransientModel):
         self._cr.execute("""
             ((SELECT inv.move_id, inv.taxbranch_id, inv.date_invoice,
                 STRING_AGG(DISTINCT atd.invoice_number, ', ') as number_preprint,
-                inv.partner_id, inv.amount_untaxed, inv.amount_tax,
+                inv.partner_id, SUM(atd.base) AS amount_untaxed, inv.amount_tax,
                 inv.source_document_id, inv.number, NULL AS document_origin,
                 inv.validate_user_id
             FROM account_invoice inv
@@ -66,7 +66,7 @@ class XLSXReportTaxExemptionReceipt(models.TransientModel):
             WHERE inv.type IN ('out_invoice', 'out_refund')
                 AND inv.state NOT IN ('draft', 'cancel')
                 %s
-            GROUP BY inv.move_id, inv.taxbranch_id, inv.date_invoice, inv.number_preprint,
+            GROUP BY inv.move_id, inv.taxbranch_id, inv.date_invoice,
                 inv.partner_id, inv.amount_untaxed, inv.amount_tax, inv.source_document_id,
                 inv.number, inv.validate_user_id
             )
@@ -74,7 +74,7 @@ class XLSXReportTaxExemptionReceipt(models.TransientModel):
             (SELECT iae.move_id, iael.taxbranch_id,
                 iael.date AS date_invoice,
                 STRING_AGG(DISTINCT atd.invoice_number, ', ') AS number_preprint,
-                iael.partner_id, SUM(iael.debit) AS amount_untaxed,
+                iael.partner_id, SUM(atd.base) AS amount_untaxed,
                 (SELECT ABS(SUM(credit) - SUM(debit))
                 FROM interface_account_entry_line
                 WHERE tax_id IS NOT NULL AND interface_id = iae.id
