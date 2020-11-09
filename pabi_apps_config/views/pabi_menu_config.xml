@@ -1537,18 +1537,27 @@
 			        <menuitem name="Expense Ledger" id="menu_xlsx_report_expense_ledger"
 			            action="pabi_account_report.action_xlsx_report_expense_ledger_form"
 			            sequence="1" parent="menu_pabi_general_ledger_report"/>
+			        <menuitem name="Expense Ledger(New)" id="menu_jasper_report_expense_ledger"
+			            action="pabi_account_gl_jasper.action_jasper_report_expense_ledger_form"
+			            sequence="2" parent="menu_pabi_general_ledger_report"/>
 			        <menuitem name="GL Project" id="menu_xlsx_report_gl_project"
 			            action="pabi_account_report.action_xlsx_report_gl_project_form"
-			            sequence="2" parent="menu_pabi_general_ledger_report"/>
+			            sequence="3" parent="menu_pabi_general_ledger_report"/>
+			        <!-- <menuitem name="GL Project(New)" id="menu_jasper_report_gl_project"
+			            action="pabi_account_gl_jasper.action_jasper_report_gl_project_form"
+			            sequence="4" parent="menu_pabi_general_ledger_report"/>     -->
 			        <menuitem name="Revenue Ledger" id="menu_xlsx_report_revenue_ledger"
 			            action="pabi_account_report.action_xlsx_report_revenue_ledger_form"
-			            sequence="3" parent="menu_pabi_general_ledger_report"/>
+			            sequence="5" parent="menu_pabi_general_ledger_report"/>
+			        <menuitem name="Revenue Ledger(New)" id="menu_jasper_report_revenue_ledger"
+			            action="pabi_account_gl_jasper.action_jasper_report_revenue_ledger_form"
+			            sequence="6" parent="menu_pabi_general_ledger_report"/>
 			        <menuitem name="Allowance for Doubtful Accounts" id="menu_report_gl_allowance_doubtful_accounts"
 			            action="pabi_account_report.action_report_gl_allowance_doubtful_accounts"
-			            sequence="4" parent="menu_pabi_general_ledger_report"/>
+			            sequence="7" parent="menu_pabi_general_ledger_report"/>
 			        <menuitem name="Journal document Entry" id="menu_jasper_report_journal_document_entry"
 			            action="pabi_account_gl_jasper.action_jasper_report_journal_document_entry_form"
-			            sequence="5" parent="menu_pabi_general_ledger_report"/>
+			            sequence="8" parent="menu_pabi_general_ledger_report"/>
 
         # Assets
 		<delete id="pabi_asset_management.menu_asset_main" model="ir.ui.menu"/>
