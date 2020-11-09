@@ -4,24 +4,90 @@ from openerp import models, fields, api
 
 class JasperReportJournalDocumentEntry(models.TransientModel):
     _name = 'jasper.report.journal.document.entry'
-    _inherit = 'xlsx.report.expense.ledger'
+    _inherit = 'report.account.common'
     
+    account_ids = fields.Many2many(
+        'account.account',
+        string='Accounts',
+    )
+    line_filter = fields.Text(
+        string='Filter',
+        help="More filter. You can use complex search with comma and between.",
+    )
+    chartfield_ids = fields.Many2many(
+        'chartfield.view',
+        string='Budget',
+        domain=['|',('active', '=', False),('active', '=', True),('model', '!=', 'res.personnel.costcenter')],
+    )
+    partner_ids = fields.Many2many(
+        'res.partner',
+        string='Partners',
+    )
+    count_chartfield = fields.Integer(
+        compute='_compute_count_chartfield',
+        string='Budget Count',
+    )
+    charge_type = fields.Selection(
+        [('internal', 'Internal'),
+         ('external', 'External')],
+        string='Charge Type',
+    )
+    operating_unit_ids = fields.Many2one(
+        'operating.unit',
+        string='Org',
+    )
+    user_type = fields.Many2one(
+        'account.account.type',
+        string='Account Type',
+        #default=lambda self: self.env.ref('account.data_account_type_expense'),
+    )
     doc_type = fields.Char(
         string='Doc Type',
     )
-    
     doc_number_ids =  fields.Many2many(
         'account.move',
         string='Document Number',
     )
-    
     doc_line_filter = fields.Text(
         string='Document Number Filter',
         help="More filter. You can use complex search with comma and between.",
     )
+    results = fields.Many2many(
+        'account.move.line',
+        string='Results',
+        compute='_compute_results',
+        help='Use compute fields, so there is nothing store in database',
+    )
+
+    @api.multi
+    @api.depends('chartfield_ids')
+    def _compute_count_chartfield(self):
+        for rec in self:
+            rec.count_chartfield = len(rec.chartfield_ids)
+
+    @api.onchange('operating_unit_ids')
+    def onchange_org(self):
+        domain_acc = []
+        domain_partner = []
+        if self.operating_unit_ids:
+            domain_acc += [('company_id', '=', self.company_id.ids), '|', ('user_type.code', 'in', ('Expense', 'Allocation')), ('code', 'like', '5%')]
+            domain_partner += [('company_id', '=', self.company_id.ids), ('supplier', '=', True), ('user_id.default_operating_unit_id', 'in', self.operating_unit_ids.ids)]
+            return {'domain': {'account_ids': domain_acc, 'partner_ids': domain_partner}}
     
-    @api.onchange('doc_line_filter')
+    @api.onchange('line_filter')
     def _onchange_line_filter(self):
+        self.chartfield_ids = []
+        Chartfield = self.env['chartfield.view']
+        dom = []
+        if self.line_filter:
+            codes = self.line_filter.split('\n')
+            codes = [x.strip() for x in codes]
+            codes = ','.join(codes)
+            dom.append(('code', 'ilike', codes))
+            self.chartfield_ids = Chartfield.search(dom, order='id')
+            
+    @api.onchange('doc_line_filter')
+    def _onchange_doc_line_filter(self):
         self.doc_number_ids = []
         am_obj = self.env['account.move']
         dom = []
