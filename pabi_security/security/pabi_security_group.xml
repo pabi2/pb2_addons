@@ -241,7 +241,8 @@
 	    </record>
 	    
         <record id="base.group_user" model="res.groups">
-            <field name="implied_ids" eval="[(4, ref('pabi_utils.group_see_own_spool_report'))]"/>
+            <field name="implied_ids"
+            		eval="[(4, ref('pabi_utils.group_see_own_spool_report'))]"/>
         </record>
     </data>
 </openerp>
