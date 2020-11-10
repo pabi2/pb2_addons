@@ -27,6 +27,28 @@ class AccountInvoice(models.Model):
         readonly=True,
         help="WA First time, Use case cancel WA and set to draft",
     )
+    date_accept = fields.Date(
+        related='wa_id.date_accept',
+        string='Acceptance Date',
+        help='Related from Acceptance Date in Work Acceptance',
+        readonly=True,
+    )
+    date_transfer = fields.Date(
+        string='Transfer Date',
+        compute='_compute_date_transfer',
+        help='Computed from Date Done in IN',
+    )
+
+    @api.multi
+    @api.depends('wa_id')
+    def _compute_date_transfer(self):
+        picking = self.env['stock.picking']
+        for rec in self:
+            if rec.wa_id:
+                picking_id = picking.search([
+                    ('acceptance_id', '=', rec.wa_id.id)])
+                rec.date_transfer = \
+                    picking_id and picking_id.date_done or False
 
     @api.multi
     def _compute_wa_id_from_origin(self):

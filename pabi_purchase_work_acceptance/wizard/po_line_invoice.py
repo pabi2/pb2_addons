@@ -56,15 +56,23 @@ class PurchaseLineInvoice(models.TransientModel):
             active_id = self._context['active_id']
             WAcceptance = self.env['purchase.work.acceptance']
             acceptance = WAcceptance.browse(active_id)
+            wa_line_service = acceptance.acceptance_line_ids.filtered(
+                lambda l: l.product_id.type == 'service')
             acceptance.invoice_created = \
                 invoice_ids and invoice_ids[0] or False
             if invoice_ids and acceptance.supplier_invoice:
                 invoices = self.env['account.invoice'].browse(invoice_ids)
-                invoices.write({
+                inv_dict = {
                     'supplier_invoice_number': acceptance.supplier_invoice,
                     'wa_id': acceptance.id,
                     'wa_origin_id': acceptance.id
-                })
+                }
+                # update currency rate in invoice
+                if wa_line_service:
+                    invoices.with_context({
+                        'date_manual': acceptance.date_accept
+                    })._compute_currency_rate()
+                invoices.write(inv_dict)
                 invoices.button_reset_taxes()
         return res
 

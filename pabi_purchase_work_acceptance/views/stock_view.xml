@@ -1,6 +1,33 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
+        <record id="vpicktree" model="ir.ui.view">
+            <field name="name">stock.picking.tree</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.vpicktree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='date']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='location_dest_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="date"/>
+                    <field name="acceptance_id"/>
+                    <field name="date_done"/>
+                </xpath>
+
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="location_dest_id"/>
+                    <field name="partner_id"/>
+                </xpath>
+            </field>
+        </record>
+
         <record model="ir.ui.view" id="view_picking_form" >
             <field name="name">stock.picking.form</field>
             <field name="model">stock.picking</field>
@@ -15,6 +42,10 @@
                     'readonly': [('state', 'in', ('done','cancel'))]}
                     "/>
                 </xpath>
+                <field name="date_done" position="replace"/>
+                <field name="min_date" position="after">
+                    <field name="date_done" groups="base.group_no_one" attrs="{'invisible': [('date_done', '=', False)]}"/>
+                </field>
                 <xpath expr="/form/sheet/div[@class='oe_right oe_button_box']" position="inside">
                     <button type="object"  name="invoice_open"
                         class="oe_stat_button"
