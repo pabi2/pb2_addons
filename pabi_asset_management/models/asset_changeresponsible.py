@@ -102,9 +102,9 @@ class AccountAssetChangeresponsible(models.Model):
         procurement_user = self.env['pabi.security.line'].sudo().\
         search([('user_id','=',self.env.user.id),'|',('mg2','=',True),('mg3','=',True)])
         requester = self.search([('requester_user_id','=',self.env.user.id)]).ids
-        requester_supervisor = self.search([('supervisor_req_id','=',self.env.user.id)]).ids
+        requester_supervisor = self.search([('supervisor_req_id','=',self.env.user.partner_id.employee_id.id)]).ids
         responsible_person = self.search([('responsible_user_id','=',self.env.user.id)]).ids
-        responsible_supervisor = self.search([('supervisor_res_id','=',self.env.user.id)]).ids
+        responsible_supervisor = self.search([('supervisor_res_id','=',self.env.user.partner_id.employee_id.id)]).ids
         asset_id = list(set().union(requester,requester_supervisor,responsible_person,responsible_supervisor))
         if procurement_user:
             org_id = self.env.user.partner_id.employee_id.org_id.id
