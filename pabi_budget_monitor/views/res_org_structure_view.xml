@@ -27,7 +27,7 @@
                         <notebook>
                             <page string="Budget Monitor">
                             <separator string="Expense"/>
-                                <field name="monitor_expense_ids">
+                                <field name="monitor_expense_view_ids">
                                     <tree string="Monitor" editable="bottom">
                                         <field name="fiscalyear_id"/>
                                         <field name="charge_type"/>
@@ -42,7 +42,7 @@
                                     </tree>
                                 </field>
                                 <separator string="Revenue"/>
-                                    <field name="monitor_revenue_ids">
+                                    <field name="monitor_revenue_view_ids">
                                         <tree string="Monitor" editable="bottom">
                                             <field name="fiscalyear_id"/>
                                             <field name="charge_type"/>
@@ -94,7 +94,7 @@
                         <notebook>
                             <page string="Budget Monitor">
                             <separator string="Expense"/>
-                                <field name="monitor_expense_ids">
+                                <field name="monitor_expense_view_ids">
                                     <tree string="Monitor" editable="bottom">
                                         <field name="fiscalyear_id"/>
                                         <field name="charge_type"/>
@@ -109,7 +109,7 @@
                                     </tree>
                                 </field>
                                 <separator string="Revenue"/>
-                                    <field name="monitor_revenue_ids">
+                                    <field name="monitor_revenue_view_ids">
                                         <tree string="Monitor" editable="bottom">
                                             <field name="fiscalyear_id"/>
                                             <field name="charge_type"/>
@@ -162,7 +162,7 @@
                         <notebook>
                             <page string="Budget Monitor">
                             <separator string="Expense"/>
-                                <field name="monitor_expense_ids">
+                                <field name="monitor_expense_view_ids">
                                     <tree string="Monitor" editable="bottom">
                                         <field name="fiscalyear_id"/>
                                         <field name="charge_type"/>
@@ -177,7 +177,7 @@
                                     </tree>
                                 </field>
                                 <separator string="Revenue"/>
-                                    <field name="monitor_revenue_ids">
+                                    <field name="monitor_revenue_view_ids">
                                         <tree string="Monitor" editable="bottom">
                                             <field name="fiscalyear_id"/>
                                             <field name="charge_type"/>
@@ -230,7 +230,7 @@
                         <notebook>
                             <page string="Budget Monitor">
                             <separator string="Expense"/>
-                                <field name="monitor_expense_ids">
+                                <field name="monitor_expense_view_ids">
                                     <tree string="Monitor" editable="bottom">
                                         <field name="fiscalyear_id"/>
                                         <field name="charge_type"/>
@@ -245,7 +245,7 @@
                                     </tree>
                                 </field>
                                 <separator string="Revenue"/>
-                                    <field name="monitor_revenue_ids">
+                                    <field name="monitor_revenue_view_ids">
                                         <tree string="Monitor" editable="bottom">
                                             <field name="fiscalyear_id"/>
                                             <field name="charge_type"/>
@@ -302,7 +302,7 @@
                         <notebook>
                             <page string="Budget Monitor">
                             <separator string="Expense"/>
-                                <field name="monitor_expense_ids">
+                                <field name="monitor_expense_view_ids">
                                     <tree string="Monitor" editable="bottom">
                                         <field name="fiscalyear_id"/>
                                         <field name="charge_type"/>
@@ -317,18 +317,18 @@
                                     </tree>
                                 </field>
                                 <separator string="Revenue"/>
-                                    <field name="monitor_revenue_ids">
-                                        <tree string="Monitor" editable="bottom">
-                                            <field name="fiscalyear_id"/>
-                                            <field name="charge_type"/>
-                                            <field name="planned_amount"/>
-                                            <field name="released_amount"/>
-                                            <field name="amount_so_commit"/>
-                                            <field name="amount_actual"/>
-                                            <field name="amount_consumed"/>
-                                            <field name="amount_balance"/>
-                                        </tree>
-                                    </field>
+                                <field name="monitor_revenue_view_ids">
+                                    <tree string="Monitor" editable="bottom">
+                                        <field name="fiscalyear_id"/>
+                                        <field name="charge_type"/>
+                                        <field name="planned_amount"/>
+                                        <field name="released_amount"/>
+                                        <field name="amount_so_commit"/>
+                                        <field name="amount_actual"/>
+                                        <field name="amount_consumed"/>
+                                        <field name="amount_balance"/>
+                                    </tree>
+                                </field>
                             </page>
                         </notebook>
                     </sheet>
@@ -370,7 +370,7 @@
                         <notebook>
                             <page string="Budget Monitor">
                             <separator string="Expense"/>
-                                <field name="monitor_expense_ids">
+                                <field name="monitor_expense_view_ids">
                                     <tree string="Monitor" editable="bottom">
                                         <field name="fiscalyear_id"/>
                                         <field name="charge_type"/>
@@ -385,7 +385,7 @@
                                     </tree>
                                 </field>
                                 <separator string="Revenue"/>
-                                    <field name="monitor_revenue_ids">
+                                    <field name="monitor_revenue_view_ids">
                                         <tree string="Monitor" editable="bottom">
                                             <field name="fiscalyear_id"/>
                                             <field name="charge_type"/>

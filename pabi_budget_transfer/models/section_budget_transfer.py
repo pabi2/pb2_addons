@@ -370,14 +370,16 @@ class SectionBudgetTransferLine(models.Model):
         fiscalyear = budget.fiscalyear_id
         control_external = fiscalyear.control_ext_charge_only
         if control_external:
-            expense_lines = budget.section_id.monitor_expense_ids.filtered(
-                lambda l: l.fiscalyear_id in fiscalyear
-                and l.charge_type == 'external'
-            )
+            expense_lines = \
+                budget.section_id.monitor_expense_view_ids.filtered(
+                    lambda l: l.fiscalyear_id in fiscalyear
+                    and l.charge_type == 'external'
+                )
         else:
-            expense_lines = budget.section_id.monitor_expense_ids.filtered(
-                lambda l: l.fiscalyear_id in fiscalyear
-            )
+            expense_lines = \
+                budget.section_id.monitor_expense_view_ids.filtered(
+                    lambda l: l.fiscalyear_id in fiscalyear
+                )
         consumed = sum([i.amount_consumed for i in expense_lines])
         release = self.from_budget_id.to_release_amount
         balance = release - consumed

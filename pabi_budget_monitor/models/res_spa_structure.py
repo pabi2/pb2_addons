@@ -98,19 +98,61 @@ class ResFunctionalArea(models.Model):
         string='Functional Area Monitor',
         readonly=True,
     )
-    monitor_revenue_ids = fields.One2many(
-        'res.functional.area.monitor.view', 'functional_area_id',
-        string='Functional Area Monitor',
-        domain=[('budget_method', '=', 'revenue')],
+    monitor_revenue_view_ids = fields.One2many(
+        comodel_name='res.functional.area.monitor.only.view',
+        compute='_compute_budget_monitor',
         readonly=True,
+        string='Functional Area Monitor',
+        help='This field created for speed performance views \
+        in Budget Monitor Tab only',
+    )
+    monitor_expense_view_ids = fields.One2many(
+        comodel_name='res.functional.area.monitor.only.view',
+        compute='_compute_budget_monitor',
+        readonly=True,
+        string='Functional Area Monitor',
+        help='This field created for speed performance views \
+        in Budget Monitor Tab only',
+    )
 
-    )
-    monitor_expense_ids = fields.One2many(
-        'res.functional.area.monitor.view', 'functional_area_id',
-        string='Functional Area Monitor',
-        domain=[('budget_method', '=', 'expense')],
-        readonly=True,
-    )
+    @api.multi
+    def _compute_budget_monitor(self):
+        self.ensure_one()
+        # create new section not query
+        if not isinstance(self.id, int):
+            return True
+        # delete all record and create new for performance on Section Struture
+        self._cr.execute("""
+            delete from res_functional_area_monitor_only_view""")
+        self._cr.execute("""
+            select dense_rank() OVER  -- Can't use row_number, it not persist
+                (ORDER BY budget_method, charge_type, fiscalyear_id) AS id,
+                budget_method, charge_type, fiscalyear_id,
+                COALESCE(sum(planned_amount),0) planned_amount,
+                COALESCE(sum(released_amount),0) released_amount,
+                COALESCE(sum(amount_pr_commit),0) amount_pr_commit,
+                COALESCE(sum(amount_po_commit),0) amount_po_commit,
+                COALESCE(sum(amount_exp_commit),0) amount_exp_commit,
+                COALESCE(sum(amount_actual),0) amount_actual,
+                COALESCE(sum(amount_so_commit),0) +
+                COALESCE(sum(amount_pr_commit),0) +
+                COALESCE(sum(amount_po_commit),0) +
+                COALESCE(sum(amount_exp_commit),0) +
+                COALESCE(sum(amount_actual),0) as amount_consumed,
+                COALESCE(sum(released_amount),0) -
+                COALESCE(sum(amount_consumed),0) as amount_balance
+            from budget_monitor_report
+            where functional_area_id = %s
+            group by budget_method, charge_type, fiscalyear_id
+        """ % (self.id, ))
+        results = self._cr.dictfetchall()
+        ReportLine = self.env['res.functional.area.monitor.only.view']
+        for line in results:
+            if line.get('budget_method') == 'expense':
+                self.monitor_expense_view_ids += ReportLine.create(line)
+            if line.get('budget_method') == 'revenue':
+                self.monitor_revenue_view_ids += ReportLine.create(line)
+        return True
 
     @api.multi
     def action_open_budget_monitor_functional(self):
@@ -130,18 +172,61 @@ class ResProgramGroup(models.Model):
         string='Program Group Monitor',
         readonly=True,
     )
-    monitor_revenue_ids = fields.One2many(
-        'res.program.group.monitor.view', 'program_group_id',
-        string='Program Group Monitor',
-        domain=[('budget_method', '=', 'revenue')],
+    monitor_revenue_view_ids = fields.One2many(
+        comodel_name='res.program.group.monitor.only.view',
+        compute='_compute_budget_monitor',
         readonly=True,
-    )
-    monitor_expense_ids = fields.One2many(
-        'res.program.group.monitor.view', 'program_group_id',
         string='Program Group Monitor',
-        domain=[('budget_method', '=', 'expense')],
-        readonly=True,
+        help='This field created for speed performance views \
+        in Budget Monitor Tab only',
     )
+    monitor_expense_view_ids = fields.One2many(
+        comodel_name='res.program.group.monitor.only.view',
+        compute='_compute_budget_monitor',
+        readonly=True,
+        string='Program Group Monitor',
+        help='This field created for speed performance views \
+        in Budget Monitor Tab only',
+    )
+
+    @api.multi
+    def _compute_budget_monitor(self):
+        self.ensure_one()
+        # create new section not query
+        if not isinstance(self.id, int):
+            return True
+        # delete all record and create new for performance on Section Struture
+        self._cr.execute("""
+            delete from res_program_group_monitor_only_view""")
+        self._cr.execute("""
+            select dense_rank() OVER  -- Can't use row_number, it not persist
+                (ORDER BY budget_method, charge_type, fiscalyear_id) AS id,
+                budget_method, charge_type, fiscalyear_id,
+                COALESCE(sum(planned_amount),0) planned_amount,
+                COALESCE(sum(released_amount),0) released_amount,
+                COALESCE(sum(amount_pr_commit),0) amount_pr_commit,
+                COALESCE(sum(amount_po_commit),0) amount_po_commit,
+                COALESCE(sum(amount_exp_commit),0) amount_exp_commit,
+                COALESCE(sum(amount_actual),0) amount_actual,
+                COALESCE(sum(amount_so_commit),0) +
+                COALESCE(sum(amount_pr_commit),0) +
+                COALESCE(sum(amount_po_commit),0) +
+                COALESCE(sum(amount_exp_commit),0) +
+                COALESCE(sum(amount_actual),0) as amount_consumed,
+                COALESCE(sum(released_amount),0) -
+                COALESCE(sum(amount_consumed),0) as amount_balance
+            from budget_monitor_report
+            where program_group_id = %s
+            group by budget_method, charge_type, fiscalyear_id
+        """ % (self.id, ))
+        results = self._cr.dictfetchall()
+        ReportLine = self.env['res.program.group.monitor.only.view']
+        for line in results:
+            if line.get('budget_method') == 'expense':
+                self.monitor_expense_view_ids += ReportLine.create(line)
+            if line.get('budget_method') == 'revenue':
+                self.monitor_revenue_view_ids += ReportLine.create(line)
+        return True
 
     @api.multi
     def action_open_budget_monitor_program_group(self):
@@ -173,6 +258,61 @@ class ResProgram(models.Model):
         domain=[('budget_method', '=', 'expense')],
         readonly=True,
     )
+    monitor_revenue_view_ids = fields.One2many(
+        comodel_name='res.program.monitor.only.view',
+        compute='_compute_budget_monitor',
+        readonly=True,
+        string='Program Monitor',
+        help='This field created for speed performance views \
+        in Budget Monitor Tab only',
+    )
+    monitor_expense_view_ids = fields.One2many(
+        comodel_name='res.program.monitor.only.view',
+        compute='_compute_budget_monitor',
+        readonly=True,
+        string='Program Monitor',
+        help='This field created for speed performance views \
+        in Budget Monitor Tab only',
+    )
+
+    @api.multi
+    def _compute_budget_monitor(self):
+        self.ensure_one()
+        # create new section not query
+        if not isinstance(self.id, int):
+            return True
+        # delete all record and create new for performance on Section Struture
+        self._cr.execute("""
+            delete from res_program_monitor_only_view""")
+        self._cr.execute("""
+            select dense_rank() OVER  -- Can't use row_number, it not persist
+                (ORDER BY budget_method, charge_type, fiscalyear_id) AS id,
+                budget_method, charge_type, fiscalyear_id,
+                COALESCE(sum(planned_amount),0) planned_amount,
+                COALESCE(sum(released_amount),0) released_amount,
+                COALESCE(sum(amount_pr_commit),0) amount_pr_commit,
+                COALESCE(sum(amount_po_commit),0) amount_po_commit,
+                COALESCE(sum(amount_exp_commit),0) amount_exp_commit,
+                COALESCE(sum(amount_actual),0) amount_actual,
+                COALESCE(sum(amount_so_commit),0) +
+                COALESCE(sum(amount_pr_commit),0) +
+                COALESCE(sum(amount_po_commit),0) +
+                COALESCE(sum(amount_exp_commit),0) +
+                COALESCE(sum(amount_actual),0) as amount_consumed,
+                COALESCE(sum(released_amount),0) -
+                COALESCE(sum(amount_consumed),0) as amount_balance
+            from budget_monitor_report
+            where program_id = %s
+            group by budget_method, charge_type, fiscalyear_id
+        """ % (self.id, ))
+        results = self._cr.dictfetchall()
+        ReportLine = self.env['res.program.monitor.only.view']
+        for line in results:
+            if line.get('budget_method') == 'expense':
+                self.monitor_expense_view_ids += ReportLine.create(line)
+            if line.get('budget_method') == 'revenue':
+                self.monitor_revenue_view_ids += ReportLine.create(line)
+        return True
 
     @api.multi
     def action_open_budget_monitor_program(self):
@@ -192,18 +332,61 @@ class ResProjectGroup(models.Model):
         string='Project Group Monitor',
         readonly=True,
     )
-    monitor_revenue_ids = fields.One2many(
-        'res.project.group.monitor.view', 'project_group_id',
-        string='Project Group Monitor',
-        domain=[('budget_method', '=', 'revenue')],
+    monitor_revenue_view_ids = fields.One2many(
+        comodel_name='res.project.group.monitor.only.view',
+        compute='_compute_budget_monitor',
         readonly=True,
-    )
-    monitor_expense_ids = fields.One2many(
-        'res.project.group.monitor.view', 'project_group_id',
         string='Project Group Monitor',
-        domain=[('budget_method', '=', 'expense')],
-        readonly=True,
+        help='This field created for speed performance views \
+        in Budget Monitor Tab only',
     )
+    monitor_expense_view_ids = fields.One2many(
+        comodel_name='res.project.group.monitor.only.view',
+        compute='_compute_budget_monitor',
+        readonly=True,
+        string='Project Group Monitor',
+        help='This field created for speed performance views \
+        in Budget Monitor Tab only',
+    )
+
+    @api.multi
+    def _compute_budget_monitor(self):
+        self.ensure_one()
+        # create new section not query
+        if not isinstance(self.id, int):
+            return True
+        # delete all record and create new for performance on Section Struture
+        self._cr.execute("""
+            delete from res_project_group_monitor_only_view""")
+        self._cr.execute("""
+            select dense_rank() OVER  -- Can't use row_number, it not persist
+                (ORDER BY budget_method, charge_type, fiscalyear_id) AS id,
+                budget_method, charge_type, fiscalyear_id,
+                COALESCE(sum(planned_amount),0) planned_amount,
+                COALESCE(sum(released_amount),0) released_amount,
+                COALESCE(sum(amount_pr_commit),0) amount_pr_commit,
+                COALESCE(sum(amount_po_commit),0) amount_po_commit,
+                COALESCE(sum(amount_exp_commit),0) amount_exp_commit,
+                COALESCE(sum(amount_actual),0) amount_actual,
+                COALESCE(sum(amount_so_commit),0) +
+                COALESCE(sum(amount_pr_commit),0) +
+                COALESCE(sum(amount_po_commit),0) +
+                COALESCE(sum(amount_exp_commit),0) +
+                COALESCE(sum(amount_actual),0) as amount_consumed,
+                COALESCE(sum(released_amount),0) -
+                COALESCE(sum(amount_consumed),0) as amount_balance
+            from budget_monitor_report
+            where project_group_id = %s
+            group by budget_method, charge_type, fiscalyear_id
+        """ % (self.id, ))
+        results = self._cr.dictfetchall()
+        ReportLine = self.env['res.project.group.monitor.only.view']
+        for line in results:
+            if line.get('budget_method') == 'expense':
+                self.monitor_expense_view_ids += ReportLine.create(line)
+            if line.get('budget_method') == 'revenue':
+                self.monitor_revenue_view_ids += ReportLine.create(line)
+        return True
 
     @api.multi
     def action_open_budget_monitor_project_group(self):
@@ -293,4 +476,24 @@ class ResProject(models.Model):
 
 class ResProjectMonitorViewOnly(models.TransientModel):
     _name = 'res.project.monitor.only.view'
+    _inherit = 'monitor.view'
+
+
+class ResFunctionalAreaMonitorViewOnly(models.TransientModel):
+    _name = 'res.functional.area.monitor.only.view'
+    _inherit = 'monitor.view'
+
+
+class ResProgramGroupMonitorViewOnly(models.TransientModel):
+    _name = 'res.program.group.monitor.only.view'
+    _inherit = 'monitor.view'
+
+
+class ResProgramMonitorViewOnly(models.TransientModel):
+    _name = 'res.program.monitor.only.view'
+    _inherit = 'monitor.view'
+
+
+class ResProjectGroupMonitorViewOnly(models.TransientModel):
+    _name = 'res.project.group.monitor.only.view'
     _inherit = 'monitor.view'

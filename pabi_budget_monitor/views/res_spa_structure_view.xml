@@ -191,7 +191,7 @@
                         <notebook>
                             <page string="Budget Monitor">
                             <separator string="Expense"/>
-                                <field name="monitor_expense_ids">
+                                <field name="monitor_expense_view_ids">
                                     <tree string="Monitor" editable="bottom">
                                         <field name="fiscalyear_id"/>
                                         <field name="charge_type"/>
@@ -206,7 +206,7 @@
                                     </tree>
                                 </field>
                                 <separator string="Revenue"/>
-                                    <field name="monitor_revenue_ids">
+                                    <field name="monitor_revenue_view_ids">
                                         <tree string="Monitor" editable="bottom">
                                             <field name="fiscalyear_id"/>
                                             <field name="charge_type"/>
@@ -259,7 +259,7 @@
                         <notebook>
                             <page string="Budget Monitor">
                             <separator string="Expense"/>
-                                <field name="monitor_expense_ids">
+                                <field name="monitor_expense_view_ids">
                                     <tree string="Monitor" editable="bottom">
                                         <field name="fiscalyear_id"/>
                                         <field name="charge_type"/>
@@ -274,7 +274,7 @@
                                     </tree>
                                 </field>
                                 <separator string="Revenue"/>
-                                    <field name="monitor_revenue_ids">
+                                    <field name="monitor_revenue_view_ids">
                                         <tree string="Monitor" editable="bottom">
                                             <field name="fiscalyear_id"/>
                                             <field name="charge_type"/>
@@ -326,7 +326,7 @@
                         <notebook>
                             <page string="Budget Monitor">
                             <separator string="Expense"/>
-                                <field name="monitor_expense_ids">
+                                <field name="monitor_expense_view_ids">
                                     <tree string="Monitor" editable="bottom">
                                         <field name="fiscalyear_id"/>
                                         <field name="charge_type"/>
@@ -341,7 +341,7 @@
                                     </tree>
                                 </field>
                                 <separator string="Revenue"/>
-                                    <field name="monitor_revenue_ids">
+                                    <field name="monitor_revenue_view_ids">
                                         <tree string="Monitor" editable="bottom">
                                             <field name="fiscalyear_id"/>
                                             <field name="charge_type"/>
@@ -393,7 +393,7 @@
                         <notebook>
                             <page string="Budget Monitor">
                             <separator string="Expense"/>
-                                <field name="monitor_expense_ids">
+                                <field name="monitor_expense_view_ids">
                                     <tree string="Monitor" editable="bottom">
                                         <field name="fiscalyear_id"/>
                                         <field name="charge_type"/>
@@ -408,7 +408,7 @@
                                     </tree>
                                 </field>
                                 <separator string="Revenue"/>
-                                    <field name="monitor_revenue_ids">
+                                    <field name="monitor_revenue_view_ids">
                                         <tree string="Monitor" editable="bottom">
                                             <field name="fiscalyear_id"/>
                                             <field name="charge_type"/>
