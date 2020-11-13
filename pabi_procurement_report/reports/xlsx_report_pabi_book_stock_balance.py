@@ -204,7 +204,7 @@ class XLSXReportPabiStockBalanceResults(models.Model):
             sl.name as location_name, 
             sum(q.qty) as balance,
             COALESCE((
-            select value_float from ir_property where res_id = concat('product.template,',t.id) 
+            select CAST(value_float as decimal(10,2)) from ir_property where res_id = concat('product.template,',t.id) 
                 and type='float' order by id  limit 1 ) * sum(q.qty),0.0) as price,
             puom.name as uom,
             ou.name as ou_name,
