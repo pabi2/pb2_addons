@@ -35,16 +35,18 @@ class AccountVoucher(models.Model):
     def cancel_voucher(self):
         for voucher in self:
             # Create the mirror only for those posted
-            for line in voucher.pit_line.filtered('posted'):
-                pit_line = line.copy({
-                    'sequence': False,
-                    'posted': False,
-                    'amount_income': -line.amount_income,
-                    'amount_wht': -line.amount_wht,
-                    'precalc_wht': -line.precalc_wht,
-                })
-                # Assign sequence and post
-                pit_line.action_post()
+            for line in voucher.pit_line:
+                if line.posted:
+                    pit_line = line.copy({
+                        'sequence': False,
+                        'posted': False,
+                        'amount_income': -line.amount_income,
+                        'amount_wht': -line.amount_wht,
+                        'precalc_wht': -line.precalc_wht,
+                    })
+                    # Assign sequence and post
+                    pit_line.action_post()
+                line.cancelled = True
         return super(AccountVoucher, self).cancel_voucher()
 
     @api.onchange('pit_line')

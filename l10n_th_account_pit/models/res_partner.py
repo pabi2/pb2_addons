@@ -10,6 +10,7 @@ class ResPartner(models.Model):
         'personal.income.tax',
         'partner_id',
         string='PIT',
+        domain=[('cancelled', '=', False)],
         readonly=False,
     )
     pit_yearly = fields.One2many(
