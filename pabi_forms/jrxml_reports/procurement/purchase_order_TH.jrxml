@@ -2,14 +2,14 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
 	<property name="ireport.zoom" value="1.2396694214876034"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="192"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<subDataset name="po_line">
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
-			<![CDATA[SELECT DISTINCT
-row_number() over (order by pol.id) as pol_id,
+			<![CDATA[SELECT
+MIN(pol.docline_seq) as item,
 pol.name,
 SUM(pol.product_qty) price_unit,
 SUM(pol.price_unit) price_unit,
@@ -24,7 +24,7 @@ ON pu.id = pol.product_uom
 WHERE pol.order_id = $P{ids}
 GROUP BY pol.id,pu.id]]>
 		</queryString>
-		<field name="pol_id" class="java.lang.Integer"/>
+		<field name="item" class="java.lang.Integer"/>
 		<field name="name" class="java.lang.String"/>
 		<field name="price_unit" class="java.math.BigDecimal">
 			<fieldDescription><![CDATA[Unit Price]]></fieldDescription>
@@ -324,9 +324,7 @@ WHERE $X{IN, po.id, PIDS}  and pol.active = True
 	<field name="tax_branch_org" class="java.lang.String"/>
 	<field name="vendor_search_key" class="java.lang.String"/>
 	<field name="logo_path" class="java.lang.String"/>
-	<variable name="line_count" class="java.lang.Integer" resetType="None" calculation="Count">
-		<variableExpression><![CDATA[$V{COLUMN_COUNT}]]></variableExpression>
-	</variable>
+	<field name="item" class="java.lang.Integer"/>
 	<variable name="stamp_vat" class="java.lang.Number">
 		<variableExpression><![CDATA[$F{sub_total}/1000]]></variableExpression>
 	</variable>
@@ -764,7 +762,7 @@ WHERE $X{IN, po.id, PIDS}  and pol.active = True
 				<textElement textAlignment="Center" lineSpacing="Single">
 					<font fontName="SansSerif" size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$V{line_count}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{item}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="50" y="0" width="181" height="18" isPrintWhenDetailOverflows="true"/>
@@ -801,51 +799,6 @@ WHERE $X{IN, po.id, PIDS}  and pol.active = True
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$V{price_subtotal}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="48" height="18" isPrintWhenDetailOverflows="true"/>
-				<box>
-					<leftPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement lineSpacing="Single"/>
-				<text><![CDATA[]]></text>
-			</staticText>
-			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="48" y="0" width="186" height="18" isPrintWhenDetailOverflows="true"/>
-				<box>
-					<leftPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement lineSpacing="Single"/>
-				<text><![CDATA[]]></text>
-			</staticText>
-			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="234" y="0" width="65" height="18" isPrintWhenDetailOverflows="true"/>
-				<box>
-					<leftPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement lineSpacing="Single"/>
-				<text><![CDATA[]]></text>
-			</staticText>
-			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="299" y="0" width="85" height="18" isPrintWhenDetailOverflows="true"/>
-				<box>
-					<leftPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement lineSpacing="Single"/>
-				<text><![CDATA[]]></text>
-			</staticText>
-			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="384" y="0" width="99" height="18" isPrintWhenDetailOverflows="true"/>
-				<box>
-					<leftPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement lineSpacing="Single"/>
-				<text><![CDATA[]]></text>
-			</staticText>
 		</band>
 	</detail>
 	<pageFooter>
