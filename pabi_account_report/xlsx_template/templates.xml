@@ -2395,6 +2395,5 @@ result = pd.pivot_table(df, index=groupby,
                 }
             </field>
         </record>
-     
     </data>
 </openerp>
