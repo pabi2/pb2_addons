@@ -783,7 +783,7 @@
                             'F8': 'product_tmpl_id.standard_price${value or "0"}#{number_format=number}',
                             'G8': 'balance${value or ""}',
                             'H8': 'uom${value or ""}',
-                            'I8': 'price${value or ""}',
+                            'I8': 'price${value or ""}#{number_format=number}',
                             'J8': 'currency${value or ""}',
                             'K8': 'product_active${value or "FALSE"}',
                         },
