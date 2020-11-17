@@ -44,6 +44,8 @@
                             <field name="project_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('project_base'))]}"/>
                             <!-- filter invest_construction -->
                             <field name="invest_construction_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('invest_construction'))]}"/>
+                            <field name="cost_control_id" attrs="{'invisible': [('report_type', '=', 'personnel')]}"/>
+                            <field name="cost_control_type_id" attrs="{'invisible': [('report_type', '=', 'personnel')]}"/>
 
                             # For menu my budget report
                             <field name="section_ids" widget="many2many_tags" attrs="{'invisible': ['|', ('action_type', '!=', 'my_budget_report'), ('report_type', 'not in', ('unit_base'))]}"/>
@@ -64,6 +66,7 @@
                             <field name="group_by_activity_group_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base', 'personnel'))]}"/>
                             <field name="group_by_activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base', 'personnel'))]}"/>
                             <field name="group_by_invest_asset_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('invest_asset'))]}"/>
+                            <field name="group_by_cost_control_id" attrs="{'invisible': [('report_type', '=', 'personnel')]}"/>
                         </group>
                     </group>
                 </form>

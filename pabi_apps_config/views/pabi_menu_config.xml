@@ -1521,7 +1521,11 @@
 			            action="pabi_account_report.action_xlsx_report_preprint_receipt_form"
 			            sequence="14" parent="menu_pabi_receivable_report"
 			            groups="account.group_account_manager,account.group_account_user"/>
-            
+			        <menuitem name="Extend The Repayment" id="menu_xlsx_report_extend_the_repayment"
+			            action="pabi_account_report.action_xlsx_report_extend_the_repayment"
+			            sequence="15" parent="menu_pabi_receivable_report"
+			            groups="account.group_account_manager,account.group_account_user"/>
+			            
 				# General Ledger
 				<delete id="pabi_account_report.menu_pabi_general_ledger_report" model="ir.ui.menu"/>
 				<delete id="pabi_account_report.menu_xlsx_report_expense_ledger" model="ir.ui.menu"/>
@@ -1550,11 +1554,10 @@
 			            sequence="5" parent="menu_pabi_general_ledger_report"/>
 
         # Assets
-		<delete id="pabi_asset_management.menu_asset_main" model="ir.ui.menu"/>
+		<delete id="menu_asset_main" model="ir.ui.menu"/>
 		
         <menuitem name="Assets" id="menu_asset_main"
-        	sequence="11"
-        	groups="purchase.group_purchase_user,account.group_account_user,pabi_asset_management.group_assets_report"/>
+        	sequence="11"/>
         	
         	# Assets
 			<delete id="pabi_asset_management.account_asset_management.menu_finance_assets" model="ir.ui.menu"/>
@@ -1581,7 +1584,19 @@
     			<menuitem name="Asset Hierarchy" id="account_asset_management.account_asset_menu_hierarchy"
               		action="account_asset_management.account_asset_action_hierarchy"
               		sequence="4" parent="menu_finance_assets"/>
-        	
+        	# My Asset
+        	<menuitem name="My Assets" id="menu_my_asset"
+        		sequence="2" parent="menu_asset_main"/>
+        		<menuitem name="Assets" id="menu_action_account_asset"
+              		action="pabi_asset_management.account_my_asset_action"
+        			sequence="1" parent="menu_my_asset"/>
+        		<menuitem name="Change Master (By User)" id="menu_action_account_asset_user_changemaster"
+              		action="pabi_asset_management.account_asset_user_changemaster_action"
+              		sequence="2" parent="menu_my_asset"/>
+        		<menuitem name="Change Responsible" id="menu_action_account_asset_changeresponsible"
+              		action="pabi_asset_management.account_asset_changeresponsible_action"
+        			sequence="3" parent="menu_my_asset"/>
+        			
         	# Asset Actions
 			<delete id="pabi_asset_management.menu_asset_actions" model="ir.ui.menu"/>
 			<delete id="pabi_asset_management.menu_action_account_asset_request" model="ir.ui.menu"/>
@@ -1595,7 +1610,7 @@
 			<delete id="pabi_asset_management.menu_action_account_asset_changemaster" model="ir.ui.menu"/>
 			
         	<menuitem name="Asset Actions" id="menu_asset_actions"
-          		sequence="2" parent="menu_asset_main"/>
+          		sequence="3" parent="menu_asset_main"/>
         		<menuitem name="Request" id="menu_action_account_asset_request"
           			action="pabi_asset_management.action_account_asset_request"
         			sequence="1" parent="menu_asset_actions"
@@ -1640,7 +1655,7 @@
 			<delete id="pabi_account_report.menu_asset_estimate_report" model="ir.ui.menu"/>
 		
         	<menuitem name="Reports" id="menu_account_asset_report"
-            	sequence="3" parent="menu_asset_main"
+            	sequence="4" parent="menu_asset_main"
             	groups="purchase.group_purchase_user,account.group_account_user"/>
       			<menuitem name="Asset Repair Report" id="menu_asset_repair_report"
           			action="pabi_account_report.action_xlsx_report_asset_repair_form"
@@ -1654,6 +1669,9 @@
       			<menuitem name="Asset Estimate Report" id="menu_asset_estimate_report"
           			action="pabi_account_report.action_asset_estimate_report_form"
           			sequence="4" parent="menu_account_asset_report"/>
+      			<menuitem name="Asset Inactive Owner Report" id="menu_asset_inactive_owner_report"
+          			action="pabi_account_asset_jasper.action_print_asset_inactive_owner_form"
+          			sequence="5" parent="menu_account_asset_report"/>
         
         # Warehouse
         <menuitem name="Warehouse" id="stock.menu_stock_root"

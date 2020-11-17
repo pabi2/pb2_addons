@@ -60,8 +60,11 @@ class PurchaseLineInvoice(models.TransientModel):
                 invoice_ids and invoice_ids[0] or False
             if invoice_ids and acceptance.supplier_invoice:
                 invoices = self.env['account.invoice'].browse(invoice_ids)
-                invoices.write({'supplier_invoice_number':
-                                acceptance.supplier_invoice})
+                invoices.write({
+                    'supplier_invoice_number': acceptance.supplier_invoice,
+                    'wa_id': acceptance.id,
+                    'wa_origin_id': acceptance.id
+                })
                 invoices.button_reset_taxes()
         return res
 

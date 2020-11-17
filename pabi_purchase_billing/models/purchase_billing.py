@@ -176,36 +176,33 @@ class PurchaseBilling(models.Model):
         for rec in self:
             for inv in rec.supplier_invoice_ids:
                 po = inv.source_document_id
-                if po and po.use_invoice_plan:
-                    # limit 1 for case user selected wrong installment
-                    wa = WA.sudo().search([
-                        ('order_id', '=', po.id),
-                        ('installment', '=', inv.installment),
-                        ('state', '!=', 'cancel')
-                    ], order='id', limit=1)
-                    if not wa:
-                        raise ValidationError(
-                            _("Can not Find Work Acceptance Installment "
-                              "'%s' of '%s'") % (inv.installment, po.name))
-                    prod_stock = wa.acceptance_line_ids.filtered(
-                        lambda l: l.product_id.type != 'service'
+                # limit 1 for case user selected wrong installment
+                wa = WA.sudo().search([
+                    ('order_id', '=', po.id),
+                    ('installment', '=', inv.installment),
+                    ('state', '!=', 'cancel')
+                ], order='id', limit=1)
+                if not wa:
+                    raise ValidationError(
+                        _("Can not Find Work Acceptance Installment "
+                          "'%s' of '%s'") % (inv.installment, po.name))
+                prod_stock = wa.acceptance_line_ids.filtered(
+                    lambda l: l.product_id.type != 'service'
+                )
+                if prod_stock:
+                    picking = Stock.sudo().search([('origin', '=', po.name)])
+                    trans_with_wa = picking.filtered(
+                        lambda l: l.acceptance_id == wa
                     )
-                    if prod_stock:
-                        picking = Stock.sudo().search([
-                            ('origin', '=', po.name),
-                        ])
-                        trans_with_wa = picking.filtered(
-                            lambda l: l.acceptance_id == wa
-                        )
-                        if not trans_with_wa and picking:
-                            raise ValidationError(_("""
-                                Some 'IN' do not have 'Work Acceptance'
-                                Please make sure every document ready to bill
-                            """))
-                        if trans_with_wa and trans_with_wa.state != 'done':
-                            raise ValidationError(_("""
-                                [%s], %s must transfer
-                            """) % (po.name, trans_with_wa.name))
+                    if not trans_with_wa and picking:
+                        raise ValidationError(_("""
+                            Some 'IN' do not have 'Work Acceptance'
+                            Please make sure every document ready to bill
+                        """))
+                    if trans_with_wa and trans_with_wa.state != 'done':
+                        raise ValidationError(_(
+                            "[%s], %s must transfer"
+                        ) % (po.name, trans_with_wa.name))
             rec.supplier_invoice_ids.write({'date_invoice': rec.date,
                                             'date_due': rec.date_due,
                                             'purchase_billing_id': rec.id})

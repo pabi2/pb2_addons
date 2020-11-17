@@ -46,6 +46,10 @@ class PersonalIncomeTax(models.Model):
         readonly=True,
         help="Once posted, sequence will run and WHT will be calculated"
     )
+    cancelled = fields.Boolean(
+        readonly=True,
+        help="for filtered Voucher is cancel"
+    )
     manual = fields.Boolean(
         string='Manual',
         default=False,

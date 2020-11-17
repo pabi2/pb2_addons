@@ -151,5 +151,32 @@
             <field name="company_id" eval="False"/>
         </record>
 
+		<!-- Asset Change Master By User-->
+        <record id="seq_type_account_asset_user_changemaster" model="ir.sequence.type">
+            <field name="name">Asset Change Master By User</field>
+            <field name="code">account.asset.user.changemaster</field>
+        </record>
+
+        <record id="seq_account_asset_user_changemaster" model="ir.sequence">
+            <field name="name">Asset Change Master By user</field>
+            <field name="code">account.asset.user.changemaster</field>
+            <field name="prefix">ACU%(y)s</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
+        
+        <!-- Change Responsible-->
+        <record id="seq_type_account_asset_changeresponsible" model="ir.sequence.type">
+            <field name="name">Change Responsible</field>
+            <field name="code">account.asset.changeresponsible</field>
+        </record>
+
+        <record id="seq_account_asset_changeresponsible" model="ir.sequence">
+            <field name="name">Change Responsible</field>
+            <field name="code">account.asset.changeresponsible</field>
+            <field name="prefix">ACR%(y)s</field>
+            <field name="padding">6</field>
+            <field name="company_id" eval="False"/>
+        </record>
     </data>
 </openerp>

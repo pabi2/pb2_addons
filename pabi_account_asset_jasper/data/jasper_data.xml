@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<openerp>
+	<data noupdate="0">
+		<record id="report_asset_inactive_owner" model="ir.actions.report.xml">
+			<field name="string">Asset Inactive Owner Report</field>
+			<field name="auto">True</field>
+			<field name="model">jasper.report.asset.inactive.owner</field>
+			<field name="jasper_model_id" ref="pabi_account_asset_jasper.model_jasper_report_asset_inactive_owner"/>
+			<field name="name">report_asset_inactive_owner</field>
+			<field name="report_name">report_asset_inactive_owner</field>
+			<field name="menu">False</field>
+			<field name="header">False</field>
+			<field name="report_type">jasperserver_rest_v2</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="jasper_report_path">/Reports/#SERVER_URL#/pb2</field>
+			<field name="criteria_field">id</field>
+		</record>
+		<record id="jasper_report_asset_inactive_owner_values" model="ir.values">
+			<field name="name">report_asset_inactive_owner_values</field>
+			<field name="model">jasper.report.asset.inactive.owner</field>
+			<field name="value_unpickle"
+				eval="'ir.actions.report.xml, ' +str(report_asset_inactive_owner)" />
+		</record>	
+		
+	</data>
+</openerp>

@@ -41,6 +41,8 @@
                             <field name="project_id" attrs="{'invisible': [('chart_view', '!=', 'project_base')]}" context="{'active_test': False}"/>
                             <field name="invest_construction_id" attrs="{'invisible': [('chart_view', '!=', 'invest_construction')]}"/>
                             <field name="invest_construction_phase_id" attrs="{'invisible': [('chart_view', '!=', 'invest_construction')]}"/>
+                            <field name="cost_control_type_id" attrs="{'invisible': [('chart_view', '=', 'personnel')]}"/>
+                            <field name="cost_control_id" attrs="{'invisible': [('chart_view', '=', 'personnel')]}"/>
                         </group>
                         <group>
                             <field name="groupby_org" attrs="{'invisible': [('chart_view', 'not in', ('unit_base', 'invest_asset', 'invest_construction'))]}"/>
@@ -55,6 +57,7 @@
                             <field name="groupby_project" attrs="{'invisible': [('chart_view', '!=', 'project_base')]}"/>
                             <field name="groupby_invest_asset" attrs="{'invisible': [('chart_view', '!=', 'invest_asset')]}"/>
                             <field name="groupby_invest_construction" attrs="{'invisible': [('chart_view', '!=', 'invest_construction')]}"/>
+                            <field name="groupby_cost_control" attrs="{'invisible': [('chart_view', '=', 'personnel')]}"/>
                         </group>
                     </group>
                     <notebook>

@@ -19,10 +19,11 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             plans = Plan.search(
                 [
                     ('order_id', '=', self._context['active_id']),
-                    ('ref_invoice_id.state', '=', 'draft'),
+                    ('ref_invoice_id.state', '=', 'draft')
                 ],
                 order='installment'
             )
+            plans = plans.filtered(lambda l: not l.ref_invoice_id.wa_id)
             installments = list(set(plans.mapped('installment')))
             if 0 in installments:
                 installments.pop(0)
@@ -70,39 +71,76 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
         select=True,
     )
 
+    def _related_wa_invoice(self, select_plan, acceptance):
+        select_plan.ref_invoice_id.write({
+            'wa_origin_id': acceptance.id,
+            'wa_id': acceptance.id
+        })
+        return True
+
     @api.multi
     def _prepare_acceptance_plan_line(self, plan_installment):
         self.ensure_one()
         Plan = self.env['purchase.invoice.plan']
         items = []
-        plans = Plan.search(
+        plan = Plan.search(
+            [
+                ('order_id', '=', self._context['active_id']),
+                ('ref_invoice_id.state', '=', 'draft'),
+            ],
+            order='installment'
+        )
+        plan = plan.filtered(lambda l: not l.ref_invoice_id.wa_id)[0]
+        select_plan = Plan.search(
             [
                 ('order_id', '=', self._context['active_id']),
                 ('ref_invoice_id.state', '=', 'draft'),
                 ('installment', '=', plan_installment),
             ],
         )
-        for plan in plans:
-            if len(plan.ref_invoice_id) == 0:
-                raise ValidationError(_("You have to create invoices first."))
-            for inv_line in plan.ref_invoice_id.invoice_line:
-                if not inv_line.product_id.id:
-                    continue
-                taxes = [(4, tax.id) for tax in inv_line.invoice_line_tax_id]
-                vals = {
-                    'line_id': inv_line.purchase_line_id.id,
-                    'product_id': inv_line.product_id.id,
-                    'name': inv_line.name or inv_line.product_id.name,
-                    'balance_qty': inv_line.purchase_line_id.product_qty,
-                    'to_receive_qty': inv_line.quantity,
-                    'product_uom': inv_line.uos_id.id,
-                    'inv_line_id': inv_line.id,
-                    'tax_ids': taxes,
-                    'price_unit': inv_line.price_unit,
-                }
-                items.append([0, 0, vals])
-            break
-        return items
+        if plan.id not in select_plan.mapped('id'):
+            name = '#%s - %s' % (plan.installment, plan.description)
+            raise ValidationError(_("You have to select %s." % name))
+        if len(plan.ref_invoice_id) == 0:
+            raise ValidationError(_("You have to create invoices first."))
+        for inv_line in plan.ref_invoice_id.invoice_line:
+            if not inv_line.product_id.id:
+                continue
+            taxes = [(4, tax.id) for tax in inv_line.invoice_line_tax_id]
+            vals = {
+                'line_id': inv_line.purchase_line_id.id,
+                'product_id': inv_line.product_id.id,
+                'name': inv_line.name or inv_line.product_id.name,
+                'balance_qty': inv_line.purchase_line_id.product_qty,
+                'to_receive_qty': inv_line.quantity,
+                'product_uom': inv_line.uos_id.id,
+                'inv_line_id': inv_line.id,
+                'tax_ids': taxes,
+                'price_unit': inv_line.price_unit,
+            }
+            items.append([0, 0, vals])
+        # for plan in select_plan:
+        #     if len(plan.ref_invoice_id) == 0:
+        #         raise ValidationError(_(
+        #               "You have to create invoices first."))
+        #     for inv_line in plan.ref_invoice_id.invoice_line:
+        #         if not inv_line.product_id.id:
+        #             continue
+        #         taxes = [(4, tax.id) for tax in inv_line.invoice_line_tax_id]
+        #         vals = {
+        #             'line_id': inv_line.purchase_line_id.id,
+        #             'product_id': inv_line.product_id.id,
+        #             'name': inv_line.name or inv_line.product_id.name,
+        #             'balance_qty': inv_line.purchase_line_id.product_qty,
+        #             'to_receive_qty': inv_line.quantity,
+        #             'product_uom': inv_line.uos_id.id,
+        #             'inv_line_id': inv_line.id,
+        #             'tax_ids': taxes,
+        #             'price_unit': inv_line.price_unit,
+        #         }
+        #         items.append([0, 0, vals])
+        #     break
+        return items, plan
 
     @api.model
     def _prepare_item(self, line):
@@ -202,23 +240,10 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
     @api.model
     def _prepare_acceptance(self):
         lines = []
-        # vals = {}
+        select_plan = False
         PWAcceptance = self.env['purchase.work.acceptance']
-        # vals.update({
-        #     'name': self.env['ir.sequence'].get('purchase.work.acceptance'),
-        #     'date_scheduled_end': self.date_scheduled_end,
-        #     'date_contract_start': self.date_contract_start,
-        #     'date_contract_end': self.date_scheduled_end,
-        #     'date_receive': self.date_receive,
-        #     'order_id': self.order_id.id,
-        #     'supplier_invoice': '-',
-        #     'date_invoice': self.date_receive,
-        #     'total_fine': 0,
-        #     'installment': self.select_invoice_plan,
-        # })
-        # acceptance = PWAcceptance.create(vals)
         if self.is_invoice_plan:
-            items = \
+            items, select_plan = \
                 self._prepare_acceptance_plan_line(self.select_invoice_plan)
             lines = items
         else:
@@ -249,6 +274,8 @@ class CreatePurchaseWorkAcceptance(models.TransientModel):
             'acceptance_line_ids': lines,
         }
         acceptance = PWAcceptance.create(vals)
+        if select_plan:
+            self._related_wa_invoice(select_plan, acceptance)
         # acceptance.write({'acceptance_line_ids': lines})
         acceptance._compute_total_fine()
         return acceptance

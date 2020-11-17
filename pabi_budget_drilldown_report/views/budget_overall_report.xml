@@ -12,6 +12,7 @@
                         <field name="line_external_ids" nolabel="1" edtible="bottom">
                             <tree editable="bottom">
                                 <field name="chart_view"/>
+                                <field name="cost_control_id"/>
                                 <field name="charge_type"/>
                                 <field name="planned_amount" sum="Total"/>
                                 <field name="policy_amount" sum="Total"/>

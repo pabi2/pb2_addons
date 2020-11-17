@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_print_asset_inactive_owner_form" model="ir.ui.view">
+            <field name="name">Asset Inactive Owner Report</field>
+            <field name="model">jasper.report.asset.inactive.owner</field>
+            <field name="arch" type="xml">
+                <form string="Asset Inactive Owner Report">
+                	<group>
+	                	<field name="calendar_period_id" string="Period"/>
+					</group>
+					<footer>
+						<button name="start_report" string="Execute"  type="object" class="oe_highlight"/>
+						or
+                		<button string="Cancel" class="oe_link" special="cancel"/>
+           			</footer>
+				</form>
+			</field>
+		</record>              
+		<record id="action_print_asset_inactive_owner_form" model="ir.actions.act_window">
+            <field name="name">Asset Inactive Owner Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">jasper.report.asset.inactive.owner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_print_asset_inactive_owner_form"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</openerp>

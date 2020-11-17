@@ -11,6 +11,7 @@ from openerp.tools.float_utils import float_compare
 class PurchaseWorkAcceptance(models.Model):
     _name = 'purchase.work.acceptance'
     _description = 'Purchase Work Acceptance'
+    _order = 'create_date desc'
 
     _STATES = [
         ('draft', 'Draft'),
@@ -114,7 +115,7 @@ class PurchaseWorkAcceptance(models.Model):
     )
     date_action = fields.Date(
         string='Action Date',
-        related = 'order_id.contract_id.action_date'
+        related='order_id.contract_id.action_date'
     )
     partner_id = fields.Many2one(
         'res.partner',
@@ -581,12 +582,15 @@ class PurchaseWorkAcceptance(models.Model):
 
     @api.multi
     def write(self, vals):
-        if vals.get('total_fine', False) and not vals.get('total_fine_cal', False):
+        if vals.get('total_fine', False) and \
+                not vals.get('total_fine_cal', False):
             vals['total_fine_cal'] = vals['total_fine']
 
         res = super(PurchaseWorkAcceptance, self).write(vals)
 
-        if vals.get('date_receive', False) or vals.get('date_contract_end', False) or vals.get('acceptance_line_ids', False):
+        if vals.get('date_receive', False) or \
+                vals.get('date_contract_end', False) or \
+                vals.get('acceptance_line_ids', False):
             self.total_fine = self.total_fine_cal
         # Redmine #2346
         self.change_invoice_detail()  # We did comment it, but set it back.
@@ -638,8 +642,8 @@ class PurchaseWorkAcceptance(models.Model):
                 )
                 amount_tax += sum([tax['amount'] for tax in taxes['taxes']])
                 amount_untaxed += taxes['total']
-            rec.amount_untaxed = round(amount_untaxed,2)
-            rec.amount_tax = round(amount_tax,2)
+            rec.amount_untaxed = round(amount_untaxed, 2)
+            rec.amount_tax = round(amount_tax, 2)
             rec.amount_total = rec.amount_untaxed + rec.amount_tax
         return True
 
@@ -707,11 +711,21 @@ class PurchaseWorkAcceptance(models.Model):
     def action_set_draft(self):
         self.ensure_one()
         self.state = 'draft'
+        invoice_id = self.env['account.invoice'].search([
+            ('wa_origin_id', '=', self.name)])
+        if invoice_id and not invoice_id.wa_id:
+            invoice_id._compute_wa_id_from_origin()
+        return True
 
     @api.multi
     def action_cancel(self):
         self.ensure_one()
+        invoice_id = self.env['account.invoice'].search([
+            ('wa_id', '=', self.name)])
+        if invoice_id:
+            invoice_id.wa_id = False
         self.state = 'cancel'
+        return True
 
     @api.model
     def open_order_line(self, ids):

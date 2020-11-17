@@ -12,10 +12,10 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
-	<property name="ireport.jasperserver.url" value="https://r-test.intra.nstda.or.th/jasperserver/"/>
+	<property name="ireport.jasperserver.url" value="https://r.nstda.or.th/jasperserver/"/>
 	<property name="ireport.jasperserver.user" value="api_pabi2"/>
-	<property name="ireport.jasperserver.report.resource" value="/Reports/API/PABI2/pabi2o_test_28046_intra_nstda_or_th/pb2/report_asset_register_files/main_jrxml"/>
-	<property name="ireport.jasperserver.reportUnit" value="/Reports/API/PABI2/pabi2o_test_28046_intra_nstda_or_th/pb2/report_asset_register"/>
+	<property name="ireport.jasperserver.report.resource" value="/Reports/API/PABI2/pabi2o_nstda_or_th/pb2/report_asset_register_files/main_jrxml"/>
+	<property name="ireport.jasperserver.reportUnit" value="/Reports/API/PABI2/pabi2o_nstda_or_th/pb2/report_asset_register"/>
 	<parameter name="date_start" class="java.lang.String"/>
 	<parameter name="date_end" class="java.lang.String"/>
 	<parameter name="accum_depre_account_ids" class="java.lang.String"/>
@@ -339,7 +339,7 @@ left join account_account aa on aap.account_asset_id = aa.id
 						left join purchase_request pr on prql.request_id = pr.id
 						left join res_users ru on pr.requested_by = ru.id
 						left join res_partner rp on  ru.partner_id = rp.id) pr on asset.move_id = pr.id
-			$P!{condition} ]]>
+			$P!{condition} and asset.date_start <= '$P!{date_end}']]>
 	</queryString>
 	<field name="owner_org_name" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.label" value="owner_org_name"/>
@@ -1430,7 +1430,7 @@ Current FY]]></text>
 				<textFieldExpression><![CDATA[$F{product_category}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="160" y="0" width="100" height="20" uuid="4a74a0bc-daf6-4d0e-a82d-3b78c7e857ba">
+				<reportElement x="160" y="0" width="101" height="20" uuid="4a74a0bc-daf6-4d0e-a82d-3b78c7e857ba">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
@@ -1439,7 +1439,7 @@ Current FY]]></text>
 				<textFieldExpression><![CDATA[$F{account_code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="260" y="0" width="70" height="20" uuid="ac6a149a-cb52-48c5-8b37-8d5c318fe714">
+				<reportElement x="261" y="0" width="69" height="20" uuid="ac6a149a-cb52-48c5-8b37-8d5c318fe714">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">

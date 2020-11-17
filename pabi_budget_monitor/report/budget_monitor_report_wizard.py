@@ -33,6 +33,18 @@ class BudgetMonitorReportWizard(models.TransientModel):
          ('external', 'External')],
         string='Charge Type',
     )
+    cost_control_type_id = fields.Many2one(
+        comodel_name='cost.control.type',
+        string='Job Order Type',
+    )
+    cost_control_id = fields.Many2one(
+        comodel_name='cost.control',
+        string='Job Order',
+    )
+    groupby_cost_control = fields.Boolean(
+        string='Job Order',
+        default=False,
+    )
     groupby_quarter = fields.Boolean(
         string='Quarter',
         default=False,
@@ -225,18 +237,22 @@ class BudgetMonitorReportWizard(models.TransientModel):
         chart_view_dict = {
             'unit_base': ['org_id', 'sector_id', 'subsector_id',
                           'division_id', 'section_id', 'charge_type',
-                          'section_program_id'],
+                          'section_program_id', 'cost_control_id',
+                          'cost_control_type_id'],
             'project_base': ['functional_area_id', 'program_group_id',
                              'program_id', 'project_group_id', 'project_id',
                              'charge_type', 'org_id', 'sector_id',
-                             'subsector_id', 'division_id', 'section_id'],
+                             'subsector_id', 'division_id', 'section_id',
+                             'cost_control_id', 'cost_control_type_id'],
             'invest_asset': ['invest_asset_id', 'charge_type', 'org_id',
                              'sector_id', 'subsector_id', 'division_id',
-                             'section_id'],
+                             'section_id', 'cost_control_id',
+                             'cost_control_type_id'],
             'invest_construction': ['invest_construction_phase_id',
                                     'charge_type', 'org_id', 'sector_id',
                                     'subsector_id', 'division_id',
-                                    'section_id'],
+                                    'section_id', 'cost_control_id',
+                                    'cost_control_type_id'],
             'personnel': ['personnel_costcenter_id'],
         }
         domain = []
@@ -256,6 +272,12 @@ class BudgetMonitorReportWizard(models.TransientModel):
             if self.section_program_id:
                 domain.append(('section_program_id', '=',
                                self.section_program_id.id))
+            if self.cost_control_type_id:
+                domain.append(('cost_control_type_id', '=',
+                               self.cost_control_type_id.id))
+            if self.cost_control_id:
+                domain.append(('cost_control_id', '=',
+                               self.cost_control_id.id))
             return domain
         todos = chart_view_dict[self.chart_view]
         for field in todos:
@@ -280,6 +302,8 @@ class BudgetMonitorReportWizard(models.TransientModel):
             res.update({'search_default_groupby_division': True})
         if self.groupby_section:
             res.update({'search_default_groupby_section': True})
+        if self.groupby_cost_control:
+            res.update({'search_default_groupby_cost_control': True})
         return res
 
     @api.model
@@ -297,6 +321,8 @@ class BudgetMonitorReportWizard(models.TransientModel):
             res.update({'search_default_groupby_project_group': True})
         if self.groupby_project:
             res.update({'search_default_groupby_project': True})
+        if self.groupby_cost_control:
+            res.update({'search_default_groupby_cost_control': True})
         return res
 
     @api.model
@@ -308,6 +334,8 @@ class BudgetMonitorReportWizard(models.TransientModel):
             res.update({'search_default_groupby_org': True})
         if self.groupby_invest_asset:
             res.update({'search_default_groupby_invest_asset': True})
+        if self.groupby_cost_control:
+            res.update({'search_default_groupby_cost_control': True})
         return res
 
     @api.model
@@ -319,6 +347,17 @@ class BudgetMonitorReportWizard(models.TransientModel):
             res.update({'search_default_groupby_org': True})
         if self.groupby_invest_construction:
             res.update({'search_default_groupby_invest_construction': True})
+        if self.groupby_cost_control:
+            res.update({'search_default_groupby_cost_control': True})
+        return res
+
+    @api.model
+    def _get_groupby_null(self):
+        res = {}
+        if self.chart_view:
+            return res
+        if self.groupby_cost_control:
+            res.update({'search_default_groupby_cost_control': True})
         return res
 
     @api.multi
@@ -340,6 +379,7 @@ class BudgetMonitorReportWizard(models.TransientModel):
         result['context'].update(self._get_groupby_project_base())
         result['context'].update(self._get_groupby_invest_asset())
         result['context'].update(self._get_groupby_invest_construction())
+        result['context'].update(self._get_groupby_null())
         # Update report name
         report_name = _('Budget Monitor %s %s %s') % \
             (dict(CHART_VIEW_LIST).get(self.chart_view),
@@ -364,6 +404,8 @@ class BudgetMonitorReportWizard(models.TransientModel):
             self.program_id = False
             self.project_group_id = False
             self.project_id = False
+            self.cost_control_id = False
+            self.cost_control_type_id = False
             self.invest_construction_phase_id = False
             self.groupby_org = False
             self.groupby_sector = False
@@ -377,3 +419,4 @@ class BudgetMonitorReportWizard(models.TransientModel):
             self.groupby_project = False
             self.groupby_invest_asset = False
             self.groupby_invest_construction = False
+            self.groupby_cost_control = False

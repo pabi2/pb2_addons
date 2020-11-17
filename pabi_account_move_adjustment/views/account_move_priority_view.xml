@@ -69,6 +69,7 @@
                                         <field name="ref"/>
                                         <field name="partner_id" invisible="0" domain="['|', ('parent_id', '=', False), ('is_company', '=', True)]" on_change="onchange_partner_id(False, partner_id, account_id, debit, credit, parent.date, parent.journal_id, context)"/>
                                         <field name="product_id"/>
+                                        <field name="charge_type"/>
                                         <field name="activity_group_id" attrs="{'required': [('is_require_activity', '=', True)]}" />
                                         <field name="activity_id" domain="[('activity_group_ids','in',activity_group_id)]" attrs="{'required': [('is_require_activity', '=', True),('activity_rpt_id', '=', False)]}" />
                                         <field name="activity_rpt_id" readonly="1"/>
@@ -90,7 +91,7 @@
                                         <field name="invest_construction_phase_id" invisible="1"/>
                                         <field name="personnel_costcenter_id" invisible="1"/>
                                         <field name="fund_id" required="0"/>
-                                        <field name="cost_control_id" invisible="1"/>
+                                        <field name="cost_control_id"/>
                                         <field name="state"/>
                                         <field name="reconcile_id"/>
                                         <field name="reconcile_partial_id"/>

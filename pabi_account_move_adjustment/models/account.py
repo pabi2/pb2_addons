@@ -220,12 +220,11 @@ class AccountMove(models.Model):
                         _('For JN, No line can have activity group!'))
             # For case adjustment journal only, create analytic when posted
             Analytic = self.env['account.analytic.account']
+            direct_create = self._context.get('direct_create', False)
+            reversal = self.env['account.move'].search([
+                ('reversal_id', '=', move.id)])
             # Only direct creation of account move, we will recompute dimension
-            if ((self._context.get('direct_create', False) and \
-                    move.doctype == 'adjustment')) or \
-                    (self.env['account.move'].search([('reversal_id','=',move.id)]).id \
-                    and move.doctype == 'adjustment'):
-                # if move.doctype == 'adjustment':
+            if move.doctype == 'adjustment' and (direct_create or reversal.id):
                 # Analytic
                 for line in move.line_id:
                     vals = self._convert_move_line_to_dict(line)

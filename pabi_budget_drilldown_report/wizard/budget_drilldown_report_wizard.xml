@@ -46,6 +46,8 @@
                             # For menu my budget report
                             <field name="section_ids" widget="many2many_tags" attrs="{'invisible': ['|', ('action_type', '!=', 'my_budget_report'), ('report_type', 'not in', ('unit_base'))]}" context="{'active_test': False}"/>
                             <field name="project_ids" widget="many2many_tags" attrs="{'invisible': ['|', ('action_type', '!=', 'my_budget_report'), ('report_type', 'not in', ('project_base'))]}" context="{'active_test': False}"/>
+                            <field name="cost_control_id" attrs="{'invisible': [('report_type', '=', 'personnel')]}"/>
+                            <field name="cost_control_type_id" attrs="{'invisible': [('report_type', '=', 'personnel')]}"/>
                         </group>
                         <group>
                             <field name="group_by_chartfield_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('all'))]}"/>
@@ -60,6 +62,7 @@
                             <field name="group_by_activity_id" attrs="{'invisible': [('report_type', 'not in', ('unit_base', 'project_base', 'personnel'))]}"/>
                             <field name="group_by_invest_asset_id" attrs="{'invisible': ['|', ('action_type', '!=', 'budget_overview_report'), ('report_type', 'not in', ('invest_asset'))]}"/>
                             <field name="group_by_budget_method" attrs="{'invisible': ['|', ('action_type', 'not in', ('my_budget_report','budget_overview_report')), ('report_type', 'not in', ('unit_base', 'project_base'))]}"/>
+                            <field name="group_by_cost_control_id" attrs="{'invisible': [('report_type', '=', 'personnel')]}"/>
                         </group>
                     </group>
                     <notebook attrs="{'invisible': [('report_type', '!=', 'all')]}">

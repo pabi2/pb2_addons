@@ -37,6 +37,7 @@
                             <tree default_order='id'>
                                 <field name="id"/>
                                 <field name="fiscalyear_id"/>
+                                <button name="%(action_edit_purchase_order_line_fy)d" string="Edit" type="action" icon="gtk-justify-fill" groups="account_budget_activity.group_budget_trans_manager"/>
                                 <field name="monitor_fy_id" string="Budget Fiscal Year"/>
                                 <field name="purchase_line_id"/>
                                 <field name="create_date"/>

@@ -433,6 +433,119 @@ class issi_budget_query_view(models.Model):
         )
         """ % self._table)
 
+class etl_issi_budget_section_query(models.Model):
+    _name = 'etl.issi.budget.section.query'
+    _auto = False
+    _description = 'etl_issi_budget_section_query'
+
+    def init(self, cr):
+        tools.drop_view_if_exists(cr, self._table)
+        cr.execute("""CREATE or REPLACE VIEW %s as (
+			 SELECT fis.name AS fiscal_year,
+				sec.code AS section,
+				ag.code AS ag,
+				ag.name AS ag_name,
+				COALESCE(sum(src.release), (0)::double precision) AS release,
+				COALESCE(sum(src.sum_pr), (0)::numeric) AS sum_pr,
+				COALESCE(sum(src.sum_po), (0)::numeric) AS sum_po,
+				COALESCE(sum(src.sum_ex), (0)::numeric) AS sum_ex,
+				COALESCE(sum(src.plan_overall_external), (0)::double precision) AS plan_expense_external,
+				COALESCE(sum(src.sum_actual), (0)::numeric) AS sum_actual_external,
+				COALESCE(sum(src.plan_overall_internal), (0)::double precision) AS plan_expense_internal,
+				COALESCE(sum(src.sum_actual_internal), (0)::numeric) AS sum_actual_internal,
+				COALESCE(sum(src.plan_overall_revenue), (0)::double precision) AS plan_revenue_external,
+				COALESCE(sum(src.sum_overall_revenue), (0)::numeric) AS sum_revenue_external,
+				COALESCE(sum(src.plan_revenue_internal), (0)::double precision) AS plan_revenue_internal,
+				COALESCE(sum(src.sum_revenue_internal), (0)::numeric) AS sum_revenue_internal,
+				now() AS import_date,
+				0 AS po_invoice_plan,
+				COALESCE(sum(src.sum_ex_internal), (0)::numeric) AS sum_ex_internal
+			   FROM (((( SELECT rpt.fiscalyear_id,
+						rpt.section_id,
+						rpt.activity_group_id,
+						sum(rpt.amount_pr_commit) AS sum_pr,
+						sum(rpt.amount_po_commit) AS sum_po,
+						sum(rpt.amount_actual) AS sum_actual,
+						sum(rpt.released_amount) AS release,
+						sum(rpt.amount_exp_commit) AS sum_ex,
+						sum(rpt.planned_amount) AS plan_overall_external,
+						0 AS sum_actual_internal,
+						0 AS plan_overall_internal,
+						0 AS sum_overall_revenue,
+						0 AS plan_overall_revenue,
+						0 AS sum_revenue_internal,
+						0 AS plan_revenue_internal,
+						0 AS sum_ex_internal
+					   FROM issi_budget_query_view rpt
+					  WHERE ((rpt.project_id IS NULL) AND ((rpt.charge_type)::text = 'external'::text) AND ((rpt.budget_method)::text = 'expense'::text))
+					  GROUP BY rpt.fiscalyear_id, rpt.section_id, rpt.activity_group_id
+					UNION
+					 SELECT rpt.fiscalyear_id,
+						rpt.section_id,
+						rpt.activity_group_id,
+						0 AS sum_pr,
+						0 AS sum_po,
+						0 AS sum_actual,
+						0 AS release,
+						0 AS sum_ex,
+						0 AS plan_overall_external,
+						0 AS sum_actual_internal,
+						0 AS plan_overall_internal,
+						sum(rpt.amount_actual) AS sum_overall_revenue,
+						sum(rpt.planned_amount) AS plan_overall_revenue,
+						0 AS sum_revenue_internal,
+						0 AS plan_revenue_internal,
+						sum(rpt.amount_exp_commit) AS sum_ex_internal
+					   FROM issi_budget_query_view rpt
+					  WHERE ((rpt.project_id IS NULL) AND ((rpt.charge_type)::text = 'external'::text) AND ((rpt.budget_method)::text = 'revenue'::text))
+					  GROUP BY rpt.fiscalyear_id, rpt.section_id, rpt.activity_group_id
+					UNION
+					 SELECT rpt.fiscalyear_id,
+						rpt.section_id,
+						rpt.activity_group_id,
+						0 AS sum_pr,
+						0 AS sum_po,
+						0 AS sum_actual,
+						0 AS release,
+						0 AS sum_ex,
+						0 AS plan_overall_external,
+						sum(rpt.amount_actual) AS sum_actual_internal,
+						sum(rpt.planned_amount) AS plan_overall_internal,
+						0 AS sum_overall_revenue,
+						0 AS plan_overall_revenue,
+						0 AS sum_revenue_internal,
+						0 AS plan_revenue_internal,
+						sum(rpt.amount_exp_commit) AS sum_ex_internal
+					   FROM issi_budget_query_view rpt
+					  WHERE ((rpt.project_id IS NULL) AND ((rpt.charge_type)::text = 'internal'::text) AND ((rpt.budget_method)::text = 'expense'::text))
+					  GROUP BY rpt.fiscalyear_id, rpt.section_id, rpt.activity_group_id
+					UNION
+					 SELECT rpt.fiscalyear_id,
+						rpt.section_id,
+						rpt.activity_group_id,
+						0 AS sum_pr,
+						0 AS sum_po,
+						0 AS sum_actual,
+						0 AS release,
+						0 AS sum_ex,
+						0 AS plan_overall_external,
+						0 AS sum_actual_internal,
+						0 AS plan_overall_internal,
+						0 AS sum_overall_revenuer,
+						0 AS plan_overall_revenue,
+						sum(rpt.amount_actual) AS sum_revenue_internal,
+						sum(rpt.planned_amount) AS plan_revenue_internal,
+						0 AS sum_ex_internal
+					   FROM issi_budget_query_view rpt
+					  WHERE ((rpt.project_id IS NULL) AND ((rpt.charge_type)::text = 'internal'::text) AND ((rpt.budget_method)::text = 'revenue'::text))
+					  GROUP BY rpt.fiscalyear_id, rpt.section_id, rpt.activity_group_id) src
+				 JOIN account_fiscalyear fis ON ((src.fiscalyear_id = fis.id)))
+				 LEFT JOIN res_section sec ON ((src.section_id = sec.id)))
+				 LEFT JOIN account_activity_group ag ON ((src.activity_group_id = ag.id)))
+			  GROUP BY fis.name, sec.id, sec.code, ag.code, ag.name
+        )
+        """ % self._table)
+
 class issi_res_project_budget_summary_view(models.Model):
     _name = 'issi.res.project.budget.summary.view'
     _auto = False
@@ -441,63 +554,47 @@ class issi_res_project_budget_summary_view(models.Model):
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
-			 SELECT min(p.id) AS id,
-				p.project_id,
-				p.fiscalyear_id,
-				p.budget_method,
-				sum((((((((((((
+			SELECT 0 AS id,
+			    aa.project_id,
+			    aa.fiscalyear_id,
+			    aa.budget_method,
+			    sum((aa.planned_amount_internal + aa.planned_amount_external)) AS planned_amount,
+			    sum((aa.released_amount_internal + aa.released_amount_external)) AS released_amount,
+			    sum(aa.planned_amount_external) AS planned_amount_external,
+			    sum(aa.released_amount_external) AS released_amount_external,
+			    sum(aa.planned_amount_internal) AS planned_amount_internal,
+			    sum(aa.released_amount_internal) AS released_amount_internal
+			   FROM ( SELECT min(p.id) AS id,
+				    p.project_id,
+				    p.fiscalyear_id,
+				    p.budget_method,
+				    p.charge_type,
+				    0 AS planned_amount_external,
+				    0 AS released_amount_external,
 					CASE
-						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
-						ELSE p.m1
-					END +
-					CASE
-						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
-						ELSE p.m2
-					END) +
-					CASE
-						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
-						ELSE p.m3
-					END) +
-					CASE
-						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
-						ELSE p.m4
-					END) +
-					CASE
-						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
-						ELSE p.m5
-					END) +
-					CASE
-						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
-						ELSE p.m6
-					END) +
-					CASE
-						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
-						ELSE p.m7
-					END) +
-					CASE
-						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
-						ELSE p.m8
-					END) +
-					CASE
-						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
-						ELSE p.m9
-					END) +
-					CASE
-						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
-						ELSE p.m10
-					END) +
-					CASE
-						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
-						ELSE p.m11
-					END) +
-					CASE
-						WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0.0)::double precision
-						ELSE p.m12
-					END)) AS planned_amount,
-				sum(p.released_amount) AS released_amount
-			   FROM (res_project_budget_plan p
-				 JOIN account_fiscalyear f ON ((p.fiscalyear_id = f.id)))
-			  GROUP BY p.project_id, p.fiscalyear_id, p.budget_method
+					    WHEN ((f.control_ext_charge_only = true) AND ((p.charge_type)::text = 'internal'::text)) THEN (0)::double precision
+					    ELSE sum((((((((((((p.m1 + p.m2) + p.m3) + p.m4) + p.m5) + p.m6) + p.m7) + p.m8) + p.m9) + p.m10) + p.m11) + p.m12))
+					END AS planned_amount_internal,
+				    sum(p.released_amount) AS released_amount_internal
+				   FROM (res_project_budget_plan p
+				     JOIN account_fiscalyear f ON ((p.fiscalyear_id = f.id)))
+				  WHERE ((p.charge_type)::text = 'internal'::text)
+				  GROUP BY p.budget_method, p.project_id, p.fiscalyear_id, f.control_ext_charge_only, p.charge_type
+				UNION
+				 SELECT min(p.id) AS id,
+				    p.project_id,
+				    p.fiscalyear_id,
+				    p.budget_method,
+				    p.charge_type,
+				    sum((((((((((((p.m1 + p.m2) + p.m3) + p.m4) + p.m5) + p.m6) + p.m7) + p.m8) + p.m9) + p.m10) + p.m11) + p.m12)) AS planned_amount_external,
+				    sum(p.released_amount) AS released_amount_external,
+				    0 AS planned_amount_internal,
+				    0 AS released_amount_internal
+				   FROM (res_project_budget_plan p
+				     JOIN account_fiscalyear f ON ((p.fiscalyear_id = f.id)))
+				  WHERE ((p.charge_type)::text = 'external'::text)
+				  GROUP BY p.budget_method, p.project_id, p.fiscalyear_id, f.control_ext_charge_only, p.charge_type) aa
+			  GROUP BY aa.project_id, aa.fiscalyear_id, aa.budget_method
         )
         """ % self._table)
 
@@ -777,203 +874,222 @@ class ISSIBudgetProjectMonitorView(models.Model):
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
-            SELECT query.fiscal_year,
-                project.code,
-                COALESCE(project.revenue_budget, (0)::double precision) AS revenue_budget,
-                project.overall_revenue_plan AS plan_overall_revenue,
-                project.proposal_overall_budget AS plan_proposal_overall_expense,
-                project.overall_expense_budget AS plan_overall_expense,
-                project.overall_expense_budget_internal AS plan_overall_expense_internal,
-                    CASE
-                        WHEN (project.active IS TRUE) THEN query.release
-                        ELSE COALESCE(( SELECT b.released_amount
-                           FROM res_project_budget_summary b
-                          WHERE (((b.budget_method)::text = 'expense'::text) AND (b.project_id = query.project_id) AND (b.fiscalyear_id = query.fiscalyear_id))), (0)::double precision)
-                    END AS release,
-                query.sum_pr,
-                query.sum_po,
-                query.sum_ex,
-                    CASE
-                        WHEN (query.plan_expense_external = (0)::double precision) THEN COALESCE(( SELECT b.planned_amount
-                           FROM res_project_budget_summary b
-                          WHERE (((b.budget_method)::text = 'expense'::text) AND (b.project_id = query.project_id) AND (b.fiscalyear_id = query.fiscalyear_id))), (0)::double precision)
-                        ELSE query.plan_expense_external
-                    END AS plan_expense_external,
-                query.sum_actual_external,
-                query.plan_expense_internal,
-                query.sum_actual_internal,
-                    CASE
-                        WHEN (query.plan_revenue_external = (0)::double precision) THEN COALESCE(( SELECT b.planned_amount
-                           FROM res_project_budget_summary b
-                          WHERE (((b.budget_method)::text = 'revenue'::text) AND (b.project_id = query.project_id) AND (b.fiscalyear_id = query.fiscalyear_id))), (0)::double precision)
-                        ELSE query.plan_revenue_external
-                    END AS plan_revenue_external,
-                query.sum_revenue_external,
-                query.plan_revenue_internal,
-                query.sum_revenue_internal,
-                false AS old_data,
-                query.sum_ex_internal,
-                query.fiscalyear_id,
-                query.project_id
-               FROM (( SELECT fis.name AS fiscal_year,
-                        prj.id AS project_id,
-                        COALESCE(sum(src.release), (0)::double precision) AS release,
-                        COALESCE(sum(src.sum_pr), (0)::numeric) AS sum_pr,
-                        COALESCE(sum(src.sum_po), (0)::numeric) AS sum_po,
-                        COALESCE(sum(src.sum_ex), (0)::numeric) AS sum_ex,
-                        COALESCE(sum(src.plan_overall_external), (0)::double precision) AS plan_expense_external,
-                        COALESCE(sum(src.sum_actual), (0)::numeric) AS sum_actual_external,
-                        COALESCE(sum(src.plan_overall_internal), (0)::double precision) AS plan_expense_internal,
-                        COALESCE(sum(src.sum_actual_internal), (0)::numeric) AS sum_actual_internal,
-                        COALESCE(sum(src.plan_overall_revenue), (0)::double precision) AS plan_revenue_external,
-                        COALESCE(sum(src.sum_overall_revenue), (0)::numeric) AS sum_revenue_external,
-                        COALESCE(sum(src.plan_revenue_internal), (0)::double precision) AS plan_revenue_internal,
-                        COALESCE(sum(src.sum_revenue_internal), (0)::numeric) AS sum_revenue_internal,
-                        0 AS po_invoice_plan,
-                        COALESCE(sum(src.sum_ex_internal), (0)::numeric) AS sum_ex_internal,
-                        src.fiscalyear_id
-                       FROM ((( SELECT rpt.fiscalyear_id,
-                                rpt.project_id,
-                                sum(rpt.amount_pr_commit) AS sum_pr,
-                                sum(rpt.amount_po_commit) AS sum_po,
-                                sum(rpt.amount_actual) AS sum_actual,
-                                sum(rpt.released_amount) AS release,
-                                sum(rpt.amount_exp_commit) AS sum_ex,
-                                sum(rpt.planned_amount) AS plan_overall_external,
-                                0 AS sum_actual_internal,
-                                0 AS plan_overall_internal,
-                                0 AS sum_overall_revenue,
-                                0 AS plan_overall_revenue,
-                                0 AS sum_revenue_internal,
-                                0 AS plan_revenue_internal,
-                                0 AS sum_ex_internal
-                               FROM issi_budget_query_view rpt
-                              WHERE ((rpt.project_id IS NOT NULL) AND ((rpt.charge_type)::text = 'external'::text) AND ((rpt.budget_method)::text = 'expense'::text))
-                              GROUP BY rpt.fiscalyear_id, rpt.project_id
-                            UNION
-                             SELECT rpt.fiscalyear_id,
-                                rpt.project_id,
-                                0 AS sum_pr,
-                                0 AS sum_po,
-                                0 AS sum_actual,
-                                0 AS release,
-                                0 AS sum_ex,
-                                0 AS plan_overall_external,
-                                0 AS sum_actual_internal,
-                                0 AS plan_overall_internal,
-                                sum(rpt.amount_actual) AS sum_overall_revenue,
-                                sum(rpt.planned_amount) AS plan_overall_revenue,
-                                0 AS sum_revenue_internal,
-                                0 AS plan_revenue_internal,
-                                0 AS sum_ex_internal
-                               FROM issi_budget_query_view rpt
-                              WHERE ((rpt.project_id IS NOT NULL) AND ((rpt.charge_type)::text = 'external'::text) AND ((rpt.budget_method)::text = 'revenue'::text))
-                              GROUP BY rpt.fiscalyear_id, rpt.project_id
-                            UNION
-                             SELECT rpt.fiscalyear_id,
-                                rpt.project_id,
-                                0 AS sum_pr,
-                                0 AS sum_po,
-                                0 AS sum_actual,
-                                0 AS release,
-                                0 AS sum_ex,
-                                0 AS plan_overall_external,
-                                sum(rpt.amount_actual) AS sum_actual_internal,
-                                sum(rpt.planned_amount) AS plan_overall_internal,
-                                0 AS sum_overall_revenue,
-                                0 AS plan_overall_revenue,
-                                0 AS sum_revenue_internal,
-                                0 AS plan_revenue_internal,
-                                sum(rpt.amount_exp_commit) AS sum_ex_internal
-                               FROM issi_budget_query_view rpt
-                              WHERE ((rpt.project_id IS NOT NULL) AND ((rpt.charge_type)::text = 'internal'::text) AND ((rpt.budget_method)::text = 'expense'::text))
-                              GROUP BY rpt.fiscalyear_id, rpt.project_id
-                            UNION
-                             SELECT rpt.fiscalyear_id,
-                                rpt.project_id,
-                                0 AS sum_pr,
-                                0 AS sum_po,
-                                0 AS sum_actual,
-                                0 AS release,
-                                0 AS sum_ex,
-                                0 AS plan_overall_external,
-                                0 AS sum_actual_internal,
-                                0 AS plan_overall_internal,
-                                0 AS sum_overall_revenuer,
-                                0 AS plan_overall_revenue,
-                                sum(rpt.amount_actual) AS sum_revenue_internal,
-                                sum(rpt.planned_amount) AS plan_revenue_internal,
-                                0 AS sum_ex_internal
-                               FROM issi_budget_query_view rpt
-                              WHERE ((rpt.project_id IS NOT NULL) AND ((rpt.charge_type)::text = 'internal'::text) AND ((rpt.budget_method)::text = 'revenue'::text))
-                              GROUP BY rpt.fiscalyear_id, rpt.project_id) src
-                         JOIN account_fiscalyear fis ON ((src.fiscalyear_id = fis.id)))
-                         JOIN res_project prj ON ((src.project_id = prj.id)))
-                      WHERE ((fis.name)::text >= '2019'::text)
-                      GROUP BY fis.name, prj.id, src.fiscalyear_id) query
-                 JOIN res_project project ON ((project.id = query.project_id)))
-            UNION
-              SELECT query.fiscal_year,
-                    project.code,
-                    project.revenue_budget,
-                    project.overall_revenue_plan AS plan_overall_revenue,
-                    project.proposal_overall_budget AS plan_proposal_overall_expense,
-                    project.overall_expense_budget AS plan_overall_expense,
-                    project.overall_expense_budget_internal AS plan_overall_expense_internal,
-                    sum(query.release) AS release,
-                    0 AS sum_pr,
-                    0 AS sum_po,
-                    0 AS sum_ex,
-                    sum(query.plan_expense_external) AS plan_expense_external,
-                    sum(query.sum_actual_external) AS sum_actual_external,
-                    0 AS plan_expense_internal,
-                    0 AS sum_actual_internal,
-                    sum(query.plan_revenue_external) AS plan_revenue_external,
-                    COALESCE(sum(query.sum_revenue_external), 0::double precision) AS sum_revenue_external,
-                    0 AS plan_revenue_internal,
-                    0 AS sum_revenue_internal,
-                    true AS old_data,
-                    0 AS sum_ex_internal,
-                    query.fiscalyear_id,
-                    project.id AS project_id
-                   FROM ( SELECT fis.name AS fiscal_year,
-                            plan.project_id,
-                            plan.planned_amount AS release,
-                            plan.planned_amount AS sum_actual_external,
-                            plan.planned_amount AS plan_expense_external,
-                            0 AS plan_revenue_external,
-                            plan.fiscalyear_id,
-                            0 AS sum_revenue_external
-                           FROM res_project_budget_summary plan
-                             LEFT JOIN account_fiscalyear fis ON plan.fiscalyear_id = fis.id
-                          WHERE plan.budget_method::text = 'expense'::text AND fis.name::text <= '2018'::text AND plan.planned_amount <> 0::double precision
-                        UNION
-                         SELECT fis.name,
-                            cc.project_id,
-                            0 AS release,
-                            0 AS sum_actual_external,
-                            0 AS plan_expense_external,
-                            COALESCE(sum(cc.planned_amount), (0)::double precision) AS plan_revenue_external,
-                            cc.fiscalyear_id,
-                            COALESCE(sum(cc.actual_amount), (0)::double precision) AS sum_revenue_external
-                           FROM (( SELECT aa.fiscalyear_id,
-                                    aa.project_id,
-                                    aa.planned_amount,
-                                    0 AS actual_amount
-                                   FROM res_project_budget_summary aa
-                                  WHERE (((aa.budget_method)::text = 'revenue'::text) AND (aa.planned_amount <> (0)::double precision))
-                                UNION
-                                 SELECT bb.fiscalyear_id,
-                                    bb.project_id,
-                                    0 AS planned_amount,
-                                    sum(bb.actual_amount) AS actual_amount
-                                   FROM res_project_revenue_actual bb
-                                  GROUP BY bb.fiscalyear_id, bb.project_id) cc
-                             LEFT JOIN account_fiscalyear fis ON ((cc.fiscalyear_id = fis.id)))
-                          WHERE ((fis.name)::text <= '2018'::text)
-                          GROUP BY fis.name, cc.fiscalyear_id, cc.project_id) query
-                     LEFT JOIN res_project project ON query.project_id = project.id
-                  GROUP BY query.fiscal_year, query.fiscalyear_id, project.code, project.id
+			SELECT query.fiscal_year,
+			    project.code,
+			    COALESCE(project.revenue_budget, (0)::double precision) AS revenue_budget,
+			    project.overall_revenue_plan AS plan_overall_revenue,
+			    project.proposal_overall_budget AS plan_proposal_overall_expense,
+			    project.overall_expense_budget AS plan_overall_expense,
+			    project.overall_expense_budget_internal AS plan_overall_expense_internal,
+				CASE
+				    WHEN (project.active IS TRUE) THEN query.release
+				    ELSE COALESCE(( SELECT b.released_amount
+				       FROM issi_res_project_budget_summary_view b
+				      WHERE (((b.budget_method)::text = 'expense'::text) AND (b.project_id = query.project_id) AND (b.fiscalyear_id = query.fiscalyear_id))), (0)::double precision)
+				END AS release,
+			    query.sum_pr,
+			    query.sum_po,
+			    query.sum_ex,
+				CASE
+				    WHEN (query.plan_expense_external = (0)::double precision) THEN COALESCE(( SELECT b.planned_amount_external
+				       FROM issi_res_project_budget_summary_view b
+				      WHERE (((b.budget_method)::text = 'expense'::text) AND (b.project_id = query.project_id) AND (b.fiscalyear_id = query.fiscalyear_id))), (0)::double precision)
+				    ELSE query.plan_expense_external
+				END AS plan_expense_external,
+			    query.sum_actual_external,
+				CASE
+				    WHEN (query.plan_expense_internal = (0)::double precision) THEN COALESCE(( SELECT b.planned_amount_internal
+				       FROM issi_res_project_budget_summary_view b
+				      WHERE (((b.budget_method)::text = 'expense'::text) AND (b.project_id = query.project_id) AND (b.fiscalyear_id = query.fiscalyear_id))), (0)::double precision)
+				    ELSE query.plan_expense_internal
+				END AS plan_expense_internal,
+			    query.sum_actual_internal,
+				CASE
+				    WHEN (query.plan_revenue_external = (0)::double precision) THEN COALESCE(( SELECT b.planned_amount_external
+				       FROM issi_res_project_budget_summary_view b
+				      WHERE (((b.budget_method)::text = 'revenue'::text) AND (b.project_id = query.project_id) AND (b.fiscalyear_id = query.fiscalyear_id))), (0)::double precision)
+				    ELSE query.plan_revenue_external
+				END AS plan_revenue_external,
+			    query.sum_revenue_external,
+			    query.plan_revenue_internal,
+			    query.sum_revenue_internal,
+			    false AS old_data,
+			    query.sum_ex_internal,
+			    query.fiscalyear_id,
+			    query.project_id,
+			    query.release_external,
+			    query.release_internal
+			   FROM (( SELECT fis.name AS fiscal_year,
+				    prj.id AS project_id,
+				    COALESCE(sum(src.release), (0)::double precision) AS release,
+				    COALESCE(sum(src.sum_pr), (0)::numeric) AS sum_pr,
+				    COALESCE(sum(src.sum_po), (0)::numeric) AS sum_po,
+				    COALESCE(sum(src.sum_ex), (0)::numeric) AS sum_ex,
+				    COALESCE(sum(src.plan_overall_external), (0)::double precision) AS plan_expense_external,
+				    COALESCE(sum(src.sum_actual), (0)::numeric) AS sum_actual_external,
+				    COALESCE(sum(src.plan_overall_internal), (0)::double precision) AS plan_expense_internal,
+				    COALESCE(sum(src.sum_actual_internal), (0)::numeric) AS sum_actual_internal,
+				    COALESCE(sum(src.plan_overall_revenue), (0)::double precision) AS plan_revenue_external,
+				    COALESCE(sum(src.sum_overall_revenue), (0)::numeric) AS sum_revenue_external,
+				    COALESCE(sum(src.plan_revenue_internal), (0)::double precision) AS plan_revenue_internal,
+				    COALESCE(sum(src.sum_revenue_internal), (0)::numeric) AS sum_revenue_internal,
+				    0 AS po_invoice_plan,
+				    COALESCE(sum(src.sum_ex_internal), (0)::numeric) AS sum_ex_internal,
+				    COALESCE(sum(src.release_external), ((0)::numeric)::double precision) AS release_external,
+				    COALESCE(sum(src.release_internal), ((0)::numeric)::double precision) AS release_internal,
+				    src.fiscalyear_id
+				   FROM ((( SELECT rpt.fiscalyear_id,
+					    rpt.project_id,
+					    sum(rpt.amount_pr_commit) AS sum_pr,
+					    sum(rpt.amount_po_commit) AS sum_po,
+					    sum(rpt.amount_actual) AS sum_actual,
+					    sum(rpt.released_amount) AS release,
+					    sum(rpt.amount_exp_commit) AS sum_ex,
+					    sum(rpt.planned_amount) AS plan_overall_external,
+					    0 AS sum_actual_internal,
+					    0 AS plan_overall_internal,
+					    0 AS sum_overall_revenue,
+					    0 AS plan_overall_revenue,
+					    0 AS sum_revenue_internal,
+					    0 AS plan_revenue_internal,
+					    0 AS sum_ex_internal,
+					    sum(rpt.released_amount) AS release_external,
+					    0 AS release_internal
+					   FROM issi_budget_query_view rpt
+					  WHERE ((rpt.project_id IS NOT NULL) AND ((rpt.charge_type)::text = 'external'::text) AND ((rpt.budget_method)::text = 'expense'::text))
+					  GROUP BY rpt.fiscalyear_id, rpt.project_id
+					UNION
+					 SELECT rpt.fiscalyear_id,
+					    rpt.project_id,
+					    0 AS sum_pr,
+					    0 AS sum_po,
+					    0 AS sum_actual,
+					    0 AS release,
+					    0 AS sum_ex,
+					    0 AS plan_overall_external,
+					    0 AS sum_actual_internal,
+					    0 AS plan_overall_internal,
+					    sum(rpt.amount_actual) AS sum_overall_revenue,
+					    sum(rpt.planned_amount) AS plan_overall_revenue,
+					    0 AS sum_revenue_internal,
+					    0 AS plan_revenue_internal,
+					    0 AS sum_ex_internal,
+					    0 AS release_external,
+					    0 AS release_internal
+					   FROM issi_budget_query_view rpt
+					  WHERE ((rpt.project_id IS NOT NULL) AND ((rpt.charge_type)::text = 'external'::text) AND ((rpt.budget_method)::text = 'revenue'::text))
+					  GROUP BY rpt.fiscalyear_id, rpt.project_id
+					UNION
+					 SELECT rpt.fiscalyear_id,
+					    rpt.project_id,
+					    0 AS sum_pr,
+					    0 AS sum_po,
+					    0 AS sum_actual,
+					    sum(rpt.released_amount) AS release,
+					    0 AS sum_ex,
+					    0 AS plan_overall_external,
+					    sum(rpt.amount_actual) AS sum_actual_internal,
+					    sum(rpt.planned_amount) AS plan_overall_internal,
+					    0 AS sum_overall_revenue,
+					    0 AS plan_overall_revenue,
+					    0 AS sum_revenue_internal,
+					    0 AS plan_revenue_internal,
+					    sum(rpt.amount_exp_commit) AS sum_ex_internal,
+					    0 AS release_external,
+					    sum(rpt.released_amount) AS release_internal
+					   FROM issi_budget_query_view rpt
+					  WHERE ((rpt.project_id IS NOT NULL) AND ((rpt.charge_type)::text = 'internal'::text) AND ((rpt.budget_method)::text = 'expense'::text))
+					  GROUP BY rpt.fiscalyear_id, rpt.project_id
+					UNION
+					 SELECT rpt.fiscalyear_id,
+					    rpt.project_id,
+					    0 AS sum_pr,
+					    0 AS sum_po,
+					    0 AS sum_actual,
+					    0 AS release,
+					    0 AS sum_ex,
+					    0 AS plan_overall_external,
+					    0 AS sum_actual_internal,
+					    0 AS plan_overall_internal,
+					    0 AS sum_overall_revenuer,
+					    0 AS plan_overall_revenue,
+					    sum(rpt.amount_actual) AS sum_revenue_internal,
+					    sum(rpt.planned_amount) AS plan_revenue_internal,
+					    0 AS sum_ex_internal,
+					    0 AS release_external,
+					    sum(rpt.released_amount) AS release_internal
+					   FROM issi_budget_query_view rpt
+					  WHERE ((rpt.project_id IS NOT NULL) AND ((rpt.charge_type)::text = 'internal'::text) AND ((rpt.budget_method)::text = 'revenue'::text))
+					  GROUP BY rpt.fiscalyear_id, rpt.project_id) src
+				     JOIN account_fiscalyear fis ON ((src.fiscalyear_id = fis.id)))
+				     JOIN res_project prj ON ((src.project_id = prj.id)))
+				  WHERE ((fis.name)::text >= '2019'::text)
+				  GROUP BY fis.name, prj.id, src.fiscalyear_id) query
+			     JOIN res_project project ON ((project.id = query.project_id)))
+			UNION
+			 SELECT query.fiscal_year,
+			    project.code,
+			    project.revenue_budget,
+			    project.overall_revenue_plan AS plan_overall_revenue,
+			    project.proposal_overall_budget AS plan_proposal_overall_expense,
+			    project.overall_expense_budget AS plan_overall_expense,
+			    project.overall_expense_budget_internal AS plan_overall_expense_internal,
+			    sum(query.release) AS release,
+			    0 AS sum_pr,
+			    0 AS sum_po,
+			    0 AS sum_ex,
+			    sum(query.plan_expense_external) AS plan_expense_external,
+			    sum(query.sum_actual_external) AS sum_actual_external,
+			    0 AS plan_expense_internal,
+			    0 AS sum_actual_internal,
+			    sum(query.plan_revenue_external) AS plan_revenue_external,
+			    COALESCE(sum(query.sum_revenue_external), (0)::double precision) AS sum_revenue_external,
+			    0 AS plan_revenue_internal,
+			    0 AS sum_revenue_internal,
+			    true AS old_data,
+			    0 AS sum_ex_internal,
+			    query.fiscalyear_id,
+			    project.id AS project_id,
+			    sum(query.release) AS release_external,
+			    0 AS release_internal
+			   FROM (( SELECT fis.name AS fiscal_year,
+				    plan.project_id,
+				    plan.planned_amount AS release,
+				    plan.planned_amount AS sum_actual_external,
+				    plan.planned_amount AS plan_expense_external,
+				    0 AS plan_revenue_external,
+				    plan.fiscalyear_id,
+				    0 AS sum_revenue_external
+				   FROM (res_project_budget_summary plan
+				     LEFT JOIN account_fiscalyear fis ON ((plan.fiscalyear_id = fis.id)))
+				  WHERE (((plan.budget_method)::text = 'expense'::text) AND ((fis.name)::text <= '2018'::text) AND (plan.planned_amount <> (0)::double precision))
+				UNION
+				 SELECT fis.name,
+				    cc.project_id,
+				    0 AS release,
+				    0 AS sum_actual_external,
+				    0 AS plan_expense_external,
+				    COALESCE(sum(cc.planned_amount), (0)::double precision) AS plan_revenue_external,
+				    cc.fiscalyear_id,
+				    COALESCE(sum(cc.actual_amount), (0)::double precision) AS sum_revenue_external
+				   FROM (( SELECT aa.fiscalyear_id,
+					    aa.project_id,
+					    aa.planned_amount,
+					    0 AS actual_amount
+					   FROM res_project_budget_summary aa
+					  WHERE (((aa.budget_method)::text = 'revenue'::text) AND (aa.planned_amount <> (0)::double precision))
+					UNION
+					 SELECT bb.fiscalyear_id,
+					    bb.project_id,
+					    0 AS planned_amount,
+					    sum(bb.actual_amount) AS actual_amount
+					   FROM res_project_revenue_actual bb
+					  GROUP BY bb.fiscalyear_id, bb.project_id) cc
+				     LEFT JOIN account_fiscalyear fis ON ((cc.fiscalyear_id = fis.id)))
+				  WHERE ((fis.name)::text <= '2018'::text)
+				  GROUP BY fis.name, cc.fiscalyear_id, cc.project_id) query
+			     LEFT JOIN res_project project ON ((query.project_id = project.id)))
+			  GROUP BY query.fiscal_year, query.fiscalyear_id, project.code, project.id
         )
         """ % self._table)
 
@@ -986,79 +1102,79 @@ class issi_budget_project_plan_view(models.Model):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
 			 SELECT ss.project_id,
-				ss.fiscalyear_id,
-				ss.fiscal_year,
-				ss.old_data,
-				sum(ss.plan_expense_external) AS plan_expense_external,
-				sum(ss.released) AS released,
-				sum(ss.plan_revenue_external) AS plan_revenue_external,
-				sum(ss.plan_expense_internal) AS plan_expense_internal,
-				sum(ss.plan_revenue_internal) AS plan_revenue_internal
+			    ss.fiscalyear_id,
+			    ss.fiscal_year,
+			    ss.old_data,
+			    sum(ss.plan_expense_external) AS plan_expense_external,
+			    sum(ss.released) AS released,
+			    sum(ss.plan_revenue_external) AS plan_revenue_external,
+			    sum(ss.plan_expense_internal) AS plan_expense_internal,
+			    sum(ss.plan_revenue_internal) AS plan_revenue_internal
 			   FROM ( SELECT aa.project_id,
-						aa.fiscalyear_id,
-						aa.planned_amount AS plan_expense_external,
-						aa.released_amount AS released,
-						0 AS plan_revenue_external,
-						fis.name AS fiscal_year,
-							CASE
-								WHEN ((fis.name)::text <= '2018'::text) THEN true
-								ELSE false
-							END AS old_data,
-						0 AS plan_expense_internal,
-						0 AS plan_revenue_internal
-					   FROM (issi_res_project_budget_summary_view aa
-						 LEFT JOIN account_fiscalyear fis ON ((aa.fiscalyear_id = fis.id)))
-					  WHERE ((aa.budget_method)::text = 'expense'::text)
-					UNION
-					 SELECT bb.project_id,
-						bb.fiscalyear_id,
-						0 AS plan_expense_external,
-						0 AS released,
-						bb.planned_amount AS plan_revenue_external,
-						fis.name AS fiscal_year,
-							CASE
-								WHEN ((fis.name)::text <= '2018'::text) THEN true
-								ELSE false
-							END AS old_data,
-						0 AS plan_expense_internal,
-						0 AS plan_revenue_internal
-					   FROM (issi_res_project_budget_summary_view bb
-						 LEFT JOIN account_fiscalyear fis ON ((bb.fiscalyear_id = fis.id)))
-					  WHERE ((bb.budget_method)::text = 'revenue'::text)
-					UNION
-					 SELECT p.project_id,
-						p.fiscalyear_id,
-						0 AS plan_expense_external,
-						0 AS released,
-						0 AS plan_revenue_external,
-						fis.name AS fiscal_year,
-							CASE
-								WHEN ((fis.name)::text <= '2018'::text) THEN true
-								ELSE false
-							END AS old_data,
-						sum((((((((((((p.m1 + p.m2) + p.m3) + p.m4) + p.m5) + p.m6) + p.m7) + p.m8) + p.m9) + p.m10) + p.m11) + p.m12)) AS plan_expense_internal,
-						0 AS plan_revenue_internal
-					   FROM (res_project_budget_plan p
-						 JOIN account_fiscalyear fis ON ((p.fiscalyear_id = fis.id)))
-					  WHERE (((p.charge_type)::text = 'internal'::text) AND ((p.budget_method)::text = 'expense'::text))
-					  GROUP BY p.project_id, p.fiscalyear_id, p.budget_method, fis.name
-					UNION
-					 SELECT p.project_id,
-						p.fiscalyear_id,
-						0 AS plan_expense_external,
-						0 AS released,
-						0 AS plan_revenue_external,
-						fis.name AS fiscal_year,
-							CASE
-								WHEN ((fis.name)::text <= '2018'::text) THEN true
-								ELSE false
-							END AS old_data,
-						0 AS plan_expense_internal,
-						sum((((((((((((p.m1 + p.m2) + p.m3) + p.m4) + p.m5) + p.m6) + p.m7) + p.m8) + p.m9) + p.m10) + p.m11) + p.m12)) AS plan_revenue_internal
-					   FROM (res_project_budget_plan p
-						 JOIN account_fiscalyear fis ON ((p.fiscalyear_id = fis.id)))
-					  WHERE (((p.charge_type)::text = 'internal'::text) AND ((p.budget_method)::text = 'revenue'::text))
-					  GROUP BY p.project_id, p.fiscalyear_id, p.budget_method, fis.name) ss
+				    aa.fiscalyear_id,
+				    aa.planned_amount_external AS plan_expense_external,
+				    aa.released_amount AS released,
+				    0 AS plan_revenue_external,
+				    fis.name AS fiscal_year,
+					CASE
+					    WHEN ((fis.name)::text <= '2018'::text) THEN true
+					    ELSE false
+					END AS old_data,
+				    0 AS plan_expense_internal,
+				    0 AS plan_revenue_internal
+				   FROM (issi_res_project_budget_summary_view aa
+				     LEFT JOIN account_fiscalyear fis ON ((aa.fiscalyear_id = fis.id)))
+				  WHERE ((aa.budget_method)::text = 'expense'::text)
+				UNION
+				 SELECT bb.project_id,
+				    bb.fiscalyear_id,
+				    0 AS plan_expense_external,
+				    0 AS released,
+				    bb.planned_amount_external AS plan_revenue_external,
+				    fis.name AS fiscal_year,
+					CASE
+					    WHEN ((fis.name)::text <= '2018'::text) THEN true
+					    ELSE false
+					END AS old_data,
+				    0 AS plan_expense_internal,
+				    0 AS plan_revenue_internal
+				   FROM (issi_res_project_budget_summary_view bb
+				     LEFT JOIN account_fiscalyear fis ON ((bb.fiscalyear_id = fis.id)))
+				  WHERE ((bb.budget_method)::text = 'revenue'::text)
+				UNION
+				 SELECT p.project_id,
+				    p.fiscalyear_id,
+				    0 AS plan_expense_external,
+				    0 AS released,
+				    0 AS plan_revenue_external,
+				    fis.name AS fiscal_year,
+					CASE
+					    WHEN ((fis.name)::text <= '2018'::text) THEN true
+					    ELSE false
+					END AS old_data,
+				    sum((((((((((((p.m1 + p.m2) + p.m3) + p.m4) + p.m5) + p.m6) + p.m7) + p.m8) + p.m9) + p.m10) + p.m11) + p.m12)) AS plan_expense_internal,
+				    0 AS plan_revenue_internal
+				   FROM (res_project_budget_plan p
+				     JOIN account_fiscalyear fis ON ((p.fiscalyear_id = fis.id)))
+				  WHERE (((p.charge_type)::text = 'internal'::text) AND ((p.budget_method)::text = 'expense'::text))
+				  GROUP BY p.project_id, p.fiscalyear_id, p.budget_method, fis.name
+				UNION
+				 SELECT p.project_id,
+				    p.fiscalyear_id,
+				    0 AS plan_expense_external,
+				    0 AS released,
+				    0 AS plan_revenue_external,
+				    fis.name AS fiscal_year,
+					CASE
+					    WHEN ((fis.name)::text <= '2018'::text) THEN true
+					    ELSE false
+					END AS old_data,
+				    0 AS plan_expense_internal,
+				    sum((((((((((((p.m1 + p.m2) + p.m3) + p.m4) + p.m5) + p.m6) + p.m7) + p.m8) + p.m9) + p.m10) + p.m11) + p.m12)) AS plan_revenue_internal
+				   FROM (res_project_budget_plan p
+				     JOIN account_fiscalyear fis ON ((p.fiscalyear_id = fis.id)))
+				  WHERE (((p.charge_type)::text = 'internal'::text) AND ((p.budget_method)::text = 'revenue'::text))
+				  GROUP BY p.project_id, p.fiscalyear_id, p.budget_method, fis.name) ss
 			  GROUP BY ss.project_id, ss.fiscalyear_id, ss.fiscal_year, ss.old_data
         )
         """ % self._table)
@@ -1071,80 +1187,101 @@ class ETLISSIBudgetProjectQuery(models.Model):
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
-            SELECT COALESCE(( SELECT bb.fiscal_year
-                       FROM issi_budget_project_monitor_view bb
-                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), fis.name) AS fiscal_year,
-                COALESCE(( SELECT bb.code
-                       FROM issi_budget_project_monitor_view bb
-                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), prj.code) AS code,
-                COALESCE(prj.revenue_budget, (0)::double precision) AS revenue_budget,
-                prj.overall_revenue_plan AS plan_overall_revenue,
-                prj.proposal_overall_budget AS plan_proposal_overall_expense,
-                prj.overall_expense_budget AS plan_overall_expense,
-                prj.overall_expense_budget_internal AS plan_overall_expense_internal,
-                COALESCE(( SELECT bb.release
-                       FROM issi_budget_project_monitor_view bb
-                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::double precision) AS release,
-                COALESCE(( SELECT bb.sum_pr
-                       FROM issi_budget_project_monitor_view bb
-                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::numeric) AS sum_pr,
-                COALESCE(( SELECT bb.sum_po
-                       FROM issi_budget_project_monitor_view bb
-                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::numeric) AS sum_po,
-                COALESCE(( SELECT bb.sum_ex
-                       FROM issi_budget_project_monitor_view bb
-                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::numeric) AS sum_ex,
-                COALESCE(( SELECT bb.plan_expense_external
-                       FROM issi_budget_project_monitor_view bb
-                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), COALESCE(( SELECT pp.plan_expense_external
-                       FROM issi_budget_project_plan_view pp
-                      WHERE ((yy.project_id = pp.project_id) AND (yy.fiscalyear_id = pp.fiscalyear_id))), (0)::double precision)) AS plan_expense_external,
-                COALESCE(( SELECT bb.sum_actual_external
-                       FROM issi_budget_project_monitor_view bb
-                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::double precision) AS sum_actual_external,
-                COALESCE(( SELECT bb.plan_expense_internal
-                        FROM issi_budget_project_monitor_view bb
-                         WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), COALESCE(( SELECT pp.plan_expense_internal
-                        FROM issi_budget_project_plan_view pp
-                    WHERE ((yy.project_id = pp.project_id) AND (yy.fiscalyear_id = pp.fiscalyear_id))), (0)::double precision)) AS plan_expense_internal,
-                COALESCE(( SELECT bb.sum_actual_internal
-                       FROM issi_budget_project_monitor_view bb
-                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::numeric) AS sum_actual_internal,
-                COALESCE(( SELECT bb.plan_revenue_external
-                       FROM issi_budget_project_monitor_view bb
-                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), COALESCE(( SELECT pp.plan_revenue_external
-                       FROM issi_budget_project_plan_view pp
-                      WHERE ((yy.project_id = pp.project_id) AND (yy.fiscalyear_id = pp.fiscalyear_id))), (0)::double precision)) AS plan_revenue_external,
-                COALESCE(( SELECT bb.sum_revenue_external
-                       FROM issi_budget_project_monitor_view bb
-                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::numeric) AS sum_revenue_external,
-                COALESCE(( SELECT bb.plan_revenue_internal
-                       FROM issi_budget_project_monitor_view bb
-                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), COALESCE(( SELECT pp.plan_revenue_internal
-                       FROM issi_budget_project_plan_view pp
-                      WHERE ((yy.project_id = pp.project_id) AND (yy.fiscalyear_id = pp.fiscalyear_id))), (0)::double precision)) AS plan_revenue_internal,
-                COALESCE(( SELECT bb.sum_revenue_internal
-                       FROM issi_budget_project_monitor_view bb
-                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::numeric) AS sum_revenue_internal,
-                COALESCE(( SELECT bb.old_data
-                       FROM issi_budget_project_monitor_view bb
-                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), yy.old_data) AS old_data,
-                COALESCE(( SELECT bb.sum_ex_internal
-                       FROM issi_budget_project_monitor_view bb
-                      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::numeric) AS sum_ex_internal,
-                yy.fiscalyear_id,
-                yy.project_id
-               FROM ((( SELECT DISTINCT mm.project_id,
-                        mm.fiscalyear_id,
-                        mm.old_data
-                       FROM issi_budget_project_monitor_view mm
-                    UNION
-                     SELECT DISTINCT pp.project_id,
-                        pp.fiscalyear_id,
-                        pp.old_data
-                       FROM issi_budget_project_plan_view pp) yy
-                 RIGHT JOIN account_fiscalyear fis ON ((yy.fiscalyear_id = fis.id)))
-                 RIGHT JOIN res_project prj ON ((yy.project_id = prj.id)))
+			 SELECT COALESCE(( SELECT bb.fiscal_year
+				   FROM issi_budget_project_monitor_view bb
+				  WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), fis.name) AS fiscal_year,
+			    COALESCE(( SELECT bb.code
+				   FROM issi_budget_project_monitor_view bb
+				  WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), prj.code) AS code,
+			    COALESCE(prj.revenue_budget, (0)::double precision) AS revenue_budget,
+			    prj.overall_revenue_plan AS plan_overall_revenue,
+			    prj.proposal_overall_budget AS plan_proposal_overall_expense,
+			    prj.overall_expense_budget AS plan_overall_expense,
+			    prj.overall_expense_budget_internal AS plan_overall_expense_internal,
+				CASE
+				    WHEN (prj.active = false) THEN COALESCE(( SELECT b.released_amount
+				       FROM issi_res_project_budget_summary_view b
+				      WHERE (((b.budget_method)::text = 'expense'::text) AND (b.project_id = yy.project_id) AND (b.fiscalyear_id = yy.fiscalyear_id))), (0)::double precision)
+				    ELSE COALESCE(( SELECT bb.release
+				       FROM issi_budget_project_monitor_view bb
+				      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::double precision)
+				END AS release,
+			    COALESCE(( SELECT bb.sum_pr
+				   FROM issi_budget_project_monitor_view bb
+				  WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::numeric) AS sum_pr,
+			    COALESCE(( SELECT bb.sum_po
+				   FROM issi_budget_project_monitor_view bb
+				  WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::numeric) AS sum_po,
+			    COALESCE(( SELECT bb.sum_ex
+				   FROM issi_budget_project_monitor_view bb
+				  WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::numeric) AS sum_ex,
+			    COALESCE(( SELECT bb.plan_expense_external
+				   FROM issi_budget_project_monitor_view bb
+				  WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), COALESCE(( SELECT pp.plan_expense_external
+				   FROM issi_budget_project_plan_view pp
+				  WHERE ((yy.project_id = pp.project_id) AND (yy.fiscalyear_id = pp.fiscalyear_id))), (0)::double precision)) AS plan_expense_external,
+			    COALESCE(( SELECT bb.sum_actual_external
+				   FROM issi_budget_project_monitor_view bb
+				  WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::double precision) AS sum_actual_external,
+			    COALESCE(( SELECT bb.plan_expense_internal
+				   FROM issi_budget_project_monitor_view bb
+				  WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), COALESCE(( SELECT pp.plan_expense_internal
+				   FROM issi_budget_project_plan_view pp
+				  WHERE ((yy.project_id = pp.project_id) AND (yy.fiscalyear_id = pp.fiscalyear_id))), (0)::double precision)) AS plan_expense_internal,
+			    COALESCE(( SELECT bb.sum_actual_internal
+				   FROM issi_budget_project_monitor_view bb
+				  WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::numeric) AS sum_actual_internal,
+			    COALESCE(( SELECT bb.plan_revenue_external
+				   FROM issi_budget_project_monitor_view bb
+				  WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), COALESCE(( SELECT pp.plan_revenue_external
+				   FROM issi_budget_project_plan_view pp
+				  WHERE ((yy.project_id = pp.project_id) AND (yy.fiscalyear_id = pp.fiscalyear_id))), (0)::double precision)) AS plan_revenue_external,
+			    COALESCE(( SELECT bb.sum_revenue_external
+				   FROM issi_budget_project_monitor_view bb
+				  WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), ((0)::numeric)::double precision) AS sum_revenue_external,
+			    COALESCE(( SELECT bb.plan_revenue_internal
+				   FROM issi_budget_project_monitor_view bb
+				  WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), COALESCE(( SELECT pp.plan_revenue_internal
+				   FROM issi_budget_project_plan_view pp
+				  WHERE ((yy.project_id = pp.project_id) AND (yy.fiscalyear_id = pp.fiscalyear_id))), (0)::double precision)) AS plan_revenue_internal,
+			    COALESCE(( SELECT bb.sum_revenue_internal
+				   FROM issi_budget_project_monitor_view bb
+				  WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::numeric) AS sum_revenue_internal,
+			    COALESCE(( SELECT bb.old_data
+				   FROM issi_budget_project_monitor_view bb
+				  WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), yy.old_data) AS old_data,
+			    COALESCE(( SELECT bb.sum_ex_internal
+				   FROM issi_budget_project_monitor_view bb
+				  WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::numeric) AS sum_ex_internal,
+			    yy.fiscalyear_id,
+			    yy.project_id,
+				CASE
+				    WHEN (prj.active = false) THEN COALESCE(( SELECT b.released_amount_external
+				       FROM issi_res_project_budget_summary_view b
+				      WHERE (((b.budget_method)::text = 'expense'::text) AND (b.project_id = yy.project_id) AND (b.fiscalyear_id = yy.fiscalyear_id))), (0)::double precision)
+				    ELSE COALESCE(( SELECT bb.release_external
+				       FROM issi_budget_project_monitor_view bb
+				      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::double precision)
+				END AS released_external,
+				CASE
+				    WHEN (prj.active = false) THEN COALESCE(( SELECT b.released_amount_internal
+				       FROM issi_res_project_budget_summary_view b
+				      WHERE (((b.budget_method)::text = 'expense'::text) AND (b.project_id = yy.project_id) AND (b.fiscalyear_id = yy.fiscalyear_id))), (0)::double precision)
+				    ELSE COALESCE(( SELECT bb.release_internal
+				       FROM issi_budget_project_monitor_view bb
+				      WHERE ((yy.project_id = bb.project_id) AND (yy.fiscalyear_id = bb.fiscalyear_id))), (0)::double precision)
+				END AS released_internal
+			   FROM ((( SELECT DISTINCT mm.project_id,
+				    mm.fiscalyear_id,
+				    mm.old_data
+				   FROM issi_budget_project_monitor_view mm
+				UNION
+				 SELECT DISTINCT pp.project_id,
+				    pp.fiscalyear_id,
+				    pp.old_data
+				   FROM issi_budget_project_plan_view pp) yy
+			     RIGHT JOIN account_fiscalyear fis ON ((yy.fiscalyear_id = fis.id)))
+			     RIGHT JOIN res_project prj ON ((yy.project_id = prj.id)))	
         )
         """ % self._table)
 

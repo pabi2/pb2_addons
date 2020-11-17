@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="voucher" language="groovy" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
-	<property name="OPENERP_RELATIONS" value="[&quot;line_ids&quot;]"/>
+	<property name="OPENERP_RELATIONS" value="[&quot;tax_line_normal&quot;]"/>
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="95"/>
-	<property name="ireport.y" value="432"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
 	<style name="table" lineSpacing="Single">
 		<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
@@ -61,6 +61,12 @@
 	<field name="currency" class="java.lang.String">
 		<fieldDescription><![CDATA[journal_id/currency/name]]></fieldDescription>
 	</field>
+	<field name="city" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/city]]></fieldDescription>
+	</field>
+	<field name="country" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/country_id/name]]></fieldDescription>
+	</field>
 	<field name="company_currency" class="java.lang.String">
 		<fieldDescription><![CDATA[company_id/currency_id/name]]></fieldDescription>
 	</field>
@@ -76,41 +82,32 @@
 	<field name="date_payment" class="java.util.Date">
 		<fieldDescription><![CDATA[date_document]]></fieldDescription>
 	</field>
+	<field name="district" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/district_id/name]]></fieldDescription>
+	</field>
+	<field name="province" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/province_id/name]]></fieldDescription>
+	</field>
 	<field name="street" class="java.lang.String">
 		<fieldDescription><![CDATA[partner_id/street]]></fieldDescription>
 	</field>
 	<field name="street2" class="java.lang.String">
 		<fieldDescription><![CDATA[partner_id/street2]]></fieldDescription>
 	</field>
-	<field name="city" class="java.lang.String">
-		<fieldDescription><![CDATA[partner_id/city]]></fieldDescription>
-	</field>
-	<field name="country" class="java.lang.String">
-		<fieldDescription><![CDATA[partner_id/country_id/name]]></fieldDescription>
-	</field>
-	<field name="zip" class="java.lang.String">
-		<fieldDescription><![CDATA[partner_id/zip]]></fieldDescription>
-	</field>
-	<field name="district" class="java.lang.String">
-		<fieldDescription><![CDATA[partner_id/district_id/name]]></fieldDescription>
-	</field>
 	<field name="township" class="java.lang.String">
 		<fieldDescription><![CDATA[partner_id/township_id/name]]></fieldDescription>
-	</field>
-	<field name="province" class="java.lang.String">
-		<fieldDescription><![CDATA[partner_id/province_id/name]]></fieldDescription>
 	</field>
 	<field name="vat" class="java.lang.String">
 		<fieldDescription><![CDATA[partner_id/vat]]></fieldDescription>
 	</field>
-	<field name="amount_total" class="java.lang.Number">
-		<fieldDescription><![CDATA[amount_total]]></fieldDescription>
+	<field name="zip" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/zip]]></fieldDescription>
 	</field>
 	<field name="invoice_amount_tax" class="java.lang.Number">
-		<fieldDescription><![CDATA[line_ids/invoice_id/amount_tax]]></fieldDescription>
+		<fieldDescription><![CDATA[tax_line_normal/tax_amount]]></fieldDescription>
 	</field>
 	<field name="invoice_amount_untaxed" class="java.lang.Number">
-		<fieldDescription><![CDATA[line_ids/invoice_id/amount_untaxed]]></fieldDescription>
+		<fieldDescription><![CDATA[tax_line_normal/base_amount]]></fieldDescription>
 	</field>
 	<field name="invoice_amount_total" class="java.lang.Number">
 		<fieldDescription><![CDATA[line_ids/amount]]></fieldDescription>
@@ -149,17 +146,19 @@
 		<fieldDescription><![CDATA[line_ids/invoice_id/invoice_description]]></fieldDescription>
 	</field>
 	<field name="invoice_number" class="java.lang.String">
-		<fieldDescription><![CDATA[line_ids/invoice_id/number]]></fieldDescription>
+		<fieldDescription><![CDATA[tax_line_normal/invoice_id/number]]></fieldDescription>
 	</field>
 	<field name="origin_invoice" class="java.lang.String">
-		<fieldDescription><![CDATA[line_ids/invoice_id/origin_invoice_id/number]]></fieldDescription>
+		<fieldDescription><![CDATA[tax_line_normal/invoice_id/origin_invoice_id/number]]></fieldDescription>
 	</field>
-	<field name="title" class="java.lang.String"/>
+	<field name="title" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="amount_total_text_th" class="java.lang.String">
-		<fieldDescription><![CDATA[amount_total_text_th]]></fieldDescription>
+		<fieldDescription><![CDATA[amount_customer_tax_total_text_th]]></fieldDescription>
 	</field>
 	<field name="amount_total_text_en" class="java.lang.String">
-		<fieldDescription><![CDATA[amount_total_text_en]]></fieldDescription>
+		<fieldDescription><![CDATA[amount_customer_tax_total_text_en]]></fieldDescription>
 	</field>
 	<field name="invoice_type" class="java.lang.String">
 		<fieldDescription><![CDATA[line_ids/invoice_id/type]]></fieldDescription>
@@ -195,20 +194,22 @@ $F{amount_total_text_en} :
 $F{amount_total_text_th}]]></variableExpression>
 	</variable>
 	<variable name="amount_total" class="java.lang.Number" resetType="Page" calculation="Sum">
-		<variableExpression><![CDATA[$F{invoice_amount_total} == null ? 0.0 :
-($F{invoice_type} == "out_refund" ? -$F{invoice_amount_total} : $F{invoice_amount_total})]]></variableExpression>
+		<variableExpression><![CDATA[$F{invoice_amount_untaxed} == null ?
+$F{invoice_amount_tax} == null ? 0.0 :
+-$F{invoice_amount_tax}:
+$F{invoice_amount_untaxed} + $F{invoice_amount_tax}]]></variableExpression>
 	</variable>
 	<variable name="amount_retention" class="java.lang.Number" resetType="Page" calculation="Sum">
 		<variableExpression><![CDATA[$F{invoice_amount_retention} == null ? 0.0 :
 ($F{invoice_type} == "out_refund" ? $F{invoice_amount_retention} : -$F{invoice_amount_retention})]]></variableExpression>
 	</variable>
-	<variable name="amount_tax" class="java.lang.Number" resetType="Page" calculation="Sum">
+	<variable name="amount_tax" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$F{invoice_amount_tax} == null ? 0.0 :
-($F{invoice_type} == "out_refund" ? -$F{invoice_amount_tax} : $F{invoice_amount_tax})]]></variableExpression>
+$F{invoice_amount_tax}]]></variableExpression>
 	</variable>
 	<variable name="amount_untaxed" class="java.lang.Number" calculation="Sum">
 		<variableExpression><![CDATA[$F{invoice_amount_untaxed} == null ? 0.0 :
-($F{invoice_type} == "out_refund" ? -$F{invoice_amount_untaxed} : $F{invoice_amount_untaxed})]]></variableExpression>
+$F{invoice_amount_untaxed}]]></variableExpression>
 	</variable>
 	<background>
 		<band height="792">
@@ -353,7 +354,7 @@ $F{first_product_categ}.toString() == "การร่วมวิจัย"]]><
 					<font fontName="Monospaced" size="9" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Number"><![CDATA[$F{invoice_amount_untaxed} == null ? 0.0 :
-($F{invoice_type} == "out_refund" ? -$F{invoice_amount_untaxed} : $F{invoice_amount_untaxed})]]></textFieldExpression>
+$F{invoice_amount_untaxed}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="240" y="1" width="150" height="17">

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
-from openerp import models, api
+from openerp import models, api, _
+from openerp.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -55,6 +56,7 @@ class AccountBudget(models.Model):
         """
         res = {'budget_ok': True,
                'message': False}
+
         if not doc_lines or not res_id or not budget_type:
             return res
         ctx = {'currency_id': currency_id}
@@ -104,4 +106,44 @@ class AccountBudget(models.Model):
             if not res['budget_ok']:
                 return res
         _logger.info('pabiweb_check_budget(), output: %s' % res)
+        return res
+
+    @api.model
+    def pabi_check_budget_over(self, doc_date, budget_type, doc_lines):
+        _logger.info(
+            '_check_budget_over(), input: [%s, %s, %s]' %
+            (doc_date, budget_type, doc_lines))
+
+        res = {'budget_ok': True, 'message': False}
+
+        if budget_type == 'unit_base' and doc_date and doc_lines and 'budget_code' in doc_lines and 'amount_total' in doc_lines:
+            Budget = self.env['account.budget']
+
+            budget_level = 'section_id'
+            amount = doc_lines['amount_total']
+            budget_level_res_id = self.env['res.section'].search([('code', '=', doc_lines['budget_code'])])
+            fiscal_id = self.env['account.fiscalyear'].search([('date_start', '<=', doc_date),
+                                                               ('date_stop', '>=', doc_date)])
+
+            res = Budget.check_budget(fiscal_id.id,
+                                      budget_type,
+                                      budget_level,
+                                      budget_level_res_id.id,
+                                      amount)
+
+        if budget_type == 'project_base' and doc_date and doc_lines and 'budget_code' in doc_lines and 'amount_total' in doc_lines:
+            Budget = self.env['account.budget']
+
+            budget_level = 'project_id'
+            amount = doc_lines['amount_total']
+            budget_level_res_id = self.env['res.project'].search([('code', '=', doc_lines['budget_code'])])
+            fiscal_id = self.env['account.fiscalyear'].search([('date_start', '<=', doc_date),
+                                                               ('date_stop', '>=', doc_date)])
+
+            res = Budget.check_budget(fiscal_id.id,
+                                      budget_type,
+                                      budget_level,
+                                      budget_level_res_id.id,
+                                      amount)
+
         return res

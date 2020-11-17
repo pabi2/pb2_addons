@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <act_window
+            id="action_update_wa_invoices"
+            name="Update WA (for old document)"
+            src_model="account.invoice"
+            res_model="update.wa.invoice"
+            view_type="form"
+            view_mode="form"
+            target="new"
+          />
+
+        <record id="wizard_update_wa_invoices" model="ir.ui.view">
+            <field name="name">wizard.update.wa.invoices</field>
+            <field name="model">update.wa.invoice</field>
+            <field name="arch" type="xml">
+                <form string="Update WA">
+                    <p>Update WA Reference following information.</p>
+                    <group>
+                        <group name="wa_group">
+                            <field name="wa_id"/>
+                        </group>
+                        <group/>
+                    </group>
+                    <footer>
+                        <button name="action_upd_wa" type="object" string="Update WA" class="oe_highlight"/>
+                        or
+                        <button special="cancel" class="oe_link" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</openerp>

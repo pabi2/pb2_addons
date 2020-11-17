@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
 	<property name="ireport.zoom" value="1.6105100000000105"/>
-	<property name="ireport.x" value="384"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
@@ -9,15 +9,23 @@
 		<parameter name="ids" class="java.lang.Integer"/>
 		<queryString>
 			<![CDATA[SELECT
+MIN(pol.docline_seq) as item,
 pol.name,
 pol.price_unit,
-CONCAT(pol.product_qty::integer,' ',pu.name) product_unit,
-pol.product_qty,
-pu.name product_uom
+CONCAT(sum(pol.product_qty)::integer,' ',pu.name) product_unit,
+sum(pol.product_qty) product_qty,
+pu.name product_uom,
+(SELECT CONCAT((amount*100)::integer::char,'%')
+FROM purchase_order_taxe pot
+LEFT JOIN account_tax at
+ON at.id = pot.tax_id
+WHERE ord_id = pol.order_id limit 1) percentvat
 FROM purchase_order_line pol
 LEFT JOIN product_uom pu
 ON pu.id = pol.product_uom
-WHERE pol.order_id = $P{ids} and pol.active = True]]>
+WHERE pol.order_id = $P{ids} and pol.active = True
+group by pol.product_id, pol.name, pu.name, pol.price_unit, pol.order_id, percentvat
+order by item]]>
 		</queryString>
 		<field name="name" class="java.lang.String"/>
 		<field name="price_unit" class="java.lang.Number">
@@ -28,6 +36,7 @@ WHERE pol.order_id = $P{ids} and pol.active = True]]>
 		<field name="product_uom" class="java.lang.String">
 			<fieldDescription><![CDATA[UoM]]></fieldDescription>
 		</field>
+		<field name="item" class="java.lang.Integer"/>
 		<variable name="price_subtotal" class="java.lang.Number">
 			<variableExpression><![CDATA[$F{price_unit}*$F{product_qty}]]></variableExpression>
 			<initialValueExpression><![CDATA[]]></initialValueExpression>
@@ -410,7 +419,9 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font size="16" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{order_date}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[$P{REPORT_LOCALE}.toString().equals("th_TH") ?
+new Date($F{order_date}.year-543, $F{order_date}.month, $F{order_date}.date):
+$F{order_date}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="3" y="21" width="280" height="31"/>
@@ -706,7 +717,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$V{row_count}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$F{item}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>

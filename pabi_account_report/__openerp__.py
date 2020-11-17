@@ -68,6 +68,7 @@
         'reports/jasper_report_cd_receivable_follow_up.xml',
         'reports/qweb_report_receivable_confirmation_letter_template.xml',
         'reports/qweb_report_receivable_confirmation_letter.xml',
+        'reports/xlsx_report_extend_the_repayment.xml',
         # GL Reports
         'reports/xlsx_report_expense_ledger.xml',
         'reports/xlsx_report_revenue_ledger.xml',

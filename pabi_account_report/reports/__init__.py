@@ -34,6 +34,7 @@ from . import qweb_report_receivable_confirmation_letter
 from . import jasper_report_cd_receivable_payment_history
 from . import jasper_report_cd_receivable_follow_up
 from . import jasper_report_parser
+from . import xlsx_report_extend_the_repayment
 # GL Reports
 from . import xlsx_report_expense_ledger
 from . import xlsx_report_revenue_ledger
