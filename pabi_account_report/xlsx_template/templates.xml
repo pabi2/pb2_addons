@@ -2395,41 +2395,6 @@ result = pd.pivot_table(df, index=groupby,
                 }
             </field>
         </record>
-        
-        #Extra Regulation
-        <record id="xlsx_report_extra_regulation" model="ir.attachment">
-            <field name="res_model">xlsx.report.extra.regulation</field>
-            <field name="datas"></field>
-            <field name="datas_fname">xlsx_report_extra_regulation.xlsx</field>
-            <field name="name">Extra Regulation Report</field>
-            <field name="parent_id" eval="ref('dir_account_reports')"/>
-            <field name="description">
-                {
-                    '__EXPORT__': {
-                        'Extra Regulation Report': {
-                            '_HEAD_': {
-                
-                            },
-                            'results': {
-                            	'A2': 'invoice_id.source_document${value or ""}#{align=left;number_format=text}',
-                            	'B2': 'invoice_id.number${value or ""}#{align=left;number_format=text}',
-                            	'C2': 'invoice_id.memo_number${value or ""}#{align=left;number_format=text}',
-                            	'D2': 'invoice_id.memo_date${value or ""}#{align=left;number_format=date}',
-                            	'E2': 'invoice_line_id.chartfield_id.name${value or ""}#{align=left;number_format=text}',
-                            	'F2': 'description${value or ""}#{align=left;number_format=text}',
-                            	'G2': 'invoice_id.memo_note${value or ""}#{align=left;number_format=text}',
-                            	'H2': 'name${value or ""}#{align=left;number_format=text}',
-                            	'I2': 'price_subtotal${value or "0.00"}#{align=right;number_format=number}',
-                            	'J2': 'cost_regulation_name${value or ""}',
-                            	'K2': 'price_regulation${value or "0.00"}#{align=right;number_format=number}',
-                            	'L2': 'amount_excess${value or "0.00"}#{align=right;number_format=number}',
-                            	
-                                             
-                            },                            
-                        }
-                    }
-                }
-            </field>
-        </record>                
+     
     </data>
 </openerp>

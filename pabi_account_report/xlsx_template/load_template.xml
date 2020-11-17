@@ -44,7 +44,6 @@
                 ref('xlsx_report_pabi_employee_advance_report'),
                 ref('xlsx_report_pv_pe'),
                 ref('xlsx_report_cgd'),
-                ref('xlsx_report_extra_regulation'),
             ]"/>
             <value>pabi_account_report/xlsx_template</value>
         </function>
