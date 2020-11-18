@@ -51,6 +51,7 @@ class AccountMove(models.Model):
     def _move_budget_check(self):
         Budget = self.env['account.budget']
         AnalyticLine = self.env['account.analytic.line']
+        direct_create = self._context.get('direct_create', False)
         for move in self:
             # For revenue, no budget check
             if move.journal_id.analytic_journal_id.budget_method == 'revenue':
@@ -62,7 +63,8 @@ class AccountMove(models.Model):
                 continue
             # If none of analytic line is budget
             if analytic_lines.filtered(  # If line contain revenue
-                    lambda l: l.activity_id.budget_method == 'revenue'):
+                    lambda l: l.activity_id.budget_method == 'revenue'
+                    ) and not (direct_create or move.doctype == 'adjustment'):
                 continue
             doc_date = move.date
             doc_lines = Budget.convert_lines_to_doc_lines(analytic_lines)
