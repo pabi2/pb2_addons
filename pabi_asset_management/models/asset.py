@@ -698,6 +698,12 @@ class AccountAsset(ChartFieldAction, models.Model):
         return res
 
     @api.multi
+    def compute_depreciation_board_with_arg(self, context):
+        allow_asset_line_update = context['allow_asset_line_update']
+        self.async_process = False
+        self.with_context(allow_asset_line_update=allow_asset_line_update).compute_depreciation_board()
+
+    @api.multi
     def compute_depreciation_board(self):
         assets = self.filtered(lambda l: not l.no_depreciation)
         return super(AccountAsset, assets).compute_depreciation_board()
