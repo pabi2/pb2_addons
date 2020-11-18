@@ -780,7 +780,7 @@
                             'C8': 'ou_name${value or ""}',
                             'D8': 'location_name${value or ""}',
                             'E8': 'product_tmpl_id.list_price${value or "0"}#{number_format=number}',
-                            'F8': 'standard_price${value or "0"}#{number_format=number}',
+                            'F8': 'standard_price${value or "0"}',
                             'G8': 'balance${value or ""}#{number_format=number}',
                             'H8': 'uom${value or ""}',
                             'I8': 'price${value or ""}#{number_format=number}',
