@@ -523,7 +523,7 @@
         </record>
 
         <menuitem id="account_budget_activity.menu_act_account_budget_view"
-            parent="account_budget_activity.menu_action_account_budget_control"
+            parent="pabi_apps_config.menu_action_account_budget_control"
             action="account_budget_activity.act_account_budget_view" sequence="1"
             groups="pabi_base.group_budget_user"/>
 
