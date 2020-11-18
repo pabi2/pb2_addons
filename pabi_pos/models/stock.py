@@ -49,7 +49,8 @@ class StockLocation(models.Model):
         Quant = self.env['stock.quant']
         stock = {}
         if product_names is not None:
-            product_ids = self.env['product.product'].search([('name', 'in', product_names)])
+            product_ids = self.env['product.product'].search([('name', 'in', product_names),
+                                                              ('type', '=', 'product')])
             quant_ids = Quant.search([('location_id', 'child_of', self.id),('product_id', 'in', product_ids.ids)])
         else:
             quant_ids = Quant.search([('location_id', 'child_of', self.id)])
