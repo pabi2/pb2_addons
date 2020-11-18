@@ -191,7 +191,10 @@ class XLSXReportPabiStockBalanceResults(models.Model):
         string='Product Template ID',
         readonly=True,
     )
-
+    standard_price = fields.Float(
+        string='Standard Price',
+        readonly=True,
+    )
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
@@ -204,8 +207,11 @@ class XLSXReportPabiStockBalanceResults(models.Model):
             sl.name as location_name, 
             sum(q.qty) as balance,
             COALESCE((
-            select value_float from ir_property where res_id = concat('product.template,',t.id) 
-                and type='float' order by id desc limit 1 ) * sum(q.qty),0.0) as price,
+                select CAST(value_float as decimal(1000,4)) from ir_property where res_id = concat('product.template,',t.id) 
+                and type='float' order by create_date,write_date desc limit 1 ),0.0) as standard_price,
+            COALESCE(
+            CAST((select value_float from ir_property where res_id = concat('product.template,',t.id) 
+                and type='float' order by create_date,write_date desc limit 1 ) * sum(q.qty) as decimal(10,2)),0.0) as price,
             puom.name as uom,
             ou.name as ou_name,
             rc.name as currency,
