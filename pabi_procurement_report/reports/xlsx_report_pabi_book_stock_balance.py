@@ -212,7 +212,7 @@ class XLSXReportPabiStockBalanceResults(models.Model):
                 and type='float' order by create_date,write_date desc limit 1 ),0.0) as standard_price,
             COALESCE(
             CAST((select value_float from ir_property where res_id = concat('product.template,',t.id) 
-                and type='float' order by create_date,write_date desc limit 1 ) * sum(q.qty) as decimal(10,2)),0.0) as price,
+                and type='float' order by create_date,write_date desc limit 1 ) * sum(q.qty) as decimal(1000,2)),0.0) as price,
             puom.name as uom,
             ou.name as ou_name,
             rc.name as currency,
