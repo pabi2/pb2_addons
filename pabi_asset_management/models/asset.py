@@ -703,6 +703,7 @@ class AccountAsset(ChartFieldAction, models.Model):
         depreciation_lines = self.depreciation_line_ids.filtered(
             lambda l: l.type == 'depreciate')
         depreciation_lines.with_context(allow_asset_line_update=allow_asset_line_update)._compute_values()
+        return True
 
     @api.multi
     def compute_depreciation_board(self):

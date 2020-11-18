@@ -125,10 +125,10 @@ class IrTestAction(models.TransientModel):
             extra_args = str2tuple(self.extra_args)
             
             for arg in extra_args:
-                res = self._callback(self.model, self.function, arg)
+                res = self._callback(self.model, self.function, str(arg))
                 message = self._get_message(res)
                 if message['success'] is not True:
-                    break
+                    raise UserError(str(message))
         else:
             res = self._callback(self.model, self.function, self.args)
     
