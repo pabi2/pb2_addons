@@ -30,7 +30,10 @@ class SalesOrder(models.Model):
             else:
                 curr_stock = workflow.location_id.get_current_stock(products)
                 for prod in products:
-                    if prod not in curr_stock.keys():
+                    product_id = self.env['product.product'].search([('name', '=', prod),
+                                                                     ('active', '=', True)])
+                    if product_id and product_id.type == 'product'\
+                            and prod not in curr_stock.keys():
                         product_err.append(prod)
                     elif curr_stock[prod] < product_dict[prod]:
                         stock_err[prod] = curr_stock[prod]
