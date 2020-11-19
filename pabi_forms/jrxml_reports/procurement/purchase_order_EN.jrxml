@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="purchase_order_TH" pageWidth="595" pageHeight="842" columnWidth="483" leftMargin="56" rightMargin="56" topMargin="26" bottomMargin="26">
 	<property name="ireport.zoom" value="1.6105100000000105"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="384"/>
 	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;,]"/>
 	<import value="org.apache.commons.codec.binary.Base64"/>
@@ -36,7 +36,6 @@ order by item]]>
 		<field name="product_uom" class="java.lang.String">
 			<fieldDescription><![CDATA[UoM]]></fieldDescription>
 		</field>
-		<field name="item" class="java.lang.Integer"/>
 		<variable name="price_subtotal" class="java.lang.Number">
 			<variableExpression><![CDATA[$F{price_unit}*$F{product_qty}]]></variableExpression>
 			<initialValueExpression><![CDATA[]]></initialValueExpression>
@@ -419,9 +418,7 @@ WHERE $X{IN,po.id,PIDS}]]>
 				<textElement lineSpacing="Single">
 					<font size="16" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$P{REPORT_LOCALE}.toString().equals("th_TH") ?
-new Date($F{order_date}.year-543, $F{order_date}.month, $F{order_date}.date):
-$F{order_date}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{order_date}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="3" y="21" width="280" height="31"/>
@@ -717,7 +714,7 @@ $F{order_date}]]></textFieldExpression>
 								<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 									<font size="13" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H"/>
 								</textElement>
-								<textFieldExpression class="java.lang.String"><![CDATA[$F{item}]]></textFieldExpression>
+								<textFieldExpression class="java.lang.String"><![CDATA[$V{row_count}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
