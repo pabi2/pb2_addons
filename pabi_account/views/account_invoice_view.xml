@@ -139,6 +139,29 @@
                     <field name="currency_rate"/>
                 </xpath>
                 <!-- Test account_id editable -->
+                <xpath expr="/form/sheet/notebook" position="inside">
+                	<page string="Extra Reguation">
+                       <group>
+                       		<field name="memo_number" style="width:40%%"/>
+                       		<field name="memo_date"/>
+                       		<field name="source_budget" />
+                       		<field name="memo_name"/>
+                       		<field name="memo_note"/>
+                       </group>
+                       <button name="get_extra_reguation" type="object" string="Create Extra Reguation" />                    
+                       <field context="{'partner_id': partner_id, 'price_type': context.get('price_type') or False, 'type': type}" name="extra_reguation_line">
+							<tree string="Extra Reguation lines" editable="bottom">                                   
+                            	<field name="activity_id" domain="[('activity_group_ids', 'in', [activity_group_id or -1])]"/>
+                            	<field name="name" string="รายการที่ขออนุมัติ เกินระเบียบ"/>
+                            	<field name="cost_regulation" string="อ้างอิงระเบียบ สวทช"/>
+                                <field name="description" string="รายละเอียด ระเบียบ"/>
+                                <field name="price_subtotal" string="จำนวนเงินเบิกจ่าย"/>    
+                                <field name="price_regulation" string="จำนวนเงินตามระเบียบฯ"/>  
+                                <field name="amount_excess" string="จำนวนเงินที่เกินระเบียบ"/>      
+                            </tree>
+                       </field>      
+                    </page>
+                </xpath>                  
                 <field name="state" position="before">
                     <field name="recreated_invoice_id" invisible="1"/>
                     <button name="recover_cancelled_invoice" type="object"

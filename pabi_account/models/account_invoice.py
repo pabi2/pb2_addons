@@ -117,6 +117,30 @@ class AccountInvoice(models.Model):
         track_visibility='onchange',
     )
 
+    memo_date = fields.Date(
+        string='Memo Date',
+    )
+    memo_name = fields.Char(
+        string='Description',
+        compute='_compute_description',
+    )
+    memo_note = fields.Char(
+        string='Note',
+        compute='_compute_get_note',
+    )
+    memo_number = fields.Char(
+        string='Memo Number',
+    )    
+    extra_reguation_line = fields.One2many(
+        'extra.reguation.line',
+         'invoice_id',
+        string='Extra Reguation Lines',
+    )
+    source_budget = fields.Char(
+        string='Source Budget ',
+        compute='_compute_source_budget',
+    )
+    
     _sql_constraints = [('number_preprint_uniq', 'unique(number_preprint)',
                         'Preprint Number must be unique!')]
 
@@ -467,6 +491,62 @@ class AccountInvoice(models.Model):
             res.update({'date': self.cancel_date,
                         'period_id': period.id})
         return res
+    
+    @api.multi
+    @api.depends('source_document_id')
+    def _compute_description(self):
+        for rec in self:
+            try:
+                if rec.source_document_id.name:
+                    rec.memo_name = rec.source_document_id.name
+                else:
+                    rec.memo_name = None
+            except Exception:
+                rec.memo_name = None
+                    
+    @api.multi
+    @api.depends('source_document_id')
+    def _compute_get_note(self):
+        for rec in self:
+            try:
+                if rec.source_document_id.note:
+                    rec.memo_note = rec.source_document_id.note
+                else:
+                    rec.memo_note = None
+            except Exception:
+                rec.memo_name = None
+     
+    @api.multi
+    @api.depends('invoice_line')
+    def _compute_source_budget(self):
+        for rec in self:
+            budget_list = []
+            for line in rec.invoice_line:
+                if not(line.chartfield_id.name in budget_list):
+                    budget_name = line.chartfield_id.name
+                    budget_list.append(budget_name)
+            budget_name_list = ','.join(budget_list)
+            rec.source_budget = budget_name_list
+                
+    @api.multi
+    def get_extra_reguation(self):
+        self.ensure_one()
+        for line in self.invoice_line:            
+            data = {
+                'activity_id': line.activity_id.id or False,
+                'name': line.name or False,
+                'move_id' : line.move_id.id or False,
+                'invoice_id' : line.invoice_id.id or False,
+                'invoice_line_id' : line.id,
+                'price_subtotal' : line.price_subtotal,
+                'date_invoice' : self.date_invoice
+            }
+            if self.extra_reguation_line.search([('invoice_line_id','=',line.id)]):
+                self.env['extra.reguation.line'].write(data)
+            else:
+                self.env['extra.reguation.line'].create(data)
+                
+      
 
 
 class AccountInvoiceLine(models.Model):
@@ -490,7 +570,86 @@ class AccountInvoiceLine(models.Model):
         res['value'].update({'name': account.name})
         return res
 
-
+class ExtraReguationLine(models.Model):
+    _name = 'extra.reguation.line'
+    
+    activity_id = fields.Many2one(
+        'account.activity',
+        string='Activity',
+        readonly=True,
+    )
+    name = fields.Char(
+        string='Items for approval',
+    )
+    description = fields.Char(
+        string='Description',
+    )
+    move_id = fields.Many2one(
+        'account.move',
+        string='Journal Entry',
+        ondelete='cascade',
+        readonly=True,
+    )
+    invoice_id = fields.Many2one(
+        'account.invoice',
+        string='Invoice Reference',
+        ondelete='cascade',
+        readonly=True,
+    )
+    invoice_line_id = fields.Many2one(
+        'account.invoice.line',
+        string='Invoice Line Reference',
+        ondelete='cascade',
+        readonly=True,
+    )
+    price_subtotal = fields.Float(
+        string='Amount',
+    )
+    price_regulation = fields.Float(
+        string='Price Regulation',
+    )
+    amount_excess = fields.Float(
+        string='Amount Excess',
+        compute='_compute_amount_excess',
+        store=True,
+    )
+    date_invoice = fields.Date(
+        string='Date Invoice',
+    )
+    cost_regulation = fields.Selection(
+        [('cost_training', 'ว่าด้วย ค่าใช้จ่ายในการฝึกอบรมพ.ศ.2549 และ (ฉบับที่ 2) พ.ศ.2557'),
+         ('cost_payment', 'ว่าด้วย ค่าตอบแทน ค่ารับรอง และค่าใช้จ่ายเบ็ดเตล็ด พ.ศ.2547'),
+         ('cost_travel', 'ว่าด้วย ค่าใช้จ่ายในการเดินทาง พ.ศ.2554'),
+         ('cost_support', 'ว่าด้วย เงินสนับสนุนผู้ปฏิบัติงานชาวต่างประทศและชาวไทย พ.ศ.2554'),
+         ],
+        string='Cost Regulations',
+    )
+    cost_regulation_name =  fields.Char(
+        string='Cost Regulations Name',
+        compute='_compute_cost_regulation_name',
+    )
+    
+    @api.multi
+    @api.depends('price_subtotal','price_regulation')
+    def _compute_amount_excess(self):
+        for rec in self:
+            rec.amount_excess = rec.price_subtotal - rec.price_regulation
+    
+    @api.multi
+    @api.depends('cost_regulation')
+    def _compute_cost_regulation_name(self):
+        regulations_type = {
+            'cost_training':'ว่าด้วย ค่าใช้จ่ายในการฝึกอบรมพ.ศ.2549 และ (ฉบับที่ 2) พ.ศ.2557',
+            'cost_payment': 'ว่าด้วย ค่าตอบแทน ค่ารับรอง และค่าใช้จ่ายเบ็ดเตล็ด พ.ศ.2547',
+            'cost_travel': 'ว่าด้วย ค่าใช้จ่ายในการเดินทาง พ.ศ.2554',
+            'cost_support': 'ว่าด้วย เงินสนับสนุนผู้ปฏิบัติงานชาวต่างประทศและชาวไทย พ.ศ.2554'}
+        for rec in self:
+            if rec.cost_regulation:
+                regulation = regulations_type[rec.cost_regulation] 
+                rec.cost_regulation_name = regulation
+            else:
+                rec.cost_regulation_name = ""
+                
 class AccountInvoiceTax(models.Model):
     _inherit = "account.invoice.tax"
 

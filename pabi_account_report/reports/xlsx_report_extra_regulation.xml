@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    	<record id="view_report_extra_regulation_form" model="ir.ui.view">
+            <field name="name">view.report.extra.regulation.form</field>
+            <field name="model">xlsx.report.extra.regulation</field>
+            <field name="inherit_id" ref="pabi_utils.xlsx_report_view"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='criteria']" position="inside">
+                   <field name="date_start" required="1"/>
+                   <field name="date_end" required="1"/>
+                </xpath>               
+            </field>
+        </record>
+        
+        <record id="action_xlxs_report_extra_regulation" model="ir.actions.act_window">
+            <field name="name">Extra Regulation Report</field>
+            <field name="res_model">xlsx.report.extra.regulation</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        
+    
+    </data>
+</openerp>
