@@ -265,12 +265,12 @@ class AccountInvoice(models.Model):
                     rec.ref_docs = header_text
 
     @api.multi
-    @api.depends('currency_id', 'date_invoice')
+    @api.depends('currency_id', 'date_invoice', 'date_transfer', 'date_accept')
     def _compute_currency_rate(self):
         for rec in self:
             company = rec.company_id
             context = self._context.copy()
-            ctx_date = rec.date_invoice
+            ctx_date = context.get('date_manual', False) or rec.date_invoice
             if rec.invoice_line:
                 stock_move = self.env['stock.move'].search([
                     ('purchase_line_id', '=',
@@ -281,6 +281,9 @@ class AccountInvoice(models.Model):
                     ctx_date = datetime.strptime(
                         stock_move.date, DEFAULT_SERVER_DATETIME_FORMAT
                         ).strftime('%Y-%m-%d')
+                elif rec.invoice_line.filtered(
+                        lambda l: l.product_id.type == 'service'):
+                    ctx_date = rec.date_accept or ctx_date
             if not ctx_date:
                 ctx_date = fields.Date.today()
             context.update({'date': ctx_date})
