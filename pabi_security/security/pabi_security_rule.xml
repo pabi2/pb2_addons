@@ -3,7 +3,7 @@
     <data>
 
 		<!-- Inherit Budget User - Budget Plan Line Access -->
-        <record id="property_rule_budget_plan_budget_user_line" model="ir.rule">
+        <record id="pabi_budget_plan.property_rule_budget_plan_budget_user_line" model="ir.rule">
             <field name="name">Budget User - Budget Plan Line Access</field>
             <field name="model_id" ref="pabi_budget_plan.model_budget_plan_unit_line"/>
             <field name="domain_force">
@@ -19,7 +19,7 @@
         </record>
         
 		<!-- Inherit Budget User - Budget Plan Access -->
-        <record id="property_rule_budget_plan_budget_user" model="ir.rule">
+        <record id="pabi_budget_plan.property_rule_budget_plan_budget_user" model="ir.rule">
             <field name="name">Budget User - Budget Plan Access</field>
             <field name="model_id" ref="pabi_budget_plan.model_budget_plan_unit"/>
             <field name="domain_force">
@@ -33,7 +33,7 @@
         </record>
         
 		<!-- Inherit Budget User - Budget Unit Based Access -->
-        <record id="property_rule_account_budget_unit_user" model="ir.rule">
+        <record id="pabi_budget_plan.property_rule_account_budget_unit_user" model="ir.rule">
             <field name="name">Budget User - Budget Unit Based Access</field>
             <field name="model_id" ref="account_budget_activity.model_account_budget"/>
             <field name="domain_force">
@@ -48,7 +48,7 @@
         </record>
         
 		<!-- Inherit Budget User - Budget Line Unit Based Access -->
-        <record id="property_rule_account_budget_line_unit_user" model="ir.rule">
+        <record id="pabi_budget_plan.property_rule_account_budget_line_unit_user" model="ir.rule">
             <field name="name">Budget User - Budget Line Unit Based Access</field>
             <field name="model_id" ref="account_budget_activity.model_account_budget_line"/>
             <field name="domain_force">
@@ -62,7 +62,7 @@
         </record>
         
 		<!-- Inherit Budget User - Section Transfer Access -->
-        <record id="rule_section_transfer_budget_user" model="ir.rule">
+        <record id="pabi_budget_transfer.rule_section_transfer_budget_user" model="ir.rule">
             <field name="name">Budget User - Section Transfer Access</field>
             <field name="model_id" ref="pabi_budget_transfer.model_section_budget_transfer"/>
             <field name="domain_force">
