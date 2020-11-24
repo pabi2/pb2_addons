@@ -41,6 +41,7 @@
 	        	eval="[(4, ref('base.group_partner_manager')),
 	        			(4, ref('base.group_user')),
 	        			(4, ref('pabi_utils.group_see_own_spool_report')),
+	        			(4, ref('base.group_hr_user')),
 	        		  ]"/>
 	    </record>
 

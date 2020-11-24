@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+		<!-- Inherit Budget User - Budget Plan Line Access -->
+        <record id="property_rule_budget_plan_budget_user_line" model="ir.rule">
+            <field name="name">Budget User - Budget Plan Line Access</field>
+            <field name="model_id" ref="model_budget_plan_unit_line"/>
+            <field name="domain_force">
+            					['|', '|', ('section_id', '=', False), 
+            					('division_id', '=', False), 
+            					('section_id.division_id','in',[x.division_id.id for x in user.partner_id.employee_id.section_assign_ids] + [user.partner_id.employee_id.section_id.division_id.id])]
+            </field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_budget_user')),
+            							(4,ref('pabi_base.group_budget_manager')),
+	        							(4, ref('pabi_security.group_pabi_accountant')),
+	        							(4, ref('pabi_security.group_pabi_procurment'))
+	        							]"/>
+        </record>
+        
+		<!-- Inherit Budget User - Budget Plan Access -->
+        <record id="property_rule_budget_plan_budget_user" model="ir.rule">
+            <field name="name">Budget User - Budget Plan Access</field>
+            <field name="model_id" ref="model_budget_plan_unit"/>
+            <field name="domain_force">
+            					[('section_id.division_id','in',[x.division_id.id for x in user.partner_id.employee_id.section_assign_ids] + [user.partner_id.employee_id.section_id.division_id.id])]
+            </field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_budget_user')),
+            							(4,ref('pabi_base.group_budget_manager')),
+	        							(4, ref('pabi_security.group_pabi_accountant')),
+	        							(4, ref('pabi_security.group_pabi_procurment'))
+            							]"/>
+        </record>
+        
+		<!-- Inherit Budget User - Budget Unit Based Access -->
+        <record id="property_rule_account_budget_unit_user" model="ir.rule">
+            <field name="name">Budget User - Budget Unit Based Access</field>
+            <field name="model_id" ref="account_budget_activity.model_account_budget"/>
+            <field name="domain_force">
+            					[('chart_view', 'in', ['unit_base', False]), 
+            					('section_id.division_id','in',[x.division_id.id for x in user.partner_id.employee_id.section_assign_ids] + [user.partner_id.employee_id.section_id.division_id.id])]
+            </field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_budget_user')),
+            							(4,ref('pabi_base.group_budget_manager')),
+	        							(4, ref('pabi_security.group_pabi_accountant')),
+	        							(4, ref('pabi_security.group_pabi_procurment'))
+	        							]"/>
+        </record>
+        
+		<!-- Inherit Budget User - Budget Line Unit Based Access -->
+        <record id="property_rule_account_budget_line_unit_user" model="ir.rule">
+            <field name="name">Budget User - Budget Line Unit Based Access</field>
+            <field name="model_id" ref="account_budget_activity.model_account_budget_line"/>
+            <field name="domain_force">
+            					[('chart_view', 'in', ['unit_base', False]), 
+            					('section_id.division_id','in',[x.division_id.id for x in user.partner_id.employee_id.section_assign_ids] + [user.partner_id.employee_id.section_id.division_id.id])]
+            </field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_budget_user')),
+            							(4,ref('pabi_base.group_budget_manager')),
+	        							(4, ref('pabi_security.group_pabi_procurment'))
+	        							]"/>
+        </record>
+        
+		<!-- Inherit Budget User - Section Transfer Access -->
+        <record id="rule_section_transfer_budget_user" model="ir.rule">
+            <field name="name">Budget User - Section Transfer Access</field>
+            <field name="model_id" ref="model_section_budget_transfer"/>
+            <field name="domain_force">
+            					[('division_id','=',user.partner_id.employee_id.section_id.division_id.id)]
+            </field>
+            <field name="groups" eval="[(4,ref('pabi_base.group_budget_user')),
+	        							(4, ref('pabi_security.group_pabi_accountant')),
+	        							(4, ref('pabi_security.group_pabi_procurment'))
+	        							]"/>
+        </record>
+
+    </data>
+</openerp>

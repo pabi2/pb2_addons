@@ -20,6 +20,7 @@ This module allow easy management of security for each user.
     ],
     'data': [
         'security/pabi_security_group.xml',
+        'security/pabi_security_rule.xml',
         'security/ir.model.access.csv',
         'views/pabi_security_view.xml',
         'xlsx_template/templates.xml',
