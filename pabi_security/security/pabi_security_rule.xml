@@ -5,7 +5,7 @@
 		<!-- Inherit Budget User - Budget Plan Line Access -->
         <record id="property_rule_budget_plan_budget_user_line" model="ir.rule">
             <field name="name">Budget User - Budget Plan Line Access</field>
-            <field name="model_id" ref="model_budget_plan_unit_line"/>
+            <field name="model_id" ref="pabi_budget_plan.model_budget_plan_unit_line"/>
             <field name="domain_force">
             					['|', '|', ('section_id', '=', False), 
             					('division_id', '=', False), 
@@ -21,7 +21,7 @@
 		<!-- Inherit Budget User - Budget Plan Access -->
         <record id="property_rule_budget_plan_budget_user" model="ir.rule">
             <field name="name">Budget User - Budget Plan Access</field>
-            <field name="model_id" ref="model_budget_plan_unit"/>
+            <field name="model_id" ref="pabi_budget_plan.model_budget_plan_unit"/>
             <field name="domain_force">
             					[('section_id.division_id','in',[x.division_id.id for x in user.partner_id.employee_id.section_assign_ids] + [user.partner_id.employee_id.section_id.division_id.id])]
             </field>
@@ -64,7 +64,7 @@
 		<!-- Inherit Budget User - Section Transfer Access -->
         <record id="rule_section_transfer_budget_user" model="ir.rule">
             <field name="name">Budget User - Section Transfer Access</field>
-            <field name="model_id" ref="model_section_budget_transfer"/>
+            <field name="model_id" ref="pabi_budget_transfer.model_section_budget_transfer"/>
             <field name="domain_force">
             					[('division_id','=',user.partner_id.employee_id.section_id.division_id.id)]
             </field>
