@@ -418,6 +418,7 @@ class PurchaseOrder(models.Model):
                                  fiscalyear_id=fiscalyear_id)
         res = super(PurchaseOrder, self).action_button_convert_to_order()
         orders = self.browse(res['res_id'])
+        orders._check_docline_seq()
         for order in orders:
             order.write({
                 'origin': order.quote_id.origin,
