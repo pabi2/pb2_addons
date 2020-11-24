@@ -579,7 +579,7 @@
         		<menuitem name="Advance Dunning Letter" id="menu_pabi_advance_dunning_letter"
         			action="pabi_advance_dunning_letter.action_pabi_advance_dunning_letter"
         			sequence="1" parent="hr.menu_hr_report"
-        			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_oia"/>
+        			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_oia"/>
         		<menuitem name="Advance Clearing Followup" id="menu_expense_clearing_followup_report"
         			action="pabi_hr_advance_clearing_followup_report.action_advance_clearing_followup_wizard"
         			sequence="2" parent="hr.menu_hr_report"
