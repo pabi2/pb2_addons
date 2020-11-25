@@ -18,7 +18,7 @@ class AcctionRecomputeAdjust(models.Model):
                 FROM account_move mv
                 LEFT JOIN account_move_line mvl ON mv.id = mvl.move_id
                 LEFT OUTER JOIN account_analytic_line al ON al.move_id = mvl.id
-                WHERE LEFT(mv.name,8) = 'JV200000'
+                WHERE LEFT(mv.name,2) = 'JV'
                 AND al.document IS NULL
                 AND al.id IS NOT NULL;""") 
         vals = self._cr.dictfetchall()
