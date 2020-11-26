@@ -54,39 +54,119 @@
 		<defaultValueExpression><![CDATA["/home/kittiu/hd/workspace/cft/jasper_forms_cft/jrxml_reports/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="COPY" class="java.lang.Integer" isForPrompting="false"/>
-	<queryString language="xPath">
-		<![CDATA[/data/record]]>
+	<parameter name="IDS" class="java.lang.Object"/>
+	<parameter name="PIDS" class="java.util.List" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{IDS}.toList()]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+am.date,
+am.name as doc_number,
+rp.display_name2 as create_by,
+am.narration as description,
+sum(aml.credit) as amount_credit,
+bg_income.code as bg_income_code,
+bg_income.name as bg_income_name,
+bg_expense.code as bg_expense_code,
+bg_expense.name as bg_expense_name
+from account_move_line aml
+left join account_move am on aml.move_id = am.id
+left join res_users ru on am.create_uid = ru.id
+left join res_partner rp on ru.partner_id = rp.id
+left join (select aml.move_id,
+case
+ 	when aml.project_id is not null
+		then bg_project.code
+	when aml.section_id is not null
+		then bg_section.code
+	when aml.invest_asset_id is not null
+		then bg_asset.code
+	when aml.invest_construction_phase_id is not null
+		then bg_constrution.code
+	when aml.personnel_costcenter_id is not null
+		then bg_personel.code
+ 	else ''
+end as code,
+case
+ 	when aml.project_id is not null
+		then bg_project.name
+	when aml.section_id is not null
+		then COALESCE((select value from ir_translation where res_id = bg_section.id and name = 'res.section,name' ),bg_section.name)
+	when aml.invest_asset_id is not null
+		then bg_asset.name
+	when aml.invest_construction_phase_id is not null
+		then bg_constrution.name
+	when aml.personnel_costcenter_id is not null
+		then COALESCE((select value from ir_translation where res_id = bg_personel.id and name = 'res.personnel.costcenter,name' ),bg_personel.name)
+ 	else ''
+ end as name
+from account_move_line aml
+LEFT JOIN res_project bg_project ON aml.project_id = bg_project.id
+LEFT JOIN res_section bg_section ON aml.section_id = bg_section.id
+LEFT JOIN res_invest_asset bg_asset ON aml.invest_asset_id = bg_asset.id
+LEFT JOIN res_invest_construction_phase bg_constrution ON aml.invest_construction_phase_id = bg_constrution.id
+LEFT JOIN res_personnel_costcenter bg_personel ON aml.personnel_costcenter_id = bg_personel.id
+where aml.credit > 0 ) bg_income on bg_income.move_id = am.id
+left join (select aml.move_id,
+case
+ 	when aml.project_id is not null
+		then bg_project.code
+	when aml.section_id is not null
+		then bg_section.code
+	when aml.invest_asset_id is not null
+		then bg_asset.code
+	when aml.invest_construction_phase_id is not null
+		then bg_constrution.code
+	when aml.personnel_costcenter_id is not null
+		then bg_personel.code
+ 	else ''
+end as code,
+case
+ 	when aml.project_id is not null
+		then bg_project.name
+	when aml.section_id is not null
+		then COALESCE((select value from ir_translation where res_id = bg_section.id and name = 'res.section,name' ),bg_section.name)
+	when aml.invest_asset_id is not null
+		then bg_asset.name
+	when aml.invest_construction_phase_id is not null
+		then bg_constrution.name
+	when aml.personnel_costcenter_id is not null
+		then COALESCE((select value from ir_translation where res_id = bg_personel.id and name = 'res.personnel.costcenter,name' ),bg_personel.name)
+ 	else ''
+ end as name
+from account_move_line aml
+LEFT JOIN res_project bg_project ON aml.project_id = bg_project.id
+LEFT JOIN res_section bg_section ON aml.section_id = bg_section.id
+LEFT JOIN res_invest_asset bg_asset ON aml.invest_asset_id = bg_asset.id
+LEFT JOIN res_invest_construction_phase bg_constrution ON aml.invest_construction_phase_id = bg_constrution.id
+LEFT JOIN res_personnel_costcenter bg_personel ON aml.personnel_costcenter_id = bg_personel.id
+where aml.debit > 0 ) bg_expense on bg_expense.move_id = am.id
+where $X{IN, am.id, PIDS}
+group by am.date,am.name,rp.display_name2,am.narration,bg_income.code,bg_income.name,bg_expense.code,bg_expense.name]]>
 	</queryString>
 	<field name="description" class="java.lang.String">
-		<fieldDescription><![CDATA[line_id/name]]></fieldDescription>
-	</field>
-	<field name="name" class="java.lang.String">
-		<fieldDescription><![CDATA[line_id/chartfield_id/name]]></fieldDescription>
+		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="date" class="java.util.Date">
 		<fieldDescription><![CDATA[message_ids/date]]></fieldDescription>
 	</field>
-	<field name="create_name" class="java.lang.String">
-		<fieldDescription><![CDATA[message_ids/author_id/name]]></fieldDescription>
+	<field name="create_by" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="amount_text_th" class="java.lang.String">
-		<fieldDescription><![CDATA[amount_text_th]]></fieldDescription>
+	<field name="amount_credit" class="java.lang.Number">
+		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="doc_number" class="java.lang.String">
-		<fieldDescription><![CDATA[name]]></fieldDescription>
+		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="project_code" class="java.lang.String">
-		<fieldDescription><![CDATA[line_id/chartfield_id/code]]></fieldDescription>
+	<field name="bg_income_code" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="body" class="java.lang.String">
-		<fieldDescription><![CDATA[message_ids/body]]></fieldDescription>
+	<field name="bg_income_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="credit" class="java.lang.Number">
-		<fieldDescription><![CDATA[line_id/credit]]></fieldDescription>
-	</field>
-	<variable name="amount_credit" class="java.lang.Number" resetType="Page" calculation="Sum">
-		<variableExpression><![CDATA[$F{credit}]]></variableExpression>
-	</variable>
+	<field name="bg_expense_code" class="java.lang.String"/>
+	<field name="bg_expense_name" class="java.lang.String"/>
 	<group name="Internal Charge" isStartNewPage="true">
 		<groupExpression><![CDATA[$F{doc_number}]]></groupExpression>
 		<groupHeader>
@@ -235,9 +315,7 @@ Description]]></text>
 				<textElement verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_LOCALE}.toString().equals("th_TH") ?
-"สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ" :
-"National Science and Technology Development Agency"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["สำนักงานพัฒนาวิทยาศาสตร์และเทคโนโลยีแห่งชาติ"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement mode="Transparent" x="0" y="88" width="535" height="19" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -279,18 +357,14 @@ Description]]></text>
 				<textElement verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_LOCALE}.toString().equals("th_TH") ?
-"111 อุทยานวิทยาศาสตร์ประเทศไทย ถนนพหลโยธิน ตำบลคลองหนึ่ง อำเภอคลองหลวง จังหวัดปทุมธานี 12120 โทรศัพท์ 02-564-7000 " :
-"111 Thailand Science Park, Phahonyothin Road,Khlong Nueng, Khlong Luang, Pathum Thani 12120, Thailand. Tel.02-564-7000 "]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["111 อุทยานวิทยาศาสตร์ประเทศไทย ถนนพหลโยธิน ตำบลคลองหนึ่ง อำเภอคลองหลวง จังหวัดปทุมธานี 12120 โทรศัพท์ 02-564-7000 "]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Transparent" x="1" y="61" width="531" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{REPORT_LOCALE}.toString().equals("th_TH") ?
-"เลขประจำตัวผู้เสียภาษีอากร 0994000165668" :
-"Tax id. 0994000165668"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["เลขประจำตัวผู้เสียภาษีอากร 0994000165668"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement mode="Transparent" x="251" y="159" width="173" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -325,10 +399,10 @@ Description]]></text>
 				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="1_1_2" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA['ชื่อ ['+$F{project_code}+'] '+$F{name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA['ชื่อ ['+$F{bg_expense_code}+'] '+$F{bg_expense_name}]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="431" y="1" width="104" height="41"/>
+				<reportElement x="431" y="0" width="104" height="41"/>
 				<imageExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "logo_nstda.gif"]]></imageExpression>
 			</image>
 		</band>
@@ -336,67 +410,59 @@ Description]]></text>
 	<columnHeader>
 		<band splitType="Stretch"/>
 	</columnHeader>
-	<detail>
-		<band height="20">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="pading_2" mode="Transparent" x="1" y="0" width="405" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$F{credit} != null]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="pading_2" mode="Transparent" x="425" y="0" width="107" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" printWhenGroupChanges="Internal Charge" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$F{credit} == null ? 0.0 : $F{credit}]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$F{credit}]]></textFieldExpression>
-			</textField>
-		</band>
-	</detail>
 	<pageFooter>
-		<band height="220">
+		<band height="462">
 			<textField>
-				<reportElement mode="Transparent" x="251" y="183" width="284" height="37" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="248" y="425" width="284" height="37" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{bg_income_name}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement style="pading_2" mode="Transparent" x="251" y="163" width="284" height="20" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="pading_2" mode="Transparent" x="248" y="405" width="284" height="20" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{create_name}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{create_by}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement mode="Transparent" x="251" y="131" width="58" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Transparent" x="248" y="373" width="58" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
 				<text><![CDATA[(ลงชื่อ)]]></text>
 			</staticText>
 			<line>
-				<reportElement x="324" y="147" width="139" height="1"/>
+				<reportElement x="321" y="389" width="139" height="1"/>
 			</line>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement style="pading_2" mode="Transparent" x="425" y="9" width="107" height="20" isPrintWhenDetailOverflows="true" printWhenGroupChanges="Internal Charge" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement style="pading_2" mode="Transparent" x="415" y="245" width="107" height="20" isPrintWhenDetailOverflows="true" printWhenGroupChanges="Internal Charge" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Number"><![CDATA[$V{amount_credit}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_credit}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="91" y="84" width="515" height="18" isPrintWhenDetailOverflows="true" printWhenGroupChanges="Internal Charge" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement stretchType="RelativeToTallestObject" mode="Transparent" x="88" y="327" width="515" height="18" isPrintWhenDetailOverflows="true" printWhenGroupChanges="Internal Charge" forecolor="#000000" backcolor="#FFFFFF"/>
 				<textElement verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
 					<font fontName="Monospaced" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[(new Scriptlet()).getAmtInWords((new BigDecimal($V{amount_credit} == null ? "0.00" : $V{amount_credit}.toString())).setScale(2).toString(),"THB")]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[(new Scriptlet()).getAmtInWords((new BigDecimal($F{amount_credit}== null ? "0.00" : $F{amount_credit}.toString())).setScale(2).toString(),"THB")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="pading_2" mode="Transparent" x="0" y="11" width="405" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="pading_2" mode="Transparent" x="415" y="11" width="107" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" printWhenGroupChanges="Internal Charge" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="Monospaced" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{amount_credit}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
