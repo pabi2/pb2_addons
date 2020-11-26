@@ -200,7 +200,7 @@ class XLSXReportPabiStockBalanceResults(models.Model):
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
         cr.execute("""CREATE or REPLACE VIEW %s as (
-            SELECT row_number() over (order by p.ean13) as id,
+            SELECT q.id as stock_id,row_number() over (order by p.ean13) as id,
             t.name as product_name,
             q.product_id as product_id,
             p.default_code as product_code,
@@ -231,99 +231,8 @@ class XLSXReportPabiStockBalanceResults(models.Model):
             left join res_company com on com.id = t.company_id
             left join res_currency rc on com.currency_id = rc.id
             left join product_category pc on pc.id = t.categ_id
+            group by t.id, sl.name, q.product_id, puom.name, ou.id, ou.name, rc.name, p.default_code, q.location_id,pc.id,pc.name,pc.parent_id,p.active,p.ean13,q.id,q.qty
             order by p.ean13
         )""" % (self._table, ))
 
 
-
-
-
-
-
-    '''def init(self, cr):
-        tools.drop_view_if_exists(cr, self._table)
-        cr.execute("""CREATE or REPLACE VIEW %s as (
-        with uitstock as (
-            select t.name product,
-            sum(product_qty) sumout,
-            COALESCE(
-            (
-	    select value_float from ir_property where res_id = concat('product.template,',t.id) and type='float' order by id desc limit 1  
-            ) * sum(product_qty)
-            ,0.0) as priceout,
-            m.product_id,
-            p.default_code,
-            m.product_uom,
-            ou.name as ou_name,
-            puom.name as uom_name,
-            m.location_id as loc,
-            sl.name as loc_name,
-            rc.name as currency,
-            (
-                SELECT id from res_org WHERE operating_unit_id = ou.id
-            ) as org_id
-            from stock_move m 
-            left join stock_location sl on m.location_id = sl.id
-            left join operating_unit ou on sl.operating_unit_id = ou.id 
-            left join product_product p 
-            on m.product_id = p.id 
-            left join product_template t 
-            on p.product_tmpl_id = t.id
-            left join product_uom puom on t.uom_id = puom.id
-            left join res_company com on com.id = t.company_id
-            left join res_currency rc on com.currency_id = rc.id
-            where m.state like 'done' 
-            and m.location_id in (select id from stock_location where operating_unit_id > 0) 
-            and m.location_dest_id not in (select id from stock_location where operating_unit_id > 0) 
-            group by t.id,product_id,product_uom, t.name, m.location_id, sl.name, p.default_code, puom.name, rc.name, ou.name, ou.id order by t.name asc ) ,
-            instock as ( 
-            select 
-            COALESCE((select price_unit from purchase_order_line where product_id = m.product_id order by id desc limit 1), 00) purchaseprice,
-            COALESCE(
-            (
-	    select value_float from ir_property where res_id = concat('product.template,',t.id) and type = 'float' order by id desc limit 1  
-            ) * sum(product_qty)
-            ,0.0) as pricein,
-            t.name product, 
-            sum(product_qty) sumin,
-            m.product_id,
-            p.default_code,
-            puom.name as uom_name,
-            ou.name as ou_name,
-            m.location_dest_id as loc,
-            rc.name as currency,
-            sl.name as loc_name,
-            (
-                SELECT id from res_org WHERE operating_unit_id = ou.id
-            ) as org_id
-            from stock_move m 
-            left join stock_location sl on m.location_dest_id = sl.id 
-            left join operating_unit ou on sl.operating_unit_id = ou.id 
-            left join product_product p on m.product_id = p.id 
-            left join product_template t on p.product_tmpl_id = t.id 
-            left join product_uom puom on t.uom_id = puom.id
-            left join res_company com on com.id = t.company_id
-            left join res_currency rc on com.currency_id = rc.id
-            where m.state like 'done' and m.location_id not in (
-            select id from stock_location where operating_unit_id > 0) 
-            and m.location_dest_id in (select id from stock_location where operating_unit_id > 0) 
-            group by t.id,product_id,product_uom, t.name, location_dest_id, sl.name, p.default_code, puom.name,rc.name, ou.name, ou.id order by t.name asc) 
-            
-            select
-            row_number() over (order by i.product) as id,
-            i.product as product_name, 
-            i.product_id as product_id,
-            i.default_code as product_code, 
-            i.loc as loc_id,
-            u.loc as loc_dest_id,
-            coalesce(i.loc_name,u.loc_name) as location_name,
-            coalesce(i.ou_name,u.ou_name) as ou_name,
-            sumin-coalesce(sumout,0) AS balance, 
-            pricein-coalesce(priceout,0) AS price,
-            coalesce(i.uom_name,u.uom_name) as uom,
-            coalesce(i.currency,u.currency) as currency,
-            coalesce(i.org_id,u.org_id) as org_id
-            from uitstock u 
-            full outer join instock i on u.product = i.product AND u.loc = i.loc
-            order by product_code,product_name
-        )""" % (self._table, ))'''
