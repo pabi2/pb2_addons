@@ -952,7 +952,7 @@
         		<menuitem name="Bank Loan MOU" id="menu_action_loan_bank_mou"
         			action="pabi_loan_receivable.action_loan_bank_mou"
         			sequence="1" parent="menu_loan_receivable"
-          			groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_oia"/>
+          			groups="pabi_security.group_pabi_admin"/>
         		<menuitem name="Loan Agreement" id="menu_action_loan_customer_agreement"
         			action="pabi_loan_receivable.action_loan_customer_agreement"
         			sequence="2" parent="menu_loan_receivable"
@@ -1095,11 +1095,11 @@
 			        <menuitem name="Manual Reconciliation" id="account.menu_manual_reconcile"
 			        	action="account.action_account_manual_reconcile"
 			            sequence="1" parent="account.periodical_processing_reconciliation"
-          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_oia"/>
+          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_oia"/>
 			        <menuitem name="Automatic Reconciliation" id="account.menu_automatic_reconcile"
 			      		action="account.action_account_automatic_reconcile"
 			            sequence="2" parent="account.periodical_processing_reconciliation"
-          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_oia"/>
+          				groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_oia"/>
 			        <menuitem name="Unreconciled Filters" id="menu_account_unreconciled_filter"
 			        	action="account_unreconciled_filter.action_account_unreconciled_filter"          
 			          	sequence="3" parent="account.periodical_processing_reconciliation"
@@ -1227,7 +1227,7 @@
         				<menuitem name="Sale/Purchase Journals" id="account.menu_account_print_sale_purchase_journal"
 				            action="account.action_account_print_sale_purchase_journal"
 				            sequence="3" parent="account.menu_journals_report"
-				            groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_oia"/>
+				            groups="pabi_security.group_pabi_admin,pabi_security.group_pabi_oia"/>
         				<menuitem name="Journals" id="account.menu_account_print_journal"
 				        	action="pabi_account_financial_report_webkit.action_account_print_journal_menu_webkit"
 				            sequence="4" parent="account.menu_journals_report"
@@ -1292,11 +1292,11 @@
         			# Analytic
         			<menuitem name="Analytic" id="account.next_id_40"
             			sequence="3" parent="account.menu_finance_generic_reporting"
-            			groups="analytic.group_analytic_accounting,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_oia"/>
+            			groups="analytic.group_analytic_accounting,pabi_security.group_pabi_admin,pabi_security.group_pabi_oia"/>
 				        <menuitem name="Analytic Journal" id="account.account_analytic_journal_print"
 				            action="account.action_account_analytic_journal"
 				            sequence="1" parent="account.next_id_40"
-				        	groups="analytic.group_analytic_accounting,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant,pabi_security.group_pabi_oia"/>
+				        	groups="analytic.group_analytic_accounting,pabi_security.group_pabi_admin,pabi_security.group_pabi_oia"/>
             
         			# Multi-Currencies
         			<menuitem name="Multi-Currencies" id="account.menu_multi_currency"
@@ -2172,6 +2172,12 @@
 	          			groups="pabi_security.group_pabi_admin"/>
 	          	
 	        	# Configurations/Accounting/Bank
+				<delete id="pabi_bank.menu_bank_main" model="ir.ui.menu"/>
+				<delete id="pabi_bank.manu_bank_accounts" model="ir.ui.menu"/>
+				<delete id="pabi_bank.menu_bank_branch" model="ir.ui.menu"/>
+				<delete id="pabi_bank.menu_banks" model="ir.ui.menu"/>
+				<delete id="pabi_bank.menu_bank_account_types" model="ir.ui.menu"/>
+				
         		<menuitem name="Bank" id="menu_bank_main"
         			sequence="5" parent="account.menu_finance_configuration"
         			groups="account.group_account_user,pabi_security.group_pabi_admin,pabi_security.group_pabi_accountant_gl,pabi_security.group_pabi_oia"/>
@@ -2230,7 +2236,7 @@
 				<menuitem name="Asset Profiles" id="account_asset_management.account_asset_profile_menu"
 					action="account_asset_management.account_asset_profile_action"
 			        sequence="1" parent="account_asset_management.menu_finance_config_assets"
-			        groups="purchase.group_purchase_user,account.group_account_user,pabi_security.group_pabi_admin"/>
+			        groups="purchase.group_purchase_user,pabi_security.group_pabi_admin"/>
 	        	<menuitem name="Actions Templates (xls)" id="menu_asset_action_import_template"
 	        		action="pabi_asset_management.action_asset_action_import_template"
 	            	sequence="2" parent="account_asset_management.menu_finance_config_assets"
