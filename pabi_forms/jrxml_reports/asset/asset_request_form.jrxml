@@ -3,11 +3,11 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;request_asset_ids&quot;]"/>
 	<property name="ireport.zoom" value="0.9313819845887553"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="18"/>
-	<style name="style1">
+	<property name="ireport.y" value="0"/>
+	<style name="style1" lineSpacing="Single">
 		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
 	</style>
-	<style name="header">
+	<style name="header" lineSpacing="Single">
 		<box>
 			<topPen lineWidth="1.0" lineStyle="Solid"/>
 			<leftPen lineWidth="1.0" lineStyle="Solid"/>
@@ -15,7 +15,7 @@
 			<rightPen lineWidth="1.0" lineStyle="Solid"/>
 		</box>
 	</style>
-	<style name="detail">
+	<style name="detail" lineSpacing="Single">
 		<pen lineWidth="0.5"/>
 		<box topPadding="4" leftPadding="4" bottomPadding="4" rightPadding="4">
 			<pen lineWidth="1.0" lineStyle="Solid"/>
@@ -53,7 +53,7 @@
 		<fieldDescription><![CDATA[request_asset_ids/room]]></fieldDescription>
 	</field>
 	<field name="logo" class="java.lang.String">
-		<fieldDescription><![CDATA[user_id/employee_id/org_id/logo]]></fieldDescription>
+		<fieldDescription><![CDATA[operating_unit_id/org_id/logo]]></fieldDescription>
 	</field>
 	<variable name="asset" class="java.lang.String">
 		<variableExpression><![CDATA[$F{asset_code} + " (" + $F{asset_name} + ")"]]></variableExpression>
@@ -99,42 +99,42 @@
 				</textField>
 				<staticText>
 					<reportElement style="header" mode="Opaque" x="225" y="150" width="106" height="50" backcolor="#D3D3D3"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 						<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<text><![CDATA[สถานที่]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="header" mode="Opaque" x="410" y="150" width="38" height="50" backcolor="#D3D3D3"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 						<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<text><![CDATA[จำนวน]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="header" mode="Opaque" x="35" y="150" width="190" height="50" backcolor="#D3D3D3"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 						<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<text><![CDATA[รายการ]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="header" mode="Opaque" x="331" y="150" width="79" height="50" backcolor="#D3D3D3"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 						<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<text><![CDATA[ห้อง]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="header" mode="Opaque" x="448" y="150" width="106" height="50" backcolor="#D3D3D3"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 						<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<text><![CDATA[ยอดเงิน (บาท)]]></text>
 				</staticText>
 				<staticText>
 					<reportElement style="header" mode="Opaque" x="0" y="150" width="35" height="50" backcolor="#D3D3D3"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 						<font size="12" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<text><![CDATA[ลำดับ]]></text>
