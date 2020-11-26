@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+	   	<record id="print_internal_charge_journal_entries_wizard" model="ir.ui.view">
+	          <field name="name">print.internal.charge.journal.entries.wizard</field>
+	          <field name="model">print.internal.charge.journal.entries.wizard</field>
+	          <field name="arch" type="xml">
+	              <form string="Print Receipt">
+	                  <p>Print Internal Charge Receipt</p>
+  	                  <footer>
+	                      <button name="action_print_internal_charge_journal_entries" type="object" string="Print" class="oe_highlight"/>
+	                      or
+	                      <button special="cancel" class="oe_link" string="Cancel"/>
+	                  </footer>
+	              </form>
+	          </field>
+	      </record>
+
+	      <act_window name="Print Internal Charge Receipt"
+	           id="action_print_internal_charge_journal_entries"
+	           src_model="account.move"
+	           res_model="print.internal.charge.journal.entries.wizard"
+	           view_type="form"
+	           view_mode="form"
+	           view_id="print_internal_charge_journal_entries_wizard"
+	           key2="client_print_multi"
+	           target="new"
+	       />
+    </data>
+</openerp> 

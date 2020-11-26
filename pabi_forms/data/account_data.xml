@@ -1023,5 +1023,28 @@
 			<field name="key2" eval="False"/>
 			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(internal_charge)"/> 
 		</record>
+		
+		<!-- Internal Charge Receipt -->
+ 			<record id="internal_charge_journal_entries" model="ir.actions.report.xml"> 
+			<field name="string">Internal Charge Receipt</field> 
+			<field name="auto">True</field>
+			<field name="model">account.move</field>
+			<field name="name">Internal Charge Receipt</field> 
+			<field name="report_name">internal_charge_journal_entries</field> 
+			<field name="report_rml">pabi_forms/jrxml_reports/account/receipt_internal_charge_journal_entries_form.jrxml</field>  
+			<field name="menu">True</field>
+			<field name="header">False</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">pdf</field>
+			<field name="copies">2</field>
+			<field name="download_filename">${o.name}.pdf</field>
+		</record>
+
+		<record id="internal_charge_values" model="ir.values">  
+			<field name="name">Internal Charge Receipt</field>  
+			<field name="model">account.move</field> 
+			<field name="key2" eval="False"/>
+			<field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(internal_charge_journal_entries)"/> 
+		</record>
 	</data>
 </openerp>
