@@ -206,13 +206,13 @@ class XLSXReportPabiStockBalanceResults(models.Model):
             p.default_code as product_code,
             q.location_id as loc_id,
             sl.name as location_name, 
-            sum(q.qty) as balance,
+            q.qty as balance,
             COALESCE((
             select CAST(value_float as decimal(1000,4)) from ir_property where res_id = concat('product.template,',t.id) 
                 and type='float' order by create_date,write_date desc limit 1 ),0.0) as standard_price,
             COALESCE(
             CAST((select CAST(value_float as decimal(1000,4)) from ir_property where res_id = concat('product.template,',t.id) 
-                and type='float' order by create_date,write_date desc limit 1 ) * sum(q.qty) as decimal(1000,2)),0.0) as price,
+                and type='float' order by create_date,write_date desc limit 1 ) * q.qty as decimal(1000,2)),0.0) as price,
             puom.name as uom,
             ou.name as ou_name,
             rc.name as currency,
@@ -231,7 +231,6 @@ class XLSXReportPabiStockBalanceResults(models.Model):
             left join res_company com on com.id = t.company_id
             left join res_currency rc on com.currency_id = rc.id
             left join product_category pc on pc.id = t.categ_id
-            group by t.id, sl.name, q.product_id, puom.name, ou.id, ou.name, rc.name, p.default_code, q.location_id,pc.id,pc.name,pc.parent_id,p.active,p.ean13 
             order by p.ean13
         )""" % (self._table, ))
 
