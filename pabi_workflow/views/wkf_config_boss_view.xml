@@ -26,8 +26,9 @@
             <field name="name">search.pb2.boss.view</field>
             <field name="model">pb2.boss.view</field>
             <field name="arch" type="xml">
-                <search string="Boss Level Approval">
-                    <field name="employee_id" string="Employee" filter_domain="['|','|',('employee_id.first_name','ilike',self),('employee_id.employee_code','ilike',self),('employee_id.employee_code','ilike',self)]"/>
+                <search string="Boss Level Approval">  
+                    <field name="section_id" string="Section" filter_domain="['|','|',('section_id.name_short','ilike',self),('section_id.code','ilike',self),('section_id.code','ilike',self)]"/>      
+                    <field name="employee_id" string="Employee"/>
                     <field name="org_id"/>
                     <filter string="AV" domain="[('doc_type','=','AV')]" name="doc_type_av"/>
                     <filter string="EX" domain="[('doc_type','=','EX')]" name="doc_type_ex"/>
