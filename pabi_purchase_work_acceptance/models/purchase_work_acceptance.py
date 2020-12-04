@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+
+from math import ceil
 from openerp import fields, models, api, _
 import datetime
 import openerp.addons.decimal_precision as dp
@@ -642,8 +644,9 @@ class PurchaseWorkAcceptance(models.Model):
                 )
                 amount_tax += sum([tax['amount'] for tax in taxes['taxes']])
                 amount_untaxed += taxes['total']
-            rec.amount_untaxed = round(amount_untaxed, 2)
-            rec.amount_tax = round(amount_tax, 2)
+            # round() is mistake i.e. .075 it will return .07
+            rec.amount_untaxed = ceil(amount_untaxed * 10 ** 2) / 10 ** 2
+            rec.amount_tax = ceil(amount_tax * 10 ** 2) / 10 ** 2
             rec.amount_total = rec.amount_untaxed + rec.amount_tax
         return True
 
