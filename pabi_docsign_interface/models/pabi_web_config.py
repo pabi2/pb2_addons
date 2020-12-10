@@ -16,6 +16,10 @@ class PABIWebConfigSettings(models.TransientModel):
         string='e-Tax Web URL',
         related='company_id.pabietax_web_url',
     )
+    pabietax_web_url_test = fields.Char(
+        string='e-Tax Web URL Test',
+        related='company_id.pabietax_web_url_test',
+    )
     pabietax_db = fields.Char(
         string='e-Tax Database',
         related='company_id.pabietax_db',

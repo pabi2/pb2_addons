@@ -246,10 +246,11 @@ class PrintAccountVoucherWizard(models.TransientModel):
 
     @api.multi
     def action_sign_account_voucher(self):
-        url = self.env.user.company_id.pabietax_web_url
-        db = self.env.user.company_id.pabietax_db
-        username = self.env.user.company_id.pabietax_user
-        password = self.env.user.company_id.pabietax_password
+        company_id = self.env.user.company_id
+        url = company_id.pabietax_web_url_test or company_id.pabietax_web_url
+        db = company_id.pabietax_db
+        username = company_id.pabietax_user
+        password = company_id.pabietax_password
         edit_sign = self._context.get("Edit_sign", False)
         # connect with server
         uid = self._connect_docsign_server(url, db, username, password)
@@ -266,10 +267,11 @@ class PrintAccountVoucherWizard(models.TransientModel):
 
     @api.multi
     def action_preview_account_voucher(self):
-        url = self.env.user.company_id.pabietax_web_url
-        db = self.env.user.company_id.pabietax_db
-        username = self.env.user.company_id.pabietax_user
-        password = self.env.user.company_id.pabietax_password
+        company_id = self.env.user.company_id
+        url = company_id.pabietax_web_url_test or company_id.pabietax_web_url
+        db = company_id.pabietax_db
+        username = company_id.pabietax_user
+        password = company_id.pabietax_password
         # connect with server
         uid = self._connect_docsign_server(url, db, username, password)
 

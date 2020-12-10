@@ -15,6 +15,9 @@ class ResCompany(models.Model):
     pabietax_web_url = fields.Char(
         string='e-Tax Web URL',
     )
+    pabietax_web_url_test = fields.Char(
+        string='e-Tax Web URL Test',
+    )
     pabietax_db = fields.Char(
         string='e-Tax Database',
     )

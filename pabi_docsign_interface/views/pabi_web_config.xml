@@ -20,6 +20,9 @@
                                 <label for="pabietax_web_url"/>
                                 <field name="pabietax_web_url" attrs="{'required': [('pabietax_active', '=', True)]}" class="oe_inline"/>
                                 <p class="oe_gray">e.g., http://ehrdev.biotec.or.th:8082</p>
+                                <label for="pabietax_web_url_test"/>
+                                <field name="pabietax_web_url_test" class="oe_inline"/>
+                                <p class="oe_gray">e.g., http://ehrdev.biotec.or.th:8082</p>
                                 <br/>
                                 <label for="pabietax_db"/>
                                 <field name="pabietax_db" attrs="{'required': [('pabietax_active', '=', True)]}" class="oe_inline"/>
