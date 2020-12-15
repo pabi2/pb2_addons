@@ -28,6 +28,11 @@ class PrintAccountInvoiceWizard(models.TransientModel):
         ('CDNG05', 'รับคืนสินค้า (ไม่ตรงตามคำพรรณนา)'),
         ('CDNG99', 'เหตุอื่น (ระบุสาเหตุ)')
     ])
+    reason_inv_code = fields.Selection([
+            ('DBNG01','มีการเพิ่มราคาค่าสินค้า (สินค้าเกินกว่าจำนวนที่ตกลงกัน)'),
+            ('DBNG02','คำนวณราคาสินค้า ผิดพลาดต่ำกว่าที่เป็นจริง'),
+            ('DBNG99','เหตุอื่นๆ (ระบุสาเหตุ)')
+    ])
     reason_text = fields.Text()
 
     @api.multi
@@ -96,6 +101,11 @@ class PrintAccountInvoiceWizard(models.TransientModel):
             reason = self.reason_dcn_code
             if self.reason_dcn_code == 'CDNG99':
                 reason_text = self.reason_text
+        elif self.doc_print in REFUND and self.doctype == 'out_invoice':
+            doctype = '380'
+            reason = self.reason_inv_code
+            if self.reason_inv_code == 'DBNG99':
+                reason_text = self.reason_text
         else:
             raise ValidationError(_("This Form can't sign."))
         for invoice in invoice_ids:
@@ -124,7 +134,7 @@ class PrintAccountInvoiceWizard(models.TransientModel):
                 'customer_name': invoice.partner_id.name,
                 'seller_name': seller.name,
                 'currency': invoice.currency_id.name,
-                'date_document': invoice.date,
+                'date_document': invoice.date_invoice,
                 'create_document': invoice.date_document,
                 'operating_unit': invoice.operating_unit_id.name,
                 'purpose_code': reason,

@@ -12,6 +12,11 @@
                     <field name="reason_dcn_code" attrs="{'invisible': [('doctype', 'not in', ['out_refund', 'in_refund'])], 'required': [('doctype', 'in', ['out_refund', 'in_refund'])]}"/>
                     <field name="reason_text" attrs="{'invisible': [('reason_dcn_code', '!=', 'CDNG99')], 'required': [('reason_dcn_code', '=', 'CDNG99')]}"/>
                 </xpath>
+                <xpath expr="//form/group" position="inside">
+                    <field name="state_sign" invisible="1"/>
+                    <field name="reason_inv_code" attrs="{'invisible': ['|', ('doc_print', 'not in', 'invoice/refund'), ('state_sign', '!=', 'signed')], 'required': ['&amp;', ('doc_print', 'in', 'invoice/refund'), ('state_sign', '=', 'signed')]}"/>
+                    <field name="reason_text" attrs="{'invisible': [('reason_inv_code', '!=', 'DBNG99')], 'required': [('reason_inv_code', '=', 'DBNG99')]}"/>
+                </xpath>
                 <xpath expr="//footer/button[@name='action_print_account_invoice']" position="after">
                     <button name="action_preview_account_invoice" type="object" string="Preview" class="oe_highlight"/>
                     or
@@ -19,7 +24,11 @@
                         <button name="action_sign_account_invoice" type="object" string="Sign" class="oe_highlight" confirm="Are you sure you want to sign this document?"/>
                     </span>
                     <span attrs="{'invisible': [('state_sign', '=', 'waiting')]}">
-                        <button name="action_edit_sign_account_invoice" type="object" string="Update Sign" class="oe_highlight" confirm="This document already signed, Do you want to edit this?"/>
+                        <button name="action_edit_sign_account_invoice" 
+                                type="object" 
+                                string="Update Sign" 
+                                class="oe_highlight" 
+                                confirm="This document already signed, Do you want to edit this?"/>
                     </span>
                     or
                 </xpath>
