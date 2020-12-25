@@ -20,7 +20,9 @@
         "views/pabi_web_config.xml",
         "views/account_invoice_view.xml",
         "views/account_voucher_view.xml",
+        "views/account_move_view.xml",
         "print_account_invoice/print_account_invoice_wizard.xml",
         "print_account_voucher/print_account_voucher_wizard.xml",
+        "print_journal_entries/print_voucher_wizard.xml",
     ],
 }
