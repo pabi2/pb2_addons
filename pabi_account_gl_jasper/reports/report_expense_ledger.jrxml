@@ -1,0 +1,2532 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.9.0.final using JasperReports Library version 6.9.0-cb8f9004be492ccc537180b49c026951f4220bf3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_expense_ledger" pageWidth="4100" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="4060" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="19bc13c9-6e38-43d4-a228-4226cf24c91c">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="myDataAdapterTest#28048"/>
+	<parameter name="date_start" class="java.lang.String"/>
+	<parameter name="date_end" class="java.lang.String"/>
+	<parameter name="condition" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[select
+        case
+                when aml.charge_type = 'internal' then 'Internal'
+                when aml.charge_type = 'external' then 'External'
+                else aml.charge_type
+        end as charge_type
+        , ou.name as org
+        , acc.code as account_code
+        , acc.name as account_name
+        , ag.code as activity_group_code
+        , ag.name as activity_group_name
+        , rpt.code as activity_rpt_code
+        , rpt.name as activity_rpt_name
+        , act.code as activity_code
+        , act.name as activity_name
+        , fis.name as fiscalyear
+        , case
+                when CAST(SUBSTRING(pe.code,1,POSITION('/' IN pe.code)-1) as INTEGER) between 1 and 12
+                        then SUBSTRING(pe.code,1,POSITION('/' IN pe.code)-1)
+                else '12'
+        end as group_period
+        , pe.name as period_name
+        , taxc.code as tax_code
+        , aml.debit
+        , aml.credit
+        , aml.name as line_description
+        , am.narration
+        , case
+                when SUBSTRING(am.name,LENGTH(SUBSTRING(am.name,1,3)),1)
+                                in ('0','1','2','3','4','5','6','7','8','9','/','.','-')
+                        then SUBSTRING(am.name,1,LENGTH(SUBSTRING(am.name,1,3))-1)
+                else SUBSTRING(am.name,1,LENGTH(SUBSTRING(am.name,1,3)))
+        end as prefix_doctype
+        , aj.name as doc_journal
+        , am.name as doc_number
+        , aml.docline_seq as item
+        , am.date_document
+        , am.date as posting_date
+        , (select STRING_AGG(am2.name,',') as name
+				from account_invoice inv
+				left join account_move_line aml on aml.move_id = inv.move_id
+				left join account_move am on am.id = aml.move_id
+				left join account_move_line aml2 on aml2.reconcile_id = aml.reconcile_id and aml2.account_id = inv.account_id
+				left join account_move am2 on am2.id = aml2.move_id
+				left join account_move_line aml3 on aml3.reconcile_partial_id = aml.reconcile_partial_id and aml3.account_id = inv.account_id
+		where (aml.reconcile_id is not null or aml.reconcile_partial_id is not null )
+				and (aml2.id <> aml.id or aml3.id <> aml.id) and inv.id = ai.id
+		) as clearing_doc
+		, (select STRING_AGG(TO_CHAR(am2.date, 'dd/mm/yyyy'),',')
+				from account_invoice inv
+				left join account_move_line aml on aml.move_id = inv.move_id
+				left join account_move am on am.id = aml.move_id
+				left join account_move_line aml2 on aml2.reconcile_id = aml.reconcile_id and aml2.account_id = inv.account_id
+				left join account_move am2 on am2.id = aml2.move_id
+				left join account_move_line aml3 on aml3.reconcile_partial_id = aml.reconcile_partial_id and aml3.account_id = inv.account_id
+		where (aml.reconcile_id is not null or aml.reconcile_partial_id is not null )
+				and (aml2.id <> aml.id or aml3.id <> aml.id) and inv.id = ai.id
+		) as clearing_date
+        , ai.source_document
+        , fund.name as fund
+        , case
+                when aml.section_id is not null then sec.code
+                when aml.project_id is not null then prj.code
+                when aml.invest_asset_id is not null then asset.code
+                when aml.invest_construction_phase_id is not null then phase.code
+                when aml.personnel_costcenter_id is not null then rpc.code
+                else null
+        end as source_budget_code
+        , case
+                when aml.section_id is not null then sec.name
+                when aml.project_id is not null then prj.name
+                when aml.invest_asset_id is not null then asset.name
+                when aml.invest_construction_phase_id is not null then phase.name
+                when aml.personnel_costcenter_id is not null then rpc.name
+                else null
+        end as source_budget_name
+        , cct.code as job_order_group_code
+        , cct.name as job_order_group_name
+        , cc.code as job_order_code
+        , cc.name as job_order_name
+        , cosc.code as costcenter_code
+        , ct_tr.value as costcenter_name
+        , pmp.code as master_plan_code
+        , pmp.name as master_plan_name
+        , mis.name as mission
+        , case
+                when am.document_id like '%interface.account.entry%'
+                        then (select
+                                        case
+                                                when rp_tr2.id is not null then concat(rpti_tr2.value,' ',rp_tr2.value) 
+                                                else concat(rpti2.name,' ',rp2.name)
+                                        end
+                                  from interface_account_entry iae
+                                          left join res_users ru2 on ru2.id = iae.validate_user_id
+                                          left join res_partner rp2 on rp2.id = ru2.partner_id
+                                        left join ir_translation rp_tr2 on rp_tr2.name = 'res.partner,name' and rp_tr2.res_id = rp2.id
+                                        left join res_partner_title rpti2 on rpti2.id = rp2.title
+                                        left join ir_translation rpti_tr2 on rpti_tr2.name = 'res.partner.title,name' and rpti_tr2.res_id = rpti2.id
+                                  where iae.id = CAST(REPLACE(am.document_id,'interface.account.entry,','') as INTEGER))
+                else (select
+                                case
+                                        when rp_tr2.id is not null then concat(rpti_tr2.value,' ',rp_tr2.value) 
+                                        else concat(rpti2.name,' ',rp2.name)
+                                end
+                          from res_users ru2
+                                  left join res_partner rp2 on rp2.id = ru2.partner_id
+                                left join ir_translation rp_tr2 on rp_tr2.name = 'res.partner,name' and rp_tr2.res_id = rp2.id
+                                left join res_partner_title rpti2 on rpti2.id = rp2.title
+                                left join ir_translation rpti_tr2 on rpti_tr2.name = 'res.partner.title,name' and rpti_tr2.res_id = rpti2.id
+                          where ru2.id = aml.create_uid)
+        end as posted_by
+        , (select aml2.date_maturity from account_move_line aml2
+           where aml2.date_maturity is not null and aml2.move_id = am.id limit 1
+         ) as due_date
+        , case
+                when am.document_id like '%account.bank.receipt%'
+                        then (select
+                                          case
+                                                  when am_can2.name <> am.name then am_can2.name
+                                                  else am2.name
+                                          end
+                                  from account_bank_receipt abr
+                                          left join account_move am2 on am2.id = abr.move_id
+                                          left join account_move am_can2 on am_can2.id = abr.cancel_move_id
+                                  where abr.id = CAST(REPLACE(am.document_id,'account.bank.receipt,','') as INTEGER) and abr.cancel_move_id is not null )
+                when am.document_id like '%account.invoice%'
+                        then (select
+                                          case
+                                                  when am_can2.name <> am.name then am_can2.name
+                                                  else am2.name
+                                          end
+                                  from account_invoice ai2
+                                          left join account_move am2 on am2.id = ai2.move_id
+                                          left join account_move am_can2 on am_can2.id = ai2.cancel_move_id
+                                  where ai2.id = CAST(REPLACE(am.document_id,'account.invoice,','') as INTEGER) and ai2.cancel_move_id is not null)
+                when am.document_id like '%account.voucher%'
+                        then (select
+                                          case
+                                                  when am_can2.name <> am.name then am_can2.name
+                                                  else am2.name
+                                          end
+                                  from account_voucher av2
+                                          left join account_move am2 on am2.id = av2.move_id
+                                          left join account_move am_can2 on am_can2.id = av2.cancel_move_id
+                                  where av2.id = CAST(REPLACE(am.document_id,'account.voucher,','') as INTEGER ) and av2.cancel_move_id is not null)
+                when am.document_id like '%hr.salary.expense%'
+                        then (select
+                                          case
+                                                  when am_can2.name <> am.name then am_can2.name
+                                                  else am2.name
+                                          end
+                                  from hr_salary_expense hse2
+                                          left join account_move am2 on am2.id = hse2.move_id
+                                          left join account_move am_can2 on am_can2.id = hse2.cancel_move_id
+                                  where hse2.id = CAST(REPLACE(am.document_id,'hr.salary.expense,','') as INTEGER) and hse2.cancel_move_id is not null)
+                else null
+        end as reverse_doc
+        , case
+                when am.document_id like '%account.bank.receipt%'
+                        then (select
+                                          case
+                                                  when am_can2.name <> am.name then am_can2.date
+                                                  else am2.date
+                                          end
+                                  from account_bank_receipt abr
+                                          left join account_move am2 on am2.id = abr.move_id
+                                          left join account_move am_can2 on am_can2.id = abr.cancel_move_id
+                                  where abr.id = CAST(REPLACE(am.document_id,'account.bank.receipt,','') as INTEGER) and abr.cancel_move_id is not null)
+                when am.document_id like '%account.invoice%'
+                        then (select
+                                          case
+                                                  when am_can2.name <> am.name then am_can2.date
+                                                  else am2.date
+                                          end
+                                  from account_invoice ai2
+                                          left join account_move am2 on am2.id = ai2.move_id
+                                          left join account_move am_can2 on am_can2.id = ai2.cancel_move_id
+                                  where ai2.id = CAST(REPLACE(am.document_id,'account.invoice,','') as INTEGER) and ai2.cancel_move_id is not null)
+                when am.document_id like '%account.voucher%'
+                        then (select
+                                          case
+                                                  when am_can2.name <> am.name then am_can2.date
+                                                  else am2.date
+                                          end
+                                  from account_voucher av2
+                                          left join account_move am2 on am2.id = av2.move_id
+                                          left join account_move am_can2 on am_can2.id = av2.cancel_move_id
+                                  where av2.id = CAST(REPLACE(am.document_id,'account.voucher,','') as INTEGER) and av2.cancel_move_id is not null)
+                when am.document_id like '%hr.salary.expense%'
+                        then (select
+                                          case
+                                                  when am_can2.name <> am.name then am_can2.date
+                                                  else am2.date
+                                          end
+                                  from hr_salary_expense hse2
+                                          left join account_move am2 on am2.id = hse2.move_id
+                                          left join account_move am_can2 on am_can2.id = hse2.cancel_move_id
+                                  where hse2.id = CAST(REPLACE(am.document_id,'hr.salary.expense,','') as INTEGER) and hse2.cancel_move_id is not null)
+                else null
+        end as reverse_date
+        , case
+                when aml.document_id like '%account.invoice%'
+                        then (select apt2.name from account_invoice ai2
+                                          left join account_payment_term apt2 on apt2.id = ai2.payment_term
+                                 where ai2.id = CAST(REPLACE(aml.document_id,'account.invoice,','') as INTEGER))
+                else null
+        end as payment_term
+        , case
+                when aml.document_id like '%account.invoice%'
+                        then (select bil.name from account_invoice ai2
+                                          left join purchase_billing bil on bil.id = ai2.purchase_billing_id
+                                 where ai2.id = CAST(REPLACE(aml.document_id,'account.invoice,','') as INTEGER))
+                else null
+        end as billing_doc
+        , (select STRING_AGG(aj2.name,',')
+           from account_invoice inv
+				left join account_move_line aml on aml.move_id = inv.move_id
+				left join account_move am on am.id = aml.move_id
+				left join account_move_line aml2 on aml2.reconcile_id = aml.reconcile_id and aml2.account_id = inv.account_id
+				left join account_move am2 on am2.id = aml2.move_id
+				left join account_move_line aml3 on aml3.reconcile_partial_id = aml.reconcile_partial_id and aml3.account_id = inv.account_id
+				left join account_journal aj2 on aj2.id = am2.journal_id
+           where (aml.reconcile_id is not null or aml.reconcile_partial_id is not null )
+				and (aml2.id <> aml.id or aml3.id <> aml.id) and inv.id = ai.id
+          ) as payment_method
+        , (select
+                           STRING_AGG(case
+                                   when am2.document_id like '%account.voucher%'
+                                           then coalesce((select STRING_AGG(av2.transfer_type,',') from account_voucher av2
+                                                  where av2.id = CAST(REPLACE(am2.document_id,'account.voucher,','') as INTEGER)),'Cheque')
+                                   else 'Cheque'
+                           end,',')
+           from account_invoice inv
+				left join account_move_line aml on aml.move_id = inv.move_id
+				left join account_move am on am.id = aml.move_id
+				left join account_move_line aml2 on aml2.reconcile_id = aml.reconcile_id and aml2.account_id = inv.account_id
+				left join account_move am2 on am2.id = aml2.move_id
+				left join account_move_line aml3 on aml3.reconcile_partial_id = aml.reconcile_partial_id and aml3.account_id = inv.account_id
+           where (aml.reconcile_id is not null or aml.reconcile_partial_id is not null )
+				and (aml2.id <> aml.id or aml3.id <> aml.id) and inv.id = ai.id
+          ) as transfer_type
+        , (select
+                           STRING_AGG(case
+                                   when am2.document_id like '%account.voucher%'
+                                           then (select STRING_AGG(TO_CHAR(av2.date_value, 'dd/mm/yyyy'),',') from account_voucher av2
+                                                  where av2.id = CAST(REPLACE(am2.document_id,'account.voucher,','') as INTEGER))
+                                   else null
+                           end,',')
+           from account_invoice inv
+				left join account_move_line aml on aml.move_id = inv.move_id
+				left join account_move am on am.id = aml.move_id
+				left join account_move_line aml2 on aml2.reconcile_id = aml.reconcile_id and aml2.account_id = inv.account_id
+				left join account_move am2 on am2.id = aml2.move_id
+				left join account_move_line aml3 on aml3.reconcile_partial_id = aml.reconcile_partial_id and aml3.account_id = inv.account_id
+           where (aml.reconcile_id is not null or aml.reconcile_partial_id is not null )
+				and (aml2.id <> aml.id or aml3.id <> aml.id) and inv.id = ai.id
+          ) as date_value
+        , (select
+                           STRING_AGG(case
+                                   when am2.document_id like '%account.voucher%'
+                                           then (select STRING_AGG(rpb2.acc_number,',') from account_voucher av2
+                                                          left join res_partner_bank rpb2 on rpb2.id = av2.supplier_bank_id
+                                                  where av2.id = CAST(REPLACE(am2.document_id,'account.voucher,','') as INTEGER))
+                                   else null
+                           end,',')
+           from account_invoice inv
+				left join account_move_line aml on aml.move_id = inv.move_id
+				left join account_move am on am.id = aml.move_id
+				left join account_move_line aml2 on aml2.reconcile_id = aml.reconcile_id and aml2.account_id = inv.account_id
+				left join account_move am2 on am2.id = aml2.move_id
+				left join account_move_line aml3 on aml3.reconcile_partial_id = aml.reconcile_partial_id and aml3.account_id = inv.account_id
+           where (aml.reconcile_id is not null or aml.reconcile_partial_id is not null )
+				and (aml2.id <> aml.id or aml3.id <> aml.id) and inv.id = ai.id
+          ) as partner_bank_account
+        , (select
+                           STRING_AGG(case
+                                   when am2.document_id like '%account.voucher%'
+                                           then (select STRING_AGG(rbb2.name,',') from account_voucher av2
+                                                          left join res_partner_bank rpb2 on rpb2.id = av2.supplier_bank_id
+                                                          left join res_bank_branch rbb2 on rbb2.id = rpb2.bank_branch
+                                                  where av2.id = CAST(REPLACE(am2.document_id,'account.voucher,','') as INTEGER))
+                                   else null
+                           end,',')
+          from account_invoice inv
+				left join account_move_line aml on aml.move_id = inv.move_id
+				left join account_move am on am.id = aml.move_id
+				left join account_move_line aml2 on aml2.reconcile_id = aml.reconcile_id and aml2.account_id = inv.account_id
+				left join account_move am2 on am2.id = aml2.move_id
+				left join account_move_line aml3 on aml3.reconcile_partial_id = aml.reconcile_partial_id and aml3.account_id = inv.account_id
+           where (aml.reconcile_id is not null or aml.reconcile_partial_id is not null )
+				and (aml2.id <> aml.id or aml3.id <> aml.id) and inv.id = ai.id
+          ) as partner_bank_branch
+        , (select
+                           STRING_AGG(case
+                                   when am2.document_id like '%account.voucher%'
+                                           then (select pe2.name from account_voucher av2
+                                                          left join payment_export pe2 on pe2.id = av2.payment_export_id
+                                                  where av2.id = CAST(REPLACE(am2.document_id,'account.voucher,','') as INTEGER))
+                                   else null
+                           end,',')
+           from account_invoice inv
+				left join account_move_line aml on aml.move_id = inv.move_id
+				left join account_move am on am.id = aml.move_id
+				left join account_move_line aml2 on aml2.reconcile_id = aml.reconcile_id and aml2.account_id = inv.account_id
+				left join account_move am2 on am2.id = aml2.move_id
+				left join account_move_line aml3 on aml3.reconcile_partial_id = aml.reconcile_partial_id and aml3.account_id = inv.account_id
+           where (aml.reconcile_id is not null or aml.reconcile_partial_id is not null )
+				and (aml2.id <> aml.id or aml3.id <> aml.id) and inv.id = ai.id
+          ) as payment_export
+		, ((select aml2.date_maturity from account_move_line aml2
+           where aml2.date_maturity is not null and aml2.move_id = am.id limit 1) -CURRENT_DATE) as duration_day
+        , rp.search_key
+        , case
+                when rp_tr.id is not null then concat(rpti_tr.value,' ',rp_tr.value) 
+                else concat(rpti.name,' ',rp.name)
+        end as partner_name
+from account_move_line aml
+        left join account_account acc on acc.id = aml.account_id
+        left join account_activity act on act.id = aml.activity_id
+        left join account_activity rpt on rpt.id = aml.activity_rpt_id
+        left join account_activity_group ag on ag.id = aml.activity_group_id
+        left join account_invoice ai on ai.move_id = aml.move_id
+        left join account_journal aj on aj.id = aml.journal_id
+        left join account_move am on am.id = aml.move_id
+        left join account_period pe on pe.id = aml.period_id
+        left join account_fiscalyear fis on fis.id = pe.fiscalyear_id
+        left join account_tax_code taxc on taxc.id = aml.tax_code_id
+        left join cost_control cc on cc.id = aml.cost_control_id
+        left join cost_control_type cct on cct.id = aml.cost_control_type_id
+        left join operating_unit ou on ou.org_id = aml.org_id
+        left join res_costcenter cosc on cosc.id = aml.costcenter_id
+        left join ir_translation ct_tr on ct_tr.name = 'res.costcenter,name' and ct_tr.res_id = cosc.id
+        left join res_fund fund on fund.id = aml.fund_id
+        left join res_invest_asset asset on asset.id = aml.invest_asset_id
+        left join res_invest_construction_phase phase on phase.id = aml.invest_construction_phase_id
+        left join res_mission mis on mis.id = aml.mission_id
+        left join res_partner rp on rp.id = aml.partner_id
+        left join ir_translation rp_tr on rp_tr.name = 'res.partner,name' and rp_tr.res_id = rp.id
+        left join res_partner_title rpti on rpti.id = rp.title
+        left join ir_translation rpti_tr on rpti_tr.name = 'res.partner.title,name' and rpti_tr.res_id = rpti.id
+        left join res_personnel_costcenter rpc on rpc.id = aml.personnel_costcenter_id
+        left join res_project prj on prj.id = aml.project_id
+        left join project_master_plan pmp on pmp.id = prj.master_plan_id
+        left join res_section sec on sec.id = aml.section_id
+        where aml.date between '$P!{date_start}'  AND '$P!{date_end}'  AND  $P!{condition}
+limit 100
+--where aml.date = '2019-01-24' and aml.account_id = 5393 order by am.name]]>
+	</queryString>
+	<field name="charge_type" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="charge_type"/>
+	</field>
+	<field name="org" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="org"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="operating_unit"/>
+	</field>
+	<field name="account_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="account_code"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_account"/>
+	</field>
+	<field name="account_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="account_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_account"/>
+	</field>
+	<field name="activity_group_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="activity_group_code"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_activity_group"/>
+	</field>
+	<field name="activity_group_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="activity_group_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_activity_group"/>
+	</field>
+	<field name="activity_rpt_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="activity_rpt_code"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_activity"/>
+	</field>
+	<field name="activity_rpt_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="activity_rpt_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_activity"/>
+	</field>
+	<field name="activity_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="activity_code"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_activity"/>
+	</field>
+	<field name="activity_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="activity_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_activity"/>
+	</field>
+	<field name="fiscalyear" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="fiscalyear"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_fiscalyear"/>
+	</field>
+	<field name="group_period" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="group_period"/>
+	</field>
+	<field name="period_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="period_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_period"/>
+	</field>
+	<field name="tax_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="tax_code"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_tax_code"/>
+	</field>
+	<field name="debit" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="debit"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_move_line"/>
+	</field>
+	<field name="credit" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="credit"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_move_line"/>
+	</field>
+	<field name="line_description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="line_description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_move_line"/>
+	</field>
+	<field name="narration" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="narration"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_move"/>
+	</field>
+	<field name="prefix_doctype" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="prefix_doctype"/>
+	</field>
+	<field name="doc_journal" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="doc_journal"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_journal"/>
+	</field>
+	<field name="doc_number" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="doc_number"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_move"/>
+	</field>
+	<field name="item" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="item"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_move_line"/>
+	</field>
+	<field name="date_document" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.label" value="date_document"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_move"/>
+	</field>
+	<field name="posting_date" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.label" value="posting_date"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_move"/>
+	</field>
+	<field name="clearing_doc" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="clearing_doc"/>
+	</field>
+	<field name="clearing_date" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="clearing_date"/>
+	</field>
+	<field name="source_document" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="source_document"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="account_invoice"/>
+	</field>
+	<field name="fund" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="fund"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="res_fund"/>
+	</field>
+	<field name="source_budget_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="source_budget_code"/>
+	</field>
+	<field name="source_budget_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="source_budget_name"/>
+	</field>
+	<field name="job_order_group_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="job_order_group_code"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cost_control_type"/>
+	</field>
+	<field name="job_order_group_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="job_order_group_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cost_control_type"/>
+	</field>
+	<field name="job_order_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="job_order_code"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cost_control"/>
+	</field>
+	<field name="job_order_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="job_order_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cost_control"/>
+	</field>
+	<field name="costcenter_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="costcenter_code"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="res_costcenter"/>
+	</field>
+	<field name="costcenter_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="costcenter_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ir_translation"/>
+	</field>
+	<field name="master_plan_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="master_plan_code"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="project_master_plan"/>
+	</field>
+	<field name="master_plan_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="master_plan_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="project_master_plan"/>
+	</field>
+	<field name="mission" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="mission"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="res_mission"/>
+	</field>
+	<field name="posted_by" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="posted_by"/>
+	</field>
+	<field name="due_date" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.label" value="due_date"/>
+	</field>
+	<field name="reverse_doc" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="reverse_doc"/>
+	</field>
+	<field name="reverse_date" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.label" value="reverse_date"/>
+	</field>
+	<field name="payment_term" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="payment_term"/>
+	</field>
+	<field name="billing_doc" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="billing_doc"/>
+	</field>
+	<field name="payment_method" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="payment_method"/>
+	</field>
+	<field name="transfer_type" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="transfer_type"/>
+	</field>
+	<field name="date_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="date_value"/>
+	</field>
+	<field name="partner_bank_account" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="partner_bank_account"/>
+	</field>
+	<field name="partner_bank_branch" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="partner_bank_branch"/>
+	</field>
+	<field name="payment_export" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="payment_export"/>
+	</field>
+	<field name="duration_day" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="duration_day"/>
+	</field>
+	<field name="search_key" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="search_key"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="res_partner"/>
+	</field>
+	<field name="partner_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="partner_name"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="43" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="254e0762-118b-486a-8ed4-7176ceb3ded8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Charge Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="70" y="0" width="50" height="43" backcolor="#BDD7EE" uuid="c402a948-888a-457a-9251-9d82e5351da0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Org.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="120" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="8a8b478e-76ff-4fc9-819f-3c37e8d62518">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Account Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="200" y="0" width="100" height="43" backcolor="#BDD7EE" uuid="393a5d77-14ca-48c4-8eb3-16a626cec0b3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Account Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="300" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="a96e6d59-06cb-4b1d-8a65-4bf7335a4ddc">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Activity Group Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="370" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="50fa2880-4886-4cbb-9de0-a7e6ae042841">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Activity Group Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="460" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="cb8bdc56-acbb-4396-83da-2537d010d89f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Activity Rpt Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="530" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="77a9f481-7df3-4c72-a616-cdf44e18652d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Activity Rpt Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="620" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="ce64ef5d-922b-4d23-88d3-b1244867a174">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Activity Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="690" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="db29f260-0d45-4051-a431-78bc8f40c561">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Activity Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="770" y="0" width="50" height="43" backcolor="#BDD7EE" uuid="acc227ea-1191-455f-9b7c-1a504a5c4fcf">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Fiscal Year]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="820" y="0" width="40" height="43" backcolor="#BDD7EE" uuid="8b82c161-5f3c-4a07-a1cf-5649e4fedf01">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Group Period]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="860" y="0" width="50" height="43" backcolor="#BDD7EE" uuid="3e67d04a-3e82-4db3-94b1-8d96748748e3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Period]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="910" y="0" width="50" height="43" backcolor="#BDD7EE" uuid="a634fe69-560b-4672-b2c8-061d452c93e4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Tax Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="960" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="9f95ffce-2afc-4f66-8e08-8123c7e4f4a2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1030" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="78517b9e-08a7-4ddf-acb2-3f7a0eb93e17">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Line Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1110" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="48cd4715-1cf9-4682-b52a-d33721af7c2e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Header Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1190" y="0" width="60" height="43" backcolor="#BDD7EE" uuid="e9560f65-2b80-4e02-b3dc-0276304f0b38">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Doc Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1250" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="cef2119b-a52b-47f2-b43e-3db5bc9d906c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Doc Journal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1320" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="8f3abcb6-b5e0-4f23-8ea0-a083e202f0e2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Document Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1400" y="0" width="40" height="43" backcolor="#BDD7EE" uuid="6401d41b-ab60-424f-a57a-60b3b07748f1">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Item]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1440" y="0" width="60" height="43" backcolor="#BDD7EE" uuid="515d6179-0e2f-4a4f-8a6a-e12890b87a30">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Document Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1500" y="0" width="60" height="43" backcolor="#BDD7EE" uuid="90daa8e4-2df5-43d7-ac41-19b971c0892c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Posting Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1560" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="0b0882a0-bcc2-4d45-82e5-546bda89be1d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Clearing Document]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1640" y="0" width="60" height="43" backcolor="#BDD7EE" uuid="c374a0b8-b7ee-4042-8000-836eab420fec">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Clearing Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1700" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="117d0821-ebcb-485d-b504-57ee2badc14c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="9" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Source Document / Reference]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1790" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="5a36921d-cecd-4450-bbf0-58a0acfe1e47">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Source of Fund]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1870" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="bc5d0fe6-0664-454c-aa97-d406a185bb0b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Source of Budget Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1960" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="2da9d6b6-53bd-4cee-a57b-be2810547b2e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Source of Budget Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2040" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="3a1fa865-ab33-4a8e-8a1a-ed9829c5a395">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Job Order Group Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2120" y="0" width="100" height="43" backcolor="#BDD7EE" uuid="2166711f-06ca-4de1-ba2e-61b7e3310e34">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Job Order Group Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2220" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="e5ff37b6-f02a-4ea1-bd7c-b82a2725dc72">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Job Order Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2300" y="0" width="100" height="43" backcolor="#BDD7EE" uuid="602d5984-5174-40ab-84c1-78837610224d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Job Order Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2400" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="290e6db2-1290-4fea-ad15-75301f6b198a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Cost Center Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2470" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="c1bb858f-b738-44dc-b4b0-4d9c9def3046">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Cost Center Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2560" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="d84822a6-f740-4f48-9874-bc9d53929236">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Master Plan Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2630" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="96c64456-6129-4e46-8074-386780b2a4c4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Master Plan Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2720" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="de3df308-3ff3-4be8-8067-c0ec3939680a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Mission]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2800" y="0" width="120" height="43" backcolor="#BDD7EE" uuid="c77b1adf-0b87-4d19-a6a2-e38d1808168c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Posted By]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3050" y="0" width="60" height="43" backcolor="#BDD7EE" uuid="d610154b-e757-4737-a3c4-475fda8e9b0f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Reverse Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2980" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="3a9ab705-60df-4751-a492-89f7e1654e48">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Reverse Document]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2920" y="0" width="60" height="43" backcolor="#BDD7EE" uuid="2a023382-55e8-4e4f-b7c6-9675f2d8851b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Due Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3110" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="e59c2835-6150-4a8a-aa08-b52a963447b4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Payment Term]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3190" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="450fc772-4e4d-4145-b69c-f2d1576a1805">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Billing Document]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3270" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="9e0d81d2-e276-40ae-a5c0-df427aafb91e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Payment Method]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3350" y="0" width="50" height="43" backcolor="#BDD7EE" uuid="b62abcd7-58dd-4410-bb2d-d6fc7d4c26e0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Transfer Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3400" y="0" width="60" height="43" backcolor="#BDD7EE" uuid="806ad5ee-6e51-49b1-abb3-5a731c5b3a3b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Value Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3460" y="0" width="110" height="43" backcolor="#BDD7EE" uuid="f58ed1f4-64e4-4528-bf87-dce5036a1168">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Partner Bank Account]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3570" y="0" width="110" height="43" backcolor="#BDD7EE" uuid="f4d303fc-ca94-4a69-b1f3-19ee36b0021b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Partner Bank Branch]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3680" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="2bc7ea00-ce1a-438d-8839-1cabcdd3f53d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Payment Export]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3770" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="f5507487-beaf-4ca2-8abd-cc90a9756c20">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Duration Day]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3860" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="71351d1a-84a5-454c-ab82-62104e0541c7">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Partner Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3950" y="0" width="110" height="43" backcolor="#BDD7EE" uuid="a55c0fad-a245-46e8-b9f0-284104eb42d6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Partner Name]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="70" height="20" uuid="bfb429d0-3123-4447-a895-d5f1c475e8ef">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{charge_type}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="70" y="0" width="50" height="20" uuid="cc5584a3-e9e1-4ba0-959a-1a30ac639c2e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{org}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="120" y="0" width="80" height="20" uuid="7dd5ee20-9df0-4413-89e3-bbab3aeeaed0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{account_code}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="200" y="0" width="100" height="20" uuid="d626d1d3-d141-48ff-8da3-ca9b8e812602">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{account_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="300" y="0" width="70" height="20" uuid="323939b6-6053-4c8b-b438-780155e9082c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{activity_group_code}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="370" y="0" width="90" height="20" uuid="dd719801-9d19-42aa-a23b-bef8841d0f3a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{activity_group_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="460" y="0" width="70" height="20" uuid="cd40ccda-d7ca-4f92-9658-fc21401d631e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{activity_rpt_code}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="530" y="0" width="90" height="20" uuid="97457d8a-afbe-4cfd-82ef-546694f7f2f7">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{activity_rpt_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="620" y="0" width="70" height="20" uuid="c848ec49-8407-453b-bd15-216a5dd43cca">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{activity_code}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="690" y="0" width="80" height="20" uuid="26dc6d71-1fab-4a81-93cb-e8d0f70b0441">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{activity_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="770" y="0" width="50" height="20" uuid="6abb3fb7-41cd-47f6-8ff2-90af8c35f0a2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fiscalyear}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="820" y="0" width="40" height="20" uuid="3b536a82-0822-4034-a3cc-0f907a82dade">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{group_period}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="860" y="0" width="50" height="20" uuid="69e3dc8d-079a-4290-9632-b76c4b093bd5">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{period_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="910" y="0" width="50" height="20" uuid="b87d8523-65bc-4266-a6e5-9e8f1256c17d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tax_code}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00#" isBlankWhenNull="true">
+				<reportElement x="960" y="0" width="70" height="20" uuid="be253103-4dc7-403c-813b-e586f6802865">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{debit}.floatValue() - $F{credit}.floatValue()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1030" y="0" width="80" height="20" uuid="8b74ba93-b4b3-40f9-b5a8-9405bd30e2cf">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{line_description}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1110" y="0" width="80" height="20" uuid="60f3c2fa-04d2-4cb4-abe8-768f3697ecf6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{narration}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1190" y="0" width="60" height="20" uuid="afb2da34-600e-4625-833c-75f37dfc06d6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prefix_doctype}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1250" y="0" width="70" height="20" uuid="3188595e-4359-4dbb-b3b3-b3c993c3b503">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_journal}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1320" y="0" width="80" height="20" uuid="9832d65e-8f6c-48e9-95e5-21309c87266d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doc_number}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1400" y="0" width="40" height="20" uuid="000882fe-dbb9-4dd0-95c4-74df165a14fa">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{item}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="1440" y="0" width="60" height="20" uuid="b4dc5813-475c-4a4a-8760-17bf2c12c72c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{date_document}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="1500" y="0" width="60" height="20" uuid="52b86373-0cc9-4c56-b431-0208d335aef7">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{posting_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1560" y="0" width="80" height="20" uuid="7289d750-d5d6-4ac5-a369-9bfff9ad6fca">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{clearing_doc}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="1640" y="0" width="60" height="20" uuid="1726757d-c82a-44f6-95df-323f8d67dba4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{clearing_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1700" y="0" width="90" height="20" uuid="267a9b30-2c21-44bf-8c18-47452f5da84b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{source_document}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1790" y="0" width="80" height="20" uuid="f9a1c1a3-ccf2-4281-94ea-c951167bf166">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fund}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1870" y="0" width="90" height="20" uuid="379ae8b0-b57b-464b-95c4-526ebd2218ef">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{source_budget_code}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1960" y="0" width="80" height="20" uuid="ea6e7208-3827-4615-852a-668abeabe835">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{source_budget_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="2040" y="0" width="80" height="20" uuid="6f8aa5a2-d1e0-4176-9552-0db3ca5b712e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{job_order_group_code}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="2120" y="0" width="100" height="20" uuid="7f7561f9-b7a4-4891-8257-527fd5f0691b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{job_order_group_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="2220" y="0" width="80" height="20" uuid="5a9db923-cfbd-4416-ad5e-f4f34e8bc3b0">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{job_order_code}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="2300" y="0" width="100" height="20" uuid="a8aade2f-2823-4a93-95cd-f30036b24430">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{job_order_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="2400" y="0" width="70" height="20" uuid="2e195fe2-b391-470c-a68f-a1a1db8450e6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{costcenter_code}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="2470" y="0" width="90" height="20" uuid="9f821af2-baf8-4250-ab6e-7e95691e6bf8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{costcenter_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="2560" y="0" width="70" height="20" uuid="ed2130b0-4138-4bc8-a2cc-c0dda1c16311">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{master_plan_code}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="2630" y="0" width="90" height="20" uuid="fc15385e-eb11-4ab4-b20d-5c5c58a066c8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{master_plan_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="2720" y="0" width="80" height="20" uuid="ad4b8a1b-c5b0-4d13-afa5-80de96fc4d91">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{mission}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="2800" y="0" width="120" height="20" uuid="a4c9dfa2-c2e3-4b0e-b56c-098b27bbb78f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{posted_by}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="2920" y="0" width="60" height="20" uuid="d35fce07-c473-45c6-92a7-705d7ad8f16b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{due_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="2980" y="0" width="70" height="20" uuid="7ab50664-fe75-454c-9f6e-fefdb1eb40b7">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reverse_doc}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="3050" y="0" width="60" height="20" uuid="34945999-0184-4ca4-873c-b4d1aa90cdf1">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{reverse_date}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="3110" y="0" width="80" height="20" uuid="c6556ac3-c408-44f8-b921-716fd51e6f1b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{payment_term}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="3190" y="0" width="80" height="20" uuid="edfb6eae-af9c-42b2-b24a-61d4ea6e2d03">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{billing_doc}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="3270" y="0" width="80" height="20" uuid="52033312-8817-4cc5-9506-0b572e29c984">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{payment_method}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="3350" y="0" width="50" height="20" uuid="6eea2b87-2e23-42c9-a6eb-b31ddc4360e8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{transfer_type}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="3400" y="0" width="60" height="20" uuid="d84e5b14-09ce-4d97-8790-b980f7adc21c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{date_value}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="3460" y="0" width="110" height="20" uuid="debcb707-6976-4ff7-8d04-c48aac62c1e8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{partner_bank_account}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="3570" y="0" width="110" height="20" uuid="a57daa01-483d-4e69-b720-14eeac9532e4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{partner_bank_branch}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="3680" y="0" width="90" height="20" uuid="fd1e8cd5-fff7-4306-88c8-2c0f3698713c">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{payment_export}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="3770" y="0" width="90" height="20" uuid="cc0dbcc6-ce36-4827-8f12-9dbefa18c712">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{duration_day}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="3860" y="0" width="90" height="20" uuid="33e7e1ae-b4c0-4b1d-9f43-c27084a45197">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{search_key}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="3950" y="0" width="110" height="20" uuid="4f934292-9771-4244-9e86-294960421ab2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="191419bd-7dee-4781-9452-adc3039aeb8b"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{partner_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<noData>
+		<band height="43">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3860" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="3cfc32ae-6f59-44ea-a5ce-8bcc4fccb561">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Partner Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3950" y="0" width="110" height="43" backcolor="#BDD7EE" uuid="5fc0885b-52b7-47c1-a519-80873b20648e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Partner Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3350" y="0" width="50" height="43" backcolor="#BDD7EE" uuid="1e687bc7-d3b8-4e3c-a9de-4979131da38f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Transfer Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3400" y="0" width="60" height="43" backcolor="#BDD7EE" uuid="3a330508-43e4-411f-9131-b1a6437d4718">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Value Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3460" y="0" width="110" height="43" backcolor="#BDD7EE" uuid="e04e97fc-d4af-4528-9810-c7128e265e79">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Partner Bank Account]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3570" y="0" width="110" height="43" backcolor="#BDD7EE" uuid="9f3a969c-378d-4b86-8489-3700e1cd3e61">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Partner Bank Branch]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3680" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="07daf39e-71c1-4e2f-a4f7-8c707a8b5047">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Payment Export]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3770" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="684ff188-a5d6-461a-ac0f-596fee19456a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Duration Day]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2800" y="0" width="120" height="43" backcolor="#BDD7EE" uuid="f24043fd-fc78-46d2-9347-afebb4d04099">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Posted By]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3050" y="0" width="60" height="43" backcolor="#BDD7EE" uuid="a44438c9-c862-46f0-aad0-011af9ccd681">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Reverse Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2980" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="457e01f5-dc14-4989-adf6-8c89d8bbf222">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Reverse Document]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2920" y="0" width="60" height="43" backcolor="#BDD7EE" uuid="c5b05f4f-3b9b-4108-b0ea-01e3ac6707ba">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Due Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3110" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="0b03189f-79db-47e2-a1a5-9f1098031c02">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Payment Term]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3190" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="aa970bb3-0ad6-4698-873e-5c99408ff858">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Billing Document]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="3270" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="f9553f69-3443-4f95-86d6-097f6c2cbee6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Payment Method]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2300" y="0" width="100" height="43" backcolor="#BDD7EE" uuid="29c4defe-063c-4559-b762-e49bbaa30dbb">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Job Order Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2400" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="aac575d1-1a23-42f8-92b2-2e3182f19b03">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Cost Center Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2470" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="028af9ab-f6ea-4aad-86e0-9625a850f9d2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Cost Center Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2560" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="4f248a36-33a5-49e5-a8b2-26e14e426445">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Master Plan Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2630" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="b3605dba-9fde-41ef-8d93-fdfcaa79d5a6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Master Plan Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2720" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="9ab8c8ce-a49f-456d-ba3a-31461b4d649f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Mission]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1700" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="8737e922-8645-432b-9664-733dfe566f76">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="9" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Source Document / Reference]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1790" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="04b72ab7-45a0-4da5-a91f-40925d5e5f18">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Source of Fund]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1870" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="c0a16369-0961-4f0f-83e2-842c196ee9a9">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Source of Budget Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1960" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="e393ee10-164c-451f-9afe-b6c4ee623baf">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Source of Budget Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2040" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="2e3083cd-08e4-41be-989c-3869bf9fccf3">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Job Order Group Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2120" y="0" width="100" height="43" backcolor="#BDD7EE" uuid="f97ab6f0-39e4-4392-b82e-a6c8236674d6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Job Order Group Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="2220" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="2bebe887-6e0b-4249-b979-a788cb98b4ce">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Job Order Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1110" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="a6e64635-0381-4507-9a19-f3444ae49cd2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Header Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1190" y="0" width="60" height="43" backcolor="#BDD7EE" uuid="61a46b9c-77fd-4eca-99b6-2064253b7cc6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Doc Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1250" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="e8db88f9-691f-4982-9255-df5d1a48bf58">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Doc Journal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1320" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="39ad50ee-2b8e-4674-9b04-94b52f88eb8e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Document Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1400" y="0" width="40" height="43" backcolor="#BDD7EE" uuid="4446dca0-30b8-4cdc-980e-c7621d2582af">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Item]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1440" y="0" width="60" height="43" backcolor="#BDD7EE" uuid="6e2bfcbb-4bed-44c8-97aa-ee540d7e7216">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Document Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1500" y="0" width="60" height="43" backcolor="#BDD7EE" uuid="fa7d3dcb-7946-466a-aa96-89e06ec0e65f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Posting Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1560" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="47aae492-9c55-41e3-b6ae-86050cd7ee4e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Clearing Document]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1640" y="0" width="60" height="43" backcolor="#BDD7EE" uuid="93332f8a-be45-40c3-a239-34aaeeab7aaf">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Clearing Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="530" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="9b7394c1-4234-4961-bc58-7a8643b38084">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Activity Rpt Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="620" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="b579986b-50e4-4883-8406-d725e202ce71">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Activity Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="690" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="ac289538-138a-4660-bd16-c2d652cc23ff">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Activity Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="770" y="0" width="50" height="43" backcolor="#BDD7EE" uuid="a3eed435-e96d-48e9-80d2-2afd517ddcb8">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Fiscal Year]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="820" y="0" width="40" height="43" backcolor="#BDD7EE" uuid="e05c4f67-ade7-461f-b214-a63f1e9fd767">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Group Period]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="860" y="0" width="50" height="43" backcolor="#BDD7EE" uuid="30c9f02a-de5a-40b0-a329-80cd9e959684">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Period]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="910" y="0" width="50" height="43" backcolor="#BDD7EE" uuid="f0c887ef-6775-488c-9c75-cf65e644c67a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Tax Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="960" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="d00cb18d-db94-4b5f-9a8f-33b3ccbaf73e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="1030" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="b47b487a-c4e3-4251-9fb9-1a31c3670777">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Line Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="0" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="57e506f8-345a-4ffd-b569-5594da7e95f9">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Charge Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="70" y="0" width="50" height="43" backcolor="#BDD7EE" uuid="c5e0f02d-c8d7-45c6-95ab-7841f8a34101">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Org.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="120" y="0" width="80" height="43" backcolor="#BDD7EE" uuid="b6e6d005-3c1c-4682-817e-5ca9da42a062">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Account Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="200" y="0" width="100" height="43" backcolor="#BDD7EE" uuid="0d944314-9b91-45f3-a112-24b7560c39f2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Account Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="300" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="cfd330d5-1154-4f10-a168-a2c67190c64b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Activity Group Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="370" y="0" width="90" height="43" backcolor="#BDD7EE" uuid="0a41a425-57d6-49c6-b3d8-fb797d38f4ad">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Activity Group Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="460" y="0" width="70" height="43" backcolor="#BDD7EE" uuid="67a14168-4905-44ca-b895-fad79473f150">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce241924-c7ae-4350-b947-9f2ddcf0551d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Activity Rpt Code]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

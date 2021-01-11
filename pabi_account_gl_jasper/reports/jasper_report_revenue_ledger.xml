@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_jasper_report_revenue_ledger_form" model="ir.ui.view">
+            <field name="name">view.jasper.report.revenue.ledger.form</field>
+            <field name="model">jasper.report.revenue.ledger</field>
+            <field name="inherit_id" ref="pabi_account_report.view_xlsx_report_account_common_form"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <field name="fiscalyear_date_end" position="after">
+                    <field name="charge_type"/>
+                    <field name="operating_unit_ids"/>
+                    <field name="user_type" invisible="1"/>
+                </field>
+                <xpath expr="//notebook[@name='additional_criteria']" position="inside">
+                    <page string="Account Filters" name="account_filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="account_ids" domain="[('company_id', '=', company_id), ('user_type.name', '=', 'Revenue')]"/>
+                    </page>
+                    <page string="Budget Filters" name="budget_filters">
+                        <group>
+                            <field name="count_chartfield"/>
+                        </group>
+                        <group>
+                            <group string="Paste list of code to search">
+                                <field name="line_filter" placeholder="Paste list of Budget Costcenter" nolabel="1" context="{'active_test': False}"/>
+                            </group>
+                            <group string="Print only">
+                                <field name="chartfield_ids" nolabel="1" context="{'active_test': False}"/>
+                            </group>
+                        </group>
+                    </page>
+                    <page string="Partner Filters">
+                        <separator string="Print only" colspan="4"/>
+                        <field name="partner_ids" colspan="4" nolabel="1" domain="[('company_id', '=', company_id), ('customer', '=', True)]"/>
+                    </page>
+                </xpath>
+                <xpath expr="//button[@name='action_get_report']" position="replace">
+                	<button name="start_report" string="Execute Report" type="object" class="oe_highlight"/>
+                </xpath>
+                <xpath expr="//field[@name='async_process']" position="replace">
+                	 <field name="async_process" invisible="1"/>
+                </xpath>
+                <xpath expr="//label[@for='async_process']" position="replace">
+                	 <label for="async_process" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='to_csv']" position="replace">
+                	 <field name="to_csv" invisible="1"/>
+                </xpath>
+                <xpath expr="//label[@for='to_csv']" position="replace">
+                	 <label for="to_csv" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="action_jasper_report_revenue_ledger_form" model="ir.actions.act_window">
+            <field name="name">Revenue Ledger(New)</field>
+            <field name="res_model">jasper.report.revenue.ledger</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'lang': 'th_TH'}</field>
+        </record>
+
+    </data>
+</openerp>

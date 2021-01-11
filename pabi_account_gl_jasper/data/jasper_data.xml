@@ -24,7 +24,7 @@
 				eval="'ir.actions.report.xml, ' +str(report_journal_document_entry)" />
 		</record>
 		
-		<!-- Jasper Asset Register -->
+		<!-- Asset Register -->
 		<record id="report_asset_register" model="ir.actions.report.xml">
 			<field name="string">Jasper Asset Register Report View</field>
 			<field name="auto">True</field>
@@ -47,5 +47,73 @@
 				eval="'ir.actions.report.xml, ' +str(report_asset_register)" />
 		</record>	
 		
+		<!-- GL Project -->
+		<record id="jasper_report_gl_project" model="ir.actions.report.xml">
+			<field name="string">GL Project VIEW</field>
+			<field name="auto">True</field>
+			<field name="model">jasper.report.gl.project</field>
+			<field name="jasper_model_id" ref="pabi_account_gl_jasper.model_jasper_report_gl_project" />
+			<field name="name">jasper_report_gl_project</field>
+			<field name="report_name">jasper_report_gl_project</field>
+			<field name="menu">False</field>
+			<field name="header">False</field>
+			<field name="report_type">jasperserver_rest_v2</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="jasper_report_path">/Reports/#SERVER_URL#/pb2</field>
+			<field name="criteria_field">id</field>
+		</record>
+		<record id="jasper_report_gl_project_values" model="ir.values">
+			<field name="name">jasper_report_gl_project_values</field>
+			<field name="model">jasper.report.gl.project</field>
+			<field name="value_unpickle"
+				eval="'ir.actions.report.xml, ' +str(jasper_report_gl_project)" />
+		</record>
+		
+		<!-- Expense Ledger -->
+		<record id="jasper_report_expense_ledger" model="ir.actions.report.xml">
+			<field name="string">Expense Ledger VIEW</field>
+			<field name="auto">True</field>
+			<field name="model">jasper.report.expense.ledger</field>
+			<field name="jasper_model_id" ref="pabi_account_gl_jasper.model_jasper_report_expense_ledger" />
+			<field name="name">jasper_report_expense_ledger</field>
+			<field name="report_name">jasper_report_expense_ledger</field>
+			<field name="menu">False</field>
+			<field name="header">False</field>
+			<field name="report_type">jasperserver_rest_v2</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="jasper_report_path">/Reports/#SERVER_URL#/pb2</field>
+			<field name="criteria_field">id</field>
+		</record>
+		<record id="jasper_report_expense_ledger_values" model="ir.values">
+			<field name="name">jasper_report_expense_ledger_values</field>
+			<field name="model">jasper.report.expense.ledger</field>
+			<field name="value_unpickle"
+				eval="'ir.actions.report.xml, ' +str(jasper_report_expense_ledger)" />
+		</record>
+		
+		<!-- Revenue Ledger -->
+		<record id="jasper_report_revenue_ledger" model="ir.actions.report.xml">
+			<field name="string">Revenue Ledger VIEW</field>
+			<field name="auto">True</field>
+			<field name="model">jasper.report.revenue.ledger</field>
+			<field name="jasper_model_id" ref="pabi_account_gl_jasper.model_jasper_report_revenue_ledger" />
+			<field name="name">jasper_report_revenue_ledger</field>
+			<field name="report_name">jasper_report_revenue_ledger</field>
+			<field name="menu">False</field>
+			<field name="header">False</field>
+			<field name="report_type">jasperserver_rest_v2</field>
+			<field name="jasper_report">True</field>
+			<field name="jasper_output">xls</field>
+			<field name="jasper_report_path">/Reports/#SERVER_URL#/pb2</field>
+			<field name="criteria_field">id</field>
+		</record>
+		<record id="jasper_report_revenue_ledger_values" model="ir.values">
+			<field name="name">jasper_report_revenue_ledger_values</field>
+			<field name="model">jasper.report.revenue.ledger</field>
+			<field name="value_unpickle"
+				eval="'ir.actions.report.xml, ' +str(jasper_report_revenue_ledger)" />
+		</record>
 	</data>
 </openerp>

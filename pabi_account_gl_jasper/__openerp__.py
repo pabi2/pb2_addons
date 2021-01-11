@@ -12,9 +12,12 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'data/jasper_data.xml',
         'reports/jasper_report_journal_document_entry.xml',
         'reports/jasper_asset_register_report.xml',
-        'data/jasper_data.xml',
+        'reports/jasper_report_gl_project.xml',
+        'reports/jasper_report_expense_ledger.xml',
+        'reports/jasper_report_revenue_ledger.xml',
     ],
     'demo': [
     ],
