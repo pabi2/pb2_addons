@@ -25,8 +25,6 @@ class InvoiceVoucherTaxDetail(object):
                 doc.update({'number_preprint': preprint_number})
             # Auto create tax detail for Sales Cycle only
             for tax in doc.tax_line:
-                if tax.tax_code_type != 'normal':
-                    continue
                 invoice_tax_id = False
                 voucher_tax_id = False
                 doc_date = False
@@ -54,6 +52,9 @@ class InvoiceVoucherTaxDetail(object):
                     invoice_tax_id, voucher_tax_id, doc_date)
                 vals['invoice_number'] = preprint_number
                 doc.update({'number_preprint': preprint_number})
+                if tax.tax_code_type != 'normal':
+                    continue
+
                 detail = TaxDetail.search(domain)
                 if detail:
                     detail.write(vals)
