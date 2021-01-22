@@ -28,8 +28,17 @@
                             type="object"
                             string="Update Sign"
                             class="oe_highlight"
-                            context="{'Edit_sign': True}"
+                            context="{'edit_sign': True}"
                             confirm="This document already signed, Do you want to edit this?"/>
+                    </span>
+                    <span attrs="{'invisible': [('state_sign', '=', 'waiting')]}">
+                        or
+                        <button name="action_sign_account_voucher"
+                            type="object"
+                            string="Cancel Sign"
+                            class="oe_highlight"
+                            context="{'cancel_sign': True}"
+                            confirm="This document already signed, Do you want to cancel this?"/>
                     </span>
                     or
                 </xpath>

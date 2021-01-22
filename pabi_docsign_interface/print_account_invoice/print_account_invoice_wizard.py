@@ -45,8 +45,13 @@ class PrintAccountInvoiceWizard(models.TransientModel):
         return state and state[0] or False
 
     @api.multi
-    def _connect_docsign_server(self, url, db, username, password):
+    def _connect_docsign_server(self):
         self.ensure_one()
+        company_id = self.env.user.company_id
+        url = company_id.pabietax_web_url_test or company_id.pabietax_web_url
+        db = company_id.pabietax_db
+        username = company_id.pabietax_user
+        password = company_id.pabietax_password
         # connect with docsign server
         models = xmlrpclib.ServerProxy('{}/xmlrpc/common'.format(url))
         try:
@@ -54,7 +59,8 @@ class PrintAccountInvoiceWizard(models.TransientModel):
             if not uid:
                 raise ValidationError(_(
                     'Login server error, Please check username and password.'))
-            return uid
+            models = xmlrpclib.ServerProxy('{}/xmlrpc/object'.format(url))
+            return db, password, uid, models
         except Exception as e:
             raise ValidationError(_("%s" % e))
 
@@ -232,56 +238,38 @@ class PrintAccountInvoiceWizard(models.TransientModel):
 
     @api.multi
     def action_sign_account_invoice(self):
-        company_id = self.env.user.company_id
-        url = company_id.pabietax_web_url_test or company_id.pabietax_web_url
-        db = company_id.pabietax_db
-        username = company_id.pabietax_user
-        password = company_id.pabietax_password
         # connect with server
-        uid = self._connect_docsign_server(url, db, username, password)
-
+        db, password, uid, models = self._connect_docsign_server()
+        # Prepare Invoice
         active_ids = self._context.get('active_ids')
         invoice_ids = self.env['account.invoice'].browse(active_ids)
-        # call method in server
-        models = xmlrpclib.ServerProxy('{}/xmlrpc/object'.format(url))
         invoice_dict = self._prepare_invoice(invoice_ids)
+        # call method in server
         self._stamp_invoice_pdf(invoice_dict, models, db, uid, password)
         return True
 
     @api.multi
     def action_edit_sign_account_invoice(self):
-        company_id = self.env.user.company_id
-        url = company_id.pabietax_web_url_test or company_id.pabietax_web_url
-        db = company_id.pabietax_db
-        username = company_id.pabietax_user
-        password = company_id.pabietax_password
         # connect with server
-        uid = self._connect_docsign_server(url, db, username, password)
-
+        db, password, uid, models = self._connect_docsign_server()
+        # Prepare Invoice
         active_ids = self._context.get('active_ids')
         invoice_ids = self.env['account.invoice'].browse(active_ids)
-        # call method in server
-        models = xmlrpclib.ServerProxy('{}/xmlrpc/object'.format(url))
         invoice_dict = self._prepare_invoice(invoice_ids)
+        # call method in server
         self._check_edit_value(invoice_dict, models, db, uid, password)
         self._stamp_invoice_pdf(invoice_dict, models, db, uid, password)
         return True
 
     @api.multi
     def action_preview_account_invoice(self):
-        company_id = self.env.user.company_id
-        url = company_id.pabietax_web_url_test or company_id.pabietax_web_url
-        db = company_id.pabietax_db
-        username = company_id.pabietax_user
-        password = company_id.pabietax_password
         # connect with server
-        uid = self._connect_docsign_server(url, db, username, password)
-
+        db, password, uid, models = self._connect_docsign_server()
+        # Prepare Invoice
         active_ids = self._context.get('active_ids')
         invoice_ids = self.env['account.invoice'].browse(active_ids)
-        # call method in server
-        models = xmlrpclib.ServerProxy('{}/xmlrpc/object'.format(url))
         invoice_dict = self._prepare_invoice(invoice_ids)
+        # call method in server
         res_ids = models.execute_kw(
             db, uid, password, 'account.printing',
             'generate_pdf_file_link', [invoice_dict])

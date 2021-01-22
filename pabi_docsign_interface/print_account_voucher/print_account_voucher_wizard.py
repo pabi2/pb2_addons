@@ -46,8 +46,13 @@ class PrintAccountVoucherWizard(models.TransientModel):
         return state and state[0] or False
 
     @api.multi
-    def _connect_docsign_server(self, url, db, username, password):
+    def _connect_docsign_server(self):
         self.ensure_one()
+        company_id = self.env.user.company_id
+        url = company_id.pabietax_web_url_test or company_id.pabietax_web_url
+        db = company_id.pabietax_db
+        username = company_id.pabietax_user
+        password = company_id.pabietax_password
         # connect with docsign server
         models = xmlrpclib.ServerProxy('{}/xmlrpc/common'.format(url))
         try:
@@ -55,7 +60,8 @@ class PrintAccountVoucherWizard(models.TransientModel):
             if not uid:
                 raise ValidationError(_(
                     'Login server error, Please check username and password.'))
-            return uid
+            models = xmlrpclib.ServerProxy('{}/xmlrpc/object'.format(url))
+            return db, password, uid, models
         except Exception as e:
             raise ValidationError(_("%s" % e))
 
@@ -66,22 +72,30 @@ class PrintAccountVoucherWizard(models.TransientModel):
         reason = ""
         reason_text = ""
         doctype = ""
-        # seller by company
-        seller = self.env.user.company_id.partner_id
+        cancel_form = self._context.get("cancel_sign", False)
         if voucher_ids.filtered(lambda l: not l.number_preprint):
             raise ValidationError(_("Pre-print Number is null."))
+        if cancel_form and voucher_ids.filtered(lambda l: l.state != 'cancel'):
+            raise ValidationError(_("State document is not cancel."))
         if self.doc_print in TAX_RECEIPT:
+            if cancel_form:
+                raise ValidationError(_(
+                    "This Form can't cancel sign. you have to credit note "
+                    "and sign for cancel this document."
+                ))
             doctype = 'T03'
             reason = self.reason_tax_receipt_update
             if self.reason_tax_receipt_update == 'TIVC99':
                 reason_text = self.reason_text
         elif self.doc_print in RECEIPT:
-            doctype = 'T01'
+            doctype = cancel_form and 'T07' or 'T01'
             reason = self.reason_receipt_update
             if self.reason_receipt_update == 'RCTC99':
                 reason_text = self.reason_text
         else:
             raise ValidationError(_("This Form can't sign."))
+        # seller by company
+        seller = self.env.user.company_id.partner_id
         for voucher in voucher_ids:
             amount_untaxed = 0.0
             amount_tax = 0.0
@@ -118,6 +132,7 @@ class PrintAccountVoucherWizard(models.TransientModel):
                 'docform': self.doc_print,
                 'lang_form': self.lang,
                 'number': voucher.number_preprint,
+                'cancel_form': cancel_form,
                 'customer_code': voucher.partner_id.search_key,
                 'customer_name': voucher.partner_id.name,
                 'seller_name': seller.name,
@@ -246,20 +261,14 @@ class PrintAccountVoucherWizard(models.TransientModel):
 
     @api.multi
     def action_sign_account_voucher(self):
-        company_id = self.env.user.company_id
-        url = company_id.pabietax_web_url_test or company_id.pabietax_web_url
-        db = company_id.pabietax_db
-        username = company_id.pabietax_user
-        password = company_id.pabietax_password
-        edit_sign = self._context.get("Edit_sign", False)
+        edit_sign = self._context.get("edit_sign", False)
         # connect with server
-        uid = self._connect_docsign_server(url, db, username, password)
-
+        db, password, uid, models = self._connect_docsign_server()
+        # Prepare Value
         active_ids = self._context.get('active_ids')
         voucher_ids = self.env['account.voucher'].browse(active_ids)
-        # call method in server
-        models = xmlrpclib.ServerProxy('{}/xmlrpc/object'.format(url))
         voucher_dict = self._prepare_voucher(voucher_ids)
+        # call method in server
         if edit_sign:
             self._check_edit_value(voucher_dict, models, db, uid, password)
         self._stamp_voucher_pdf(voucher_dict, models, db, uid, password)
@@ -267,19 +276,13 @@ class PrintAccountVoucherWizard(models.TransientModel):
 
     @api.multi
     def action_preview_account_voucher(self):
-        company_id = self.env.user.company_id
-        url = company_id.pabietax_web_url_test or company_id.pabietax_web_url
-        db = company_id.pabietax_db
-        username = company_id.pabietax_user
-        password = company_id.pabietax_password
         # connect with server
-        uid = self._connect_docsign_server(url, db, username, password)
-
+        db, password, uid, models = self._connect_docsign_server()
+        # Prepare Value
         active_ids = self._context.get('active_ids')
         voucher_ids = self.env['account.voucher'].browse(active_ids)
-        # call method in server
-        models = xmlrpclib.ServerProxy('{}/xmlrpc/object'.format(url))
         voucher_dict = self._prepare_voucher(voucher_ids)
+        # call method in server
         res_ids = models.execute_kw(
             db, uid, password, 'account.printing',
             'generate_pdf_file_link', [voucher_dict])
