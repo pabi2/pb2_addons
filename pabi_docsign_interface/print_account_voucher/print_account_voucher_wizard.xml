@@ -9,9 +9,11 @@
             <field name="arch" type="xml">
                 <xpath expr="//form/group" position="inside">
                     <field name="state_sign" invisible="1"/>
-                    <field name="reason_receipt_update" attrs="{'invisible': ['|', ('doc_print', 'not in', ['customer_receipt', 'customer_receipt_voucher']), ('state_sign', '!=', 'signed')], 'required': ['&amp;', ('doc_print', 'in', ['customer_receipt', 'customer_receipt_voucher']), ('state_sign', '=', 'signed')]}"/>
-                    <field name="reason_tax_receipt_update" attrs="{'invisible': ['|', ('doc_print', 'not in', ['customer_tax_receipt', 'customer_tax_receipt200']), ('state_sign', '!=', 'signed')], 'required': ['&amp;', ('doc_print', 'in', ['customer_tax_receipt', 'customer_tax_receipt200']), ('state_sign', '=', 'signed')]}"/>
-                    <field name="reason_text" attrs="{'invisible': ['&amp;', ('reason_receipt_update', '!=', 'RCTC99'), ('reason_tax_receipt_update', '!=', 'TIVC99')], 'required': ['|', ('reason_receipt_update', '=', 'RCTC99'), ('reason_tax_receipt_update', '=', 'TIVC99'), ('state_sign', '=', 'signed')]}"/>
+                    <field name="state" invisible="1"/>
+                    <field name="reason_receipt_update" attrs="{'invisible': ['|', ('doc_print', 'not in', ['customer_receipt', 'customer_receipt_voucher']), ('state_sign', '!=', 'signed')], 'required': [('doc_print', 'in', ['customer_receipt', 'customer_receipt_voucher']), ('state_sign', '=', 'signed'), ('state', '!=', 'cancel')]}"/>
+                    <field name="reason_tax_receipt_update" attrs="{'invisible': ['|', ('doc_print', 'not in', ['customer_tax_receipt', 'customer_tax_receipt200']), ('state_sign', '!=', 'signed')], 'required': [('doc_print', 'in', ['customer_tax_receipt', 'customer_tax_receipt200']), ('state_sign', '=', 'signed'), ('state', '!=', 'cancel')]}"/>
+                    <field name="reason_dcn_code" attrs="{'invisible': ['|', ('doc_print', 'not in', ['customer_tax_receipt', 'customer_tax_receipt200']), ('state', '!=', 'cancel')]}"/>
+                    <field name="reason_text" attrs="{'invisible': [('reason_receipt_update', '!=', 'RCTC99'), ('reason_tax_receipt_update', '!=', 'TIVC99'), ('reason_dcn_code', '!=', 'CDNG99')], 'required': ['|', '|', ('reason_receipt_update', '=', 'RCTC99'), ('reason_tax_receipt_update', '=', 'TIVC99'), ('reason_dcn_code', '=', 'CDNG99'), ('state_sign', '=', 'signed')]}"/>
                 </xpath>
                 <xpath expr="//footer/button[@name='action_print_account_voucher']" position="after">
                     <button name="action_preview_account_voucher" type="object" string="Preview" class="oe_highlight"/>
@@ -31,7 +33,7 @@
                             context="{'edit_sign': True}"
                             confirm="This document already signed, Do you want to edit this?"/>
                     </span>
-                    <span attrs="{'invisible': [('state_sign', '=', 'waiting')]}">
+                    <span attrs="{'invisible': ['|', ('state_sign', '=', 'waiting'), ('state', '!=', 'cancel')]}">
                         or
                         <button name="action_sign_account_voucher"
                             type="object"

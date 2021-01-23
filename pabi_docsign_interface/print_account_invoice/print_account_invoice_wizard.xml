@@ -14,7 +14,8 @@
                 </xpath>
                 <xpath expr="//form/group" position="inside">
                     <field name="state_sign" invisible="1"/>
-                    <field name="reason_inv_code" attrs="{'invisible': ['|', ('doc_print', 'not in', 'invoice/refund'), ('state_sign', '!=', 'signed')], 'required': ['&amp;', ('doc_print', 'in', 'invoice/refund'), ('state_sign', '=', 'signed')]}"/>
+                    <field name="state" invisible="1"/>
+                    <field name="reason_inv_code" attrs="{'invisible': ['|', ('doc_print', 'not in', 'invoice/refund'), ('state_sign', '!=', 'signed')], 'required': [('doc_print', 'in', 'invoice/refund'), ('state_sign', '=', 'signed'), ('state', '!=', 'cancel')]}"/>
                     <field name="reason_text" attrs="{'invisible': [('reason_inv_code', '!=', 'DBNG99')], 'required': [('reason_inv_code', '=', 'DBNG99')]}"/>
                 </xpath>
                 <xpath expr="//footer/button[@name='action_print_account_invoice']" position="after">
@@ -24,11 +25,21 @@
                         <button name="action_sign_account_invoice" type="object" string="Sign" class="oe_highlight" confirm="Are you sure you want to sign this document?"/>
                     </span>
                     <span attrs="{'invisible': [('state_sign', '=', 'waiting')]}">
-                        <button name="action_edit_sign_account_invoice" 
+                        <button name="action_sign_account_invoice" 
                                 type="object" 
                                 string="Update Sign" 
-                                class="oe_highlight" 
+                                class="oe_highlight"
+                                context="{'edit_sign': True}"
                                 confirm="This document already signed, Do you want to edit this?"/>
+                    </span>
+                    <span attrs="{'invisible': ['|', ('state_sign', '=', 'waiting'), ('state', '!=', 'cancel')]}">
+                        or
+                        <button name="action_sign_account_invoice"
+                            type="object"
+                            string="Cancel Sign"
+                            class="oe_highlight"
+                            context="{'cancel_sign': True}"
+                            confirm="This document already signed, Do you want to cancel this?"/>
                     </span>
                     or
                 </xpath>

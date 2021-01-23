@@ -12,11 +12,12 @@ REFUND = ('invoice/refund')
 class PrintAccountInvoiceWizard(models.TransientModel):
     _inherit = 'print.account.invoice.wizard'
 
-    state_sign = fields.Selection([
-        ('waiting', 'Waiting'),
-        ('signed', 'Signed'), ],
-        string="State Sign",
-        default=lambda self: self._get_default_state(),
+    state_sign = fields.Char(
+        default=lambda self: self._get_default_state('state_sign'),
+        readonly=True,
+    )
+    state = fields.Char(
+        default=lambda self: self._get_default_state('state'),
         readonly=True,
     )
     # TODO: How can we do this product or service
@@ -26,20 +27,22 @@ class PrintAccountInvoiceWizard(models.TransientModel):
         ('CDNG03', 'สินค้าขาดจำนวนตามที่ตกลงซื้อขาย'),
         ('CDNG04', 'คำนวณราคาสินค้าผิดพลาดสูงกว่าที่เป็นจริง'),
         ('CDNG05', 'รับคืนสินค้า (ไม่ตรงตามคำพรรณนา)'),
-        ('CDNG99', 'เหตุอื่น (ระบุสาเหตุ)')
-    ])
+        ('CDNG99', 'เหตุอื่น (ระบุสาเหตุ)')],
+        string="Reason for Debit/Credir Note"
+    )
     reason_inv_code = fields.Selection([
-            ('DBNG01','มีการเพิ่มราคาค่าสินค้า (สินค้าเกินกว่าจำนวนที่ตกลงกัน)'),
-            ('DBNG02','คำนวณราคาสินค้า ผิดพลาดต่ำกว่าที่เป็นจริง'),
-            ('DBNG99','เหตุอื่นๆ (ระบุสาเหตุ)')
-    ])
+        ('DBNG01','มีการเพิ่มราคาค่าสินค้า (สินค้าเกินกว่าจำนวนที่ตกลงกัน)'),
+        ('DBNG02','คำนวณราคาสินค้า ผิดพลาดต่ำกว่าที่เป็นจริง'),
+        ('DBNG99','เหตุอื่นๆ (ระบุสาเหตุ)')],
+        string="Reason for update",
+    )
     reason_text = fields.Text()
 
     @api.multi
-    def _get_default_state(self):
+    def _get_default_state(self, state):
         active_ids = self._context.get('active_ids')
         invoice_ids = self.env['account.invoice'].browse(active_ids)
-        state = invoice_ids.mapped('state_sign')
+        state = invoice_ids.mapped(state)
         if len(set(state)) > 1:
             raise ValidationError(_("Selected Document state more than 1"))
         return state and state[0] or False
@@ -99,23 +102,31 @@ class PrintAccountInvoiceWizard(models.TransientModel):
         invoice_dict = []
         reason = ""
         reason_text = ""
-        # seller by company
-        seller = self.env.user.company_id.partner_id
-        if self.doc_print in REFUND and self.doctype == 'out_refund':
-            self._check_refund_direct(invoice_ids)
-            doctype = '81'  # credit note
-            reason = self.reason_dcn_code
-            if self.reason_dcn_code == 'CDNG99':
-                reason_text = self.reason_text
-        elif self.doc_print in REFUND and self.doctype == 'out_invoice':
-            doctype = '380'
-            reason = self.reason_inv_code
-            if self.reason_inv_code == 'DBNG99':
-                reason_text = self.reason_text
+        cancel_form = self._context.get("cancel_sign", False)
+        if cancel_form and invoice_ids.filtered(lambda l: l.state != 'cancel'):
+            raise ValidationError(_("State document is not cancel."))
+        if self.doc_print in REFUND:
+            if self.doctype == 'out_refund':
+                self._check_refund_direct(invoice_ids)
+                doctype = cancel_form and 'T07' or '81' # credit note
+                reason = self.reason_dcn_code
+                if self.reason_dcn_code == 'CDNG99':
+                    reason_text = self.reason_text
+            elif self.doctype == 'out_invoice':
+                doctype = cancel_form and 'T07' or '380'
+                reason = self.reason_inv_code
+                if self.reason_inv_code == 'DBNG99':
+                    reason_text = self.reason_text
         else:
             raise ValidationError(_("This Form can't sign."))
+        # seller by company
+        seller = self.env.user.company_id.partner_id
         for invoice in invoice_ids:
-            origin = self._check_origin_invoice(invoice)
+            # refund
+            if invoice.origin_invoice_id:
+                origin = self._check_origin_invoice(invoice)
+            else:
+                origin = cancel_form and invoice.number_preprint or False
             # invoice lines
             line_ids = [(0, 0, {
                 'name': line.name,
@@ -238,6 +249,8 @@ class PrintAccountInvoiceWizard(models.TransientModel):
 
     @api.multi
     def action_sign_account_invoice(self):
+        edit_sign = self._context.get("edit_sign", False)
+        cancel_form = self._context.get("cancel_sign", False)
         # connect with server
         db, password, uid, models = self._connect_docsign_server()
         # Prepare Invoice
@@ -245,20 +258,11 @@ class PrintAccountInvoiceWizard(models.TransientModel):
         invoice_ids = self.env['account.invoice'].browse(active_ids)
         invoice_dict = self._prepare_invoice(invoice_ids)
         # call method in server
+        if edit_sign:
+            self._check_edit_value(invoice_dict, models, db, uid, password)
         self._stamp_invoice_pdf(invoice_dict, models, db, uid, password)
-        return True
-
-    @api.multi
-    def action_edit_sign_account_invoice(self):
-        # connect with server
-        db, password, uid, models = self._connect_docsign_server()
-        # Prepare Invoice
-        active_ids = self._context.get('active_ids')
-        invoice_ids = self.env['account.invoice'].browse(active_ids)
-        invoice_dict = self._prepare_invoice(invoice_ids)
-        # call method in server
-        self._check_edit_value(invoice_dict, models, db, uid, password)
-        self._stamp_invoice_pdf(invoice_dict, models, db, uid, password)
+        if cancel_form:
+            self.write({'state_sign': 'cancel'})
         return True
 
     @api.multi

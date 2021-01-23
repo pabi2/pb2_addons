@@ -10,7 +10,9 @@ class AccountVoucher(models.Model):
 
     state_sign = fields.Selection([
         ('waiting', 'Waiting'),
-        ('signed', 'Signed'), ],
+        ('signed', 'Signed'),
+        ('cancel', 'Cancelled'),
+        ],
         string="State Sign",
         default="waiting",
         readonly=True,

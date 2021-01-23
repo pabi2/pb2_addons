@@ -13,11 +13,12 @@ TAX_RECEIPT = ('customer_tax_receipt', 'customer_tax_receipt200')
 class PrintAccountVoucherWizard(models.TransientModel):
     _inherit = 'print.account.voucher.wizard'
 
-    state_sign = fields.Selection([
-        ('waiting', 'Waiting'),
-        ('signed', 'Signed'), ],
-        string="State Sign",
-        default=lambda self: self._get_default_state(),
+    state_sign = fields.Char(
+        default=lambda self: self._get_default_state('state_sign'),
+        readonly=True,
+    )
+    state = fields.Char(
+        default=lambda self: self._get_default_state('state'),
         readonly=True,
     )
     reason_tax_receipt_update = fields.Selection([
@@ -34,13 +35,22 @@ class PrintAccountVoucherWizard(models.TransientModel):
             'บางส่วนจำนวน (ระบุจำนวนเงิน) บาท'),
         ('RCTC99', 'เหตุอื่น (ระบุสาเหตุ)'), ],
     )
+    reason_dcn_code = fields.Selection([
+        ('CDNG01', 'ลดราคาสินค้าที่ขาย (สินค้าผิดข้อกำหนดที่ตกลงกัน)'),
+        ('CDNG02', 'สินค้าชำรุดเสียหาย'),
+        ('CDNG03', 'สินค้าขาดจำนวนตามที่ตกลงซื้อขาย'),
+        ('CDNG04', 'คำนวณราคาสินค้าผิดพลาดสูงกว่าที่เป็นจริง'),
+        ('CDNG05', 'รับคืนสินค้า (ไม่ตรงตามคำพรรณนา)'),
+        ('CDNG99', 'เหตุอื่น (ระบุสาเหตุ)')],
+        string="Reason for cancellation",
+    )
     reason_text = fields.Text()
 
     @api.multi
-    def _get_default_state(self):
+    def _get_default_state(self, state):
         active_ids = self._context.get('active_ids')
         voucher_ids = self.env['account.voucher'].browse(active_ids)
-        state = voucher_ids.mapped('state_sign')
+        state = voucher_ids.mapped(state)
         if len(set(state)) > 1:
             raise ValidationError(_("Selected Document state more than 1"))
         return state and state[0] or False
@@ -79,13 +89,17 @@ class PrintAccountVoucherWizard(models.TransientModel):
             raise ValidationError(_("State document is not cancel."))
         if self.doc_print in TAX_RECEIPT:
             if cancel_form:
-                raise ValidationError(_(
-                    "This Form can't cancel sign. you have to credit note "
-                    "and sign for cancel this document."
-                ))
-            doctype = 'T03'
-            reason = self.reason_tax_receipt_update
-            if self.reason_tax_receipt_update == 'TIVC99':
+                if not self.reason_dcn_code:
+                    raise ValidationError(_(
+                        "This Form can't cancel sign. "
+                        "you have to choose Reason for cancellation."
+                    ))
+                doctype = '81'
+                reason = self.reason_dcn_code
+            else:
+                doctype = 'T03'
+                reason = self.reason_tax_receipt_update
+            if self.reason_tax_receipt_update == 'TIVC99' or self.reason_dcn_code == 'CDNG99':
                 reason_text = self.reason_text
         elif self.doc_print in RECEIPT:
             doctype = cancel_form and 'T07' or 'T01'
@@ -100,6 +114,7 @@ class PrintAccountVoucherWizard(models.TransientModel):
             amount_untaxed = 0.0
             amount_tax = 0.0
             amount_total = 0.0
+            origin = cancel_form and voucher.number_preprint_current or False
             # invoice lines
             line_ids = []
             taxbranch_id = voucher.line_ids[0].invoice_id.taxbranch_id
@@ -188,8 +203,9 @@ class PrintAccountVoucherWizard(models.TransientModel):
                 'amount_tax': amount_tax,
                 'amount_total': amount_total,
                 # origin
+                'origin_id': origin,
                 'system_origin_name': 'pabi2',
-                'system_origin_number': voucher.number,
+                'system_origin_number': cancel_form and voucher.cancel_move_id.name or voucher.number,
                 'user_sign': self.env.user.name,
                 'approved_by': self.env.user.name,  # TODO: Waiting new pg.
                 # payment method
@@ -272,6 +288,9 @@ class PrintAccountVoucherWizard(models.TransientModel):
         if edit_sign:
             self._check_edit_value(voucher_dict, models, db, uid, password)
         self._stamp_voucher_pdf(voucher_dict, models, db, uid, password)
+        cancel_form = self._context.get("cancel_sign", False)
+        if cancel_form:
+            self.write({'state_sign': 'cancel'})
         return True
 
     @api.multi
