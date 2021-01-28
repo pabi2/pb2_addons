@@ -154,6 +154,7 @@ class PrintAccountInvoiceWizard(models.TransientModel):
                 'date_document': invoice.date_invoice,
                 'create_document': invoice.date_document,
                 'operating_unit': invoice.operating_unit_id.name,
+                'payment_term': invoice.payment_term.note,
                 'purpose_code': reason,
                 'purpose_reason_other': reason_text,
                 'notes': invoice.comment,
@@ -192,6 +193,7 @@ class PrintAccountInvoiceWizard(models.TransientModel):
                 'system_origin_number': invoice.number,
                 'origin_id': origin,
                 'user_sign': self.env.user.name,
+                'validate_by': invoice.validate_user_id.name,
                 'approved_by': self.env.user.name,  # TODO: Waiting new pg.
                 # lines
                 'printing_lines': line_ids,
