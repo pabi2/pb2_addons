@@ -146,12 +146,12 @@ class PrintAccountInvoiceWizard(models.TransientModel):
                 'doctype': doctype,
                 'docform': self.doc_print,
                 'lang_form': self.lang,
-                'number': invoice.number_preprint,  # TODO: number preprint CN
+                'number': invoice.number_preprint or invoice.id,  # TODO: number preprint CN
                 'customer_code': invoice.partner_id.search_key,
                 'customer_name': invoice.partner_id.name,
                 'seller_name': seller.name,
                 'currency': invoice.currency_id.name,
-                'date_document': invoice.date_invoice,
+                'date_document': invoice.date_invoice or invoice.date_document,
                 'create_document': invoice.date_document,
                 'operating_unit': invoice.operating_unit_id.name,
                 'payment_term': invoice.payment_term.note,
@@ -190,7 +190,7 @@ class PrintAccountInvoiceWizard(models.TransientModel):
                 'amount_total': invoice.amount_total,
                 # origin
                 'system_origin_name': 'pabi2',
-                'system_origin_number': invoice.number,
+                'system_origin_number': invoice.number or invoice.id,
                 'origin_id': origin,
                 'user_sign': self.env.user.name,
                 'validate_by': invoice.validate_user_id.name,
@@ -209,7 +209,11 @@ class PrintAccountInvoiceWizard(models.TransientModel):
         for res in res_ids:
             if res['status'] == 'OK':
                 preview = self._context.get('preview')
-                invoice_id = invoice_obj.search([('number', '=', res['name'])])
+                state_draft = self._context.get('draft')
+                domain = [('number', '=', res['name'])]
+                if state_draft:
+                    domain = [('id', '=', res['name'])]
+                invoice_id = invoice_obj.search(domain)
                 # unlink preview pdf
                 filename = _('%s_preview.pdf') % res['preprint_number']
                 name_preview = attachment_obj.search([('name', '=', filename)])
@@ -261,6 +265,8 @@ class PrintAccountInvoiceWizard(models.TransientModel):
         # Prepare Invoice
         active_ids = self._context.get('active_ids')
         invoice_ids = self.env['account.invoice'].browse(active_ids)
+        if invoice_ids.filtered(lambda l: l.state == 'draft'):
+            raise ValidationError(_("State draft can not sign."))
         invoice_dict = self._prepare_invoice(invoice_ids)
         # call method in server
         if edit_sign:
@@ -270,17 +276,19 @@ class PrintAccountInvoiceWizard(models.TransientModel):
 
     @api.multi
     def action_preview_account_invoice(self):
+        ctx = self._context.copy()
         # connect with server
         db, password, uid, models = self._connect_docsign_server()
         # Prepare Invoice
         active_ids = self._context.get('active_ids')
         invoice_ids = self.env['account.invoice'].browse(active_ids)
         invoice_dict = self._prepare_invoice(invoice_ids)
+        ctx.update({'preview': True})
+        if invoice_ids.filtered(lambda l: l.state == 'draft'):
+            ctx.update({'draft': True})
         # call method in server
         res_ids = models.execute_kw(
             db, uid, password, 'account.printing',
             'generate_pdf_file_link', [invoice_dict])
-
-        self.with_context(
-            {'preview': True})._create_attachment(res_ids)
+        self.with_context(ctx)._create_attachment(res_ids)
         return True

@@ -83,8 +83,8 @@ class PrintAccountVoucherWizard(models.TransientModel):
         reason_text = ""
         doctype = ""
         cancel_form = self._context.get("cancel_sign", False)
-        if voucher_ids.filtered(lambda l: not l.number_preprint):
-            raise ValidationError(_("Pre-print Number is null."))
+        # if voucher_ids.filtered(lambda l: not l.number_preprint):
+        #     raise ValidationError(_("Pre-print Number is null."))
         if cancel_form and voucher_ids.filtered(lambda l: l.state != 'cancel'):
             raise ValidationError(_("State document is not cancel."))
         if self.doc_print in TAX_RECEIPT:
@@ -146,7 +146,7 @@ class PrintAccountVoucherWizard(models.TransientModel):
                 'doctype': doctype,
                 'docform': self.doc_print,
                 'lang_form': self.lang,
-                'number': voucher.number_preprint,
+                'number': voucher.number_preprint or voucher.id,
                 'cancel_form': cancel_form,
                 'customer_code': voucher.partner_id.search_key,
                 'customer_name': voucher.partner_id.name,
@@ -205,7 +205,7 @@ class PrintAccountVoucherWizard(models.TransientModel):
                 # origin
                 'origin_id': origin,
                 'system_origin_name': 'pabi2',
-                'system_origin_number': cancel_form and voucher.cancel_move_id.name or voucher.number,
+                'system_origin_number': cancel_form and voucher.cancel_move_id.name or voucher.number or voucher.id,
                 'user_sign': self.env.user.name,
                 'approved_by': self.env.user.name,  # TODO: Waiting new pg.
                 # payment method
@@ -235,10 +235,13 @@ class PrintAccountVoucherWizard(models.TransientModel):
         for res in res_ids:
             if res['status'] == 'OK':
                 preview = self._context.get('preview')
+                state_draft = self._context.get('draft')
                 domain = [('number', '=', res['name'])]
                 if cancel_form:
                     move_id = move_obj.search([('name', '=', res['name'])])
                     domain = [('number', '=', move_id.ref)]
+                elif state_draft:
+                    domain = [('id', '=', res['name'])]
                 voucher_id = voucher_obj.search(domain)
                 # unlink preview pdf
                 filename = _('%s_preview.pdf') % res['preprint_number']
@@ -293,6 +296,8 @@ class PrintAccountVoucherWizard(models.TransientModel):
         # Prepare Value
         active_ids = self._context.get('active_ids')
         voucher_ids = self.env['account.voucher'].browse(active_ids)
+        if voucher_ids.filtered(lambda l: l.state == 'draft'):
+            raise ValidationError(_("State draft can not sign."))
         voucher_dict = self._prepare_voucher(voucher_ids)
         # call method in server
         if edit_sign:
@@ -302,17 +307,20 @@ class PrintAccountVoucherWizard(models.TransientModel):
 
     @api.multi
     def action_preview_account_voucher(self):
+        ctx = self._context.copy()
         # connect with server
         db, password, uid, models = self._connect_docsign_server()
         # Prepare Value
         active_ids = self._context.get('active_ids')
         voucher_ids = self.env['account.voucher'].browse(active_ids)
+        ctx.update({'preview': True})
+        if voucher_ids.filtered(lambda l: l.state == 'draft'):
+            ctx.update({'draft': True})
         voucher_dict = self._prepare_voucher(voucher_ids)
         # call method in server
         res_ids = models.execute_kw(
             db, uid, password, 'account.printing',
             'generate_pdf_file_link', [voucher_dict])
 
-        self.with_context(
-            {'preview': True})._create_attachment(res_ids)
+        self.with_context(ctx)._create_attachment(res_ids)
         return True
