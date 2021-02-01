@@ -235,7 +235,7 @@ class PrintAccountVoucherWizard(models.TransientModel):
                 preview = self._context.get('preview')
                 voucher_id = voucher_obj.search([('number', '=', res['name'])])
                 # unlink preview pdf
-                filename = _('%s_preview.pdf') % res['name']
+                filename = _('%s_preview.pdf') % res['preprint_number']
                 name_preview = attachment_obj.search([('name', '=', filename)])
                 if name_preview:
                     name_preview.unlink()

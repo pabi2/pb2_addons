@@ -172,7 +172,7 @@ class PrintAccountInvoiceWizard(models.TransientModel):
                 'customer_email': invoice.partner_id.email,
                 'customer_taxbranch_code': invoice.partner_id.taxbranch,
                 'customer_taxbranch_name': 'สำนักงานใหญ่',
-                # # seller information
+                # seller information
                 'seller_street': seller.street,
                 'seller_street2': seller.street2,
                 'seller_city': '',
@@ -211,12 +211,12 @@ class PrintAccountInvoiceWizard(models.TransientModel):
                 preview = self._context.get('preview')
                 invoice_id = invoice_obj.search([('number', '=', res['name'])])
                 # unlink preview pdf
-                filename = _('%s_preview.pdf') % res['name']
+                filename = _('%s_preview.pdf') % res['preprint_number']
                 name_preview = attachment_obj.search([('name', '=', filename)])
                 if name_preview:
                     name_preview.unlink()
                 if not preview:
-                    filename = _('%s.pdf') % res['name']
+                    filename = _('%s.pdf') % res['preprint_number']
                 # create url attachment
                 attachment_obj.create({
                     'name': filename,
