@@ -233,11 +233,15 @@ class PrintAccountInvoiceWizard(models.TransientModel):
 
     @api.multi
     def _stamp_invoice_pdf(self, invoice_dict, models, db, uid, password):
+        cancel_form = self._context.get("cancel_sign", False)
         res_ids = models.execute_kw(
             db, uid, password, 'account.printing',
             'action_call_service', [invoice_dict])
         invoice_ok = self._create_attachment(res_ids)
-        invoice_ok.write({'state_sign': 'signed'})
+        state = 'signed'
+        if cancel_form:
+            state = 'cancel'
+        invoice_ok.write({'state_sign': state})
         return True
 
     @api.multi
@@ -252,7 +256,6 @@ class PrintAccountInvoiceWizard(models.TransientModel):
     @api.multi
     def action_sign_account_invoice(self):
         edit_sign = self._context.get("edit_sign", False)
-        cancel_form = self._context.get("cancel_sign", False)
         # connect with server
         db, password, uid, models = self._connect_docsign_server()
         # Prepare Invoice
@@ -263,8 +266,6 @@ class PrintAccountInvoiceWizard(models.TransientModel):
         if edit_sign:
             self._check_edit_value(invoice_dict, models, db, uid, password)
         self._stamp_invoice_pdf(invoice_dict, models, db, uid, password)
-        if cancel_form:
-            self.write({'state_sign': 'cancel'})
         return True
 
     @api.multi

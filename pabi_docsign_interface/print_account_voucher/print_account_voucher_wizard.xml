@@ -18,14 +18,14 @@
                 <xpath expr="//footer/button[@name='action_print_account_voucher']" position="after">
                     <button name="action_preview_account_voucher" type="object" string="Preview" class="oe_highlight"/>
                     or
-                    <span attrs="{'invisible': [('state_sign', '=', 'signed')]}">
+                    <span attrs="{'invisible': [('state_sign', '!=', 'waiting')]}">
                         <button name="action_sign_account_voucher"
                             type="object"
                             string="Sign"
                             class="oe_highlight"
                             confirm="Are you sure you want to sign this document?"/>
                     </span>
-                    <span attrs="{'invisible': [('state_sign', '=', 'waiting')]}">
+                    <span attrs="{'invisible': [('state_sign', '!=', 'signed')]}">
                         <button name="action_sign_account_voucher"
                             type="object"
                             string="Update Sign"
@@ -33,7 +33,7 @@
                             context="{'edit_sign': True}"
                             confirm="This document already signed, Do you want to edit this?"/>
                     </span>
-                    <span attrs="{'invisible': ['|', ('state_sign', '=', 'waiting'), ('state', '!=', 'cancel')]}">
+                    <span attrs="{'invisible': [('state_sign', '!=', 'signed')]}">
                         or
                         <button name="action_sign_account_voucher"
                             type="object"

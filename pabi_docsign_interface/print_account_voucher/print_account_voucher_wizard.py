@@ -228,19 +228,25 @@ class PrintAccountVoucherWizard(models.TransientModel):
     def _create_attachment(self, res_ids):
         self.ensure_one()
         voucher_obj = self.env['account.voucher']
+        move_obj = self.env['account.move']
         attachment_obj = self.env['ir.attachment']
         voucher_ids = self.env['account.voucher']
+        cancel_form = self._context.get("cancel_sign", False)
         for res in res_ids:
             if res['status'] == 'OK':
                 preview = self._context.get('preview')
-                voucher_id = voucher_obj.search([('number', '=', res['name'])])
+                domain = [('number', '=', res['name'])]
+                if cancel_form:
+                    move_id = move_obj.search([('name', '=', res['name'])])
+                    domain = [('number', '=', move_id.ref)]
+                voucher_id = voucher_obj.search(domain)
                 # unlink preview pdf
                 filename = _('%s_preview.pdf') % res['preprint_number']
                 name_preview = attachment_obj.search([('name', '=', filename)])
                 if name_preview:
                     name_preview.unlink()
                 if not preview:
-                    filename = _('%s.pdf') % res['name']
+                    filename = _('%s.pdf') % res['preprint_number']
                 # create url attachment
                 attachment_obj.create({
                     'name': filename,
@@ -259,11 +265,15 @@ class PrintAccountVoucherWizard(models.TransientModel):
 
     @api.multi
     def _stamp_voucher_pdf(self, voucher_dict, models, db, uid, password):
+        cancel_form = self._context.get("cancel_sign", False)
         res_ids = models.execute_kw(
             db, uid, password, 'account.printing',
             'action_call_service', [voucher_dict])
         voucher_ok = self._create_attachment(res_ids)
-        voucher_ok.write({'state_sign': 'signed'})
+        state = 'signed'
+        if cancel_form:
+            state = 'cancel'
+        voucher_ok.write({'state_sign': state})
         return True
 
     @api.multi
@@ -288,9 +298,6 @@ class PrintAccountVoucherWizard(models.TransientModel):
         if edit_sign:
             self._check_edit_value(voucher_dict, models, db, uid, password)
         self._stamp_voucher_pdf(voucher_dict, models, db, uid, password)
-        cancel_form = self._context.get("cancel_sign", False)
-        if cancel_form:
-            self.write({'state_sign': 'cancel'})
         return True
 
     @api.multi
