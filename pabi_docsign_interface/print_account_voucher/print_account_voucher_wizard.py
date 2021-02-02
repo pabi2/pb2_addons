@@ -83,8 +83,8 @@ class PrintAccountVoucherWizard(models.TransientModel):
         reason_text = ""
         doctype = ""
         cancel_form = self._context.get("cancel_sign", False)
-        # if voucher_ids.filtered(lambda l: not l.number_preprint):
-        #     raise ValidationError(_("Pre-print Number is null."))
+        if voucher_ids.filtered(lambda l: l.doc_print and l.doc_print != self.doc_print):
+            raise ValidationError(_("Report Type is not equal document sign."))
         if cancel_form and voucher_ids.filtered(lambda l: l.state != 'cancel'):
             raise ValidationError(_("State document is not cancel."))
         if self.doc_print in TAX_RECEIPT:
@@ -276,7 +276,7 @@ class PrintAccountVoucherWizard(models.TransientModel):
         state = 'signed'
         if cancel_form:
             state = 'cancel'
-        voucher_ok.write({'state_sign': state})
+        voucher_ok.write({'state_sign': state, 'doc_print': self.doc_print})
         return True
 
     @api.multi

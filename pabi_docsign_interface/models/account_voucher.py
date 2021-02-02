@@ -21,3 +21,7 @@ class AccountVoucher(models.Model):
         string='Preprint Signed',
         readonly=True,
     )
+    doc_print = fields.Char(
+        string="Report Type",
+        readonly=True,
+    )

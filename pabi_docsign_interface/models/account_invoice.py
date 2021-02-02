@@ -17,3 +17,7 @@ class AccountInvoice(models.Model):
         default="waiting",
         readonly=True,
     )
+    doc_print = fields.Char(
+        string="Report Type",
+        readonly=True,
+    )

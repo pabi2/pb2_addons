@@ -103,6 +103,8 @@ class PrintAccountInvoiceWizard(models.TransientModel):
         reason = ""
         reason_text = ""
         cancel_form = self._context.get("cancel_sign", False)
+        if invoice_ids.filtered(lambda l: l.doc_print and l.doc_print != self.doc_print):
+            raise ValidationError(_("Report Type is not equal document sign."))
         if cancel_form and invoice_ids.filtered(lambda l: l.state != 'cancel'):
             raise ValidationError(_("State document is not cancel."))
         if self.doc_print in REFUND:
@@ -245,7 +247,7 @@ class PrintAccountInvoiceWizard(models.TransientModel):
         state = 'signed'
         if cancel_form:
             state = 'cancel'
-        invoice_ok.write({'state_sign': state})
+        invoice_ok.write({'state_sign': state, 'doc_print': self.doc_print})
         return True
 
     @api.multi
