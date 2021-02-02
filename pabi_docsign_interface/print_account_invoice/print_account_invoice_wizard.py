@@ -129,6 +129,8 @@ class PrintAccountInvoiceWizard(models.TransientModel):
                 origin = self._check_origin_invoice(invoice)
             else:
                 origin = cancel_form and invoice.number_preprint or False
+            # check state draft
+            state_draft = invoice.state == 'draft' and True or False
             # invoice lines
             line_ids = [(0, 0, {
                 'name': line.name,
@@ -160,6 +162,7 @@ class PrintAccountInvoiceWizard(models.TransientModel):
                 'purpose_code': reason,
                 'purpose_reason_other': reason_text,
                 'notes': invoice.comment,
+                'state_draft': state_draft,
                 # customer information
                 'customer_street': invoice.partner_id.street,
                 'customer_street2': invoice.partner_id.street2,

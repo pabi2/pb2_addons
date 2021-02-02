@@ -115,6 +115,8 @@ class PrintAccountVoucherWizard(models.TransientModel):
             amount_tax = 0.0
             amount_total = 0.0
             origin = cancel_form and voucher.number_preprint_current or False
+            # check state draft
+            state_draft = voucher.state == 'draft' and True or False
             # invoice lines
             line_ids = []
             taxbranch_id = voucher.line_ids[0].invoice_id.taxbranch_id
@@ -158,6 +160,7 @@ class PrintAccountVoucherWizard(models.TransientModel):
                 'purpose_code': reason,
                 'purpose_reason_other': reason_text,
                 'notes': voucher.narration,
+                'state_draft': state_draft,
                 # customer information
                 'customer_street': voucher.partner_id.street,
                 'customer_street2': voucher.partner_id.street2,
