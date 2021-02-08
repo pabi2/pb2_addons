@@ -864,6 +864,8 @@ class InterfaceAccountEntry(models.Model):
             return interfaced
 
         try:
+            seq_code = data_dict['sequence_code']
+            data_dict['preprint_number'] = self.env['ir.sequence.preprint'].next_by_code(seq_code)
             data_dict = self._pre_process_interface_account_entry(data_dict)
             # For migration period, payment reconicle can be entry or item
             # so, we need to manually check it
@@ -889,6 +891,7 @@ class InterfaceAccountEntry(models.Model):
                 res['result']['number'] = document.number
                 res['result']['fiscalyear'] = \
                     document.move_id.period_id.fiscalyear_id.name
+                res['result']['preprint_number'] = document.preprint_number
         except Exception, e:
             err_msg = str(e)
             if err_msg == "could not serialize access due to concurrent update":
