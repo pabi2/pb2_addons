@@ -866,6 +866,7 @@ class InterfaceAccountEntry(models.Model):
         try:
             seq_code = data_dict['sequence_code']
             data_dict['preprint_number'] = self.env['ir.sequence.preprint'].next_by_code(seq_code)
+            del data_dict['sequence_code']
             data_dict = self._pre_process_interface_account_entry(data_dict)
             # For migration period, payment reconicle can be entry or item
             # so, we need to manually check it
