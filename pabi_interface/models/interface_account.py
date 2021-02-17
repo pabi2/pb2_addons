@@ -885,8 +885,8 @@ class InterfaceAccountEntry(models.Model):
                     l['reconcile_move_line_ref'] = l['reconcile_move_id']
                     del l['reconcile_move_id']
                 
-                if seq_code:
-                    l['tax_invoice_number'] = data_dict['preprint_number']
+                #if seq_code:
+                l['tax_invoice_number'] = 'test_00'
 
             # -
             res = self.env['pabi.utils.ws'].create_data(self._name, data_dict)
