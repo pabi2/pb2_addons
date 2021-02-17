@@ -888,6 +888,7 @@ class InterfaceAccountEntry(models.Model):
                 #if seq_code:
                 l['tax_invoice_number'] = 'test_00'
 
+            _logger.info("IA - Input2: %s" % data_dict)
             # -
             res = self.env['pabi.utils.ws'].create_data(self._name, data_dict)
             if res['is_success']:
