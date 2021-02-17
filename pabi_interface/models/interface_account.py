@@ -884,11 +884,11 @@ class InterfaceAccountEntry(models.Model):
                     # Auto reassign to reconcile_move_line_id
                     l['reconcile_move_line_ref'] = l['reconcile_move_id']
                     del l['reconcile_move_id']
-                
-                #if seq_code:
-                l['tax_invoice_number'] = 'test_00'
 
-            _logger.info("IA - Input2: %s" % data_dict)
+            if seq_code:
+                for l in range(len(data_dict['line_ids'])):
+                    data_dict['line_ids'][l]['tax_invoice_number'] = data_dict['preprint_number']
+
             # -
             res = self.env['pabi.utils.ws'].create_data(self._name, data_dict)
             if res['is_success']:
