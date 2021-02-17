@@ -15,3 +15,6 @@ class InterfaceSystem(models.Model):
         size=500,
         required=True,
     )
+    etax_preprint = fields.Boolean(
+        'e-Tax Preprint'
+    )

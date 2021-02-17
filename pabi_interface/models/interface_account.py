@@ -864,9 +864,13 @@ class InterfaceAccountEntry(models.Model):
             return interfaced
 
         try:
-            seq_code = data_dict['sequence_code']
-            data_dict['preprint_number'] = self.env['ir.sequence.preprint'].next_by_code(seq_code)
-            del data_dict['sequence_code']
+            seq_code = False
+            system_id = self.env['interface.system'].search([('name', '=', data_dict['system_id'])])
+            if system_id and system_id.etax_preprint is True:
+                seq_code = data_dict['sequence_code']
+                data_dict['preprint_number'] = self.env['ir.sequence.preprint'].next_by_code(seq_code)
+                del data_dict['sequence_code']
+            
             data_dict = self._pre_process_interface_account_entry(data_dict)
             # For migration period, payment reconicle can be entry or item
             # so, we need to manually check it
@@ -880,6 +884,9 @@ class InterfaceAccountEntry(models.Model):
                     # Auto reassign to reconcile_move_line_id
                     l['reconcile_move_line_ref'] = l['reconcile_move_id']
                     del l['reconcile_move_id']
+                
+                if seq_code:
+                    l['tax_invoice_number'] = data_dict['preprint_number']
 
             # -
             res = self.env['pabi.utils.ws'].create_data(self._name, data_dict)
