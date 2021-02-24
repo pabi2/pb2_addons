@@ -865,11 +865,12 @@ class InterfaceAccountEntry(models.Model):
 
         try:
             seq_code = False
-            system_id = self.env['interface.system'].search([('name', '=', data_dict['system_id'])])
-            if system_id and system_id.etax_preprint is True:
-                seq_code = data_dict['sequence_code']
-                data_dict['preprint_number'] = self.env['ir.sequence.preprint'].next_by_code(seq_code)
-                del data_dict['sequence_code']
+            if data_dict['type'] != 'reverse':
+                system_id = self.env['interface.system'].search([('name', '=', data_dict['system_id'])])
+                if system_id and system_id.etax_preprint is True:
+                    seq_code = data_dict['sequence_code']
+                    data_dict['preprint_number'] = self.env['ir.sequence.preprint'].next_by_code(seq_code)
+                    del data_dict['sequence_code']
             
             data_dict = self._pre_process_interface_account_entry(data_dict)
             # For migration period, payment reconicle can be entry or item
