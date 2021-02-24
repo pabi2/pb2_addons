@@ -865,7 +865,7 @@ class InterfaceAccountEntry(models.Model):
 
         try:
             seq_code = False
-            if data_dict['type'] != 'reverse':
+            if data_dict['type'].lower() != 'reverse':
                 system_id = self.env['interface.system'].search([('name', '=', data_dict['system_id'])])
                 if system_id and system_id.etax_preprint is True:
                     seq_code = data_dict['sequence_code']
