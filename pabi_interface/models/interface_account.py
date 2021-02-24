@@ -788,8 +788,7 @@ class InterfaceAccountEntry(models.Model):
                             "result": {
                                         "id": ia_id,
                                         "number": ia_number,
-                                        "fiscalyear": ia_fiscalyear,
-                                        "preprint_number": ia_datas[0].preprint_number
+                                        "fiscalyear": ia_fiscalyear
                                       },
                             "messages": "Record created successfully"
                           }
