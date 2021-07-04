@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_budget_future_commit_summary_report" pageWidth="7040" pageHeight="20000" columnWidth="7000" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="border_box" lineSpacing="Single">
+		<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
+			<topPen lineWidth="0.5" lineStyle="Solid"/>
+			<leftPen lineWidth="0.5" lineStyle="Solid"/>
+			<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+			<rightPen lineWidth="0.5"/>
+		</box>
+	</style>
+	<queryString language="xPath">
+		<![CDATA[/data/record]]>
+	</queryString>
+	<field name="fiscalyear" class="java.lang.String">
+		<fieldDescription><![CDATA[fiscalyear_id/name]]></fieldDescription>
+	</field>
+	<field name="doc_number" class="java.lang.String">
+		<fieldDescription><![CDATA[document_number]]></fieldDescription>
+	</field>
+	<field name="contract_number" class="java.lang.String">
+		<fieldDescription><![CDATA[contract_id/display_name]]></fieldDescription>
+	</field>
+	<field name="subtotal" class="java.lang.String">
+		<fieldDescription><![CDATA[subtotal]]></fieldDescription>
+	</field>
+	<field name="po_commit" class="java.lang.String">
+		<fieldDescription><![CDATA[po_commit]]></fieldDescription>
+	</field>
+	<field name="po_actual" class="java.lang.String">
+		<fieldDescription><![CDATA[po_actual]]></fieldDescription>
+	</field>
+	<field name="remaining" class="java.lang.String">
+		<fieldDescription><![CDATA[remaining]]></fieldDescription>
+	</field>
+	<field name="budget_view" class="java.lang.String">
+		<fieldDescription><![CDATA[budget_view]]></fieldDescription>
+	</field>
+	<field name="budget_code" class="java.lang.String">
+		<fieldDescription><![CDATA[budget_code]]></fieldDescription>
+	</field>
+	<field name="budget_name" class="java.lang.String">
+		<fieldDescription><![CDATA[budget_name]]></fieldDescription>
+	</field>
+	<field name="po_status" class="java.lang.String">
+		<fieldDescription><![CDATA[po_status]]></fieldDescription>
+	</field>
+	<field name="close_uncommit" class="java.lang.String">
+		<fieldDescription><![CDATA[close_uncommit]]></fieldDescription>
+	</field>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement style="border_box" x="0" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fiscalyear]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="border_box" x="100" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Doc Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="border_box" x="200" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Contract Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="border_box" x="300" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PO ตามสัญญา]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="border_box" x="400" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PO Commit]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="border_box" x="500" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Actual]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="border_box" x="600" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Remaining]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="border_box" x="700" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Budget View]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="border_box" x="800" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Budget]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="border_box" x="900" y="0" width="200" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Budget Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="border_box" x="1100" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="border_box" x="1200" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Close & Uncommit]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement style="border_box" x="0" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{fiscalyear} ? $F{fiscalyear} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="border_box" x="100" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{doc_number} ? $F{doc_number} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="border_box" x="200" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{contract_number} ? $F{contract_number} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="border_box" x="300" y="0" width="100" height="20"/>
+				<textElement textAlignment="Right" lineSpacing="Single">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{subtotal} ? new java.text.DecimalFormat("#,###.00").format(Float.valueOf($F{subtotal})) : 0.00]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="border_box" x="400" y="0" width="100" height="20"/>
+				<textElement textAlignment="Right" lineSpacing="Single">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{po_commit} ? new java.text.DecimalFormat("#,###.00").format(Float.valueOf($F{po_commit})) : 0.00]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="border_box" x="500" y="0" width="100" height="20"/>
+				<textElement textAlignment="Right" lineSpacing="Single">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{po_actual} ? new java.text.DecimalFormat("#,###.00").format(Float.valueOf($F{po_actual})) : 0.00]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="border_box" x="600" y="0" width="100" height="20"/>
+				<textElement textAlignment="Right" lineSpacing="Single">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{remaining} ? new java.text.DecimalFormat("#,###.00").format(Float.valueOf($F{remaining})) : 0.00]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="border_box" x="700" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{budget_view} ? $F{budget_view} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="border_box" x="800" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{budget_code} ? $F{budget_code} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="border_box" x="900" y="0" width="200" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{budget_name} ? $F{budget_name} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="border_box" x="1100" y="0" width="100" height="20"/>
+				<textElement lineSpacing="Single">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{po_status} ? $F{po_status} : '']]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="border_box" x="1200" y="0" width="100" height="20"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{close_uncommit} ? 'X' : '']]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
