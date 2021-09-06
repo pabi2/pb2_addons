@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import fields, models, api
+from openerp import fields, models, api, _
+from openerp.exceptions import ValidationError
 
 
 class ResBank(models.Model):
@@ -31,8 +32,18 @@ class ResPartnerBank(models.Model):
 
     @api.onchange('bank')
     def _onchange_bank(self):
-        self.bank_branch = False
+        for rec in self:
+            if rec.bank:
+                rec.bank_name = rec.bank.name
+                rec.bank_bic = rec.bank.bic
+                rec.bank_branch = False
 
+    @api.onchange('bank_branch')
+    def _onchange_bank_branch(self):
+        for rec in self:
+            if rec.bank_branch and rec.bank and rec.bank_branch.bank_id != rec.bank:
+                raise ValidationError(_('กรุณาเลือกสาขาใหม่ \nเนื่องจากสาขาไม่สัมพันธ์กับธนาคาร'))
+            
     @api.multi
     def name_get(self):
         res = []
