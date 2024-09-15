@@ -6,7 +6,7 @@ from openerp import models, fields, api
 class XLSXReportPabiComparisonPrPo(models.TransientModel):
     _name = 'xlsx.report.pabi.comparison.pr.po'
     _inherit = 'xlsx.report'
-
+    
     # Search Criteria
     partner_id = fields.Many2one(
         'res.partner',
@@ -16,7 +16,14 @@ class XLSXReportPabiComparisonPrPo(models.TransientModel):
         'res.org',
         string='Org',
     )
-
+    date_start = fields.Date(
+        string='PR Create From Date',
+        required=True,
+    )
+    date_to = fields.Date(
+        string='PR Create To Date',
+        required=True,
+    )
     # Report Result
     results = fields.Many2many(
         'xlsx.report.pabi.comparison.pr.po.results',
@@ -34,8 +41,12 @@ class XLSXReportPabiComparisonPrPo(models.TransientModel):
             dom += [('partner_id', '=', self.partner_id.id)]
         if self.org_ids:
             dom += [('org_id', 'in', self.org_ids._ids)]
+        if self.date_start:
+            dom += [('date_start', '>=', self.date_start)]
+        if self.date_to:
+            dom += [('date_start', '<=', self.date_to)]
         self.results = Result.search(dom)
-
+        
 
 class XLSXReportPabiComparisonPrPoResults(models.Model):
     _name = 'xlsx.report.pabi.comparison.pr.po.results'
@@ -56,6 +67,9 @@ class XLSXReportPabiComparisonPrPoResults(models.Model):
     )
     pr_name = fields.Char(
         string='PR',
+        readonly=True,
+    )
+    date_start = fields.Date(
         readonly=True,
     )
     po_name = fields.Char(
@@ -93,6 +107,7 @@ class XLSXReportPabiComparisonPrPoResults(models.Model):
     ou_name = fields.Char(
         string='OU',
     )
+    
 
     def init(self, cr):
         tools.drop_view_if_exists(cr, self._table)
@@ -101,6 +116,7 @@ class XLSXReportPabiComparisonPrPoResults(models.Model):
             pr.id as id,
             prl.name as pr_header,
             pr.name as pr_name,
+            pr.date_start,  
             prl.price_subtotal as pr_total,
             pol.name,
             po.name as po_name,
