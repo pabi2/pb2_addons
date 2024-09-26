@@ -19,6 +19,25 @@
             </field>
         </record>
 
+		#Confirm Validate Supplier Payment Wizard
+        <record id="view_confirm_vendor_payment_wizard_form" model="ir.ui.view">
+            <field name="name">view.confirm.vendor.payment.wizard.form</field>
+            <field name="model">account.voucher</field>
+            <field name="arch" type="xml">
+            	<form>
+                	<group>
+                		<p>กรุณาคลิกช่อง manual เพื่อยืนยันการแก้ไข tax value จากผู้ใช้งาน
+                		 หากไม่ดำเนินการ ระบบจะ auto calculation ให้ใหม่</p>
+                	</group>
+                	<footer>
+                		<button name="confirm_validate_payments" type="object" string="Confirm" class="oe_highlight"/>
+						or
+						<button special="cancel" class="oe_link" string="Cancel"/>
+                	</footer>
+            	</form>
+            </field>
+        </record>
+
         #Supplier Payment
         <record model="ir.ui.view" id="view_vendor_payment_form">
             <field name="name">account.voucher.payment.form</field>
@@ -60,7 +79,13 @@
                 <xpath expr="/form/sheet/notebook/page[@string='Journal Items']/field[@name='move_ids']/tree/field[@name='ref']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
-
+                <button name="proforma_voucher" position="attributes">
+                	<attribute name="invisible">True</attribute>
+                </button>
+                <button name="proforma_voucher" position="after">
+                	<button name="confirm_proforma_voucher" string="Validate" states="draft" type="object"
+                			invisible="context.get('line_type', False)" class="oe_highlight"/>
+                </button>
             </field>
         </record>
 
