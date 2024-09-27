@@ -13,8 +13,7 @@ class AccountAssetReverse(models.TransientModel):
         'account.asset.status',
         string='Target Status',
         domain="[('map_state_removed', '=', 'removed')]",
-        default=lambda self:
-        self.env.ref('pabi_asset_management.asset_status_reverse', False),
+        default=lambda self: self.env.ref('pabi_asset_management.asset_status_reverse', False),
         required=True,
         readonly=True,
     )
@@ -23,11 +22,34 @@ class AccountAssetReverse(models.TransientModel):
         size=1000,
     )
 
+    void_date_remove = fields.Date(
+        string='Asset Removal Date',
+        default=fields.Date.today,
+        required=True,
+        copy=False,
+    )
+    void_account_residual_value_id = fields.Many2one(
+        comodel_name='account.account',
+        string='Residual Value Account',
+        domain=[('type', '=', 'other')],
+        required=True,
+        default=lambda self: self.env['account.account'].search([('code','=','1214010002')])
+    )
+    void_posting_regime = fields.Selection(
+        [('residual_value', _('Residual Value')),
+         ('gain_loss_on_sale', _('Gain/Loss on Sale')),],
+        string='Removal Entry Policy',
+        required=True,
+        default='residual_value',
+        #default=lambda self: self._get_posting_regime(),
+    )
+    
     @api.multi
     def reverse(self):
         """ Reverse JE of the asset receipt, and set as removed """
         asset_ids = self._context.get('active_ids')
         Asset = self.env['account.asset']
+        Assetreverse = self.env['account.asset.reverse']
         AccountMove = self.env['account.move']
         MoveLine = self.env['account.move.line']
         Purchase = self.env['purchase.order']
@@ -64,6 +86,15 @@ class AccountAssetReverse(models.TransientModel):
             AccountMove._reconcile_voided_entry([move.id, rev_move.id])
             rev_move.button_validate()
             # Set asset removed
+            for removal in self:
+                assets_id = Asset.with_context(active_test=False).search([('id', 'in',
+                                                                        asset_ids)])
+                for asset in assets_id:
+                    res = asset.open_entries()
+                    move_id = self.env['account.move'].search(res['domain'])
+                    for move in move_id:
+                          move.date = self.void_date_remove
+                        
             asset.write({'status': self.target_status.id,
                          'state': 'removed'})
             asset.message_post(body=_('-- Void/Removed --\n%s') % self.note)
